@@ -326,29 +326,121 @@ function calculatePricing() {
 
 function setupReview() {
     const reviewDiv = G('review-summary');
-    const { customer, totals, pricing, containerPlan, media } = state.survey;
-    
-    let photoHtml = '<p>No photos captured.</p>';
-    if (media.photos && media.photos.length > 0) {
-        photoHtml = media.photos.map(p => `<img src="${p.dataUrl}" class="w-16 h-16 object-cover rounded">`).join('');
-    }
-    
-    let signatureHtml = '<p>No signature captured.</p>';
-    if(media.signature) {
-        signatureHtml = `<img src="${media.signature}" class="border bg-gray-100 rounded mix-blend-darken">`;
-    }
+    const { company } = state.settings;
+    const { id, customer, items, totals, pricing, media } = state.survey;
 
+    const itemsHtml = items.map(item => `
+        <tr>
+            <td class="py-2 px-4 border-b">${item.name}</td>
+            <td class="py-2 px-4 border-b text-center">${item.qty}</td>
+            <td class="py-2 px-4 border-b text-right">${item.cbmPerUnit.toFixed(3)}</td>
+            <td class="py-2 px-4 border-b text-right">${(item.cbmPerUnit * item.qty).toFixed(3)}</td>
+        </tr>
+    `).join('');
+
+    const pricingHtml = pricing ? `
+        <div class="flex justify-between py-1"><span>CBM Cost (${customer.moveType}):</span> <span>${pricing.cbmCost.toFixed(2)}</span></div>
+        <div class="flex justify-between py-1"><span>Materials:</span> <span>${state.settings.rates.materials.toFixed(2)}</span></div>
+        <div class="flex justify-between py-1"><span>Labor:</span> <span>${state.settings.rates.labor.toFixed(2)}</span></div>
+        <div class="flex justify-between py-1"><span>Surcharges:</span> <span>${state.settings.rates.surcharges.toFixed(2)}</span></div>
+        <div class="flex justify-between py-1 font-bold border-t mt-2 pt-2"><span>Subtotal:</span> <span>${pricing.subtotal.toFixed(2)}</span></div>
+        <div class="flex justify-between py-1"><span>Insurance (${state.settings.rates.insurancePercent}%):</span> <span>${pricing.insurance.toFixed(2)}</span></div>
+        <div class="flex justify-between py-1"><span>Markup (${state.settings.rates.markupPercent}%):</span> <span>${pricing.markup.toFixed(2)}</span></div>
+        <div class="flex justify-between py-1"><span>VAT (${state.settings.rates.vatPercent}%):</span> <span>${pricing.vat.toFixed(2)}</span></div>
+        <div class="flex justify-between pt-2 font-bold text-xl text-primary border-t mt-2"><span>Grand Total:</span> <span>${pricing.grandTotal.toFixed(2)} ${pricing.currency}</span></div>
+    ` : '<p>Pricing not calculated.</p>';
+
+    let photoHtml = '<p class="text-sm text-gray-500">No photos captured.</p>';
+    if (media.photos && media.photos.length > 0) {
+        photoHtml = media.photos.map(p => `<img src="${p.dataUrl}" class="w-20 h-20 object-cover rounded border">`).join('');
+    }
+    
+    let signatureHtml = '<p class="text-sm text-gray-500">No signature captured.</p>';
+    if(media.signature) {
+        signatureHtml = `<img src="${media.signature}" class="border bg-gray-100 rounded mix-blend-darken max-w-xs mx-auto">`;
+    }
+    
     reviewDiv.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="border p-4 rounded-lg"><h4 class="font-bold mb-2">Customer</h4><p>${customer.name || ''}</p><p>${customer.phone || ''}</p></div>
-            <div class="border p-4 rounded-lg"><h4 class="font-bold mb-2">Move Details</h4><p>From: ${customer.pickupAddress || ''}</p><p>To: ${customer.destinationAddress || ''}</p><p>Type: ${customer.moveType || ''}</p></div>
+        <div class="border rounded-lg p-6 bg-white">
+            <!-- Header -->
+            <div class="flex justify-between items-start pb-4 border-b">
+                <div class="flex items-center gap-4">
+                     <img src="${company.logo}" alt="Company Logo" class="h-16 w-16">
+                     <div>
+                        <h3 class="text-2xl font-bold text-dark">${company.name}</h3>
+                        <p class="text-sm text-gray-600">${company.address.replace(/\n/g, '<br>')}</p>
+                        <p class="text-sm text-gray-600">Tel: ${company.phone} | Email: ${company.email}</p>
+                     </div>
+                </div>
+                <div class="text-right">
+                    <h4 class="text-xl font-bold">QUOTATION</h4>
+                    <p class="text-sm"><b>Quote #:</b> ${id.substring(id.length - 9)}</p>
+                    <p class="text-sm"><b>Date:</b> ${new Date(customer.surveyDate).toLocaleDateString()}</p>
+                </div>
+            </div>
+
+            <!-- Customer Info -->
+            <div class="grid grid-cols-2 gap-4 py-4">
+                <div>
+                    <h5 class="font-bold text-gray-700">Bill To:</h5>
+                    <p>${customer.name || ''}</p>
+                    <p>${customer.phone || ''}</p>
+                    <p>${customer.email || ''}</p>
+                </div>
+                <div class="text-sm">
+                    <p><b>Pickup:</b> ${customer.pickupAddress || ''}</p>
+                    <p><b>Destination:</b> ${customer.destinationAddress || ''}</p>
+                    <p><b>Move Type:</b> ${customer.moveType || ''}</p>
+                </div>
+            </div>
+
+            <!-- Items Table -->
+            <h5 class="font-bold text-gray-700 mt-4 mb-2">Itemized List</h5>
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="py-2 px-4 text-left font-semibold">Item Description</th>
+                        <th class="py-2 px-4 text-center font-semibold">Qty</th>
+                        <th class="py-2 px-4 text-right font-semibold">CBM/Unit</th>
+                        <th class="py-2 px-4 text-right font-semibold">Total CBM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${itemsHtml}
+                    <tr class="font-bold bg-gray-50">
+                        <td colspan="3" class="py-2 px-4 text-right">Total Volume:</td>
+                        <td class="py-2 px-4 text-right">${totals.cbm.toFixed(3)} CBM</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Pricing & Signature -->
+            <div class="grid grid-cols-2 gap-8 mt-6">
+                <div>
+                     <h5 class="font-bold text-gray-700 mb-2">Pricing Summary</h5>
+                     <div class="text-sm space-y-1">${pricingHtml}</div>
+                </div>
+                <div>
+                     <h5 class="font-bold text-gray-700 mb-2">Customer Signature</h5>
+                     <div class="p-4 border rounded-md h-40 flex items-center justify-center">${signatureHtml}</div>
+                </div>
+            </div>
+            
+            <!-- Photos -->
+            <div class="mt-6">
+                <h5 class="font-bold text-gray-700 mb-2">Photos</h5>
+                <div class="flex gap-2 flex-wrap">${photoHtml}</div>
+            </div>
+
+            <!-- Terms -->
+            <div class="mt-6 border-t pt-4">
+                <h5 class="font-bold text-gray-700 mb-2">Terms & Conditions</h5>
+                <p class="text-xs text-gray-600 whitespace-pre-wrap">${state.settings.templates.pdfTerms}</p>
+            </div>
         </div>
-         <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Summary</h4><p>Total CBM: ${totals.cbm.toFixed(3)}</p><p>Container: ${containerPlan?.selected || containerPlan?.recommended || 'N/A'}</p></div>
-        <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Pricing</h4><p class="text-primary text-lg">Grand Total: ${pricing?.grandTotal.toFixed(2) || 'N/A'} ${pricing?.currency || ''}</p></div>
-        <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Photos</h4><div class="flex gap-2 flex-wrap">${photoHtml}</div></div>
-        <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Signature</h4><div>${signatureHtml}</div></div>
     `;
 }
+
 
 function saveDraft() {
     localStorage.setItem('currentSurvey', JSON.stringify(state.survey));
