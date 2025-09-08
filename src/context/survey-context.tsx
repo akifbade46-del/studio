@@ -19,9 +19,9 @@ interface SurveyContextType {
 
 const SurveyContext = createContext<SurveyContextType | undefined>(undefined);
 
-const getActiveSurveyId = (): string | null => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('qgo-cargo-active-survey-id');
+const getActiveSurveyId = (): string => {
+    if (typeof window === 'undefined') return 'new';
+    return localStorage.getItem('qgo-cargo-active-survey-id') || 'new';
 }
 
 const setActiveSurveyId = (id: string) => {
@@ -34,8 +34,8 @@ export const SurveyProvider = ({ children }: { children: ReactNode }) => {
     const [goToStep, setGoToStep] = useState<GoToStepFunction>(() => () => {});
     
     const [survey, setSurvey] = useLocalStorage<SurveyData>(
-        `qgo-cargo-survey-${activeId || 'new'}`, 
-        { ...INITIAL_SURVEY_DATA, id: activeId || uuidv4(), createdAt: new Date().toISOString() }
+        `qgo-cargo-survey-${activeId}`, 
+        { ...INITIAL_SURVEY_DATA, id: activeId, createdAt: new Date().toISOString() }
     );
 
     const startNewSurvey = useCallback((goToFirstStep = false) => {
@@ -45,27 +45,20 @@ export const SurveyProvider = ({ children }: { children: ReactNode }) => {
             id: newId,
             createdAt: new Date().toISOString(),
         };
-        // We set the survey data for the *new* key first.
-        window.localStorage.setItem(`qgo-cargo-survey-${newId}`, JSON.stringify(newSurvey));
-        
-        // Then, we update the active ID, which will cause useLocalStorage to pick up the new data.
         setActiveSurveyId(newId);
+        // This will trigger the useLocalStorage hook to update because its key has changed.
+        setSurvey(newSurvey);
         setActiveId(newId);
 
         if (goToFirstStep) {
             goToStep(1);
         }
-    }, [goToStep]);
+    }, [goToStep, setSurvey]);
 
     const loadSurvey = useCallback((surveyData: SurveyData) => {
-        // Set the active ID, which will trigger the useLocalStorage hook to read the correct survey.
         setActiveSurveyId(surveyData.id);
         setActiveId(surveyData.id);
-        
-        if (goToStep) {
-            goToStep(1);
-        }
-    }, [goToStep]);
+    }, []);
   
   return (
     <SurveyContext.Provider value={{ survey, setSurvey, loadSurvey, startNewSurvey, goToStep, setGoToStep }}>
