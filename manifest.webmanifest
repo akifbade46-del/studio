@@ -1,0 +1,25 @@
+{
+  "name": "Q'go Cargo Survey & Quote App",
+  "short_name": "Q'go Cargo",
+  "description": "A comprehensive tool for creating and managing moving surveys, calculating CBM, and generating quotes.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#E30B17",
+  "icons": [
+    {
+      "src": "https://qgocargo.com/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://qgocargo.com/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
+
+    

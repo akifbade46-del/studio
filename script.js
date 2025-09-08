@@ -81,6 +81,7 @@ function init() {
     renderItemsTable();
     updateFooter();
     renderPhotos();
+    registerServiceWorker();
 }
 
 function initFirebase() {
@@ -94,6 +95,18 @@ function initFirebase() {
             console.error("Could not initialize Firebase. Check your config.", e);
             alert("Could not initialize Firebase. Please check your configuration in the Editor.");
         }
+    }
+}
+
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').then(registration => {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, err => {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        });
     }
 }
 
@@ -330,7 +343,7 @@ function calculatePricing() {
     updateFooter();
 }
 
-function generateReceiptHtml(survey, type = 'office') {
+function generateReceiptHtml(survey, type = 'customer') { // Default to customer copy
     const { company } = state.settings;
     const { id, customer, items, totals, pricing, media } = survey;
 
@@ -359,11 +372,11 @@ function generateReceiptHtml(survey, type = 'office') {
             <div class="flex justify-between py-1"><span>VAT (${state.settings.rates.vatPercent}%):</span> <span>${pricing.vat.toFixed(2)}</span></div>
             <div class="flex justify-between pt-2 font-bold text-xl text-primary border-t mt-2"><span>Grand Total:</span> <span>${pricing.grandTotal.toFixed(2)} ${pricing.currency}</span></div>
         </div>
-    ` : `<p class="text-sm text-gray-500">Contact us for pricing details.</p>`;
-
+    ` : `<div class="flex justify-between pt-4 font-bold text-xl text-primary border-t mt-2"><span>Grand Total:</span> <span>Contact for Pricing</span></div>`;
+    
     let photoHtml = '<p class="text-sm text-gray-500">No photos captured.</p>';
     if (media.photos && media.photos.length > 0) {
-        photoHtml = media.photos.map(p => `<img src="${p.dataUrl}" class="w-20 h-20 object-cover rounded border cursor-pointer zoomable-photo" alt="Survey photo">`).join('');
+         photoHtml = `<div class="photos-grid">${media.photos.map(p => `<img src="${p.dataUrl}" class="w-20 h-20 object-cover rounded border cursor-pointer zoomable-photo" alt="Survey photo">`).join('')}</div>`;
     }
     
     let signatureHtml = '<p class="text-sm text-gray-500">No signature captured.</p>';
@@ -788,7 +801,7 @@ async function showLoadSurveyModal() {
     }
 
     try {
-        const querySnapshot = await state.firebase.db.collection('surveys').limit(50).get();
+        const querySnapshot = await state.firebase.db.collection('surveys').orderBy('meta.createdAt', 'desc').limit(50).get();
         state.surveysCache = []; // Clear cache
         
         if (querySnapshot.empty) {
@@ -1049,3 +1062,5 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+    
