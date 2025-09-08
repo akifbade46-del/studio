@@ -12,6 +12,20 @@
 </head>
 <body class="bg-gray-100 font-sans">
 
+    <!-- Login Screen -->
+    <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 glass-effect">
+        <div class="w-full max-w-sm text-center">
+            <img src="https://qgocargo.com/logo.png" alt="Logo" class="h-24 mx-auto mb-6">
+            <h1 class="text-2xl font-bold mb-2 text-dark">Survey App Access</h1>
+            <p class="text-gray-600 mb-6">Please enter the password to continue.</p>
+            <form id="login-form" class="space-y-4">
+                <input type="password" id="login-password" placeholder="Password" class="w-full text-center" required>
+                <button type="submit" class="w-full bg-primary text-white font-bold">Login</button>
+            </form>
+        </div>
+    </div>
+
+
     <div id="app" class="max-w-4xl mx-auto bg-white min-h-screen shadow-lg">
         <!-- Header -->
         <header id="app-header" class="p-4 border-b flex justify-between items-center bg-white sticky top-0 z-50">

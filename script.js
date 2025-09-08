@@ -554,6 +554,17 @@ function printReport(content) {
 
 
 function setupEventListeners() {
+    // App Login
+    G('login-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const password = G('login-password').value;
+        if (password === 'qgoadmin') {
+            G('login-screen').style.display = 'none';
+        } else {
+            alert('Incorrect Password. Please try again.');
+        }
+    });
+
     // New Survey
     G('new-survey-btn').addEventListener('click', startNewSurvey);
 
