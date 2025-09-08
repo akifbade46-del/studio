@@ -13,7 +13,6 @@ const state = {
 const defaultSettings = {
     company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNFMzA1MTciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTdWNmE0IDQgMCAwIDAtOCAwIi8+PHBhdGggZD0iTTEzIDZWMTRIMyIvPjxwYXRoIGQ9Ik0zIDE0SDEiLz48cGF0aCBkPSJNNyAxNEg2Ii8+PHBhdGggZD0iTTIxIDE3SDMiLz48Y2lyY2xlIGN4PSI4IiBjeT0iMTciIHI9IjIiLz48Y2lyY2xlIGN4PSIxOCIgY3k9IjE3IiByPSIyIi8+PC9zdmc+" },
     branding: { primary: '#E30B17', dark: '#111827', accent: '#0EA5E9' },
-    // Hardcoded Firebase config
     firebaseConfig: {
       apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
       authDomain: "survey-bf41d.firebaseapp.com",
@@ -339,7 +338,7 @@ function setupReview() {
     `).join('');
 
     const pricingHtml = pricing ? `
-        <div class="flex justify-between py-1"><span>CBM Cost (${customer.moveType}):</span> <span>${pricing.cbmCost.toFixed(2)}</span></div>
+        <div class="flex justify-between py-1"><span>CBM Cost (${customer.moveType || 'N/A'}):</span> <span>${pricing.cbmCost.toFixed(2)}</span></div>
         <div class="flex justify-between py-1"><span>Materials:</span> <span>${state.settings.rates.materials.toFixed(2)}</span></div>
         <div class="flex justify-between py-1"><span>Labor:</span> <span>${state.settings.rates.labor.toFixed(2)}</span></div>
         <div class="flex justify-between py-1"><span>Surcharges:</span> <span>${state.settings.rates.surcharges.toFixed(2)}</span></div>
@@ -361,7 +360,7 @@ function setupReview() {
     }
     
     reviewDiv.innerHTML = `
-        <div class="border rounded-lg p-6 bg-white">
+        <div id="receipt" class="border rounded-lg p-6 bg-white">
             <!-- Header -->
             <div class="flex justify-between items-start pb-4 border-b">
                 <div class="flex items-center gap-4">
@@ -453,7 +452,7 @@ function setupEventListeners() {
     // Navigation
     G('next-btn').addEventListener('click', () => {
         if (state.currentStep < state.totalSteps) {
-            state.currentStep++; // Always increment first
+            state.currentStep++;
             if (state.currentStep === 3) calculateContainerPlan();
             if (state.currentStep === 4) calculatePricing();
             if (state.currentStep === 6) setupReview();
@@ -917,3 +916,5 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+    
