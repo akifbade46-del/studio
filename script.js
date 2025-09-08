@@ -359,7 +359,7 @@ function generateReceiptHtml(survey) {
 
     let photoHtml = '<p class="text-sm text-gray-500">No photos captured.</p>';
     if (media.photos && media.photos.length > 0) {
-        photoHtml = media.photos.map(p => `<img src="${p.dataUrl}" class="w-20 h-20 object-cover rounded border">`).join('');
+        photoHtml = media.photos.map(p => `<img src="${p.dataUrl}" class="w-20 h-20 object-cover rounded border cursor-pointer zoomable-photo" alt="Survey photo">`).join('');
     }
     
     let signatureHtml = '<p class="text-sm text-gray-500">No signature captured.</p>';
@@ -434,7 +434,7 @@ function generateReceiptHtml(survey) {
             </div>
             
             <!-- Photos -->
-            <div class="mt-6">
+            <div class="mt-6 photos-section-for-print">
                 <h5 class="font-bold text-gray-700 mb-2">Photos</h5>
                 <div class="flex gap-2 flex-wrap">${photoHtml}</div>
             </div>
@@ -637,7 +637,7 @@ function setupEventListeners() {
     G('generate-pdf-btn').addEventListener('click', () => {
         const reviewContent = G('review-summary').innerHTML;
         const originalContent = D.body.innerHTML;
-        D.body.innerHTML = reviewContent;
+        D.body.innerHTML = `<div class="p-8">${reviewContent}</div>`;
         window.print();
         D.body.innerHTML = originalContent;
         // Re-initialize everything after print since we replaced the body
@@ -659,14 +659,29 @@ function setupEventListeners() {
     G('preview-print-btn').addEventListener('click', () => {
         const previewContent = G('preview-content').innerHTML;
         const originalContent = D.body.innerHTML;
-        D.body.innerHTML = previewContent;
+        D.body.innerHTML = `<div class="p-8">${previewContent}</div>`;
         window.print();
         D.body.innerHTML = originalContent;
         // Re-initialize everything after print since we replaced the body
         init(); 
         G('preview-modal').style.display = 'flex'; // Keep the modal open
-        G('preview-content').innerHTML = previewContent; // Put the content back in the modal
-        G('load-survey-modal').style.display = 'flex'; // Also keep the load survey modal open
+        const surveyId = G('preview-modal').dataset.surveyId;
+        const surveyToPreview = state.surveysCache.find(s => s.id === surveyId);
+        if (surveyToPreview) {
+            showPreviewModal(surveyToPreview); // Re-render preview content
+        }
+        
+    });
+
+    // Image Zoom Modal
+    const zoomModal = G('image-zoom-modal');
+    G('zoom-close-btn').addEventListener('click', () => zoomModal.style.display = 'none');
+    zoomModal.addEventListener('click', () => zoomModal.style.display = 'none'); // Also close on clicking background
+    D.body.addEventListener('click', e => {
+        if(e.target.matches('.zoomable-photo')) {
+            G('zoomed-image').src = e.target.src;
+            zoomModal.style.display = 'flex';
+        }
     });
 
 }
@@ -820,7 +835,7 @@ function showPreviewModal(surveyData) {
     const modal = G('preview-modal');
     const contentDiv = G('preview-content');
     
-    // Generate the same receipt HTML used in Step 6
+    modal.dataset.surveyId = surveyData.id; // Store survey ID for re-printing
     contentDiv.innerHTML = generateReceiptHtml(surveyData);
     
     modal.style.display = 'flex';

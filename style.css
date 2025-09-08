@@ -75,4 +75,5 @@ form label {
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .no-print { display: none !important; }
   #pdf-output { display: block !important; position: absolute; top: 0; left: 0; width: 100%; }
+  .photos-section-for-print { display: none !important; }
 }
