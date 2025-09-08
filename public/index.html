@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q'go Cargo Survey</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#007AFF">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Header -->
+        <header id="app-header" class="glass">
+            <img src="https://qgocargo.com/logo.png" alt="Q'go Cargo" id="app-logo" class="h-16">
+            <div class="header-actions">
+                <button id="load-survey-btn" class="app-button">Load</button>
+                <button id="editor-mode-btn" class="app-button">Editor</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="app-main">
+            <!-- Step 1: Customer Info -->
+            <div id="step-1" class="step-card glass active">
+                <h2>Customer Information</h2>
+                <input type="text" id="customer-name" placeholder="Name">
+                <input type="text" id="customer-id" placeholder="ID / Phone">
+                <input type="date" id="survey-date">
+                <input type="text" id="surveyor-name" placeholder="Surveyor Name">
+                <input type="text" id="origin" placeholder="Origin">
+                <input type="text" id="destination" placeholder="Destination">
+            </div>
+
+            <!-- Step 2: Rooms -->
+            <div id="step-2" class="step-card glass">
+                <h2>Select Rooms</h2>
+                <div id="room-list" class="grid-container"></div>
+                <div class="add-new-container">
+                    <input type="text" id="new-room-name" placeholder="Add custom room...">
+                    <button id="add-room-btn" class="app-button">+</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Items -->
+            <div id="step-3" class="step-card glass">
+                <h2 id="room-name-header">Items in...</h2>
+                <div id="item-list" class="grid-container"></div>
+                 <div class="add-new-container">
+                    <input type="text" id="new-item-name" placeholder="Add custom item...">
+                    <button id="add-item-btn" class="app-button">+</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Item Details -->
+            <div id="step-4" class="step-card glass">
+                <h2 id="item-name-header">...</h2>
+                <div class="item-details-grid">
+                    <div class="detail-box">
+                        <label>Length (cm)</label>
+                        <input type="number" id="item-length" placeholder="L">
+                    </div>
+                    <div class="detail-box">
+                        <label>Width (cm)</label>
+                        <input type="number" id="item-width" placeholder="W">
+                    </div>
+                    <div class="detail-box">
+                        <label>Height (cm)</label>
+                        <input type="number" id="item-height" placeholder="H">
+                    </div>
+                    <div class="detail-box">
+                        <label>Quantity</label>
+                        <input type="number" id="item-quantity" value="1" min="1">
+                    </div>
+                </div>
+                <p>CBM per item: <span id="item-cbm">0.000</span></p>
+                <button id="add-to-survey-btn" class="app-button">Add to Survey</button>
+            </div>
+            
+            <!-- Step 5: Survey Summary -->
+            <div id="step-5" class="step-card glass">
+                <h2>Survey Summary</h2>
+                <div id="summary-list"></div>
+                <p class="total-cbm-display">Total CBM: <span id="total-cbm">0.000</span></p>
+                <p>Survey saved as: <strong id="survey-id-display"></strong></p>
+            </div>
+
+            <!-- Step 6: Review & Share -->
+            <div id="step-6" class="step-card glass">
+                <h2>Review & Share</h2>
+                <div class="review-details">
+                    <p><strong>Customer:</strong> <span id="review-customer-name"></span></p>
+                    <p><strong>Survey ID:</strong> <span id="review-survey-id"></span></p>
+                    <p><strong>Total CBM:</strong> <span id="review-total-cbm"></span></p>
+                </div>
+                <div class="pricing-section">
+                    <h3>Pricing</h3>
+                    <div class="price-input">
+                        <label for="price-per-cbm">Price per CBM:</label>
+                        <input type="number" id="price-per-cbm" placeholder="e.g., 100">
+                    </div>
+                    <p class="total-price-display">Total Price: <span id="total-price">0.00</span></p>
+                </div>
+                <div class="button-group">
+                    <button id="customer-pdf-btn" class="app-button">Generate Customer PDF</button>
+                    <button id="office-pdf-btn" class="app-button">Generate Office PDF</button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer / Navigation -->
+        <footer id="app-footer" class="glass">
+            <button id="prev-btn" class="app-button">Previous</button>
+            <div id="step-indicator">Step 1/6</div>
+            <button id="next-btn" class="app-button">Next</button>
+        </footer>
+    </div>
+    
+    <!-- Editor Modal -->
+    <div id="editor-modal" class="modal-overlay hidden">
+        <div class="modal-content glass">
+            <span class="close-modal-btn" data-modal-id="editor-modal">&times;</span>
+            <h2>Editor Mode</h2>
+            <p>Here you can edit the lists of rooms and items.</p>
+            <div class="editor-section">
+                <h3>Rooms</h3>
+                <div id="editable-rooms-list"></div>
+                <div class="add-new-container">
+                    <input type="text" id="editor-new-room" placeholder="New room name">
+                    <button id="editor-add-room-btn" class="app-button">+</button>
+                </div>
+            </div>
+            <div class="editor-section">
+                <h3>Standard Items</h3>
+                <div id="editable-items-list"></div>
+                 <div class="add-new-container">
+                    <input type="text" id="editor-new-item" placeholder="New item name">
+                    <button id="editor-add-item-btn" class="app-button">+</button>
+                </div>
+            </div>
+            <button id="save-editor-changes-btn" class="app-button">Save Changes</button>
+        </div>
+    </div>
+
+    <!-- Load Survey Modal -->
+    <div id="load-survey-modal" class="modal-overlay hidden">
+        <div class="modal-content glass">
+            <span class="close-modal-btn" data-modal-id="load-survey-modal">&times;</span>
+            <h2>Load Existing Survey</h2>
+            <div id="saved-surveys-list">
+                <p>Loading saved surveys...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Preview Modal -->
+    <div id="preview-modal" class="modal-overlay hidden">
+         <div id="preview-content" class="modal-content glass full-screen">
+             <span class="close-modal-btn" data-modal-id="preview-modal">&times;</span>
+             <div id="receipt-content" class="receipt">
+                 <!-- Receipt content will be generated here by script.js -->
+             </div>
+             <div class="button-group">
+                <button id="preview-customer-print-btn" class="app-button">Print Customer Copy</button>
+                <button id="preview-office-print-btn" class="app-button">Print Office Copy</button>
+            </div>
+         </div>
+    </div>
+
+
+    <script src="script.js"></script>
+</body>
+</html>

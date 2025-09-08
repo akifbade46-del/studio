@@ -1,0 +1,21 @@
+{
+    "name": "Q'go Cargo Survey",
+    "short_name": "Q'go Survey",
+    "description": "A survey and quoting tool for Q'go Cargo.",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#007AFF",
+    "icons": [
+        {
+            "src": "https://qgocargo.com/logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://qgocargo.com/logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

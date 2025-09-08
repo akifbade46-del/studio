@@ -1,18 +1,15 @@
-const CACHE_NAME = 'qgo-cargo-cache-v1';
+const CACHE_NAME = 'qgo-cargo-cache-v2';
 const urlsToCache = [
   '/',
-  'index.html',
-  'style.css',
-  'script.js',
-  'https://cdn.tailwindcss.com',
-  'https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css',
-  'https://qgocargo.com/logo.png',
-  'https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js',
-  'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js',
-  'https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js'
+  '/index.html',
+  '/style.css',
+  '/script.js',
+  '/manifest.webmanifest',
+  'https://qgocargo.com/logo.png'
 ];
 
 self.addEventListener('install', event => {
+  // Perform install steps
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -31,18 +28,18 @@ self.addEventListener('fetch', event => {
           return response;
         }
 
-        // Clone the request because it's a one-time-use stream
-        const fetchRequest = event.request.clone();
-
-        return fetch(fetchRequest).then(
+        return fetch(event.request).then(
           response => {
             // Check if we received a valid response
             if(!response || response.status !== 200 || response.type !== 'basic') {
               return response;
             }
 
-            // Clone the response because it's also a one-time-use stream
-            const responseToCache = response.clone();
+            // IMPORTANT: Clone the response. A response is a stream
+            // and because we want the browser to consume the response
+            // as well as the cache consuming the response, we need
+            // to clone it so we have two streams.
+            var responseToCache = response.clone();
 
             caches.open(CACHE_NAME)
               .then(cache => {
@@ -70,5 +67,3 @@ self.addEventListener('activate', event => {
     })
   );
 });
-
-    
