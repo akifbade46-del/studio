@@ -93,10 +93,14 @@ input, select, textarea, button:not(#clear-signature) {
     padding: 0.75rem !important;
     transition: all 0.2s ease-in-out !important;
     border: 1px solid rgba(209, 213, 219, 0.4) !important;
-    background-color: rgba(255, 255, 255, 0.3) !important;
 }
 input, select, textarea {
      color: #111827;
+     background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+button:not(#clear-signature):not([class*="bg-"]) {
+    background-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 
@@ -185,4 +189,3 @@ form label {
       border-radius: 0 !important;
   }
 }
-    
