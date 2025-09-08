@@ -1,4 +1,3 @@
-
 const D = document;
 const G = (id) => D.getElementById(id);
 
@@ -33,9 +32,22 @@ const defaultSettings = {
         { id: 'moveType', label: 'Move Type', type: 'select', options: ['Local', 'GCC', 'International'], required: true, enabled: true },
     ],
     itemPresets: [
-        { name: 'Carton S', l: 45, w: 45, h: 45 },
-        { name: 'Carton M', l: 60, w: 60, h: 60 },
-        { name: 'Sofa 3-seater', l: 200, w: 90, h: 80},
+        // Boxes
+        { name: 'Carton S', l: 45, w: 45, h: 45, category: 'Boxes' },
+        { name: 'Carton M', l: 60, w: 60, h: 60, category: 'Boxes' },
+        { name: 'Carton L', l: 75, w: 75, h: 75, category: 'Boxes' },
+        { name: 'Wardrobe Box', l: 50, w: 50, h: 120, category: 'Boxes' },
+
+        // Kitchen
+        { name: 'Refrigerator', l: 80, w: 80, h: 180, category: 'Kitchen' },
+        { name: 'Washing Machine', l: 60, w: 60, h: 85, category: 'Kitchen' },
+        { name: 'Dishwasher', l: 60, w: 60, h: 85, category: 'Kitchen' },
+        { name: 'Microwave', l: 50, w: 40, h: 30, category: 'Kitchen' },
+
+        // Furniture
+        { name: 'Sofa 3-seater', l: 200, w: 90, h: 80, category: 'Furniture'},
+        { name: 'Armchair', l: 90, w: 90, h: 80, category: 'Furniture' },
+        { name: 'Coffee Table', l: 120, w: 60, h: 45, category: 'Furniture' },
     ],
     containers: [
         { type: '20ft', capacity: 33.2, efficiency: 0.85 },
@@ -218,15 +230,44 @@ function renderCustomerForm() {
 function renderItemPresets() {
     const container = G('item-presets');
     container.innerHTML = '';
-    state.settings.itemPresets.forEach(preset => {
-        const btn = D.createElement('button');
-        btn.className = 'bg-gray-200 text-sm p-2 rounded-md hover:bg-gray-300';
-        btn.innerHTML = `<i class="lucide-box mr-1"></i> ${preset.name}`;
-        btn.onclick = () => {
-            addItem({ name: preset.name, qty: 1, l: preset.l, w: preset.w, h: preset.h, unit: 'cm' });
-        };
-        container.appendChild(btn);
-    });
+    
+    // Group presets by category
+    const groupedPresets = state.settings.itemPresets.reduce((acc, preset) => {
+        const category = preset.category || 'General';
+        if (!acc[category]) {
+            acc[category] = [];
+        }
+        acc[category].push(preset);
+        return acc;
+    }, {});
+
+    // Render each category
+    for (const category in groupedPresets) {
+        const categoryWrapper = D.createElement('div');
+        categoryWrapper.className = 'w-full mb-4';
+        
+        const categoryTitle = D.createElement('h3');
+        categoryTitle.className = 'font-semibold mb-2 text-lg';
+        categoryTitle.textContent = category;
+        categoryWrapper.appendChild(categoryTitle);
+
+        const buttonContainer = D.createElement('div');
+        buttonContainer.className = 'flex flex-wrap gap-2';
+
+        groupedPresets[category].forEach(preset => {
+            const btn = D.createElement('button');
+            const isHighlighted = ['Boxes'].includes(category);
+            btn.className = `text-sm p-3 rounded-md flex-grow md:flex-grow-0 ${isHighlighted ? 'bg-primary text-white' : 'bg-white text-gray-800'}`;
+            btn.innerHTML = `<i class="lucide-box mr-1"></i> ${preset.name}`;
+            btn.onclick = () => {
+                addItem({ name: preset.name, qty: 1, l: preset.l, w: preset.w, h: preset.h, unit: 'cm' });
+            };
+            buttonContainer.appendChild(btn);
+        });
+
+        categoryWrapper.appendChild(buttonContainer);
+        container.appendChild(categoryWrapper);
+    }
 }
 
 function calculateCBM(l, w, h, unit) {
@@ -1086,5 +1127,4 @@ function saveAndApplySettings() {
 
 document.addEventListener('DOMContentLoaded', init);
 
-    
     
