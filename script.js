@@ -13,22 +13,15 @@ const state = {
 const defaultSettings = {
     company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "https://qgocargo.com/logo.png" },
     branding: {
-        primary: '210 40% 50%', // HSL format
-        accent: '210 40% 90%',
+        primary: '222.2 47.4% 11.2%', // HSL format for shadcn theming
         background: '0 0% 100%',
         foreground: '222.2 47.4% 11.2%',
         card: '0 0% 100%',
-        card_foreground: '222.2 47.4% 11.2%',
-        popover: '0 0% 100%',
-        popover_foreground: '222.2 47.4% 11.2%',
-        secondary: '210 40% 96.1%',
-        secondary_foreground: '215 20.2% 65.1%',
-        muted: '210 40% 96.1%',
-        muted_foreground: '215.4 16.3% 46.9%',
         border: '214.3 31.8% 91.4%',
-        input: '214.3 31.8% 91.4%',
-        ring: '215 20.2% 65.1%',
+        accent: '210 40% 96.1%',
         radius: 0.75,
+        fontFamily: 'sans-serif',
+        fontSizeBase: 16, // in pixels
     },
     firebaseConfig: {
       apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
@@ -211,10 +204,46 @@ function updateUI() {
 function applyBranding() {
     const root = document.documentElement;
     const branding = state.settings.branding;
-    for (const key in branding) {
-        root.style.setProperty(`--${key}`, branding[key]);
-    }
+
+    // Set color variables
+    const colors = ['background', 'foreground', 'primary', 'accent', 'card', 'border'];
+    colors.forEach(color => {
+         if (branding[color]) {
+            root.style.setProperty(`--${color}`, branding[color]);
+        }
+    });
+
+    // Set other CSS variables
+    root.style.setProperty('--radius', `${branding.radius || 0.75}rem`);
+    root.style.setProperty('--font-family', branding.fontFamily || 'sans-serif');
+    root.style.setProperty('--font-size-base', `${branding.fontSizeBase || 16}px`);
+
+    // Set derived colors
+    const primaryFg = getContrastingColor(branding.primary) > 128 ? '222.2 47.4% 11.2%' : '210 40% 98%';
+    root.style.setProperty('--primary-foreground', primaryFg);
+    
+    // Apply logo
     G('header-logo').src = state.settings.company.logo;
+}
+
+
+// Helper to determine if text on a given HSL background should be light or dark
+function getContrastingColor(hsl) {
+    const [h, s, l] = hsl.split(' ').map(parseFloat);
+    // This is a simplified luminance calculation
+    const C = (1 - Math.abs(2 * (l/100) - 1)) * (s/100);
+    const X = C * (1 - Math.abs((h / 60) % 2 - 1));
+    const m = (l/100) - C/2;
+    let r, g, b;
+    if (h < 60) [r, g, b] = [C, X, 0];
+    else if (h < 120) [r, g, b] = [X, C, 0];
+    else if (h < 180) [r, g, b] = [0, C, X];
+    else if (h < 240) [r, g, b] = [0, X, C];
+    else if (h < 300) [r, g, b] = [X, 0, C];
+    else [r, g, b] = [C, 0, X];
+    
+    const lum = ((r+m) * 0.299 + (g+m) * 0.587 + (b+m) * 0.114) * 255;
+    return lum;
 }
 
 function renderCustomerForm() {
@@ -274,7 +303,7 @@ function renderItemPresets() {
         groupedPresets[category].forEach(preset => {
             const btn = D.createElement('button');
             const isHighlighted = ['Boxes'].includes(category);
-            btn.className = `text-sm p-3 rounded-md flex-grow md:flex-grow-0 ${isHighlighted ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground'}`;
+            btn.className = `text-sm p-3 rounded-md flex-grow md:flex-grow-0 ${isHighlighted ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground border'}`;
             btn.innerHTML = `<i class="lucide-box mr-1"></i> ${preset.name}`;
             btn.onclick = () => {
                 addItem({ name: preset.name, qty: 1, l: preset.l, w: preset.w, h: preset.h, unit: 'cm' });
@@ -970,7 +999,7 @@ function renderEditor(tabId) {
     const createTextarea = (label, settingPath, value) => `<div><label class="block text-sm font-medium mb-1">${label}</label><textarea class="w-full border-gray-300 rounded" rows="3" data-setting="${settingPath}">${value}</textarea></div>`;
     const createColorInput = (label, settingPath, value) => {
         const hex = hslToHex.apply(null, value.split(' ').map(parseFloat));
-        return `<div><label class="block text-sm font-medium mb-1">${label}</label><input type="color" class="w-full h-10 border-gray-300 rounded" data-color-setting="${settingPath}" value="${hex}"></div>`;
+        return `<div class="flex items-center justify-between"><label class="block text-sm font-medium">${label}</label><input type="color" class="w-24 h-10 border-gray-300 rounded" data-color-setting="${settingPath}" value="${hex}"></div>`;
     };
 
     switch (tabId) {
@@ -1068,17 +1097,55 @@ function renderEditor(tabId) {
                 </div>`;
             break;
         case 'editor-theme':
+            const { branding } = state.settings;
             content.innerHTML = `
-                <h3 class="text-xl font-bold mb-4">Theme</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    ${createColorInput('Primary Color', 'branding.primary', state.settings.branding.primary)}
-                    ${createColorInput('Background Color', 'branding.background', state.settings.branding.background)}
-                    ${createColorInput('Accent Color', 'branding.accent', state.settings.branding.accent)}
-                </div>
-                 <div class="mt-4 bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4" role="alert">
-                  <p class="font-bold">Coming Soon!</p>
-                  <p>Full theme customization, including light/dark modes and controls for blur and transparency, is under development.</p>
+                <h3 class="text-xl font-bold mb-4">Theme & Appearance</h3>
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-lg font-semibold mb-2">Colors</h4>
+                        <div class="space-y-2">
+                           ${createColorInput('Primary', 'branding.primary', branding.primary)}
+                           ${createColorInput('Background', 'branding.background', branding.background)}
+                           ${createColorInput('Foreground', 'branding.foreground', branding.foreground)}
+                           ${createColorInput('Card', 'branding.card', branding.card)}
+                           ${createColorInput('Accent', 'branding.accent', branding.accent)}
+                           ${createColorInput('Border', 'branding.border', branding.border)}
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-2">Typography</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <label for="font-family-select" class="block text-sm font-medium">Font Family</label>
+                                <select id="font-family-select" data-setting="branding.fontFamily" class="w-48 border-gray-300 rounded">
+                                    <option value="sans-serif" ${branding.fontFamily === 'sans-serif' ? 'selected' : ''}>Sans-serif</option>
+                                    <option value="serif" ${branding.fontFamily === 'serif' ? 'selected' : ''}>Serif</option>
+                                    <option value="monospace" ${branding.fontFamily === 'monospace' ? 'selected' : ''}>Monospace</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label for="font-size-slider" class="block text-sm font-medium">Font Size (<span id="font-size-label">${branding.fontSizeBase}</span>px)</label>
+                                <input type="range" id="font-size-slider" data-setting="branding.fontSizeBase" min="12" max="20" step="1" class="w-48" value="${branding.fontSizeBase}">
+                            </div>
+                        </div>
+                    </div>
+                     <div>
+                        <h4 class="text-lg font-semibold mb-2">Borders & Spacing</h4>
+                        <div class="flex items-center justify-between">
+                            <label for="radius-slider" class="block text-sm font-medium">Corner Radius (<span id="radius-label">${branding.radius}</span>rem)</label>
+                            <input type="range" id="radius-slider" data-setting="branding.radius" min="0" max="2" step="0.1" class="w-48" value="${branding.radius}">
+                        </div>
+                    </div>
                 </div>`;
+            
+             // Add event listener for live feedback on sliders
+            const fontSizeSlider = G('font-size-slider');
+            const fontSizeLabel = G('font-size-label');
+            fontSizeSlider.addEventListener('input', () => fontSizeLabel.textContent = fontSizeSlider.value);
+
+            const radiusSlider = G('radius-slider');
+            const radiusLabel = G('radius-label');
+            radiusSlider.addEventListener('input', () => radiusLabel.textContent = radiusSlider.value);
             break;
         case 'editor-firebase':
              content.innerHTML = `<h3 class="text-xl font-bold mb-4">Firebase &amp; Data</h3>
@@ -1132,7 +1199,7 @@ function renderEditor(tabId) {
     }
     
     // Generic event listener for all setting inputs
-    content.querySelectorAll('input[data-setting], textarea[data-setting]').forEach(input => {
+    content.querySelectorAll('input[data-setting], textarea[data-setting], select[data-setting]').forEach(input => {
         input.addEventListener('change', (e) => {
             const keys = e.target.dataset.setting.split('.');
             let settingObj = state.settings;
@@ -1145,7 +1212,7 @@ function renderEditor(tabId) {
             });
             
             let value;
-            if(e.target.type === 'number') {
+            if(e.target.type === 'number' || e.target.type === 'range') {
                 value = parseFloat(e.target.value);
             } else if (e.target.type === 'checkbox') {
                 value = e.target.checked;

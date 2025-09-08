@@ -1,56 +1,25 @@
 :root {
+  /* Default Light Theme - These will be overridden by JS */
   --background: 0 0% 100%;
   --foreground: 222.2 47.4% 11.2%;
   --card: 0 0% 100%;
-  --card-foreground: 222.2 47.4% 11.2%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 47.4% 11.2%;
   --primary: 222.2 47.4% 11.2%;
   --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
   --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 100% 50%;
-  --destructive-foreground: 210 40% 98%;
   --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 215 20.2% 65.1%;
   --radius: 0.75rem;
+  --font-family: sans-serif;
+  --font-size-base: 16px;
 }
-
-.dark {
-  --background: 224 71% 4%;
-  --foreground: 213 31% 91%;
-  --card: 224 71% 4%;
-  --card-foreground: 213 31% 91%;
-  --popover: 224 71% 4%;
-  --popover-foreground: 213 31% 91%;
-  --primary: 210 40% 98%;
-  --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 215 28% 17%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 215 28% 17%;
-  --muted-foreground: 215 20% 65%;
-  --accent: 215 28% 17%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 63% 31%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 215 28% 17%;
-  --input: 215 28% 17%;
-  --ring: 215 28% 17%;
-}
-
 
 /* --- Base Styles & New Gradient Background --- */
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: linear-gradient(to top right, hsl(var(--secondary)), hsl(var(--muted)));
-    background-attachment: fixed;
+    background: hsl(var(--background));
     color: hsl(var(--foreground));
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
 }
 
 #app {
@@ -66,7 +35,7 @@ body {
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid hsla(var(--border), 0.3) !important;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-    color: hsl(var(--card-foreground));
+    color: hsl(var(--foreground));
 }
 
 #preview-modal .bg-white {
@@ -106,7 +75,7 @@ main {
 #editor-modal .bg-white,
 #passcode-modal .bg-white,
 #load-survey-modal .bg-white {
-    background-color: hsla(var(--popover), 0.75) !important;
+    background-color: hsla(var(--card), 0.75) !important;
 }
 
 /* Card-like elements */
@@ -114,7 +83,7 @@ main {
     transition: all 0.3s ease;
     background-color: hsla(var(--card), 0.4);
     border: 1px solid hsla(var(--border), 0.2);
-    color: hsl(var(--card-foreground));
+    color: hsl(var(--foreground));
 }
 
 .border.p-4:hover, .border.rounded-lg:hover {
@@ -132,13 +101,18 @@ main {
 .bg-dark { background-color: #111827 !important; } /* Kept for specific buttons */
 .text-dark { color: #111827 !important; }
 .bg-accent { background-color: hsl(var(--accent)) !important; }
-.text-accent { color: hsl(var(--accent-foreground)) !important; }
+.text-accent-foreground { color: hsl(var(--accent-foreground)) !important; }
 .border-accent { border-color: hsl(var(--accent)) !important; }
 .bg-card { background-color: hsl(var(--card)) !important; }
-.text-card-foreground { color: hsl(var(--card-foreground)) !important; }
-.bg-gray-200 { background-color: hsl(var(--muted)) !important; }
-.bg-gray-300 { background-color: hsl(var(--secondary)) !important; }
+.text-card-foreground { color: hsl(var(--foreground)) !important; }
 
+/* Muted/Gray colors */
+.bg-gray-50 { background-color: hsla(var(--accent), 0.5) !important; }
+.bg-gray-100 { background: hsl(var(--background)); }
+.bg-gray-200 { background-color: hsl(var(--accent)) !important; }
+.bg-gray-300 { background-color: hsl(var(--accent)) !important; filter: brightness(0.95); }
+.text-gray-500 { color: hsl(var(--foreground)); opacity: 0.6; }
+.text-gray-600 { color: hsl(var(--foreground)); opacity: 0.7; }
 
 input, select, textarea, button:not(#clear-signature) {
     border-radius: var(--radius) !important;
@@ -157,14 +131,14 @@ button:not(#clear-signature):not([class*="bg-"]) {
 
 input, select, textarea {
      color: hsl(var(--foreground));
-     background-color: hsla(var(--input), 0.3) !important;
+     background-color: hsla(var(--accent), 0.3) !important;
 }
 
 
 input:focus, select:focus, textarea:focus {
-    box-shadow: 0 0 0 2px hsl(var(--ring)) !important;
+    box-shadow: 0 0 0 2px hsl(var(--primary)) !important;
     outline: none !important;
-    background-color: hsla(var(--input), 0.7) !important;
+    background-color: hsla(var(--accent), 0.7) !important;
 }
 
 
@@ -201,7 +175,8 @@ button:disabled {
 
 /* Form Styles */
 form label {
-    color: hsl(var(--muted-foreground)); /* text-gray-700 */
+    color: hsl(var(--foreground)); /* text-gray-700 */
+    opacity: 0.8;
     font-weight: 500;
 }
 
@@ -219,8 +194,8 @@ form label {
 #items-table {
     background-color: transparent !important;
 }
-#items-table thead, .bg-gray-50 {
-    background-color: hsla(var(--muted), 0.5) !important;
+#items-table thead {
+    background-color: hsla(var(--accent), 0.5) !important;
 }
 
 /* Editor */
@@ -235,8 +210,9 @@ form label {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background-color: hsl(var(--destructive)) !important;
-    color: hsl(var(--destructive-foreground));
+    background-color: hsl(var(--primary)) !important;
+    opacity: 0.8;
+    color: hsl(var(--primary-foreground));
     width: 48px;
     height: 48px;
     border-radius: 9999px;
@@ -248,13 +224,14 @@ form label {
     border: none !important;
 }
 .preview-close-btn-style:hover {
+    opacity: 1;
     filter: brightness(1.1);
 }
 
 
 /* Print Styles */
 @media print {
-  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #fff !important; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #fff !important; font-size: 14px; }
   .no-print { display: none !important; }
   #pdf-output { display: block !important; position: absolute; top: 0; left: 0; width: 100%; }
   .photos-section-for-print { display: none !important; }
