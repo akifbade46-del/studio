@@ -63,6 +63,9 @@ const defaultSettings = {
 function init() {
     state.settings = JSON.parse(localStorage.getItem('surveyAppSettings')) || defaultSettings;
     
+    // Always use the hardcoded logo, ignore saved one
+    state.settings.company.logo = "https://qgocargo.com/logo.png";
+
     initFirebase();
     
     const savedSurvey = localStorage.getItem('currentSurvey');
@@ -371,13 +374,7 @@ function generateReceiptHtml(survey) {
         <div id="receipt" class="border rounded-lg p-6 bg-white">
             <!-- Header -->
             <div class="flex justify-between items-start pb-4 border-b">
-                <div class="flex items-center gap-4">
-                     <img src="${company.logo}" alt="Company Logo" class="h-16">
-                     <div>
-                        <p class="text-sm text-gray-600">${company.address.replace(/\n/g, '<br>')}</p>
-                        <p class="text-sm text-gray-600">Tel: ${company.phone} | Email: ${company.email}</p>
-                     </div>
-                </div>
+                 <img src="${company.logo}" alt="Company Logo" class="h-16">
                 <div class="text-right">
                     <h4 class="text-xl font-bold">QUOTATION</h4>
                     <p class="text-sm"><b>Quote #:</b> ${id.substring(id.length - 9)}</p>
@@ -393,12 +390,17 @@ function generateReceiptHtml(survey) {
                     <p>${customer.phone || ''}</p>
                     <p>${customer.email || ''}</p>
                 </div>
-                <div class="text-sm">
+                 <div>
+                    <h5 class="font-bold text-gray-700">Company Info:</h5>
+                    <p>${company.address.replace(/\n/g, '<br>')}</p>
+                    <p>Tel: ${company.phone} | Email: ${company.email}</p>
+                 </div>
+            </div>
+             <div class="text-sm py-4 border-t border-b">
                     <p><b>Pickup:</b> ${customer.pickupAddress || ''}</p>
                     <p><b>Destination:</b> ${customer.destinationAddress || ''}</p>
                     <p><b>Move Type:</b> ${customer.moveType || ''}</p>
-                </div>
-            </div>
+             </div>
 
             <!-- Items Table -->
             <h5 class="font-bold text-gray-700 mt-4 mb-2">Itemized List</h5>
@@ -420,20 +422,17 @@ function generateReceiptHtml(survey) {
                 </tbody>
             </table>
             
-            <!-- This container will hold pricing and photos in a grid for screen view -->
             <div class="grid grid-cols-2 gap-8 mt-6 print:grid-cols-1">
                  <div>
                      <h5 class="font-bold text-gray-700 mb-2">Pricing Summary</h5>
                      <div class="text-sm space-y-1">${pricingHtml}</div>
                 </div>
-                <!-- Photos (for screen view only) -->
                 <div class="photos-section-for-screen print:hidden">
                     <h5 class="font-bold text-gray-700 mb-2">Photos</h5>
                     <div class="flex gap-2 flex-wrap">${photoHtml}</div>
                 </div>
             </div>
 
-            <!-- This container will hold signature and terms for both screen and print -->
             <div style="page-break-inside: avoid; margin-top: 2rem;">
                 <div class="grid grid-cols-2 gap-8 pt-4">
                      <div>
@@ -640,7 +639,7 @@ function setupEventListeners() {
         const previewContent = G('review-summary').innerHTML;
         const printWindow = window.open('', '', 'height=800,width=1000');
         printWindow.document.write('<html><head><title>Print Survey</title>');
-        printWindow.document.write('<link rel="stylesheet" href="https://cdn.tailwindcss.com/2.2.19/tailwind.min.css">');
+        printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
         printWindow.document.write('<link rel="stylesheet" href="style.css">');
         printWindow.document.write('</head><body>');
         printWindow.document.write('<div class="p-8">');
@@ -648,7 +647,7 @@ function setupEventListeners() {
         printWindow.document.write('</div>');
         printWindow.document.write('</body></html>');
         printWindow.document.close();
-        printWindow.print();
+        setTimeout(() => { printWindow.print(); }, 500);
     });
     G('share-whatsapp-btn').addEventListener('click', shareToWhatsApp);
 
@@ -663,7 +662,7 @@ function setupEventListeners() {
         const previewContent = G('preview-content').innerHTML;
         const printWindow = window.open('', '', 'height=800,width=1000');
         printWindow.document.write('<html><head><title>Print Survey</title>');
-        printWindow.document.write('<link rel="stylesheet" href="https://cdn.tailwindcss.com/2.2.19/tailwind.min.css">');
+        printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
         printWindow.document.write('<link rel="stylesheet" href="style.css">');
         printWindow.document.write('</head><body>');
         printWindow.document.write('<div class="p-8">');
@@ -671,7 +670,7 @@ function setupEventListeners() {
         printWindow.document.write('</div>');
         printWindow.document.write('</body></html>');
         printWindow.document.close();
-        printWindow.print();
+        setTimeout(() => { printWindow.print(); }, 500);
     });
 
     // Image Zoom Modal
@@ -1042,4 +1041,5 @@ document.addEventListener('DOMContentLoaded', init);
     
 
     
+
 
