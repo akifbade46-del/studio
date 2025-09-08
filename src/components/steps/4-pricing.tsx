@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSettings } from '@/context/settings-context';
 import { useSurvey } from '@/context/survey-context';
-import { calculateTotals } from '@/lib/utils';
+import { calculateTotals, cn } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
