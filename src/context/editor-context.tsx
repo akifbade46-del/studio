@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
-type EditorTab = 'surveys' | 'company' | 'fields' | 'presets' | 'containers' | 'rates' | 'templates' | 'data';
+type EditorTab = 'surveys' | 'company' | 'rates' | 'data';
 
 interface EditorContextType {
   isEditorOpen: boolean;

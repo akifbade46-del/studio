@@ -11,6 +11,7 @@ type GoToStepFunction = (step: number) => void;
 interface SurveyContextType {
   survey: SurveyData;
   setSurvey: (survey: SurveyData) => void;
+  loadSurvey: (survey: SurveyData) => void;
   startNewSurvey: (goToFirstStep?: boolean) => void;
   goToStep: GoToStepFunction;
   setGoToStep: React.Dispatch<React.SetStateAction<GoToStepFunction>>;
@@ -38,27 +39,41 @@ export const SurveyProvider = ({ children }: { children: ReactNode }) => {
     );
 
     useEffect(() => {
-        if (activeId !== survey.id) {
-            setActiveSurveyId(survey.id);
-            setActiveId(survey.id);
+        // This effect ensures that if the activeId changes (e.g. by loading a survey),
+        // the `useLocalStorage` hook is now targetting the correct key,
+        // and we can now read the correct data from it.
+        const storedSurvey = localStorage.getItem(`qgo-cargo-survey-${activeId}`);
+        if (storedSurvey) {
+            setSurvey(JSON.parse(storedSurvey));
         }
-    }, [survey.id, activeId]);
+    }, [activeId, setSurvey]);
 
-  const startNewSurvey = useCallback((goToFirstStep = false) => {
-    const newId = uuidv4();
-    const newSurvey = {
-      ...INITIAL_SURVEY_DATA,
-      id: newId,
-      createdAt: new Date().toISOString(),
-    };
-    setSurvey(newSurvey);
-    if (goToFirstStep) {
+
+    const startNewSurvey = useCallback((goToFirstStep = false) => {
+        const newId = uuidv4();
+        setActiveSurveyId(newId);
+        const newSurvey = {
+        ...INITIAL_SURVEY_DATA,
+        id: newId,
+        createdAt: new Date().toISOString(),
+        };
+        setSurvey(newSurvey);
+        setActiveId(newId);
+
+        if (goToFirstStep) {
+            goToStep(1);
+        }
+    }, [setSurvey, goToStep]);
+
+    const loadSurvey = useCallback((surveyData: SurveyData) => {
+        setActiveSurveyId(surveyData.id);
+        setSurvey(surveyData);
+        setActiveId(surveyData.id);
         goToStep(1);
-    }
-  }, [setSurvey, goToStep]);
+    }, [setSurvey, goToStep]);
   
   return (
-    <SurveyContext.Provider value={{ survey, setSurvey, startNewSurvey, goToStep, setGoToStep }}>
+    <SurveyContext.Provider value={{ survey, setSurvey, loadSurvey, startNewSurvey, goToStep, setGoToStep }}>
       {children}
     </SurveyContext.Provider>
   );

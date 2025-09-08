@@ -10,7 +10,7 @@ import { useEditor } from '@/context/editor-context';
 
 export default function SavedSurveysTab() {
   const [savedSurveys, setSavedSurveys] = useState<SurveyData[]>([]);
-  const { survey, setSurvey, startNewSurvey } = useSurvey();
+  const { survey, loadSurvey, startNewSurvey } = useSurvey();
   const { setUnlocked } = useEditor();
 
   useEffect(() => {
@@ -31,8 +31,8 @@ export default function SavedSurveysTab() {
     setSavedSurveys(allSurveys.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
   }, [survey.id]); // Rerender when active survey changes
 
-  const loadSurvey = (surveyData: SurveyData) => {
-    setSurvey(surveyData);
+  const handleLoadSurvey = (surveyData: SurveyData) => {
+    loadSurvey(surveyData);
     setUnlocked(false);
   };
 
@@ -70,7 +70,7 @@ export default function SavedSurveysTab() {
                         <p className="text-xs text-muted-foreground">{new Date(s.createdAt).toLocaleString()}</p>
                     </div>
                     <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => loadSurvey(s)} disabled={s.id === survey.id} aria-label="Load Survey">
+                        <Button variant="ghost" size="icon" onClick={() => handleLoadSurvey(s)} disabled={s.id === survey.id} aria-label="Load Survey">
                             <FileEdit className="h-4 w-4" />
                         </Button>
                         <Button variant="ghost" size="icon" onClick={() => deleteSurvey(s.id)} aria-label="Delete Survey">
