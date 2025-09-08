@@ -1,9 +1,85 @@
 :root {
     --primary: #E30B17;
     --dark: #111827;
-    --accent: #6B7280; /* Updated from blue to gray */
-    --radius: 0.5rem;
+    --accent: #6B7280;
+    --radius: 0.75rem; /* Slightly larger radius for a softer look */
 }
+
+/* --- Base Styles & New Gradient Background --- */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(to top right, #f3f4f6, #e5e7eb);
+    background-attachment: fixed;
+}
+
+#app {
+    background-color: transparent; /* App container is now transparent */
+    box-shadow: none; /* Remove main shadow */
+    min-height: 100vh;
+}
+
+/* --- Glassmorphism Effect --- */
+.glass-effect {
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(209, 213, 219, 0.3);
+    border-radius: var(--radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Applying the Effect to Elements --- */
+
+/* Header */
+#app-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    margin: 1rem 1rem 0 1rem; /* Add margin */
+    width: calc(100% - 2rem);
+    border-radius: var(--radius);
+    border-bottom: none;
+}
+
+/* Make the main content start below the header */
+main.p-4 {
+    padding-top: 1rem;
+}
+
+/* Sticky Footer */
+#sticky-footer {
+    position: sticky;
+    bottom: 1rem;
+    z-index: 50;
+    margin: 0 1rem;
+    width: calc(100% - 2rem);
+    border-radius: var(--radius);
+}
+
+/* All Modals */
+#editor-modal .bg-white,
+#passcode-modal .bg-white,
+#load-survey-modal .bg-white,
+#preview-modal .bg-white {
+    background-color: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(209, 213, 219, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+
+/* Card-like elements */
+.border.p-4, .border.rounded-lg {
+    transition: all 0.3s ease;
+}
+
+.border.p-4:hover, .border.rounded-lg:hover {
+     border-color: rgba(255, 255, 255, 0.8);
+     transform: translateY(-2px);
+}
+
+/* --- Component Styling --- */
 .bg-primary { background-color: var(--primary); }
 .text-primary { color: var(--primary); }
 .border-primary { border-color: var(--primary); }
@@ -14,17 +90,18 @@
 .text-accent { color: var(--accent); }
 .border-accent { border-color: var(--accent); }
 
-/* General Styles */
-body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
 input, select, textarea, button {
     border-radius: var(--radius);
     padding: 0.75rem;
     transition: all 0.2s ease-in-out;
+    border: 1px solid rgba(209, 213, 219, 0.3);
 }
+
+input:focus, select:focus, textarea:focus {
+    box-shadow: 0 0 0 2px var(--primary);
+    outline: none;
+}
+
 
 button {
     cursor: pointer;
@@ -39,37 +116,34 @@ button:active {
     transform: scale(0.98);
 }
 
-
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     filter: none;
 }
 
+/* --- Page Transitions & Animations --- */
 .step { display: none; }
-.step.active { 
-    display: block; 
-    animation: fadeIn 0.5s ease-in-out; 
+.step.active {
+    display: block;
+    animation: fadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-/* Header */
-#app-header {
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 /* Form Styles */
 form label {
     color: #374151; /* text-gray-700 */
+    font-weight: 500;
 }
 
 /* Tables */
 #items-table th {
     font-weight: 600;
+    color: #1f2937;
 }
 #items-table td, #items-table th {
     border-bottom: 1px solid #e5e7eb; /* border-gray-200 */
@@ -80,14 +154,24 @@ form label {
 
 /* Editor */
 .editor-tab-btn.bg-gray-200 {
-    background-color: #e5e7eb; /* bg-gray-200 */
+    background-color: rgba(255, 255, 255, 0.8);
     font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 /* Print Styles */
 @media print {
-  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #fff !important; }
   .no-print { display: none !important; }
   #pdf-output { display: block !important; position: absolute; top: 0; left: 0; width: 100%; }
   .photos-section-for-print { display: none !important; }
+  .glass-effect, #app-header, #sticky-footer {
+      background: #fff !important;
+      backdrop-filter: none !important;
+      box-shadow: none !important;
+      border: 1px solid #e5e7eb !important;
+      margin: 0 !important;
+      width: 100% !important;
+      border-radius: 0 !important;
+  }
 }
