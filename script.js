@@ -1035,6 +1035,14 @@ function renderEditor(tabId) {
                     <p class="text-xs text-gray-500">Use placeholders like {{customerName}}, {{grandTotal}}, {{currency}}, {{companyName}}.</p>
                 </div>`;
             break;
+        case 'editor-theme':
+            content.innerHTML = `
+                <h3 class="text-xl font-bold mb-4">Theme & Appearance</h3>
+                <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4" role="alert">
+                  <p class="font-bold">Coming Soon!</p>
+                  <p>Full theme customization, including light/dark modes and controls for blur and transparency, is under development.</p>
+                </div>`;
+            break;
         case 'editor-firebase':
              content.innerHTML = `<h3 class="text-xl font-bold mb-4">Firebase &amp; Data</h3>
                 <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
@@ -1126,5 +1134,3 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-
-    
