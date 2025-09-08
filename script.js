@@ -36,13 +36,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let currentStep = 1;
     const totalSteps = 6;
+    
+    // --- FIREBASE CONFIG ---
+    // IMPORTANT: Replace with your actual Firebase config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // --- FIREBASE INITIALIZATION ---
+    let app, auth;
+    try {
+        app = firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+    } catch(e) {
+        console.error("Firebase initialization failed. Please provide your Firebase config in script.js", e);
+        // You could show a message to the user here
+    }
+
 
     // Element selectors
     const elements = {
         // Login
         loginScreen: document.getElementById('login-screen'),
+        emailInput: document.getElementById('emailInput'),
         passwordInput: document.getElementById('passwordInput'),
         loginBtn: document.getElementById('loginBtn'),
+        logoutBtn: document.getElementById('logoutBtn'),
         loginError: document.getElementById('login-error'),
         appContainer: document.getElementById('app-container'),
 
@@ -93,24 +117,55 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let signaturePad;
 
-    // --- LOGIN ---
-    function initLogin() {
+    // --- AUTHENTICATION ---
+    function initAuth() {
+        if (!auth) return;
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // User is signed in.
+                elements.loginScreen.classList.add('hidden');
+                elements.appContainer.classList.remove('hidden');
+                initializeApp();
+            } else {
+                // User is signed out.
+                elements.loginScreen.classList.remove('hidden');
+                elements.appContainer.classList.add('hidden');
+            }
+        });
+        
         elements.loginBtn.addEventListener('click', handleLogin);
+        elements.logoutBtn.addEventListener('click', handleLogout);
         elements.passwordInput.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') handleLogin();
         });
     }
 
     function handleLogin() {
+        if (!auth) return;
+        const email = elements.emailInput.value;
         const password = elements.passwordInput.value;
-        if (password === 'admin') {
-            elements.loginScreen.classList.add('hidden');
-            elements.appContainer.classList.remove('hidden');
-            initializeApp();
-        } else {
-            elements.loginError.classList.remove('hidden');
-            setTimeout(() => elements.loginError.classList.add('hidden'), 3000);
+
+        if (!email || !password) {
+            showLoginError("Please enter email and password.");
+            return;
         }
+
+        auth.signInWithEmailAndPassword(email, password)
+            .catch(error => {
+                console.error("Login Error:", error);
+                showLoginError(error.message);
+            });
+    }
+    
+    function handleLogout() {
+        if (auth) auth.signOut();
+    }
+
+    function showLoginError(message) {
+        elements.loginError.textContent = message;
+        elements.loginError.classList.remove('hidden');
+        setTimeout(() => elements.loginError.classList.add('hidden'), 3000);
     }
 
 
@@ -626,13 +681,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 <tr><td class="label">Materials:</td><td class="value">${costs.materials}</td></tr>
                 <tr><td class="label">Labor:</td><td class="value">${costs.labor}</td></tr>
                 <tr><td class="label">Surcharges:</td><td class="value">0.00</td></tr>
-                <tr><td class="label" style="border-top: 1px solid #eee; font-weight: bold;">Subtotal:</td><td class="value" style="border-top: 1px solid #eee; font-weight: bold;">${costs.subtotal}</td></tr>
+                <tr style="border-top: 1px solid #333;"><td class="label" style="font-weight: bold;">Subtotal:</td><td class="value" style="font-weight: bold;">${costs.subtotal}</td></tr>
                 <tr><td class="label">Insurance (1.5%):</td><td class="value">${costs.insurance}</td></tr>
                 <tr><td class="label">Markup (10%):</td><td class="value">${costs.markup}</td></tr>
                 <tr><td class="label">VAT (5%):</td><td class="value">${costs.vat}</td></tr>
                 <tr><td class="label grand-total">Grand Total:</td><td class="value grand-total">${costs.grandTotal} ${currency}</td></tr>
             </table>
-        ` : '';
+        ` : `<div class="grand-total-customer">Quote: ${costs.grandTotal} ${currency}</div>`;
+        
+        const grandTotalColor = isOfficeCopy ? 'inherit' : '#000'; // Black for customer copy
 
         const photosHtml = photos && photos.length > 0
             ? photos.map(p => `<img src="${p}" alt="photo">`).join('')
@@ -640,6 +697,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         return `
             <div class="receipt-container">
+                <style>
+                    .grand-total-customer {
+                        text-align: right;
+                        font-size: 1.5em;
+                        font-weight: bold;
+                        margin: 20px 0;
+                        color: #000;
+                    }
+                    .totals-table td {
+                        color: #000 !important;
+                    }
+                </style>
                 <div class="receipt-header">
                     <img src="https://i.ibb.co/3s0vK0h/qgocargo-logo.png" alt="Logo" style="width: 150px;">
                     <div class="company-info-main">
@@ -689,7 +758,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     Total Volume: ${costs.totalCbm} CBM
                 </div>
 
-                ${pricingHtml ? `<h3 style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Pricing Summary</h3>` : ''}
+                ${pricingHtml ? `<h3 style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; color: ${grandTotalColor};">Pricing Summary</h3>` : ''}
                 ${pricingHtml}
                 
                 <h3 style="font-weight: bold; margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Photos</h3>
@@ -712,7 +781,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- HELPERS ---
     function generateQuoteId() {
-        return Math.random().toString(36).substring(2, 8);
+        return Math.random().toString(36).substring(2, 8).toUpperCase();
     }
     
     // PWA Service Worker
@@ -727,6 +796,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    // Start the login process
-    initLogin();
+    // Start the app
+    initAuth();
 });

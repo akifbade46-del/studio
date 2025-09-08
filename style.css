@@ -138,18 +138,30 @@ body {
 
 #previewModal {
     padding: 0;
-    background-color: var(--background-color);
+    background-color: #ffffff; /* Solid white background for preview */
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    overflow-y: auto; /* Allow scrolling on the modal itself */
 }
 #preview-content {
     background-color: #ffffff;
-    height: 100%;
+    height: auto; /* Let content determine height */
     width: 100%;
     border-radius: 0;
     box-shadow: none;
-    padding: 1rem;
+    padding: 0; /* Remove padding */
 }
+#preview-content > header {
+    position: sticky; /* Make header sticky */
+    top: 0;
+    background: white;
+    padding: 0.5rem 1rem;
+    z-index: 10;
+}
+#preview-content > div {
+    padding: 1rem; /* Add padding to content area */
+}
+
 
 
 /* Signature Pad */
@@ -173,7 +185,7 @@ body {
 /* Receipt Styles */
 .receipt-container {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    color: #000000;
+    color: #333;
     max-width: 800px;
     margin: auto;
     padding: 20px;
@@ -221,9 +233,11 @@ body {
 .totals-table {
     width: 100%;
     margin-top: 20px;
+    color: #000; /* Ensure pricing text is black */
 }
 .totals-table td {
     padding: 5px;
+    color: #000; /* Ensure pricing text is black */
 }
 .totals-table .label {
     text-align: right;

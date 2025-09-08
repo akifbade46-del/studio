@@ -18,6 +18,7 @@
       <div class="container mx-auto px-4 py-2 flex justify-between items-center">
         <img src="https://i.ibb.co/3s0vK0h/qgocargo-logo.png" alt="Q'go Cargo" id="logo" class="h-16">
         <div class="flex items-center space-x-2">
+          <button id="logoutBtn" class="app-button text-sm">Logout</button>
           <button id="editorModeBtn" class="app-button text-sm">Editor</button>
           <button id="loadSurveyBtn" class="app-button text-sm">Load</button>
         </div>
@@ -104,9 +105,11 @@
     <div class="modal-content w-full max-w-sm text-center">
         <img src="https://i.ibb.co/3s0vK0h/qgocargo-logo.png" alt="Q'go Cargo" class="h-20 mx-auto mb-4">
         <h2 class="text-2xl font-bold mb-4">Login</h2>
-        <input type="password" id="passwordInput" placeholder="Password" class="app-input w-full">
+        <input type="email" id="emailInput" placeholder="Email" class="app-input w-full">
+        <input type="password" id="passwordInput" placeholder="Password" class="app-input w-full mt-2">
         <button id="loginBtn" class="app-button w-full mt-4">Enter</button>
         <p id="login-error" class="text-red-500 mt-2 hidden">Incorrect Password</p>
+         <p class="mt-4 text-sm">Don't have an account? <a href="#" id="signup-link" class="text-blue-600 hover:underline">Sign Up</a></p>
     </div>
   </div>
 
@@ -153,7 +156,11 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="script.js"></script>
 </body>
 
 </html>
+
+    
