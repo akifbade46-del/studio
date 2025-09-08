@@ -1,5 +1,3 @@
-
-
 const D = document;
 const G = (id) => D.getElementById(id);
 
@@ -332,7 +330,7 @@ function calculatePricing() {
     updateFooter();
 }
 
-function generateReceiptHtml(survey) {
+function generateReceiptHtml(survey, type = 'office') {
     const { company } = state.settings;
     const { id, customer, items, totals, pricing, media } = survey;
 
@@ -348,17 +346,20 @@ function generateReceiptHtml(survey) {
         </tr>
     `).join('');
 
-    const pricingHtml = pricing ? `
-        <div class="flex justify-between py-1"><span>CBM Cost (${customer.moveType || 'N/A'}):</span> <span>${pricing.cbmCost.toFixed(2)}</span></div>
-        <div class="flex justify-between py-1"><span>Materials:</span> <span>${state.settings.rates.materials.toFixed(2)}</span></div>
-        <div class="flex justify-between py-1"><span>Labor:</span> <span>${state.settings.rates.labor.toFixed(2)}</span></div>
-        <div class="flex justify-between py-1"><span>Surcharges:</span> <span>${state.settings.rates.surcharges.toFixed(2)}</span></div>
-        <div class="flex justify-between py-1 font-bold border-t mt-2 pt-2"><span>Subtotal:</span> <span>${pricing.subtotal.toFixed(2)}</span></div>
-        <div class="flex justify-between py-1"><span>Insurance (${state.settings.rates.insurancePercent}%):</span> <span>${pricing.insurance.toFixed(2)}</span></div>
-        <div class="flex justify-between py-1"><span>Markup (${state.settings.rates.markupPercent}%):</span> <span>${pricing.markup.toFixed(2)}</span></div>
-        <div class="flex justify-between py-1"><span>VAT (${state.settings.rates.vatPercent}%):</span> <span>${pricing.vat.toFixed(2)}</span></div>
-        <div class="flex justify-between pt-2 font-bold text-xl text-primary border-t mt-2"><span>Grand Total:</span> <span>${pricing.grandTotal.toFixed(2)} ${pricing.currency}</span></div>
-    ` : '<p>Pricing not calculated.</p>';
+    const pricingHtml = (pricing && type === 'office') ? `
+        <h5 class="font-bold text-gray-700 mb-2">Pricing Summary</h5>
+        <div class="text-sm space-y-1">
+            <div class="flex justify-between py-1"><span>CBM Cost (${customer.moveType || 'N/A'}):</span> <span>${pricing.cbmCost.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>Materials:</span> <span>${state.settings.rates.materials.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>Labor:</span> <span>${state.settings.rates.labor.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>Surcharges:</span> <span>${state.settings.rates.surcharges.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1 font-bold border-t mt-2 pt-2"><span>Subtotal:</span> <span>${pricing.subtotal.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>Insurance (${state.settings.rates.insurancePercent}%):</span> <span>${pricing.insurance.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>Markup (${state.settings.rates.markupPercent}%):</span> <span>${pricing.markup.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>VAT (${state.settings.rates.vatPercent}%):</span> <span>${pricing.vat.toFixed(2)}</span></div>
+            <div class="flex justify-between pt-2 font-bold text-xl text-primary border-t mt-2"><span>Grand Total:</span> <span>${pricing.grandTotal.toFixed(2)} ${pricing.currency}</span></div>
+        </div>
+    ` : '<p class="text-sm text-gray-500">Contact us for pricing details.</p>';
 
     let photoHtml = '<p class="text-sm text-gray-500">No photos captured.</p>';
     if (media.photos && media.photos.length > 0) {
@@ -376,7 +377,7 @@ function generateReceiptHtml(survey) {
             <div class="flex justify-between items-start pb-4 border-b">
                  <img src="${company.logo}" alt="Company Logo" class="h-16">
                 <div class="text-right">
-                    <h4 class="text-xl font-bold">QUOTATION</h4>
+                    <h4 class="text-xl font-bold">${type === 'office' ? 'QUOTATION (Office Copy)' : 'QUOTATION'}</h4>
                     <p class="text-sm"><b>Quote #:</b> ${id.substring(id.length - 9)}</p>
                     <p class="text-sm"><b>Date:</b> ${new Date(customer.surveyDate).toLocaleDateString()}</p>
                 </div>
@@ -422,10 +423,9 @@ function generateReceiptHtml(survey) {
                 </tbody>
             </table>
             
-            <div class="grid grid-cols-2 gap-8 mt-6 print:grid-cols-1">
+            <div class="grid grid-cols-2 gap-8 mt-6 print:grid-cols-1 print-friendly-layout">
                  <div>
-                     <h5 class="font-bold text-gray-700 mb-2">Pricing Summary</h5>
-                     <div class="text-sm space-y-1">${pricingHtml}</div>
+                     ${pricingHtml}
                 </div>
                 <div class="photos-section-for-screen print:hidden">
                     <h5 class="font-bold text-gray-700 mb-2">Photos</h5>
@@ -449,15 +449,32 @@ function generateReceiptHtml(survey) {
     `;
 }
 
+
 function setupReview() {
     const reviewDiv = G('review-summary');
-    reviewDiv.innerHTML = generateReceiptHtml(state.survey);
+    // Default to office copy for on-screen review
+    reviewDiv.innerHTML = generateReceiptHtml(state.survey, 'office');
 }
 
 
 function saveDraft() {
     localStorage.setItem('currentSurvey', JSON.stringify(state.survey));
 }
+
+function printReport(content) {
+    const printWindow = window.open('', '', 'height=800,width=1000');
+    printWindow.document.write('<html><head><title>Print Survey</title>');
+    printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
+    printWindow.document.write('<link rel="stylesheet" href="style.css">');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<div class="p-8">');
+    printWindow.document.write(content);
+    printWindow.document.write('</div>');
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    setTimeout(() => { printWindow.print(); }, 500);
+}
+
 
 function setupEventListeners() {
     // New Survey
@@ -635,19 +652,13 @@ function setupEventListeners() {
 
     // Step 6 Actions
     G('save-survey-btn').addEventListener('click', saveSurveyToFirestore);
-    G('generate-pdf-btn').addEventListener('click', () => {
-        const previewContent = G('review-summary').innerHTML;
-        const printWindow = window.open('', '', 'height=800,width=1000');
-        printWindow.document.write('<html><head><title>Print Survey</title>');
-        printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
-        printWindow.document.write('<link rel="stylesheet" href="style.css">');
-        printWindow.document.write('</head><body>');
-        printWindow.document.write('<div class="p-8">');
-        printWindow.document.write(previewContent);
-        printWindow.document.write('</div>');
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        setTimeout(() => { printWindow.print(); }, 500);
+    G('generate-customer-pdf-btn').addEventListener('click', () => {
+        const customerReceipt = generateReceiptHtml(state.survey, 'customer');
+        printReport(customerReceipt);
+    });
+    G('generate-office-pdf-btn').addEventListener('click', () => {
+        const officeReceipt = generateReceiptHtml(state.survey, 'office');
+        printReport(officeReceipt);
     });
     G('share-whatsapp-btn').addEventListener('click', shareToWhatsApp);
 
@@ -658,20 +669,21 @@ function setupEventListeners() {
 
     // Preview Modal
     G('preview-close-btn').addEventListener('click', () => G('preview-modal').style.display = 'none');
-    G('preview-print-btn').addEventListener('click', () => {
-        const previewContent = G('preview-content').innerHTML;
-        const printWindow = window.open('', '', 'height=800,width=1000');
-        printWindow.document.write('<html><head><title>Print Survey</title>');
-        printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
-        printWindow.document.write('<link rel="stylesheet" href="style.css">');
-        printWindow.document.write('</head><body>');
-        printWindow.document.write('<div class="p-8">');
-        printWindow.document.write(previewContent);
-        printWindow.document.write('</div>');
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        setTimeout(() => { printWindow.print(); }, 500);
+    G('preview-print-customer-btn').addEventListener('click', () => {
+        const surveyId = G('preview-modal').dataset.surveyId;
+        const surveyData = state.surveysCache.find(s => s.id === surveyId);
+        if (surveyData) {
+            printReport(generateReceiptHtml(surveyData, 'customer'));
+        }
     });
+    G('preview-print-office-btn').addEventListener('click', () => {
+         const surveyId = G('preview-modal').dataset.surveyId;
+        const surveyData = state.surveysCache.find(s => s.id === surveyId);
+        if (surveyData) {
+            printReport(generateReceiptHtml(surveyData, 'office'));
+        }
+    });
+
 
     // Image Zoom Modal
     const zoomModal = G('image-zoom-modal');
@@ -836,7 +848,7 @@ function showPreviewModal(surveyData) {
     const contentDiv = G('preview-content');
     
     modal.dataset.surveyId = surveyData.id; // Store survey ID for re-printing
-    contentDiv.innerHTML = generateReceiptHtml(surveyData);
+    contentDiv.innerHTML = generateReceiptHtml(surveyData, 'office'); // Default to office copy in preview
     
     modal.style.display = 'flex';
 }
@@ -1037,9 +1049,3 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-
-    
-
-    
-
-
