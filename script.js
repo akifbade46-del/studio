@@ -39,15 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // --- FIREBASE CONFIG ---
     // IMPORTANT: This object is automatically generated and should not be changed.
-    const firebaseConfig = {
-      "apiKey": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ5Y2E3MjZkY2E2MGUwM2MyYzE5ODliY2Y4MDU2MjIwOWZiZWI5YjUiLCJ0eXAiOiJKV1QifQ.eyJhcHBfaWQiOiIxOjM2MzQwOTI3MjQ2NTphbmRyb2lkOjYyNzM4N2U1ZTA4MWY4ZWIzYjA0MzYiLCJhdWQiOiJmaXJlYmFzZS1jbGllbnRzIiwiaXNzIjoiaHR0cHM6Ly9maXJlYmFzZS5nb29nbGUuY29tL3Byb2plY3RzL2ZpcmViYXNlLXNka3MvYXBwcyIsImV4cCI6MTcxNTgwODAwMCwic3ViIjoicHJvamVjdDozNjM0MDkyNzI0NjUifQ.iC1zD2zE_b-u-r0l8z4G_Q9y2n7v-W5f-U5W3H0q5r0l3R4Q7z7H-b3J-l4f-N9x-V3h-n4r7h2W7v-d2l-i9K-V1z-t4g-j3h-l7h-u4w-b7l-i8U-k2f-x3U-h7k-U5c-r5y-d3H-x4k-L6k-h4I-c5H-e6s-G2l-I9l-G4k-z7l-d2n-V3r-s8U-C4r-T8w-h6I-K2h-F6g-l3s-z7l-G8o-N2h-g7k-f3l-G6c-V3h-t3l-n2f-k3G-V2g-y7j-g2s-Z7o-x3r-Q8k",
-      "authDomain": "qgo-cargo-survey-app-static.firebaseapp.com",
-      "projectId": "qgo-cargo-survey-app-static",
-      "storageBucket": "qgo-cargo-survey-app-static.appspot.com",
-      "messagingSenderId": "363409272465",
-      "appId": "1:363409272465:web:8e3c6c5a2b1a0d8f3b0436",
-      "measurementId": "G-555N10PBMJ"
-    };
+    const firebaseConfig = {"projectId":"qgo-cargo-survey-app-static","appId":"1:363409272465:web:8e3c6c5a2b1a0d8f3b0436","storageBucket":"qgo-cargo-survey-app-static.appspot.com","apiKey":"eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ5Y2E3MjZkY2E2MGUwM2MyYzE5ODliY2Y4MDU2MjIwOWZiZWI5YjUiLCJ0eXAiOiJKV1QifQ.eyJhcHBfaWQiOiIxOjM2MzQwOTI3MjQ2NTphbmRyb2lkOjYyNzM4N2U1ZTA4MWY4ZWIzYjA0MzYiLCJhdWQiOiJmaXJlYmFzZS1jbGllbnRzIiwiaXNzIjoiaHR0cHM6Ly9maXJlYmFzZS5nb29nbGUuY29tL3Byb2plY3RzL2ZpcmViYXNlLXNka3MvYXBwcyIsImV4cCI6MTcxNTgwODAwMCwic3ViIjoicHJvamVjdDozNjM0MDkyNzI0NjUifQ.iC1zD2zE_b-u-r0l8z4G_Q9y2n7v-W5f-U5W3H0q5r0l3R4Q7z7H-b3J-l4f-N9x-V3h-n4r7h2W7v-d2l-i9K-V1z-t4g-j3h-l7h-u4w-b7l-i8U-k2f-x3U-h7k-U5c-r5y-d3H-x4k-L6k-h4I-c5H-e6s-G2l-I9l-G4k-z7l-d2n-V3r-s8U-C4r-T8w-h6I-K2h-F6g-l3s-z7l-G8o-N2h-g7k-f3l-G6c-V3h-t3l-n2f-k3G-V2g-y7j-g2s-Z7o-x3r-Q8k","authDomain":"qgo-cargo-survey-app-static.firebaseapp.com","messagingSenderId":"363409272465"};
 
     // --- FIREBASE INITIALIZATION ---
     let app, auth;
