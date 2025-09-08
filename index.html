@@ -174,7 +174,7 @@
                 <button id="close-editor-btn" class="p-1 rounded-full hover:bg-gray-200"><i class="lucide-x"></i></button>
             </div>
             <div class="flex flex-1 min-h-0">
-                <div id="editor-tabs" class="w-1/4 border-r p-2 space-y-1">
+                <div id="editor-tabs" class="w-1/4 border-r p-2 space-y-1 bg-gray-50">
                      <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-company">Company Info</button>
                      <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-rates">Rates</button>
                      <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-presets">Item Presets</button>
@@ -717,9 +717,6 @@
             try {
                 const surveyToSave = JSON.parse(JSON.stringify(state.survey)); // Deep copy
                 surveyToSave.meta.savedAt = new Date().toISOString();
-
-                // Handle media separately if needed (e.g., upload to Firebase Storage)
-                // For simplicity, we'll store DataURLs in Firestore, but this is not recommended for large images.
                 
                 await state.firebase.db.collection('surveys').doc(surveyToSave.id).set(surveyToSave);
 
@@ -748,32 +745,91 @@
             D.querySelector(`.editor-tab-btn[data-tab="${tabId}"]`).classList.add('bg-gray-200');
 
             const content = G('editor-content');
-            content.innerHTML = '';
+            content.innerHTML = ''; // Clear previous content
             
+            const createInput = (label, settingPath, value, type = 'text') => `<div><label class="block text-sm font-medium mb-1">${label}</label><input type="${type}" step="any" class="w-full border-gray-300 rounded" data-setting="${settingPath}" value="${value}"></div>`;
+            const createTextarea = (label, settingPath, value) => `<div><label class="block text-sm font-medium mb-1">${label}</label><textarea class="w-full border-gray-300 rounded" rows="3" data-setting="${settingPath}">${value}</textarea></div>`;
+
             switch (tabId) {
                 case 'editor-company':
                     content.innerHTML = `
                         <h3 class="text-xl font-bold mb-4">Company Info</h3>
                         <div class="space-y-4">
-                            <div><label class="block">Company Name</label><input type="text" class="w-full border-gray-300 rounded" data-setting="company.name" value="${state.settings.company.name}"></div>
-                            <div><label class="block">Address</label><input type="text" class="w-full border-gray-300 rounded" data-setting="company.address" value="${state.settings.company.address}"></div>
-                            <div><label class="block">Phone</label><input type="text" class="w-full border-gray-300 rounded" data-setting="company.phone" value="${state.settings.company.phone}"></div>
-                            <div><label class="block">Email</label><input type="text" class="w-full border-gray-300 rounded" data-setting="company.email" value="${state.settings.company.email}"></div>
-                            <div><label class="block">Logo URL (or Data URL)</label><textarea class="w-full border-gray-300 rounded" data-setting="company.logo">${state.settings.company.logo}</textarea></div>
+                            ${createInput('Company Name', 'company.name', state.settings.company.name)}
+                            ${createInput('Address', 'company.address', state.settings.company.address)}
+                            ${createInput('Phone', 'company.phone', state.settings.company.phone)}
+                            ${createInput('Email', 'company.email', state.settings.company.email)}
+                            ${createTextarea('Logo URL (or Data URL)', 'company.logo', state.settings.company.logo)}
                         </div>`;
                     break;
-                 case 'editor-rates':
+                case 'editor-rates':
                     content.innerHTML = `<h3 class="text-xl font-bold mb-4">Rates & Pricing</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div><label class="block">Currency</label><input type="text" class="w-full border-gray-300 rounded" data-setting="rates.currency" value="${state.settings.rates.currency}"></div>
-                            <div><label class="block">Min Charge</label><input type="number" class="w-full border-gray-300 rounded" data-setting="rates.minCharge" value="${state.settings.rates.minCharge}"></div>
-                            <div><label class="block">CBM Rate (Local)</label><input type="number" class="w-full border-gray-300 rounded" data-setting="rates.cbmRates.Local" value="${state.settings.rates.cbmRates.Local}"></div>
-                            <div><label class="block">CBM Rate (GCC)</label><input type="number" class="w-full border-gray-300 rounded" data-setting="rates.cbmRates.GCC" value="${state.settings.rates.cbmRates.GCC}"></div>
-                            <div><label class="block">CBM Rate (Int'l)</label><input type="number" class="w-full border-gray-300 rounded" data-setting="rates.cbmRates.International" value="${state.settings.rates.cbmRates.International}"></div>
-                            <div><label class="block">Labor Cost</label><input type="number" class="w-full border-gray-300 rounded" data-setting="rates.labor" value="${state.settings.rates.labor}"></div>
-                            <div><label class="block">Insurance %</label><input type="number" class="w-full border-gray-300 rounded" data-setting="rates.insurancePercent" value="${state.settings.rates.insurancePercent}"></div>
-                            <div><label class="block">VAT %</label><input type="number" class="w-full border-gray-300 rounded" data-setting="rates.vatPercent" value="${state.settings.rates.vatPercent}"></div>
-                            <div><label class="block">Markup %</label><input type="number" class="w-full border-gray-300 rounded" data-setting="rates.markupPercent" value="${state.settings.rates.markupPercent}"></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${createInput('Currency', 'rates.currency', state.settings.rates.currency)}
+                            ${createInput('Min Charge', 'rates.minCharge', state.settings.rates.minCharge, 'number')}
+                            ${createInput('CBM Rate (Local)', 'rates.cbmRates.Local', state.settings.rates.cbmRates.Local, 'number')}
+                            ${createInput('CBM Rate (GCC)', 'rates.cbmRates.GCC', state.settings.rates.cbmRates.GCC, 'number')}
+                            ${createInput('CBM Rate (Int\'l)', 'rates.cbmRates.International', state.settings.rates.cbmRates.International, 'number')}
+                            ${createInput('Materials Cost', 'rates.materials', state.settings.rates.materials, 'number')}
+                            ${createInput('Labor Cost', 'rates.labor', state.settings.rates.labor, 'number')}
+                            ${createInput('Surcharges', 'rates.surcharges', state.settings.rates.surcharges, 'number')}
+                            ${createInput('Insurance %', 'rates.insurancePercent', state.settings.rates.insurancePercent, 'number')}
+                            ${createInput('VAT %', 'rates.vatPercent', state.settings.rates.vatPercent, 'number')}
+                            ${createInput('Markup %', 'rates.markupPercent', state.settings.rates.markupPercent, 'number')}
+                        </div>`;
+                    break;
+                case 'editor-presets':
+                    content.innerHTML = `<h3 class="text-xl font-bold mb-4">Item Presets</h3><div id="presets-editor-list" class="space-y-2"></div><button id="add-preset-btn" class="mt-4 bg-gray-200 p-2 rounded">Add Preset</button>`;
+                    const presetsList = G('presets-editor-list');
+                    state.settings.itemPresets.forEach((p, i) => {
+                        presetsList.innerHTML += `<div class="grid grid-cols-5 gap-2 items-center border p-2 rounded">
+                            <input class="col-span-2 border-gray-300 rounded" data-setting="itemPresets.${i}.name" value="${p.name}">
+                            <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.l" value="${p.l}" placeholder="L">
+                            <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.w" value="${p.w}" placeholder="W">
+                            <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.h" value="${p.h}" placeholder="H">
+                            <button class="text-red-500" data-delete-preset="${i}"><i class="lucide-trash-2"></i></button>
+                        </div>`;
+                    });
+                    G('add-preset-btn').onclick = () => {
+                        state.settings.itemPresets.push({ name: 'New Item', l: 10, w: 10, h: 10 });
+                        renderEditor(tabId);
+                    };
+                    presetsList.addEventListener('click', e => {
+                       if (e.target.closest('[data-delete-preset]')) {
+                           const index = e.target.closest('[data-delete-preset]').dataset.deletePreset;
+                           state.settings.itemPresets.splice(index, 1);
+                           renderEditor(tabId); // Re-render to reflect deletion
+                       }
+                    });
+                    break;
+                case 'editor-fields':
+                     content.innerHTML = `<h3 class="text-xl font-bold mb-4">Customer Form Fields</h3><p class="text-sm mb-4 text-gray-600">Drag to reorder. Uncheck to disable.</p><div id="fields-editor-list" class="space-y-2"></div>`;
+                     const fieldsList = G('fields-editor-list');
+                     state.settings.customerFields.forEach((f, i) => {
+                         fieldsList.innerHTML += `<div class="flex items-center gap-2 border p-2 rounded bg-white">
+                             <i class="lucide-grip-vertical cursor-move"></i>
+                             <input type="checkbox" class="h-4 w-4 rounded border-gray-300" data-setting="customerFields.${i}.enabled" ${f.enabled ? 'checked' : ''}>
+                             <input class="flex-grow border-gray-300 rounded" data-setting="customerFields.${i}.label" value="${f.label}">
+                         </div>`;
+                     });
+                     break;
+                 case 'editor-containers':
+                    content.innerHTML = `<h3 class="text-xl font-bold mb-4">Containers</h3><div id="containers-editor-list" class="space-y-2"></div>`;
+                    const contsList = G('containers-editor-list');
+                    state.settings.containers.forEach((c, i) => {
+                        contsList.innerHTML += `<div class="grid grid-cols-3 gap-2 items-center border p-2 rounded">
+                            <input class="border-gray-300 rounded" data-setting="containers.${i}.type" value="${c.type}">
+                            <input type="number" class="border-gray-300 rounded" data-setting="containers.${i}.capacity" value="${c.capacity}" placeholder="Capacity (CBM)">
+                            <input type="number" class="border-gray-300 rounded" data-setting="containers.${i}.efficiency" value="${c.efficiency}" placeholder="Efficiency">
+                        </div>`;
+                    });
+                    break;
+                case 'editor-templates':
+                    content.innerHTML = `<h3 class="text-xl font-bold mb-4">Templates</h3>
+                        <div class="space-y-4">
+                            ${createTextarea('PDF Terms & Conditions', 'templates.pdfTerms', state.settings.templates.pdfTerms)}
+                            ${createTextarea('WhatsApp Message', 'templates.whatsapp', state.settings.templates.whatsapp)}
+                            <p class="text-xs text-gray-500">Use placeholders like {{customerName}}, {{grandTotal}}, {{currency}}, {{companyName}}.</p>
                         </div>`;
                     break;
                 case 'editor-firebase':
@@ -781,8 +837,17 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block mb-1 font-medium">Firebase Config (JSON)</label>
+                                <div class="p-2 bg-blue-50 border border-blue-200 rounded-md text-sm text-blue-800 mb-4">
+                                  <h4 class="font-bold">How to get the config:</h4>
+                                  <ol class="list-decimal list-inside">
+                                      <li>Go to your Firebase project: <a href="https://console.firebase.google.com" target="_blank" class="underline">console.firebase.google.com</a></li>
+                                      <li>Click the <strong>Project Overview</strong> settings gear <i class="lucide-settings text-xs"></i> icon, then select <strong>Project settings</strong>.</li>
+                                      <li>In the "Your apps" card, select the web app.</li>
+                                      <li>Select <strong>Config</strong>, then copy the JSON object.</li>
+                                  </ol>
+                                </div>
                                 <textarea id="firebase-config-input" class="w-full border-gray-300 rounded h-48 font-mono text-sm">${JSON.stringify(state.settings.firebaseConfig, null, 2) || ''}</textarea>
-                                <p class="text-xs text-gray-500 mt-1">Paste your Firebase project's web configuration object here.</p>
+                                <p class="text-xs text-gray-500 mt-1">This is saved in your browser. You only need to set it once.</p>
                             </div>
                             <button id="save-firebase-config" class="bg-primary text-white p-2 rounded">Save & Re-initialize Firebase</button>
                              <h4 class="font-bold pt-4">Manage App Settings</h4>
@@ -826,9 +891,10 @@
                                 try {
                                     state.settings = JSON.parse(ev.target.result);
                                     saveAndApplySettings();
-                                    renderEditor(tabId);
-                                    state.firebase.app = null;
-                                    initFirebase();
+                                    // Re-render all parts of the app that depend on settings
+                                    init();
+                                    renderEditor(tabId); // re-render editor view
+                                    alert('Settings imported successfully!');
                                 } catch (err) {
                                     alert('Invalid JSON file.');
                                 }
@@ -841,6 +907,7 @@
                     content.innerHTML = `<p>This editor section is under construction.</p>`;
             }
             
+            // Generic event listener for all setting inputs
             content.querySelectorAll('input[data-setting], textarea[data-setting]').forEach(input => {
                 input.addEventListener('change', (e) => {
                     const keys = e.target.dataset.setting.split('.');
@@ -848,9 +915,23 @@
                     keys.slice(0, -1).forEach(key => {
                         settingObj = settingObj[key] = settingObj[key] || {};
                     });
-                    const value = e.target.type === 'number' ? parseFloat(e.target.value) : e.target.value;
+                    
+                    let value;
+                    if(e.target.type === 'number') {
+                        value = parseFloat(e.target.value);
+                    } else if (e.target.type === 'checkbox') {
+                        value = e.target.checked;
+                    } else {
+                        value = e.target.value;
+                    }
                     settingObj[keys.pop()] = value;
+                    
                     saveAndApplySettings();
+                    
+                    // Re-render relevant parts of the main app UI
+                    if(keys.includes('itemPresets')) renderItemPresets();
+                    if(keys.includes('customerFields')) renderCustomerForm();
+
                 });
             });
         }
@@ -858,12 +939,12 @@
         function saveAndApplySettings() {
             localStorage.setItem('surveyAppSettings', JSON.stringify(state.settings));
             applyBranding();
+            // Re-render things that depend on settings
             renderCustomerForm();
+            renderItemPresets();
         }
 
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
-
-    
