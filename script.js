@@ -13,7 +13,7 @@ const state = {
 
 const defaultSettings = {
     company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "https://qgocargo.com/logo.png" },
-    branding: { primary: '#E30B17', dark: '#111827', accent: '#6B7280' },
+    branding: { primary: '#007AFF', dark: '#111827', accent: '#6B7280' },
     firebaseConfig: {
       apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
       authDomain: "survey-bf41d.firebaseapp.com",
@@ -1062,5 +1062,3 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-
-    
