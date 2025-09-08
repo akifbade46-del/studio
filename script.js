@@ -1,821 +1,105 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const config = {
-        company: {
-            name: "Q'go Cargo",
-            address: "123 Cargo Lane, Kuwait City, Kuwait",
-            phone: "+965 1234 5678",
-            email: "contact@qgocargo.com"
-        },
-        currency: "KWD",
-        pricing: {
-            cbmRate: 15,
-            insuranceRate: 0.015, // 1.5%
-            markupRate: 0.10, // 10%
-            vatRate: 0.05, // 5%
-        },
-        items: {
-            "Living Room": ["Sofa 3-seater (200x90x80 cm)", "Sofa 2-seater (150x90x80 cm)", "Armchair (80x80x80 cm)", "Coffee Table (120x60x45 cm)", "TV Unit (180x40x50 cm)", "Bookshelf (80x30x200 cm)"],
-            "Dining Room": ["Dining Table (180x90x75 cm)", "Dining Chair (45x45x90 cm)", "Sideboard (160x45x80 cm)"],
-            "Bedroom": ["King Bed (200x200x100 cm)", "Queen Bed (160x200x100 cm)", "Nightstand (50x40x60 cm)", "Dresser (120x50x80 cm)", "Wardrobe (150x60x200 cm)"],
-            "Kitchen": ["Refrigerator (90x90x180 cm)", "Washing Machine (60x60x85 cm)", "Dishwasher (60x60x85 cm)", "Microwave (50x40x30 cm)"],
-            "Boxes": ["Carton S (45x45x45 cm)", "Carton M (60x60x60 cm)", "Carton L (80x80x80 cm)", "Wardrobe Box (60x50x120 cm)"]
-        },
-        packing: ["Wrapping", "Crating", "Bubble Wrap"],
-        services: ["Handyman", "AC Removal/Installation", "Chandelier Fixing"]
-    };
 
-    let surveyData = {
-        customer: {},
-        items: [],
-        packing: [],
-        services: [],
-        photos: [],
-        signature: null,
-        costs: {}
-    };
+const D = document;
+const G = (id) => D.getElementById(id);
 
-    let currentStep = 1;
-    const totalSteps = 6;
+const state = {
+    currentStep: 1,
+    totalSteps: 6,
+    survey: {},
+    settings: {},
+    firebase: { app: null, db: null, storage: null },
+    surveysCache: [], // To cache loaded surveys
+};
+
+const defaultSettings = {
+    company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "https://qgocargo.com/logo.png" },
+    branding: { primary: '#007AFF', dark: '#111827', accent: '#6B7280' },
+    firebaseConfig: {
+      apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
+      authDomain: "survey-bf41d.firebaseapp.com",
+      projectId: "survey-bf41d",
+      storageBucket: "survey-bf41d.appspot.com",
+      messagingSenderId: "869329094353",
+      appId: "1:869329094353:web:2692f2ad3db106a95827f0",
+      measurementId: "G-GEFSXECYMQ"
+    },
+    customerFields: [
+        { id: 'name', label: 'Customer Name', type: 'text', required: true, enabled: true },
+        { id: 'phone', label: 'Phone', type: 'tel', required: true, enabled: true },
+        { id: 'email', label: 'Email', type: 'email', required: false, enabled: true },
+        { id: 'pickupAddress', label: 'Pickup Address', type: 'text', required: true, enabled: true },
+        { id: 'destinationAddress', label: 'Destination Address', type: 'text', required: true, enabled: true },
+        { id: 'surveyDate', label: 'Survey Date', type: 'datetime-local', required: true, enabled: true },
+        { id: 'moveType', label: 'Move Type', type: 'select', options: ['Local', 'GCC', 'International'], required: true, enabled: true },
+    ],
+    itemPresets: [
+        { name: 'Carton S', l: 45, w: 45, h: 45 },
+        { name: 'Carton M', l: 60, w: 60, h: 60 },
+        { name: 'Sofa 3-seater', l: 200, w: 90, h: 80},
+    ],
+    containers: [
+        { type: '20ft', capacity: 33.2, efficiency: 0.85 },
+        { type: '40ft', capacity: 67.7, efficiency: 0.85 },
+        { type: '40HC', capacity: 76.0, efficiency: 0.85 },
+    ],
+    rates: {
+        currency: 'KWD',
+        cbmRates: { Local: 15, GCC: 25, International: 40 },
+        minCharge: 100,
+        materials: 5,
+        labor: 50,
+        surcharges: 0,
+        insurancePercent: 1.5,
+        vatPercent: 5,
+        markupPercent: 10,
+    },
+    templates: {
+        pdfTerms: '1. This quote is valid for 30 days.\n2. All goods are handled with care.',
+        whatsapp: 'Dear {{customerName}},\n\nPlease find your quote summary. Total is {{grandTotal}} {{currency}}.\n\nThank you,\n{{companyName}}'
+    }
+};
+
+function init() {
+    state.settings = JSON.parse(localStorage.getItem('surveyAppSettings')) || defaultSettings;
     
-    // --- FIREBASE CONFIG ---
-    // IMPORTANT: This object is automatically generated and should not be changed.
-    const firebaseConfig = {"projectId":"qgo-cargo-survey-app-static","appId":"1:363409272465:web:8e3c6c5a2b1a0d8f3b0436","storageBucket":"qgo-cargo-survey-app-static.appspot.com","apiKey":"eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ5Y2E3MjZkY2E2MGUwM2MyYzE5ODliY2Y4MDU2MjIwOWZiZWI5YjUiLCJ0eXAiOiJKV1QifQ.eyJhcHBfaWQiOiIxOjM2MzQwOTI3MjQ2NTphbmRyb2lkOjYyNzM4N2U1ZTA4MWY4ZWIzYjA0MzYiLCJhdWQiOiJmaXJlYmFzZS1jbGllbnRzIiwiaXNzIjoiaHR0cHM6Ly9maXJlYmFzZS5nb29nbGUuY29tL3Byb2plY3RzL2ZpcmViYXNlLXNka3MvYXBwcyIsImV4cCI6MTcxNTgwODAwMCwic3ViIjoicHJvamVjdDozNjM0MDkyNzI0NjUifQ.iC1zD2zE_b-u-r0l8z4G_Q9y2n7v-W5f-U5W3H0q5r0l3R4Q7z7H-b3J-l4f-N9x-V3h-n4r7h2W7v-d2l-i9K-V1z-t4g-j3h-l7h-u4w-b7l-i8U-k2f-x3U-h7k-U5c-r5y-d3H-x4k-L6k-h4I-c5H-e6s-G2l-I9l-G4k-z7l-d2n-V3r-s8U-C4r-T8w-h6I-K2h-F6g-l3s-z7l-G8o-N2h-g7k-f3l-G6c-V3h-t3l-n2f-k3G-V2g-y7j-g2s-Z7o-x3r-Q8k","authDomain":"qgo-cargo-survey-app-static.firebaseapp.com","messagingSenderId":"363409272465"};
+    // Always use the hardcoded logo, ignore saved one
+    state.settings.company.logo = "https://qgocargo.com/logo.png";
 
-    // --- FIREBASE INITIALIZATION ---
-    let app, auth;
-    try {
-        app = firebase.initializeApp(firebaseConfig);
-        auth = firebase.auth();
-    } catch(e) {
-        console.error("Firebase initialization failed. Please provide your Firebase config in script.js", e);
-        // You could show a message to the user here
-    }
-
-
-    // Element selectors
-    const elements = {
-        // Login
-        loginScreen: document.getElementById('login-screen'),
-        emailInput: document.getElementById('emailInput'),
-        passwordInput: document.getElementById('passwordInput'),
-        loginBtn: document.getElementById('loginBtn'),
-        logoutBtn: document.getElementById('logoutBtn'),
-        loginError: document.getElementById('login-error'),
-        appContainer: document.getElementById('app-container'),
-        signupLink: document.getElementById('signup-link'),
-
-        // Main App
-        steps: document.querySelectorAll('.step'),
-        prevBtn: document.getElementById('prevBtn'),
-        nextBtn: document.getElementById('nextBtn'),
-        stepIndicator: document.getElementById('step-indicator'),
-        itemButtonsContainer: document.getElementById('item-buttons'),
-        itemList: document.getElementById('itemList'),
-        packingList: document.getElementById('packingList'),
-        servicesList: document.getElementById('servicesList'),
-        reviewDetails: document.getElementById('reviewDetails'),
-
-        // Modals
-        itemModal: document.getElementById('itemModal'),
-        itemModalTitle: document.getElementById('itemModalTitle'),
-        itemQuantity: document.getElementById('itemQuantity'),
-        itemModalCancel: document.getElementById('itemModalCancel'),
-        itemModalSave: document.getElementById('itemModalSave'),
-        editorModal: document.getElementById('editorModal'),
-        editorModeBtn: document.getElementById('editorModeBtn'),
-        jsonEditor: document.getElementById('jsonEditor'),
-        editorSave: document.getElementById('editorSave'),
-        editorCancel: document.getElementById('editorCancel'),
-        loadSurveyModal: document.getElementById('loadSurveyModal'),
-        loadSurveyBtn: document.getElementById('loadSurveyBtn'),
-        savedSurveysList: document.getElementById('savedSurveysList'),
-        loadSurveyCancel: document.getElementById('loadSurveyCancel'),
-        
-        previewModal: document.getElementById('previewModal'),
-        previewContent: document.getElementById('preview-content'),
-
-        // Photo Capture
-        addPhotoBtn: document.getElementById('addPhotoBtn'),
-        photoInput: document.getElementById('photoInput'),
-        photoPreviewContainer: document.getElementById('photoPreviewContainer'),
-        
-        // Signature
-        signaturePad: document.getElementById('signature-pad'),
-        signatureCanvas: document.getElementById('signatureCanvas'),
-        clearSignatureBtn: document.getElementById('clearSignatureBtn'),
-
-        // PDF Generation
-        generateCustomerPdfBtn: document.getElementById('generateCustomerPdfBtn'),
-        generateOfficePdfBtn: document.getElementById('generateOfficePdfBtn')
-    };
-
-    let signaturePad;
-
-    // --- AUTHENTICATION ---
-    function initAuth() {
-        // BYPASS LOGIN SCREEN FOR DEVELOPMENT
-        elements.loginScreen.classList.add('hidden');
-        elements.appContainer.classList.remove('hidden');
-        initializeApp();
-
-        // Original Auth Logic (Kept for later)
-        if (!auth) { 
-            console.log("Firebase auth not ready, bypassing login.");
-            return;
-        }
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                // User is signed in.
-                // elements.loginScreen.classList.add('hidden');
-                // elements.appContainer.classList.remove('hidden');
-                // initializeApp();
-            } else {
-                // User is signed out.
-                // elements.loginScreen.classList.remove('hidden');
-                // elements.appContainer.classList.add('hidden');
-            }
-        });
-        
-        elements.loginBtn.addEventListener('click', handleLogin);
-        elements.logoutBtn.addEventListener('click', handleLogout);
-        elements.passwordInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') handleLogin();
-        });
-        
-        elements.signupLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            handleSignUp();
-        });
-    }
-
-    function handleLogin() {
-        if (!auth) return;
-        const email = elements.emailInput.value;
-        const password = elements.passwordInput.value;
-
-        if (!email || !password) {
-            showLoginError("Please enter email and password.");
-            return;
-        }
-
-        auth.signInWithEmailAndPassword(email, password)
-            .catch(error => {
-                console.error("Login Error:", error);
-                showLoginError(error.message);
-            });
+    initFirebase();
+    
+    const savedSurvey = localStorage.getItem('currentSurvey');
+    if (savedSurvey) {
+        state.survey = JSON.parse(savedSurvey);
+    } else {
+        state.survey = createNewSurvey();
     }
     
-    function handleSignUp() {
-        if (!auth) return;
-        const email = elements.emailInput.value;
-        const password = elements.passwordInput.value;
+    applyBranding();
+    updateUI();
+    setupEventListeners();
+    renderCustomerForm();
+    renderItemPresets();
+    renderItemsTable();
+    updateFooter();
+    renderPhotos();
+    registerServiceWorker();
+}
 
-        if (!email || !password) {
-            showLoginError("Please enter email and password to sign up.");
-            return;
-        }
-
-        auth.createUserWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-                // Signed in 
-                console.log("User created:", userCredential.user);
-                alert("Sign up successful! Please log in.");
-                // You might want to automatically log them in, or redirect to login
-            })
-            .catch((error) => {
-                console.error("SignUp Error:", error);
-                showLoginError(error.message);
-            });
-    }
-
-    function handleLogout() {
-        if (auth) auth.signOut();
-    }
-
-    function showLoginError(message) {
-        elements.loginError.textContent = message;
-        elements.loginError.classList.remove('hidden');
-        setTimeout(() => elements.loginError.classList.add('hidden'), 3000);
-    }
-
-
-    // --- INITIALIZATION ---
-    function initializeApp() {
-        populateItemButtons();
-        populateChecklist('packing', config.packing, elements.packingList);
-        populateChecklist('services', config.services, elements.servicesList);
-        setupEventListeners();
-        updateStepUI();
-        initSignaturePad();
-    }
-
-    function setupEventListeners() {
-        elements.prevBtn.addEventListener('click', () => changeStep(-1));
-        elements.nextBtn.addEventListener('click', () => changeStep(1));
-        elements.itemModalCancel.addEventListener('click', () => elements.itemModal.style.display = 'none');
-        elements.itemModalSave.addEventListener('click', saveItem);
-        elements.editorModeBtn.addEventListener('click', openEditor);
-        elements.editorSave.addEventListener('click', saveJsonAndReload);
-        elements.editorCancel.addEventListener('click', () => elements.editorModal.style.display = 'none');
-        elements.loadSurveyBtn.addEventListener('click', openLoadSurvey);
-        elements.loadSurveyCancel.addEventListener('click', () => elements.loadSurveyModal.style.display = 'none');
-        elements.clearSignatureBtn.addEventListener('click', () => signaturePad.clear());
-        elements.generateCustomerPdfBtn.addEventListener('click', () => generatePdf(false));
-        elements.generateOfficePdfBtn.addEventListener('click', () => generatePdf(true));
-
-        elements.addPhotoBtn.addEventListener('click', () => elements.photoInput.click());
-        elements.photoInput.addEventListener('change', handlePhotoSelect);
-    }
-    
-    function initSignaturePad() {
-        const canvas = elements.signatureCanvas;
-        // Adjust canvas size for high DPI screens
-        const ratio = Math.max(window.devicePixelRatio || 1, 1);
-        canvas.width = canvas.offsetWidth * ratio;
-        canvas.height = canvas.offsetHeight * ratio;
-        canvas.getContext("2d").scale(ratio, ratio);
-        
-        // Simple signature pad logic
-        let drawing = false;
-        const ctx = canvas.getContext('2d');
-
-        function getMousePos(canvas, evt) {
-            const rect = canvas.getBoundingClientRect();
-            return {
-                x: evt.clientX - rect.left,
-                y: evt.clientY - rect.top
-            };
-        }
-        
-        function getTouchPos(canvas, touch) {
-             const rect = canvas.getBoundingClientRect();
-             return {
-                x: touch.clientX - rect.left,
-                y: touch.clientY - rect.top
-            };
-        }
-
-        function startDrawing(e) {
-            drawing = true;
-            const pos = e.touches ? getTouchPos(canvas, e.touches[0]) : getMousePos(canvas, e);
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
-            e.preventDefault();
-        }
-
-        function draw(e) {
-            if (!drawing) return;
-            const pos = e.touches ? getTouchPos(canvas, e.touches[0]) : getMousePos(canvas, e);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
-            e.preventDefault();
-        }
-
-        function stopDrawing(e) {
-            drawing = false;
-            e.preventDefault();
-        }
-        
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-
-        // Mouse events
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
-
-        // Touch events
-        canvas.addEventListener('touchstart', startDrawing);
-        canvas.addEventListener('touchmove', draw);
-        canvas.addEventListener('touchend', stopDrawing);
-        canvas.addEventListener('touchcancel', stopDrawing);
-
-
-        signaturePad = {
-            clear: () => ctx.clearRect(0, 0, canvas.width, canvas.height),
-            toDataURL: () => canvas.toDataURL()
-        };
-    }
-
-
-    // --- UI & STEP LOGIC ---
-    function changeStep(direction) {
-        const newStep = currentStep + direction;
-        if (newStep > 0 && newStep <= totalSteps) {
-            if (direction > 0 && !validateStep(currentStep)) return;
-
-            if (newStep === 2 && surveyData.items.length === 0) {
-                 resetSurveyData();
-            }
-
-            if (newStep === totalSteps) {
-                saveCustomerInfo();
-                calculateCosts();
-                displayReview();
-            }
-            document.getElementById(`step-${currentStep}`).classList.add('hidden');
-            currentStep = newStep;
-            document.getElementById(`step-${currentStep}`).classList.remove('hidden');
-            updateStepUI();
-        }
-    }
-
-    function updateStepUI() {
-        elements.stepIndicator.textContent = `Step ${currentStep} of ${totalSteps}`;
-        elements.prevBtn.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
-        elements.nextBtn.textContent = currentStep === totalSteps ? 'Save' : 'Next';
-        elements.nextBtn.onclick = currentStep === totalSteps ? saveSurvey : null;
-    }
-
-    function validateStep(step) {
-        if (step === 1) {
-            const name = document.getElementById('customerName').value;
-            if (!name) {
-                alert('Please enter a customer name.');
-                return false;
-            }
-        }
-        return true;
-    }
-
-    function populateItemButtons() {
-        let html = '';
-        for (const category in config.items) {
-            html += `<h3 class="col-span-full text-lg font-semibold mt-4">${category}</h3>`;
-            config.items[category].forEach(item => {
-                const itemName = item.split(' (')[0];
-                html += `<button class="item-button" data-item="${item}">${itemName}</button>`;
-            });
-        }
-        elements.itemButtonsContainer.innerHTML = html;
-        elements.itemButtonsContainer.querySelectorAll('.item-button').forEach(btn => {
-            btn.addEventListener('click', () => openItemModal(btn.dataset.item));
-        });
-    }
-
-    function populateChecklist(type, items, container) {
-        let html = '';
-        items.forEach(item => {
-            html += `
-                <div class="flex items-center justify-between">
-                    <label for="${type}-${item}">${item}</label>
-                    <input type="checkbox" id="${type}-${item}" data-type="${type}" data-item="${item}" class="form-checkbox h-5 w-5 text-blue-600">
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-        container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', (e) => {
-                const { item, type } = e.target.dataset;
-                if (e.target.checked) {
-                    surveyData[type].push(item);
-                } else {
-                    surveyData[type] = surveyData[type].filter(i => i !== item);
-                }
-            });
-        });
-    }
-
-
-    // --- DATA HANDLING ---
-    function openItemModal(item) {
-        elements.itemModalTitle.textContent = item.split(' (')[0];
-        elements.itemModal.dataset.currentItem = item;
-        elements.itemQuantity.value = 1;
-        elements.itemModal.style.display = 'flex';
-    }
-
-    function saveItem() {
-        const itemFullName = elements.itemModal.dataset.currentItem;
-        const quantity = parseInt(elements.itemQuantity.value, 10);
-        const itemName = itemFullName.split(' (')[0];
-
-        const existingItem = surveyData.items.find(i => i.name === itemName);
-        if (existingItem) {
-            existingItem.quantity += quantity;
-        } else {
-            const dimensionsMatch = itemFullName.match(/(\d+)x(\d+)x(\d+)/);
-            let cbm = 0;
-            if (dimensionsMatch) {
-                const [, l, w, h] = dimensionsMatch.map(Number);
-                cbm = (l * w * h) / 1000000;
-            }
-            surveyData.items.push({ name: itemName, fullName: itemFullName, quantity, cbm });
-        }
-        
-        updateItemList();
-        document.querySelector(`.item-button[data-item="${itemFullName}"]`).classList.add('added');
-        elements.itemModal.style.display = 'none';
-    }
-    
-    function updateItemList() {
-        let html = '';
-        if (surveyData.items.length > 0) {
-            surveyData.items.forEach((item, index) => {
-                html += `
-                    <div class="flex items-center justify-between">
-                        <span>${item.quantity} x ${item.name}</span>
-                        <button data-index="${index}" class="remove-item-btn text-red-500 font-bold">X</button>
-                    </div>
-                `;
-            });
-        }
-        elements.itemList.innerHTML = html;
-
-        document.querySelectorAll('.remove-item-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = e.target.dataset.index;
-                const itemToRemove = surveyData.items[index];
-                surveyData.items.splice(index, 1);
-                
-                // Check if any other item with the same name exists
-                const isOtherPresent = surveyData.items.some(i => i.fullName === itemToRemove.fullName);
-                if (!isOtherPresent) {
-                     const button = document.querySelector(`.item-button[data-item="${itemToRemove.fullName}"]`);
-                     if (button) button.classList.remove('added');
-                }
-                updateItemList();
-            });
-        });
-    }
-    
-    function saveCustomerInfo() {
-        surveyData.customer.name = document.getElementById('customerName').value;
-        surveyData.customer.phone = document.getElementById('customerPhone').value;
-        surveyData.customer.email = document.getElementById('customerEmail').value;
-        surveyData.customer.pickup = document.getElementById('pickupAddress').value;
-        surveyData.customer.destination = document.getElementById('destinationAddress').value;
-        surveyData.customer.moveType = document.getElementById('moveType').value;
-    }
-    
-    function resetSurveyData() {
-        surveyData.items = [];
-        // un-highlight all buttons
-        document.querySelectorAll('.item-button.added').forEach(btn => btn.classList.remove('added'));
-        updateItemList();
-    }
-
-
-    // --- PHOTO HANDLING ---
-    function handlePhotoSelect(event) {
-        const files = event.target.files;
-        for (const file of files) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                surveyData.photos.push(e.target.result);
-                renderPhotoPreviews();
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function renderPhotoPreviews() {
-        let html = '';
-        surveyData.photos.forEach((dataUrl, index) => {
-            html += `
-                <div class="relative">
-                    <img src="${dataUrl}" alt="Survey photo ${index + 1}">
-                    <button data-index="${index}" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold">&times;</button>
-                </div>
-            `;
-        });
-        elements.photoPreviewContainer.innerHTML = html;
-        elements.photoPreviewContainer.querySelectorAll('button').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = e.target.dataset.index;
-                surveyData.photos.splice(index, 1);
-                renderPhotoPreviews();
-            });
-        });
-    }
-
-    // --- CALCULATION & REVIEW ---
-    function calculateCosts() {
-        const totalCbm = surveyData.items.reduce((acc, item) => acc + (item.cbm * item.quantity), 0);
-        const cbmCost = totalCbm * config.pricing.cbmRate;
-        const materialsCost = surveyData.packing.length * 5; // Example cost
-        const laborCost = surveyData.services.length * 50; // Example cost
-        
-        const subtotal = cbmCost + materialsCost + laborCost;
-        const insurance = subtotal * config.pricing.insuranceRate;
-        const markup = subtotal * config.pricing.markupRate;
-        const subtotalWithExtras = subtotal + insurance + markup;
-        const vat = subtotalWithExtras * config.pricing.vatRate;
-        const grandTotal = subtotalWithExtras + vat;
-
-        surveyData.costs = {
-            totalCbm: totalCbm.toFixed(3),
-            cbmCost: cbmCost.toFixed(2),
-            materials: materialsCost.toFixed(2),
-            labor: laborCost.toFixed(2),
-            subtotal: subtotal.toFixed(2),
-            insurance: insurance.toFixed(2),
-            markup: markup.toFixed(2),
-            vat: vat.toFixed(2),
-            grandTotal: grandTotal.toFixed(2)
-        };
-    }
-
-    function displayReview() {
-        const { customer, items, costs } = surveyData;
-        let itemsHtml = items.map(i => `<p>${i.quantity} x ${i.name}</p>`).join('');
-        
-        elements.reviewDetails.innerHTML = `
-            <div><strong>Name:</strong> ${customer.name}</div>
-            <div><strong>Phone:</strong> ${customer.phone}</div>
-            <div><strong>Total CBM:</strong> ${costs.totalCbm}</div>
-            <hr>
-            <h3 class="text-lg font-bold">Items:</h3>
-            ${itemsHtml}
-            <hr>
-            <h3 class="text-lg font-bold">Pricing:</h3>
-            <p>Subtotal: ${costs.subtotal} ${config.currency}</p>
-            <p>Grand Total: ${costs.grandTotal} ${config.currency}</p>
-        `;
-    }
-
-
-    // --- LOCAL STORAGE & JSON ---
-    function saveSurvey() {
-        if (signaturePad.toDataURL() === document.createElement('canvas').toDataURL()) {
-             // A very basic check for empty canvas. A better check would compare pixel data.
-            alert("Please provide a customer signature.");
-            return;
-        }
-        surveyData.signature = signaturePad.toDataURL();
-
-        const quoteId = generateQuoteId();
-        surveyData.quoteId = quoteId;
-        surveyData.date = new Date().toLocaleDateString('en-CA');
-        
+function initFirebase() {
+    if (state.settings.firebaseConfig && !firebase.apps.length) {
         try {
-            localStorage.setItem(`survey_${quoteId}`, JSON.stringify(surveyData));
-            alert(`Survey saved with Quote ID: ${quoteId}`);
-            // Reset for next survey
-            location.reload();
+            state.firebase.app = firebase.initializeApp(state.settings.firebaseConfig);
+            state.firebase.db = firebase.firestore();
+            state.firebase.storage = firebase.storage();
+            console.log("Firebase initialized successfully.");
         } catch (e) {
-            alert('Error saving survey. Local storage might be full.');
-            console.error(e);
+            console.error("Could not initialize Firebase. Check your config.", e);
+            alert("Could not initialize Firebase. Please check your configuration in the Editor.");
         }
     }
+}
 
-    function openLoadSurvey() {
-        const surveys = [];
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith('survey_')) {
-                try {
-                    const data = JSON.parse(localStorage.getItem(key));
-                    surveys.push(data);
-                } catch (e) {
-                    console.error(`Could not parse survey ${key}`, e);
-                }
-            }
-        }
-
-        let html = '';
-        if (surveys.length > 0) {
-            surveys.sort((a, b) => new Date(b.date) - new Date(a.date));
-            surveys.forEach(s => {
-                html += `
-                    <div class="flex items-center justify-between p-2 border-b">
-                        <div>
-                            <p class="font-bold">${s.customer.name} - ${s.quoteId}</p>
-                            <p class="text-sm text-gray-600">${s.date}</p>
-                        </div>
-                        <div>
-                            <button data-id="${s.quoteId}" class="view-survey-btn app-button text-sm">View</button>
-                            <button data-id="${s.quoteId}" class="delete-survey-btn app-button-secondary text-sm bg-red-500 text-white">Del</button>
-                        </div>
-                    </div>
-                `;
-            });
-        } else {
-            html = '<p>No saved surveys found.</p>';
-        }
-
-        elements.savedSurveysList.innerHTML = html;
-        elements.loadSurveyModal.style.display = 'flex';
-        
-        document.querySelectorAll('.view-survey-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                showPreviewModal(e.target.dataset.id);
-                elements.loadSurveyModal.style.display = 'none';
-            });
-        });
-        
-        document.querySelectorAll('.delete-survey-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if (confirm('Are you sure you want to delete this survey?')) {
-                    localStorage.removeItem(`survey_${e.target.dataset.id}`);
-                    openLoadSurvey(); // Refresh list
-                }
-            });
-        });
-    }
-
-    function openEditor() {
-        elements.jsonEditor.value = JSON.stringify(config, null, 2);
-        elements.editorModal.style.display = 'flex';
-    }
-
-    function saveJsonAndReload() {
-        try {
-            const newConfig = JSON.parse(elements.jsonEditor.value);
-            // This is a simple example. In a real app, you'd save this to a server or localStorage.
-            // For now, we just reload and the default config will be used again. A real implementation would be more complex.
-            alert("Configuration updated. The page will now reload.");
-            // To persist config, you would do: localStorage.setItem('surveyConfig', JSON.stringify(newConfig));
-            // And on load: const savedConfig = localStorage.getItem('surveyConfig'); if(savedConfig) config = JSON.parse(savedConfig);
-            location.reload();
-        } catch (e) {
-            alert("Invalid JSON format!");
-        }
-    }
-
-
-    // --- PDF & PREVIEW ---
-    function generatePdf(isOfficeCopy) {
-        const content = generateReceiptHtml(surveyData, isOfficeCopy);
-        const opt = {
-            margin: 0,
-            filename: `${surveyData.quoteId}_${isOfficeCopy ? 'Office' : 'Customer'}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().from(content).set(opt).save();
-    }
-    
-    function showPreviewModal(quoteId) {
-        const data = JSON.parse(localStorage.getItem(`survey_${quoteId}`));
-        const content = generateReceiptHtml(data, true); // Show office copy by default in preview
-        
-        let previewHtml = `
-            <header class="fixed top-0 left-0 right-0 bg-white p-2 flex justify-between items-center border-b z-10">
-                 <button id="closePreviewBtn" class="app-button">Back</button>
-                 <div>
-                    <button id="printCustomerCopyBtn" class="app-button-secondary text-sm">Print Customer</button>
-                    <button id="printOfficeCopyBtn" class="app-button text-sm">Print Office</button>
-                 </div>
-            </header>
-            <div class="pt-16">
-              ${content}
-            </div>
-        `;
-        
-        elements.previewContent.innerHTML = previewHtml;
-        elements.previewModal.classList.remove('hidden');
-
-        document.getElementById('closePreviewBtn').addEventListener('click', () => {
-            elements.previewModal.classList.add('hidden');
-        });
-        document.getElementById('printCustomerCopyBtn').addEventListener('click', () => {
-             const customerContent = generateReceiptHtml(data, false);
-             printContent(customerContent, data.quoteId, "Customer");
-        });
-        document.getElementById('printOfficeCopyBtn').addEventListener('click', () => {
-             const officeContent = generateReceiptHtml(data, true);
-             printContent(officeContent, data.quoteId, "Office");
-        });
-    }
-
-    function printContent(content, quoteId, type) {
-        const opt = {
-            margin: 0,
-            filename: `${quoteId}_${type}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().from(content).set(opt).save();
-    }
-
-    function generateReceiptHtml(data, isOfficeCopy) {
-        const { company, currency } = config;
-        const { customer, items, costs, quoteId, date, signature, photos, packing, services } = data;
-
-        const itemsHtml = items.map(item => `
-            <tr>
-                <td>${item.name}<br><small class="text-gray-500">${item.fullName.split('(')[1] ? '(' + item.fullName.split('(')[1] : ''}</small></td>
-                <td class="text-right">${item.quantity}</td>
-                <td class="text-right">${item.cbm.toFixed(3)}</td>
-                <td class="text-right">${(item.cbm * item.quantity).toFixed(3)}</td>
-            </tr>
-        `).join('');
-
-        const pricingHtml = isOfficeCopy ? `
-            <table class="totals-table">
-                <tr><td class="label">CBM Cost (N/A):</td><td class="value">${costs.cbmCost}</td></tr>
-                <tr><td class="label">Materials:</td><td class="value">${costs.materials}</td></tr>
-                <tr><td class="label">Labor:</td><td class="value">${costs.labor}</td></tr>
-                <tr><td class="label">Surcharges:</td><td class="value">0.00</td></tr>
-                <tr style="border-top: 1px solid #333;"><td class="label" style="font-weight: bold;">Subtotal:</td><td class="value" style="font-weight: bold;">${costs.subtotal}</td></tr>
-                <tr><td class="label">Insurance (1.5%):</td><td class="value">${costs.insurance}</td></tr>
-                <tr><td class="label">Markup (10%):</td><td class="value">${costs.markup}</td></tr>
-                <tr><td class="label">VAT (5%):</td><td class="value">${costs.vat}</td></tr>
-                <tr><td class="label grand-total">Grand Total:</td><td class="value grand-total">${costs.grandTotal} ${currency}</td></tr>
-            </table>
-        ` : `<div class="grand-total-customer">Quote: ${costs.grandTotal} ${currency}</div>`;
-        
-        const grandTotalColor = isOfficeCopy ? 'inherit' : '#000'; // Black for customer copy
-
-        const photosHtml = photos && photos.length > 0
-            ? photos.map(p => `<img src="${p}" alt="photo">`).join('')
-            : '<p class="text-gray-600">No photos captured.</p>';
-
-        return `
-            <div class="receipt-container">
-                <style>
-                    .grand-total-customer {
-                        text-align: right;
-                        font-size: 1.5em;
-                        font-weight: bold;
-                        margin: 20px 0;
-                        color: #000;
-                    }
-                    .totals-table td {
-                        color: #000 !important;
-                    }
-                </style>
-                <div class="receipt-header">
-                    <img src="https://i.ibb.co/3s0vK0h/qgocargo-logo.png" alt="Logo" style="width: 150px;">
-                    <div class="company-info-main">
-                        <h2 style="font-size: 1.5em; font-weight: bold;">QUOTATION ${isOfficeCopy ? '(Office Copy)' : ''}</h2>
-                        <p><strong>Quote #:</strong> ${quoteId}</p>
-                        <p><strong>Date:</strong> ${date}</p>
-                    </div>
-                </div>
-
-                <div class="receipt-details">
-                    <div>
-                        <h3 style="font-weight: bold; margin-bottom: 5px;">Bill To:</h3>
-                        <p>${customer.name || ''}</p>
-                        <p>${customer.phone || ''}</p>
-                        <p>${customer.email || ''}</p>
-                    </div>
-                    <div>
-                        <h3 style="font-weight: bold; margin-bottom: 5px;">Company Info:</h3>
-                        <p>${company.name}</p>
-                        <p>${company.address}</p>
-                        <p>Tel: ${company.phone} | Email: ${company.email}</p>
-                    </div>
-                </div>
-                 <div class="receipt-details">
-                    <div>
-                        <p><strong>Pickup:</strong> ${customer.pickup || ''}</p>
-                        <p><strong>Destination:</strong> ${customer.destination || ''}</p>
-                        <p><strong>Move Type:</strong> ${customer.moveType || ''}</p>
-                    </div>
-                </div>
-
-                <h3 style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Itemized List</h3>
-                <table class="receipt-table">
-                    <thead>
-                        <tr>
-                            <th>Item Description</th>
-                            <th class="text-right">Qty</th>
-                            <th class="text-right">CBM/Unit</th>
-                            <th class="text-right">Total CBM</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${itemsHtml}
-                    </tbody>
-                </table>
-                <div style="text-align: right; font-weight: bold; font-size: 1.2em; margin-bottom: 20px;">
-                    Total Volume: ${costs.totalCbm} CBM
-                </div>
-
-                ${pricingHtml ? `<h3 style="font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; color: ${grandTotalColor};">Pricing Summary</h3>` : ''}
-                ${pricingHtml}
-                
-                <h3 style="font-weight: bold; margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Photos</h3>
-                <div class="receipt-photos">${photosHtml}</div>
-
-                <div class="receipt-footer">
-                    <div>
-                        <h3 style="font-weight: bold; margin-bottom: 10px;">Terms & Conditions</h3>
-                        <p style="font-size: 0.8em;">1. This quote is valid for 30 days.</p>
-                        <p style="font-size: 0.8em;">2. All goods are handled with care.</p>
-                    </div>
-                    <div>
-                        <h3 style="font-weight: bold; margin-bottom: 10px;">Customer Signature</h3>
-                        ${signature ? `<img src="${signature}" alt="signature" style="width: 200px; height: auto;">` : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    // --- HELPERS ---
-    function generateQuoteId() {
-        return Math.random().toString(36).substring(2, 8).toUpperCase();
-    }
-    
-    // PWA Service Worker
+function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js').then(registration => {
@@ -825,8 +109,956 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
+}
+
+function createNewSurvey() {
+    return {
+        id: `survey-${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`,
+        meta: { createdAt: new Date().toISOString() },
+        customer: { surveyDate: new Date().toISOString().slice(0, 16) },
+        items: [],
+        totals: { cbm: 0 },
+        media: { photos: [], signature: null }
+    };
+}
+
+function startNewSurvey() {
+    if (confirm('Are you sure you want to start a new survey? Any unsaved data will be lost.')) {
+        localStorage.removeItem('currentSurvey');
+        state.survey = createNewSurvey();
+        state.currentStep = 1;
+        
+        applyBranding();
+        updateUI();
+        renderCustomerForm();
+        renderItemPresets();
+        renderItemsTable();
+        updateFooter();
+        renderPhotos();
+        
+        // Clear signature pad
+        const canvas = G('signature-pad');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+function loadSurvey(surveyData) {
+    if (confirm('Loading this survey will overwrite any current unsaved data. Continue?')) {
+        state.survey = surveyData;
+        state.currentStep = 1;
+        saveDraft(); 
+        
+        updateUI();
+        renderCustomerForm();
+        renderItemPresets();
+        renderItemsTable();
+        updateFooter();
+        renderPhotos();
+        calculateContainerPlan();
+        calculatePricing();
+        G('load-survey-modal').style.display = 'none';
+    }
+}
 
 
-    // Start the app
-    initAuth();
-});
+function updateUI() {
+    D.querySelectorAll('.step').forEach((step, i) => {
+        step.classList.toggle('active', i + 1 === state.currentStep);
+    });
+    G('prev-btn').disabled = state.currentStep === 1;
+    G('next-btn').disabled = state.currentStep === state.totalSteps;
+    G('next-btn').innerText = state.currentStep === state.totalSteps ? 'Finish' : 'Next';
+
+    const indicatorContainer = G('step-indicator');
+    indicatorContainer.innerHTML = '';
+    for(let i=1; i <= state.totalSteps; i++) {
+        const dot = D.createElement('div');
+        dot.className = `w-3 h-3 rounded-full ${i === state.currentStep ? 'bg-primary' : 'bg-gray-300'}`;
+        indicatorContainer.appendChild(dot);
+    }
+}
+
+function applyBranding() {
+    const { primary, dark, accent } = state.settings.branding;
+    const root = D.documentElement;
+    root.style.setProperty('--primary', primary);
+    root.style.setProperty('--dark', dark);
+    root.style.setProperty('--accent', accent);
+    G('header-logo').src = state.settings.company.logo;
+}
+
+function renderCustomerForm() {
+    const form = G('customer-form');
+    form.innerHTML = '';
+    state.settings.customerFields.forEach(field => {
+        if (!field.enabled) return;
+        const div = D.createElement('div');
+        let inputHtml = '';
+        if (field.type === 'select') {
+            inputHtml = `<select id="customer-${field.id}" name="${field.id}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" ${field.required ? 'required' : ''}>
+                ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+            </select>`;
+        } else {
+            inputHtml = `<input type="${field.type}" id="customer-${field.id}" name="${field.id}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" ${field.required ? 'required' : ''}>`;
+        }
+        div.innerHTML = `<label for="customer-${field.id}" class="block text-sm font-medium">${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}</label>${inputHtml}`;
+        form.appendChild(div);
+        const input = G(`customer-${field.id}`);
+        if (state.survey.customer[field.id]) {
+            input.value = state.survey.customer[field.id];
+        }
+        input.addEventListener('input', (e) => {
+            state.survey.customer[e.target.name] = e.target.value;
+            saveDraft();
+        });
+    });
+}
+
+function renderItemPresets() {
+    const container = G('item-presets');
+    container.innerHTML = '';
+    state.settings.itemPresets.forEach(preset => {
+        const btn = D.createElement('button');
+        btn.className = 'bg-gray-200 text-sm p-2 rounded-md hover:bg-gray-300';
+        btn.innerHTML = `<i class="lucide-box mr-1"></i> ${preset.name}`;
+        btn.onclick = () => {
+            addItem({ name: preset.name, qty: 1, l: preset.l, w: preset.w, h: preset.h, unit: 'cm' });
+        };
+        container.appendChild(btn);
+    });
+}
+
+function calculateCBM(l, w, h, unit) {
+    if (unit === 'in') {
+        l *= 2.54; w *= 2.54; h *= 2.54;
+    }
+    return (l * w * h) / 1000000;
+}
+
+function addItem(itemData) {
+    const cbmPerUnit = calculateCBM(itemData.l, itemData.w, itemData.h, itemData.unit);
+    state.survey.items.push({
+        ...itemData,
+        id: `item-${Date.now()}`,
+        cbmPerUnit,
+        totalCBM: cbmPerUnit * itemData.qty,
+    });
+    renderItemsTable();
+    saveDraft();
+}
+
+function renderItemsTable() {
+    const tbody = G('items-table').querySelector('tbody');
+    tbody.innerHTML = '';
+    let totalCBM = 0;
+    state.survey.items.forEach(item => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+            <td class="py-2 px-4">${item.name}</td>
+            <td class="py-2 px-4"><input type="number" value="${item.qty}" min="1" class="w-16 border-gray-300 rounded" data-item-id="${item.id}"></td>
+            <td class="py-2 px-4">${item.cbmPerUnit.toFixed(3)}</td>
+            <td class="py-2 px-4">${(item.cbmPerUnit * item.qty).toFixed(3)}</td>
+            <td class="py-2 px-4"><button data-delete-id="${item.id}" class="text-red-500 hover:text-red-700"><i class="lucide-trash-2"></i></button></td>
+        `;
+        totalCBM += item.cbmPerUnit * item.qty;
+    });
+    state.survey.totals.cbm = totalCBM;
+    updateFooter();
+}
+
+function updateFooter() {
+    G('footer-total-cbm').textContent = (state.survey.totals.cbm || 0).toFixed(3);
+    G('footer-grand-total').textContent = `${(state.survey.pricing?.grandTotal || 0).toFixed(2)} ${state.settings.rates.currency}`;
+}
+
+function calculateContainerPlan() {
+    const containerDiv = G('container-options');
+    containerDiv.innerHTML = '';
+    const totalCbm = state.survey.totals.cbm;
+    G('container-total-cbm').textContent = totalCbm.toFixed(3);
+    
+    let bestOption = null;
+
+    state.settings.containers.forEach(cont => {
+        const effectiveCapacity = cont.capacity * cont.efficiency;
+        const utilization = (totalCbm / effectiveCapacity) * 100;
+        const containersNeeded = Math.ceil(totalCbm / effectiveCapacity);
+        
+        if (containersNeeded === 1 && (!bestOption || cont.capacity < bestOption.capacity)) {
+            bestOption = cont.type;
+        }
+
+        const card = D.createElement('div');
+        card.className = 'border rounded-lg p-4 cursor-pointer hover:border-primary';
+        card.dataset.containerType = cont.type;
+        card.innerHTML = `
+            <h3 class="font-bold flex items-center gap-2"><i class="lucide-truck"></i> ${cont.type}</h3>
+            <p class="text-sm text-gray-600">Capacity: ${cont.capacity.toFixed(2)} CBM</p>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${Math.min(utilization, 100)}%"></div>
+            </div>
+            <p class="text-sm mt-1">Utilization: ${utilization.toFixed(1)}%</p>
+            ${containersNeeded > 1 ? `<p class="text-sm text-red-500">Requires: ${containersNeeded} containers</p>`: ''}
+        `;
+        containerDiv.appendChild(card);
+    });
+    
+    if(bestOption) {
+        state.survey.containerPlan = { recommended: bestOption };
+    }
+    if(state.survey.containerPlan?.selected) {
+         D.querySelector(`[data-container-type="${state.survey.containerPlan.selected}"]`)?.classList.add('border-primary', 'ring-2', 'ring-primary');
+    } else if (bestOption) {
+        D.querySelector(`[data-container-type="${bestOption}"]`)?.classList.add('border-accent');
+    }
+}
+
+function calculatePricing() {
+    const breakdownDiv = G('pricing-breakdown');
+    const { rates } = state.settings;
+    const { totals, customer } = state.survey;
+    const moveType = customer.moveType || 'Local';
+    
+    const cbmCost = Math.max(totals.cbm * (rates.cbmRates[moveType] || 0), rates.minCharge);
+    const subtotal = cbmCost + rates.materials + rates.labor + rates.surcharges;
+    const insurance = subtotal * (rates.insurancePercent / 100);
+    const markup = subtotal * (rates.markupPercent / 100);
+    const totalBeforeVat = subtotal + insurance + markup;
+    const vat = totalBeforeVat * (rates.vatPercent / 100);
+    const grandTotal = totalBeforeVat + vat;
+    
+    state.survey.pricing = { cbmCost, subtotal, insurance, markup, vat, grandTotal, currency: rates.currency };
+
+    breakdownDiv.innerHTML = `
+        <div class="flex justify-between py-2 border-b"><span>CBM Cost (${moveType}):</span> <span>${cbmCost.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b"><span>Materials:</span> <span>${rates.materials.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b"><span>Labor:</span> <span>${rates.labor.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b"><span>Surcharges:</span> <span>${rates.surcharges.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b font-bold"><span>Subtotal:</span> <span>${subtotal.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b"><span>Insurance (${rates.insurancePercent}%):</span> <span>${insurance.toFixed(2)}</span></div>
+         <div class="flex justify-between py-2 border-b"><span>Markup (${rates.markupPercent}%):</span> <span>${markup.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b"><span>VAT (${rates.vatPercent}%):</span> <span>${vat.toFixed(2)}</span></div>
+        <div class="flex justify-between pt-4 font-bold text-xl text-primary"><span>Grand Total:</span> <span>${grandTotal.toFixed(2)} ${rates.currency}</span></div>
+    `;
+    updateFooter();
+}
+
+function generateReceiptHtml(survey, type = 'customer') { // Default to customer copy
+    const { company } = state.settings;
+    const { id, customer, items, totals, pricing, media } = survey;
+
+    const itemsHtml = items.map(item => `
+        <tr>
+            <td class="py-2 px-4 border-b">
+                ${item.name}
+                <span class="text-xs text-gray-500 block">(${item.l}x${item.w}x${item.h} ${item.unit || 'cm'})</span>
+            </td>
+            <td class="py-2 px-4 border-b text-center">${item.qty}</td>
+            <td class="py-2 px-4 border-b text-right">${item.cbmPerUnit.toFixed(3)}</td>
+            <td class="py-2 px-4 border-b text-right">${(item.cbmPerUnit * item.qty).toFixed(3)}</td>
+        </tr>
+    `).join('');
+
+    const pricingHtml = (pricing && type === 'office') ? `
+        <h5 class="font-bold text-gray-700 mb-2">Pricing Summary</h5>
+        <div class="text-sm space-y-1">
+            <div class="flex justify-between py-1"><span>CBM Cost (${customer.moveType || 'N/A'}):</span> <span>${pricing.cbmCost.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>Materials:</span> <span>${state.settings.rates.materials.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>Labor:</span> <span>${state.settings.rates.labor.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>Surcharges:</span> <span>${state.settings.rates.surcharges.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1 font-bold border-t mt-2 pt-2"><span>Subtotal:</span> <span>${pricing.subtotal.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>Insurance (${state.settings.rates.insurancePercent}%):</span> <span>${pricing.insurance.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>Markup (${state.settings.rates.markupPercent}%):</span> <span>${pricing.markup.toFixed(2)}</span></div>
+            <div class="flex justify-between py-1"><span>VAT (${state.settings.rates.vatPercent}%):</span> <span>${pricing.vat.toFixed(2)}</span></div>
+            <div class="flex justify-between pt-2 font-bold text-xl text-primary border-t mt-2"><span>Grand Total:</span> <span>${pricing.grandTotal.toFixed(2)} ${pricing.currency}</span></div>
+        </div>
+    ` : `<div class="p-4 border rounded-lg bg-gray-50 text-center"><h5 class="font-bold">Total Volume</h5><p class="text-2xl">${totals.cbm.toFixed(3)} CBM</p></div>`;
+    
+    let photoHtml = '<p class="text-sm text-gray-500">No photos captured.</p>';
+    if (media.photos && media.photos.length > 0) {
+         photoHtml = `<div class="photos-grid print:hidden">${media.photos.map(p => `<img src="${p.dataUrl}" class="w-20 h-20 object-cover rounded border cursor-pointer zoomable-photo" alt="Survey photo">`).join('')}</div>`;
+    }
+    
+    let signatureHtml = '<p class="text-sm text-gray-500">No signature captured.</p>';
+    if(media.signature) {
+        signatureHtml = `<img src="${media.signature}" class="border bg-gray-100 rounded mix-blend-darken max-w-xs mx-auto">`;
+    }
+
+    return `
+        <div id="receipt" class="border rounded-lg p-6 bg-white">
+            <!-- Header -->
+            <div class="flex justify-between items-start pb-4 border-b">
+                 <img src="${company.logo}" alt="Company Logo" class="h-16">
+                <div class="text-right">
+                    <h4 class="text-xl font-bold">${type === 'office' ? 'QUOTATION (Office Copy)' : 'QUOTATION'}</h4>
+                    <p class="text-sm"><b>Quote #:</b> ${id.substring(id.length - 9)}</p>
+                    <p class="text-sm"><b>Date:</b> ${new Date(customer.surveyDate).toLocaleDateString()}</p>
+                </div>
+            </div>
+
+            <!-- Customer Info -->
+            <div class="grid grid-cols-2 gap-4 py-4">
+                <div>
+                    <h5 class="font-bold text-gray-700">Bill To:</h5>
+                    <p>${customer.name || ''}</p>
+                    <p>${customer.phone || ''}</p>
+                    <p>${customer.email || ''}</p>
+                </div>
+                 <div>
+                    <h5 class="font-bold text-gray-700">Company Info:</h5>
+                    <p>${company.address.replace(/\n/g, '<br>')}</p>
+                    <p>Tel: ${company.phone} | Email: ${company.email}</p>
+                 </div>
+            </div>
+             <div class="text-sm py-4 border-t border-b">
+                    <p><b>Pickup:</b> ${customer.pickupAddress || ''}</p>
+                    <p><b>Destination:</b> ${customer.destinationAddress || ''}</p>
+                    <p><b>Move Type:</b> ${customer.moveType || ''}</p>
+             </div>
+
+            <!-- Items Table -->
+            <h5 class="font-bold text-gray-700 mt-4 mb-2">Itemized List</h5>
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="py-2 px-4 text-left font-semibold">Item Description</th>
+                        <th class="py-2 px-4 text-center font-semibold">Qty</th>
+                        <th class="py-2 px-4 text-right font-semibold">CBM/Unit</th>
+                        <th class="py-2 px-4 text-right font-semibold">Total CBM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${itemsHtml}
+                    <tr class="font-bold bg-gray-50">
+                        <td colspan="3" class="py-2 px-4 text-right">Total Volume:</td>
+                        <td class="py-2 px-4 text-right">${totals.cbm.toFixed(3)} CBM</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+             <div class="mt-6">
+                ${pricingHtml}
+             </div>
+            
+            <div class="photos-section mt-6 print:hidden">
+                <h5 class="font-bold text-gray-700 mb-2">Photos</h5>
+                <div class="flex gap-2 flex-wrap">${photoHtml}</div>
+            </div>
+
+            <div style="page-break-inside: avoid; margin-top: 2rem;">
+                <div class="grid grid-cols-2 gap-8 pt-4">
+                     <div>
+                        <h5 class="font-bold text-gray-700 mb-2">Terms & Conditions</h5>
+                        <p class="text-xs text-gray-600 whitespace-pre-wrap">${state.settings.templates.pdfTerms}</p>
+                     </div>
+                     <div>
+                         <h5 class="font-bold text-gray-700 mb-2">Customer Signature</h5>
+                         <div class="p-2 border rounded-md h-32 flex items-center justify-center">${signatureHtml.replace('max-w-xs', 'max-h-full max-w-full')}</div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+
+function setupReview() {
+    const reviewDiv = G('review-summary');
+    // Default to office copy for on-screen review
+    reviewDiv.innerHTML = generateReceiptHtml(state.survey, 'office');
+}
+
+
+function saveDraft() {
+    localStorage.setItem('currentSurvey', JSON.stringify(state.survey));
+}
+
+function printReport(content) {
+    const printWindow = window.open('', '', 'height=800,width=1000');
+    printWindow.document.write('<html><head><title>Print Survey</title>');
+    printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
+    printWindow.document.write('<link rel="stylesheet" href="style.css">');
+    printWindow.document.write('</head><body>');
+    printWindow.document.write('<div class="p-8">');
+    printWindow.document.write(content);
+    printWindow.document.write('</div>');
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    setTimeout(() => { printWindow.print(); }, 500);
+}
+
+
+function setupEventListeners() {
+    // New Survey
+    G('new-survey-btn').addEventListener('click', startNewSurvey);
+
+    // Navigation
+    G('next-btn').addEventListener('click', () => {
+        if (state.currentStep < state.totalSteps) {
+            state.currentStep++;
+            if (state.currentStep === 3) calculateContainerPlan();
+            if (state.currentStep === 4) calculatePricing();
+            if (state.currentStep === 6) setupReview();
+            updateUI();
+        }
+    });
+    G('prev-btn').addEventListener('click', () => {
+        if (state.currentStep > 1) {
+            state.currentStep--;
+            updateUI();
+        }
+    });
+    
+    // Item Form
+    G('add-item-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        addItem({
+            name: G('item-name').value,
+            qty: parseInt(G('item-qty').value),
+            l: parseFloat(G('item-l').value),
+            w: parseFloat(G('item-w').value),
+            h: parseFloat(G('item-h').value),
+            unit: G('item-unit').value
+        });
+        e.target.reset();
+        G('item-name').focus();
+    });
+
+    // Items Table Delegation
+    G('items-table').addEventListener('change', (e) => {
+        if(e.target.matches('input[data-item-id]')) {
+            const itemId = e.target.dataset.itemId;
+            const newQty = parseInt(e.target.value);
+            const item = state.survey.items.find(i => i.id === itemId);
+            if(item) {
+                item.qty = newQty;
+                renderItemsTable();
+                saveDraft();
+            }
+        }
+    });
+     G('items-table').addEventListener('click', (e) => {
+        if(e.target.closest('button[data-delete-id]')) {
+            const itemId = e.target.closest('button[data-delete-id]').dataset.deleteId;
+            state.survey.items = state.survey.items.filter(i => i.id !== itemId);
+            renderItemsTable();
+            saveDraft();
+        }
+    });
+
+    // Container Selection
+    G('container-options').addEventListener('click', e => {
+        const card = e.target.closest('[data-container-type]');
+        if(card) {
+            D.querySelectorAll('[data-container-type]').forEach(c => c.classList.remove('border-primary', 'ring-2', 'ring-primary'));
+            card.classList.add('border-primary', 'ring-2', 'ring-primary');
+            if(!state.survey.containerPlan) state.survey.containerPlan = {};
+            state.survey.containerPlan.selected = card.dataset.containerType;
+            saveDraft();
+        }
+    });
+    
+    // Photo upload
+    const photoInput = G('photo-upload');
+    photoInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        if (!files) return;
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = D.createElement('canvas');
+                    const MAX_DIM = 800;
+                    let { width, height } = img;
+                    if (width > height) {
+                        if (width > MAX_DIM) { height *= MAX_DIM / width; width = MAX_DIM; }
+                    } else {
+                        if (height > MAX_DIM) { width *= MAX_DIM / height; height = MAX_DIM; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    state.survey.media.photos.push({id: `photo-${Date.now()}`, dataUrl});
+                    renderPhotos();
+                    saveDraft();
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    
+     G('photos-preview').addEventListener('click', e => {
+        const btn = e.target.closest('[data-photo-id]');
+        if(btn) {
+            state.survey.media.photos = state.survey.media.photos.filter(p => p.id !== btn.dataset.photoId);
+            renderPhotos();
+            saveDraft();
+        }
+    });
+
+    // Signature Pad
+    const canvas = G('signature-pad');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    function getMousePos(canvas, evt) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (evt.clientX || evt.touches[0].clientX) - rect.left,
+            y: (evt.clientY || evt.touches[0].clientY) - rect.top
+        };
+    }
+    function startDrawing(e) { drawing = true; draw(e); }
+    function stopDrawing() { 
+        drawing = false; 
+        ctx.beginPath(); 
+        state.survey.media.signature = canvas.toDataURL();
+        saveDraft();
+    }
+    function draw(e) {
+        e.preventDefault();
+        if (!drawing) return;
+        const pos = getMousePos(canvas, e);
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#111827';
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    }
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchmove', draw);
+    G('clear-signature').addEventListener('click', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        state.survey.media.signature = null;
+        saveDraft();
+    });
+
+    // Editor Mode
+    G('editor-mode-btn').addEventListener('click', () => G('passcode-modal').style.display = 'flex');
+    G('passcode-cancel').addEventListener('click', () => G('passcode-modal').style.display = 'none');
+    G('passcode-submit').addEventListener('click', () => {
+        if (G('passcode-input').value === '1234') {
+            G('passcode-modal').style.display = 'none';
+            G('passcode-input').value = '';
+            G('editor-modal').style.display = 'flex';
+            renderEditor('editor-company');
+        } else {
+            alert('Incorrect passcode');
+        }
+    });
+    G('close-editor-btn').addEventListener('click', () => G('editor-modal').style.display = 'none');
+    G('editor-tabs').addEventListener('click', e => {
+        if(e.target.matches('.editor-tab-btn')) {
+            renderEditor(e.target.dataset.tab);
+        }
+    });
+
+    // Step 6 Actions
+    G('save-survey-btn').addEventListener('click', saveSurveyToFirestore);
+    G('generate-customer-pdf-btn').addEventListener('click', () => {
+        const customerReceipt = generateReceiptHtml(state.survey, 'customer');
+        printReport(customerReceipt);
+    });
+    G('generate-office-pdf-btn').addEventListener('click', () => {
+        const officeReceipt = generateReceiptHtml(state.survey, 'office');
+        printReport(officeReceipt);
+    });
+    G('share-whatsapp-btn').addEventListener('click', shareToWhatsApp);
+
+
+    // Load Survey
+    G('load-survey-btn').addEventListener('click', showLoadSurveyModal);
+    G('load-survey-cancel').addEventListener('click', () => G('load-survey-modal').style.display = 'none');
+
+    // Preview Modal
+    G('preview-close-btn').addEventListener('click', () => G('preview-modal').style.display = 'none');
+    G('preview-print-customer-btn').addEventListener('click', () => {
+        const surveyId = G('preview-modal').dataset.surveyId;
+        const surveyData = state.surveysCache.find(s => s.id === surveyId);
+        if (surveyData) {
+            printReport(generateReceiptHtml(surveyData, 'customer'));
+        }
+    });
+    G('preview-print-office-btn').addEventListener('click', () => {
+         const surveyId = G('preview-modal').dataset.surveyId;
+        const surveyData = state.surveysCache.find(s => s.id === surveyId);
+        if (surveyData) {
+            printReport(generateReceiptHtml(surveyData, 'office'));
+        }
+    });
+
+
+    // Image Zoom Modal
+    const zoomModal = G('image-zoom-modal');
+    G('zoom-close-btn').addEventListener('click', () => zoomModal.style.display = 'none');
+    zoomModal.addEventListener('click', () => zoomModal.style.display = 'none'); // Also close on clicking background
+    D.body.addEventListener('click', e => {
+        if(e.target.matches('.zoomable-photo')) {
+            G('zoomed-image').src = e.target.src;
+            zoomModal.style.display = 'flex';
+        }
+    });
+
+}
+
+function shareToWhatsApp() {
+    const { customer, pricing } = state.survey;
+    const { company } = state.settings;
+    let template = state.settings.templates.whatsapp;
+
+    if (!customer.phone) {
+        alert("Please enter a customer phone number first.");
+        return;
+    }
+
+    // Replace placeholders
+    const replacements = {
+        '{{customerName}}': customer.name || '',
+        '{{grandTotal}}': (pricing?.grandTotal || 0).toFixed(2),
+        '{{currency}}': pricing?.currency || '',
+        '{{companyName}}': company.name || ''
+    };
+    
+    for (const key in replacements) {
+        template = template.replace(new RegExp(key, 'g'), replacements[key]);
+    }
+    
+    const whatsappUrl = `https://wa.me/${customer.phone}?text=${encodeURIComponent(template)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+
+function renderPhotos() {
+    const preview = G('photos-preview');
+    preview.innerHTML = '';
+    state.survey.media.photos.forEach(photo => {
+        const div = D.createElement('div');
+        div.className = 'relative group';
+        div.innerHTML = `
+            <img src="${photo.dataUrl}" class="w-full h-24 object-cover rounded-md">
+            <button data-photo-id="${photo.id}" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><i class="lucide-trash-2 w-4 h-4"></i></button>
+        `;
+        preview.appendChild(div);
+    });
+}
+
+async function saveSurveyToFirestore() {
+    const btn = G('save-survey-btn');
+    const statusDiv = G('save-status');
+
+    if (!state.firebase.db) {
+        alert('Firebase is not configured. Please check your settings in the editor.');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = `<i class="lucide-loader-2 animate-spin mr-2"></i>Saving...`;
+    statusDiv.textContent = 'Saving survey to Firebase...';
+
+    try {
+        const surveyToSave = JSON.parse(JSON.stringify(state.survey));
+        surveyToSave.meta.savedAt = new Date().toISOString();
+        
+        // Use the survey ID as the document ID in Firestore
+        await state.firebase.db.collection('surveys').doc(surveyToSave.id).set(surveyToSave);
+
+        statusDiv.textContent = `Survey saved successfully to Firebase with ID: ${surveyToSave.id}`;
+        alert(`Survey saved successfully! A new survey has been started.`);
+        
+        // Automatically start a new survey after a successful save
+        startNewSurvey();
+
+    } catch (error) {
+        console.error('Error saving survey to Firebase:', error);
+        statusDiv.textContent = `Error: ${error.message}. Please check Firestore rules.`;
+        alert(`Failed to save survey. Check the console and your Firestore rules. ${error.message}`);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="lucide-save mr-2"></i>Save Survey`;
+    }
+}
+
+
+async function showLoadSurveyModal() {
+    const modal = G('load-survey-modal');
+    const listDiv = G('load-survey-list');
+    listDiv.innerHTML = '<p>Loading surveys...</p>';
+    modal.style.display = 'flex';
+
+    if (!state.firebase.db) {
+        listDiv.innerHTML = '<p class="text-red-500">Firebase is not configured.</p>';
+        return;
+    }
+
+    try {
+        const querySnapshot = await state.firebase.db.collection('surveys').orderBy('meta.createdAt', 'desc').limit(50).get();
+        state.surveysCache = []; // Clear cache
+        
+        if (querySnapshot.empty) {
+            listDiv.innerHTML = '<p>No saved surveys found.</p>';
+            return;
+        }
+
+        listDiv.innerHTML = '';
+        querySnapshot.forEach(doc => {
+            const survey = doc.data();
+            state.surveysCache.push(survey); // Cache the loaded survey data
+            const surveyDiv = D.createElement('div');
+            surveyDiv.className = 'flex justify-between items-center p-2 border-b hover:bg-gray-100';
+            surveyDiv.innerHTML = `
+                <div>
+                    <p class="font-bold">${survey.customer?.name || 'No Name'}</p>
+                    <p class="text-sm text-gray-600">ID: ${survey.id.substring(survey.id.length - 9)}</p>
+                    <p class="text-sm text-gray-500">Date: ${new Date(survey.meta.createdAt).toLocaleString()}</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="preview-btn text-sm bg-gray-200 p-2 rounded" data-survey-id="${survey.id}">Preview</button>
+                    <button class="load-btn text-sm bg-primary text-white p-2 rounded" data-survey-id="${survey.id}">Load</button>
+                </div>
+            `;
+            listDiv.appendChild(surveyDiv);
+        });
+        
+        // Add event listeners for the new buttons
+        listDiv.querySelectorAll('.preview-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const surveyId = e.target.dataset.surveyId;
+                const surveyToPreview = state.surveysCache.find(s => s.id === surveyId);
+                if (surveyToPreview) {
+                    showPreviewModal(surveyToPreview);
+                }
+            });
+        });
+
+        listDiv.querySelectorAll('.load-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const surveyId = e.target.dataset.surveyId;
+                const surveyToLoad = state.surveysCache.find(s => s.id === surveyId);
+                if (surveyToLoad) {
+                    loadSurvey(surveyToLoad);
+                }
+            });
+        });
+
+    } catch (error) {
+        console.error("Error loading surveys:", error);
+        listDiv.innerHTML = `<p class="text-red-500">Could not load surveys. Error: ${error.message}</p>`;
+    }
+}
+
+function showPreviewModal(surveyData) {
+    const modal = G('preview-modal');
+    const contentDiv = G('preview-content');
+    
+    modal.dataset.surveyId = surveyData.id; // Store survey ID for re-printing
+    contentDiv.innerHTML = generateReceiptHtml(surveyData, 'office'); // Default to office copy in preview
+    
+    modal.style.display = 'flex';
+}
+
+
+function renderEditor(tabId) {
+    D.querySelectorAll('.editor-tab-btn').forEach(btn => btn.classList.remove('bg-gray-200'));
+    D.querySelector(`.editor-tab-btn[data-tab="${tabId}"]`).classList.add('bg-gray-200');
+
+    const content = G('editor-content');
+    content.innerHTML = ''; // Clear previous content
+    
+    const createInput = (label, settingPath, value, type = 'text') => `<div><label class="block text-sm font-medium mb-1">${label}</label><input type="${type}" step="any" class="w-full border-gray-300 rounded" data-setting="${settingPath}" value="${value}"></div>`;
+    const createTextarea = (label, settingPath, value) => `<div><label class="block text-sm font-medium mb-1">${label}</label><textarea class="w-full border-gray-300 rounded" rows="3" data-setting="${settingPath}">${value}</textarea></div>`;
+
+    switch (tabId) {
+        case 'editor-company':
+            content.innerHTML = `
+                <h3 class="text-xl font-bold mb-4">Company Info</h3>
+                <div class="space-y-4">
+                    ${createInput('Company Name', 'company.name', state.settings.company.name)}
+                    ${createInput('Address', 'company.address', state.settings.company.address)}
+                    ${createInput('Phone', 'company.phone', state.settings.company.phone)}
+                    ${createInput('Email', 'company.email', state.settings.company.email)}
+                    ${createTextarea('Logo URL (or Data URL)', 'company.logo', state.settings.company.logo)}
+                </div>`;
+            break;
+        case 'editor-rates':
+            content.innerHTML = `<h3 class="text-xl font-bold mb-4">Rates &amp; Pricing</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    ${createInput('Currency', 'rates.currency', state.settings.rates.currency)}
+                    ${createInput('Min Charge', 'rates.minCharge', state.settings.rates.minCharge, 'number')}
+                    ${createInput('CBM Rate (Local)', 'rates.cbmRates.Local', state.settings.rates.cbmRates.Local, 'number')}
+                    ${createInput('CBM Rate (GCC)', 'rates.cbmRates.GCC', state.settings.rates.cbmRates.GCC, 'number')}
+                    ${createInput('CBM Rate (Int\'l)', 'rates.cbmRates.International', state.settings.rates.cbmRates.International, 'number')}
+                    ${createInput('Materials Cost', 'rates.materials', state.settings.rates.materials, 'number')}
+                    ${createInput('Labor Cost', 'rates.labor', state.settings.rates.labor, 'number')}
+                    ${createInput('Surcharges', 'rates.surcharges', state.settings.rates.surcharges, 'number')}
+                    ${createInput('Insurance %', 'rates.insurancePercent', state.settings.rates.insurancePercent, 'number')}
+                    ${createInput('VAT %', 'rates.vatPercent', state.settings.rates.vatPercent, 'number')}
+                    ${createInput('Markup %', 'rates.markupPercent', state.settings.rates.markupPercent, 'number')}
+                </div>`;
+            break;
+        case 'editor-presets':
+            content.innerHTML = `<h3 class="text-xl font-bold mb-4">Item Presets</h3><div id="presets-editor-list" class="space-y-2"></div><button id="add-preset-btn" class="mt-4 bg-gray-200 p-2 rounded">Add Preset</button>`;
+            const presetsList = G('presets-editor-list');
+            state.settings.itemPresets.forEach((p, i) => {
+                presetsList.innerHTML += `<div class="grid grid-cols-5 gap-2 items-center border p-2 rounded">
+                    <input class="col-span-2 border-gray-300 rounded" data-setting="itemPresets.${i}.name" value="${p.name}">
+                    <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.l" value="${p.l}" placeholder="L">
+                    <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.w" value="${p.w}" placeholder="W">
+                    <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.h" value="${p.h}" placeholder="H">
+                    <button class="text-red-500 hover:text-red-700" data-delete-preset="${i}"><i class="lucide-trash-2"></i></button>
+                </div>`;
+            });
+            G('add-preset-btn').onclick = () => {
+                state.settings.itemPresets.push({ name: 'New Item', l: 10, w: 10, h: 10 });
+                renderEditor(tabId);
+            };
+            presetsList.addEventListener('click', e => {
+               if (e.target.closest('[data-delete-preset]')) {
+                   const index = e.target.closest('[data-delete-preset]').dataset.deletePreset;
+                   state.settings.itemPresets.splice(index, 1);
+                   renderEditor(tabId); // Re-render to reflect deletion
+               }
+            });
+            break;
+        case 'editor-fields':
+             content.innerHTML = `<h3 class="text-xl font-bold mb-4">Customer Form Fields</h3><p class="text-sm mb-4 text-gray-600">Drag to reorder. Uncheck to disable.</p><div id="fields-editor-list" class="space-y-2"></div>`;
+             const fieldsList = G('fields-editor-list');
+             state.settings.customerFields.forEach((f, i) => {
+                 fieldsList.innerHTML += `<div class="flex items-center gap-2 border p-2 rounded bg-white">
+                     <i class="lucide-grip-vertical cursor-move"></i>
+                     <input type="checkbox" class="h-4 w-4 rounded border-gray-300" data-setting="customerFields.${i}.enabled" ${f.enabled ? 'checked' : ''}>
+                     <input class="flex-grow border-gray-300 rounded" data-setting="customerFields.${i}.label" value="${f.label}">
+                 </div>`;
+             });
+             break;
+         case 'editor-containers':
+            content.innerHTML = `<h3 class="text-xl font-bold mb-4">Containers</h3><div id="containers-editor-list" class="space-y-2"></div><button id="add-container-btn" class="mt-4 bg-gray-200 p-2 rounded">Add Container</button>`;
+            const contsList = G('containers-editor-list');
+            state.settings.containers.forEach((c, i) => {
+                contsList.innerHTML += `<div class="grid grid-cols-4 gap-2 items-center border p-2 rounded">
+                    <input class="border-gray-300 rounded" data-setting="containers.${i}.type" value="${c.type}">
+                    <input type="number" class="border-gray-300 rounded" data-setting="containers.${i}.capacity" value="${c.capacity}" placeholder="Capacity (CBM)">
+                    <input type="number" class="border-gray-300 rounded" data-setting="containers.${i}.efficiency" value="${c.efficiency}" placeholder="Efficiency">
+                     <button class="text-red-500 hover:text-red-700" data-delete-container="${i}"><i class="lucide-trash-2"></i></button>
+                </div>`;
+            });
+             G('add-container-btn').onclick = () => {
+                state.settings.containers.push({ type: 'New Container', capacity: 10, efficiency: 0.85 });
+                renderEditor(tabId);
+            };
+            contsList.addEventListener('click', e => {
+               if (e.target.closest('[data-delete-container]')) {
+                   const index = e.target.closest('[data-delete-container]').dataset.deleteContainer;
+                   state.settings.containers.splice(index, 1);
+                   renderEditor(tabId);
+               }
+            });
+            break;
+        case 'editor-templates':
+            content.innerHTML = `<h3 class="text-xl font-bold mb-4">Templates</h3>
+                <div class="space-y-4">
+                    ${createTextarea('PDF Terms &amp; Conditions', 'templates.pdfTerms', state.settings.templates.pdfTerms)}
+                    ${createTextarea('WhatsApp Message', 'templates.whatsapp', state.settings.templates.whatsapp)}
+                    <p class="text-xs text-gray-500">Use placeholders like {{customerName}}, {{grandTotal}}, {{currency}}, {{companyName}}.</p>
+                </div>`;
+            break;
+        case 'editor-firebase':
+             content.innerHTML = `<h3 class="text-xl font-bold mb-4">Firebase &amp; Data</h3>
+                <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+                  <p class="font-bold">Info</p>
+                  <p>Your Firebase configuration is now hardcoded in the script. You don't need to paste it here anymore.</p>
+                   <p class="mt-2">To get data loading to work, you may need to create a composite index in your Firebase Firestore settings. If loading fails, go to Firestore -> Indexes -> Composite and create an index for the 'surveys' collection on the 'meta.createdAt' field in 'descending' order.</p>
+                </div>
+                 <h4 class="font-bold pt-4">Manage App Settings</h4>
+                 <p class="text-sm text-gray-600 mb-2">You can export all your app settings (rates, presets, etc.) to a JSON file as a backup, or import them on another device.</p>
+                <div class="flex gap-2">
+                    <button id="export-settings" class="bg-blue-500 text-white p-2 rounded">Export JSON</button>
+                    <button onclick="G('import-settings-input').click()" class="bg-gray-200 p-2 rounded">Import JSON</button>
+                    <input type="file" id="import-settings-input" class="hidden" accept=".json">
+                </div>`;
+
+            G('export-settings').addEventListener('click', () => {
+                const settingsToExport = {...state.settings};
+                delete settingsToExport.firebaseConfig; 
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settingsToExport, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", "qgo-cargo-settings.json");
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            });
+            G('import-settings-input').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        try {
+                            const importedSettings = JSON.parse(ev.target.result);
+                            importedSettings.firebaseConfig = state.settings.firebaseConfig;
+                            state.settings = importedSettings;
+                            saveAndApplySettings();
+                            init();
+                            renderEditor(tabId);
+                            alert('Settings imported successfully!');
+                        } catch (err) {
+                            alert('Invalid JSON file.');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            break;
+         default:
+            content.innerHTML = `<p>Select an editor tab from the left.</p>`;
+    }
+    
+    // Generic event listener for all setting inputs
+    content.querySelectorAll('input[data-setting], textarea[data-setting]').forEach(input => {
+        input.addEventListener('change', (e) => {
+            const keys = e.target.dataset.setting.split('.');
+            let settingObj = state.settings;
+            keys.slice(0, -1).forEach(key => {
+                if (!settingObj[key]) {
+                    const isNumericIndex = !isNaN(parseInt(keys[keys.indexOf(key) + 1], 10));
+                    settingObj[key] = isNumericIndex ? [] : {};
+                }
+                settingObj = settingObj[key];
+            });
+            
+            let value;
+            if(e.target.type === 'number') {
+                value = parseFloat(e.target.value);
+            } else if (e.target.type === 'checkbox') {
+                value = e.target.checked;
+            } else {
+                value = e.target.value;
+            }
+            settingObj[keys.pop()] = value;
+            
+            saveAndApplySettings();
+            
+            if(keys[0] === 'itemPresets') renderItemPresets();
+            if(keys[0] === 'customerFields') renderCustomerForm();
+
+        });
+    });
+}
+
+function saveAndApplySettings() {
+    localStorage.setItem('surveyAppSettings', JSON.stringify(state.settings));
+    applyBranding();
+    renderCustomerForm();
+    renderItemPresets();
+}
+
+document.addEventListener('DOMContentLoaded', init);
