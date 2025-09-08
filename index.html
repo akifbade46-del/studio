@@ -201,17 +201,22 @@
     </div>
     
     <!-- Preview Modal -->
-    <div id="preview-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-5xl h-[95vh] flex flex-col">
-            <div class="p-4 border-b flex justify-between items-center no-print">
+    <div id="preview-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden items-center justify-center">
+        <div class="bg-white w-screen h-screen flex flex-col relative">
+            <!-- Header for Preview -->
+            <div class="p-4 border-b flex justify-between items-center no-print flex-shrink-0">
                 <h2 class="text-xl font-bold">Survey Preview</h2>
                 <div>
                      <button id="preview-print-customer-btn" class="p-2 rounded hover:bg-gray-200 text-sm flex items-center gap-1"><i class="lucide-printer"></i> Customer Copy</button>
                      <button id="preview-print-office-btn" class="p-2 rounded hover:bg-gray-200 text-sm flex items-center gap-1 ml-2"><i class="lucide-printer"></i> Office Copy</button>
-                     <button id="preview-close-btn" class="p-1 rounded-full hover:bg-gray-200 ml-4"><i class="lucide-x"></i></button>
                 </div>
             </div>
-            <div id="preview-content" class="p-6 overflow-y-auto">
+            <!-- Red Close Button -->
+            <button id="preview-close-btn" class="preview-close-btn-style no-print">
+                 <i class="lucide-x text-3xl"></i>
+            </button>
+            <!-- Scrollable Content -->
+            <div id="preview-content" class="p-6 overflow-y-auto flex-grow">
                 <!-- Survey receipt/html will be injected here -->
             </div>
         </div>
@@ -238,4 +243,3 @@
     <script type="module" src="script.js"></script>
 </body>
 </html>
-    

@@ -28,6 +28,11 @@ body {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
 }
 
+#preview-modal .bg-white {
+    border-radius: 0 !important;
+}
+
+
 /* --- Applying the Effect to Elements --- */
 
 /* Header */
@@ -59,8 +64,7 @@ main {
 /* All Modals */
 #editor-modal .bg-white,
 #passcode-modal .bg-white,
-#load-survey-modal .bg-white,
-#preview-modal .bg-white {
+#load-survey-modal .bg-white {
     background-color: rgba(255, 255, 255, 0.75) !important;
 }
 
@@ -94,13 +98,14 @@ input, select, textarea, button:not(#clear-signature) {
     transition: all 0.2s ease-in-out !important;
     border: 1px solid rgba(209, 213, 219, 0.4) !important;
 }
-input, select, textarea {
-     color: #111827;
-     background-color: rgba(255, 255, 255, 0.3) !important;
-}
 
 button:not(#clear-signature):not([class*="bg-"]) {
     background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+input, select, textarea {
+     color: #111827;
+     background-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 
@@ -172,6 +177,29 @@ form label {
     font-weight: 600;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+
+/* Preview Modal Close Button */
+.preview-close-btn-style {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: #ef4444 !important; /* bg-red-500 */
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 0 !important;
+    border: none !important;
+}
+.preview-close-btn-style:hover {
+    background-color: #dc2626 !important; /* bg-red-600 */
+    filter: none;
+}
+
 
 /* Print Styles */
 @media print {
