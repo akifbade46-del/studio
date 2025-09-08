@@ -121,7 +121,7 @@ input, select, textarea, button:not(#clear-signature) {
 }
 
 /* This rule applies to buttons WITHOUT a bg- class, like Load, New, Settings. This is the FIX */
-button:not(.bg-primary):not(.bg-dark):not(.bg-green-500):not(.bg-gray-200):not(.bg-gray-300):not(.bg-red-500):not(#clear-signature) {
+button:not([class*="bg-"]):not(#clear-signature) {
     color: hsl(var(--foreground)) !important;
     background: linear-gradient(to bottom, hsla(var(--card), 0.6), hsla(var(--card), 0.2)) !important; /* Liquid gradient */
     border: 1px solid hsla(var(--card), 0.7) !important; /* Brighter border */
@@ -203,6 +203,24 @@ form label {
     font-weight: 600;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+
+/* Editor Modal Traffic Lights */
+.traffic-light-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.traffic-light-btn.close { background-color: #ff5f57; }
+.traffic-light-btn.minimize { background-color: #ffbd2e; }
+.traffic-light-btn.maximize { background-color: #28c940; }
+#close-editor-btn {
+    cursor: pointer;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+}
+
 
 /* Preview Modal Close Button */
 .preview-close-btn-style {
