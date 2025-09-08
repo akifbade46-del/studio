@@ -42,12 +42,13 @@ export interface RateSettings {
   cbmRates: Record<MoveType, number>;
   minCharge: number;
   containerFlatRate: number;
-  materials: string; // Can be a formula or fixed value
-  labor: string;
-  surcharges: string;
+  materials: number;
+  labor: number;
+  surcharges: number;
   insurance: number; // Percentage
   vat: number; // Percentage
   markup: number; // Percentage
+  moveType: MoveType;
 }
 
 export interface TemplateSettings {
@@ -60,7 +61,7 @@ export interface EditorSettings {
   itemPresets: ItemPreset[];
   customerFields: CustomerField[];
   containerSettings: ContainerSettings[];
-  rateSettings: RateSettings;
+  rateSettings: Omit<RateSettings, 'moveType'>;
   templateSettings: TemplateSettings;
 }
 

@@ -54,13 +54,15 @@ export default function ReviewShareStep() {
         totalCbm: containerPlan.totalCbm,
         containerType: settings.containerSettings.find(c => c.id === containerPlan.recommendedContainerId)?.name || 'N/A',
         grandTotal: pricing.grandTotal,
+        currency: settings.rateSettings.currency,
         pdfLink: pdfLink,
       });
 
       const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(result.summary)}`;
       window.open(whatsappUrl, '_blank');
 
-    } catch (error) {
+    } catch (error)
+     {
       console.error('Error generating share summary:', error);
       toast({
         variant: 'destructive',
@@ -85,15 +87,15 @@ export default function ReviewShareStep() {
       <Card>
         <CardContent className="p-6 space-y-6">
           <ReviewSection title="Customer Details">
-            {Object.entries(customer).map(([key, value]) => (
-              <p key={key}><strong>{settings.customerFields.find(f => f.id === key)?.label || key}:</strong> {value}</p>
-            ))}
+            {Object.entries(customer).map(([key, value]) => value ? (
+              <p key={key}><strong>{settings.customerFields.find(f => f.id === key)?.label || key}:</strong> {String(value)}</p>
+            ): null)}
           </ReviewSection>
 
           <Separator />
 
           <ReviewSection title="Move Summary">
-            <p><strong>Total Items:</strong> {items.length}</p>
+            <p><strong>Total Items:</strong> {items.reduce((acc, item) => acc + item.quantity, 0)}</p>
             <p><strong>Total CBM:</strong> {containerPlan.totalCbm.toFixed(3)}</p>
             <p><strong>Recommended Container:</strong> {settings.containerSettings.find(c => c.id === containerPlan.recommendedContainerId)?.name || 'N/A'}</p>
           </ReviewSection>
@@ -119,8 +121,10 @@ export default function ReviewShareStep() {
           )}
 
            {signature && (
-            <ReviewSection title="Signature">
-                <Image src={signature.dataUrl} alt="customer signature" width={160} height={80} className="rounded-md bg-muted p-1" />
+             <ReviewSection title="Signature">
+                <div className="bg-muted p-2 rounded-md inline-block">
+                    <Image src={signature.dataUrl} alt="customer signature" width={160} height={80} className="mix-blend-darken" />
+                </div>
             </ReviewSection>
           )}
         </CardContent>

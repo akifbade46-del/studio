@@ -53,7 +53,8 @@ const RatesTab = () => {
     const { rateSettings } = settings;
 
     const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSettings({ ...settings, rateSettings: { ...rateSettings, [e.target.name]: e.target.value } });
+        const { name, value } = e.target;
+        setSettings({ ...settings, rateSettings: { ...rateSettings, [name]: value } });
     };
 
     const handleCbmRateChange = (moveType: 'local' | 'gcc' | 'international', value: string) => {
@@ -86,6 +87,20 @@ const RatesTab = () => {
                     <Input name="minCharge" type="number" value={rateSettings.minCharge} onChange={handleRateChange} />
                 </div>
              </div>
+             <div className="grid grid-cols-3 gap-4">
+                 <div className="space-y-2">
+                    <Label>Materials Cost</Label>
+                    <Input name="materials" type="number" value={rateSettings.materials} onChange={handleRateChange} />
+                </div>
+                 <div className="space-y-2">
+                    <Label>Labor Cost</Label>
+                    <Input name="labor" type="number" value={rateSettings.labor} onChange={handleRateChange} />
+                </div>
+                 <div className="space-y-2">
+                    <Label>Surcharges</Label>
+                    <Input name="surcharges" type="number" value={rateSettings.surcharges} onChange={handleRateChange} />
+                </div>
+            </div>
              <div className="grid grid-cols-3 gap-4">
                  <div className="space-y-2">
                     <Label>VAT %</Label>

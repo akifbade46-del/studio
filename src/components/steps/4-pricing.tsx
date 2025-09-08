@@ -25,7 +25,8 @@ export default function PricingStep() {
 
   const totals = useMemo(() => {
     if (survey.items.length === 0) return null;
-    return calculateTotals(survey.items, { ...rateSettings, moveType: survey.moveType });
+    const currentRateSettings = { ...rateSettings, moveType: survey.moveType };
+    return calculateTotals(survey.items, currentRateSettings);
   }, [survey.items, rateSettings, survey.moveType]);
   
   useEffect(() => {

@@ -17,6 +17,7 @@ const GenerateQuoteSummaryInputSchema = z.object({
   totalCbm: z.number().describe('The total CBM of the items.'),
   containerType: z.string().describe('The type of container recommended.'),
   grandTotal: z.number().describe('The grand total amount of the quote.'),
+  currency: z.string().describe('The currency of the quote.'),
   pdfLink: z.string().describe('A link to the generated PDF document.'),
 });
 export type GenerateQuoteSummaryInput = z.infer<typeof GenerateQuoteSummaryInputSchema>;
@@ -36,16 +37,15 @@ const generateQuoteSummaryPrompt = ai.definePrompt({
   output: {schema: GenerateQuoteSummaryOutputSchema},
   prompt: `You are an AI assistant helping surveyors quickly share quote summaries with customers via WhatsApp.
 
-  Generate a concise and professional summary of the quote using the following information:
+  Generate a professional and detailed summary of the quote using the following information:
 
   Customer Name: {{{customerName}}}
   Total CBM: {{{totalCbm}}}
   Container Type: {{{containerType}}}
-  Grand Total: {{{grandTotal}}} KWD
-  PDF Link: {{{pdfLink}}}
+  Grand Total: {{{grandTotal}}} {{{currency}}}
+  Link to full PDF Quote: {{{pdfLink}}}
 
-  The summary should be no more than two sentences and include a call to action to view the attached PDF for complete details.
-  Consider shortening the PDF link if it is too long.
+  The summary should be formatted nicely for WhatsApp. It should greet the customer, provide the key details of the quote (Total Volume, Container, and Grand Total), and end with a friendly closing and a call to action to view the full PDF quote.
 `,
 });
 
