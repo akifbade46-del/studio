@@ -1,7 +1,7 @@
 :root {
     --primary: #E30B17;
     --dark: #111827;
-    --accent: #0EA5E9;
+    --accent: #6B7280; /* Updated from blue to gray */
     --radius: 0.5rem;
 }
 .bg-primary { background-color: var(--primary); }
@@ -28,15 +28,29 @@ input, select, textarea, button {
 
 button {
     cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
 }
+
+button:hover {
+    filter: brightness(1.1);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
 
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    filter: none;
 }
 
 .step { display: none; }
-.step.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+.step.active { 
+    display: block; 
+    animation: fadeIn 0.5s ease-in-out; 
+}
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
