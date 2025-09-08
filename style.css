@@ -136,7 +136,7 @@ button:disabled {
 }
 
 /* Universal Button Fix */
-button.bg-primary, button.bg-dark, button.bg-green-500 {
+button.bg-primary, button.bg-green-500 {
     /* These buttons with specific bg colors are already fine */
 }
 button:not([class*="bg-"]):not(#clear-signature):not(.traffic-light-btn):not([data-photo-id]):not([data-delete-id]):not([data-delete-preset]):not([data-delete-container]) {
@@ -244,3 +244,5 @@ form label {
       border-radius: 0 !important;
   }
 }
+
+    
