@@ -1,7 +1,10 @@
+'use client';
+
 // Disabling eslint rule for now as it's a known issue with searchParams in App Router
 /* eslint-disable @next/next/no-img-element */
 
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from "@/components/ui/table";
@@ -9,31 +12,40 @@ import CargoLogo from "@/components/cargo-logo";
 import type { EditorSettings, SurveyData } from "@/lib/types";
 
 // The main component is wrapped in Suspense to handle streaming of searchParams
-export default function QuotePage({ searchParams }: { searchParams: { data?: string } }) {
+export default function QuotePage() {
   return (
     <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading quote...</div>}>
-      <QuoteDisplay searchParams={searchParams} />
+      <QuoteDisplay />
     </Suspense>
   );
 }
 
-function QuoteDisplay({ searchParams }: { searchParams: { data?: string } }) {
-  let survey: SurveyData | null = null;
-  let settings: EditorSettings | null = null;
+function QuoteDisplay() {
+  const searchParams = useSearchParams();
+  const [survey, setSurvey] = useState<SurveyData | null>(null);
+  const [settings, setSettings] = useState<EditorSettings | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  try {
-    if (searchParams.data) {
-      const decodedData = JSON.parse(atob(decodeURIComponent(searchParams.data)));
-      survey = decodedData.survey;
-      settings = decodedData.settings;
+  useEffect(() => {
+    const data = searchParams.get('data');
+    if (data) {
+      try {
+        const decodedData = JSON.parse(atob(decodeURIComponent(data)));
+        setSurvey(decodedData.survey);
+        setSettings(decodedData.settings);
+      } catch (e) {
+        console.error("Failed to parse quote data:", e);
+        setError("Failed to load quote data. The link may be corrupted.");
+      }
     }
-  } catch (error) {
-    console.error("Failed to parse quote data:", error);
-    return <div className="p-8 text-center text-red-500">Failed to load quote data. The link may be corrupted.</div>;
+  }, [searchParams]);
+
+  if (error) {
+    return <div className="p-8 text-center text-red-500">{error}</div>;
   }
 
   if (!survey || !settings) {
-    return <div className="p-8 text-center">No quote data provided.</div>;
+    return <div className="flex h-screen items-center justify-center">Loading quote...</div>;
   }
 
   const { companyInfo, rateSettings } = settings;

@@ -11,6 +11,7 @@ import PhotosSignatureStep from '@/components/steps/5-photos-signature';
 import ReviewShareStep from '@/components/steps/6-review-share';
 import EditorPanel from './editor/editor-panel';
 import PasscodeDialog from './editor/passcode-dialog';
+import { useSearchParams } from 'next/navigation';
 
 const stepComponents = [
   { id: 1, name: 'Customer', component: CustomerDetailsStep },
@@ -21,10 +22,19 @@ const stepComponents = [
   { id: 6, name: 'Review & Share', component: ReviewShareStep },
 ];
 
-export default function PageClient() {
+function MainContent() {
   const [currentStep, setCurrentStep] = useState(1);
   const { survey, setGoToStep } = useSurvey();
   const totalSteps = stepComponents.length;
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Handle redirection for GitHub Pages 404 fallback
+    const redirectPath = searchParams.get('redirect');
+    if (redirectPath) {
+      window.history.replaceState(null, '', `/studio${redirectPath}`);
+    }
+  }, [searchParams]);
 
   const goToNextStep = () => setCurrentStep(prev => Math.min(prev + 1, totalSteps));
   const goToPrevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
@@ -77,4 +87,12 @@ export default function PageClient() {
       {CurrentComponent && <CurrentComponent />}
     </MainLayout>
   );
+}
+
+export default function PageClient() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MainContent />
+    </Suspense>
+  )
 }
