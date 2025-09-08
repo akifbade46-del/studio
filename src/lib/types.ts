@@ -17,6 +17,7 @@ export interface ItemPreset {
   width: number;
   height: number;
   unit: 'cm' | 'in';
+  price: number;
 }
 
 export interface CustomerField {
@@ -42,7 +43,6 @@ export interface RateSettings {
   cbmRates: Record<MoveType, number>;
   minCharge: number;
   containerFlatRate: number;
-  materials: number;
   labor: number;
   surcharges: number;
   insurance: number; // Percentage
@@ -76,6 +76,7 @@ export interface SurveyItem {
   height: number;
   unit: 'cm' | 'in';
   cbm: number;
+  price: number;
 }
 
 export interface CustomerData {

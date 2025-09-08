@@ -20,6 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 import { exportJson, importJson } from '@/lib/utils';
 import { DEFAULT_EDITOR_SETTINGS } from '@/lib/consts';
 import SavedSurveysTab from './saved-surveys-tab';
+import ItemPresetsTab from './item-presets-tab';
 
 const CompanyInfoTab = () => {
     const { settings, setSettings } = useSettings();
@@ -87,11 +88,7 @@ const RatesTab = () => {
                     <Input name="minCharge" type="number" value={rateSettings.minCharge} onChange={handleRateChange} />
                 </div>
              </div>
-             <div className="grid grid-cols-3 gap-4">
-                 <div className="space-y-2">
-                    <Label>Materials Cost</Label>
-                    <Input name="materials" type="number" value={rateSettings.materials} onChange={handleRateChange} />
-                </div>
+             <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-2">
                     <Label>Labor Cost</Label>
                     <Input name="labor" type="number" value={rateSettings.labor} onChange={handleRateChange} />
@@ -174,13 +171,14 @@ export default function EditorPanel() {
   const tabs = [
     { id: 'surveys', label: 'Saved Surveys' },
     { id: 'company', label: 'Company' },
+    { id: 'presets', label: 'Item Presets' },
     { id: 'rates', label: 'Rates' },
     { id: 'data', label: 'Data Mgmt' },
   ];
 
   return (
     <Sheet open={isUnlocked} onOpenChange={setUnlocked}>
-      <SheetContent className="w-full sm:max-w-lg flex flex-col">
+      <SheetContent className="w-full sm:max-w-2xl flex flex-col">
         <SheetHeader>
           <SheetTitle>Editor Mode</SheetTitle>
           <SheetDescription>
@@ -189,7 +187,7 @@ export default function EditorPanel() {
         </SheetHeader>
         <div className="flex-1 min-h-0">
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               {tabs.map(tab => (
                  <TabsTrigger key={tab.id} value={tab.id}>{tab.label}</TabsTrigger>
               ))}
@@ -198,6 +196,7 @@ export default function EditorPanel() {
                 <div className="py-4 px-1">
                     <TabsContent value="surveys"><SavedSurveysTab /></TabsContent>
                     <TabsContent value="company"><CompanyInfoTab /></TabsContent>
+                    <TabsContent value="presets"><ItemPresetsTab /></TabsContent>
                     <TabsContent value="rates"><RatesTab /></TabsContent>
                     <TabsContent value="data"><DataTab /></TabsContent>
                 </div>

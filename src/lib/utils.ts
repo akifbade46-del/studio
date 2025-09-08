@@ -29,9 +29,9 @@ export const calculateTotals = (items: SurveyItem[], rates: RateSettings): Total
     cbmCost = rates.containerFlatRate;
   }
 
-  const materialsCost = parseFloat(rates.materials) || 0;
-  const laborCost = parseFloat(rates.labor) || 0;
-  const surchargesCost = parseFloat(rates.surcharges) || 0;
+  const materialsCost = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const laborCost = Number(rates.labor) || 0;
+  const surchargesCost = Number(rates.surcharges) || 0;
 
   const subtotal = cbmCost + materialsCost + laborCost + surchargesCost;
 
@@ -45,7 +45,7 @@ export const calculateTotals = (items: SurveyItem[], rates: RateSettings): Total
   return {
     totalCbm: parseFloat(totalCbm.toFixed(3)),
     cbmCost: parseFloat(cbmCost.toFixed(2)),
-    materialsCost,
+    materialsCost: parseFloat(materialsCost.toFixed(2)),
     laborCost,
     surchargesCost,
     subtotal: parseFloat(subtotal.toFixed(2)),

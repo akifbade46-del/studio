@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useSettings } from '@/context/settings-context';
 import { useSurvey } from '@/context/survey-context';
-import type { SurveyItem } from '@/lib/types';
+import type { SurveyItem, ItemPreset } from '@/lib/types';
 import { calculateCbm } from '@/lib/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,8 @@ const ItemForm = ({ onAddItem }: { onAddItem: (item: Omit<SurveyItem, 'id' | 'cb
       alert('Please fill all fields with valid values.');
       return;
     }
-    onAddItem({ name, quantity, length, width, height, unit: survey.itemUnit });
+    // Custom items have a price of 0 for materials
+    onAddItem({ name, quantity, length, width, height, unit: survey.itemUnit, price: 0 });
     setName('');
     setQuantity(1);
     setLength(0);
@@ -40,6 +41,7 @@ const ItemForm = ({ onAddItem }: { onAddItem: (item: Omit<SurveyItem, 'id' | 'cb
     <Card>
       <CardHeader>
         <CardTitle>Add Custom Item</CardTitle>
+        <CardDescription>Custom items will have a packing material cost of 0.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-4 gap-4 items-end">
@@ -89,7 +91,7 @@ export default function ItemListStep() {
     });
   };
 
-  const addPreset = (preset: typeof settings.itemPresets[0]) => {
+  const addPreset = (preset: ItemPreset) => {
     addItem({ ...preset, quantity: 1 });
   };
   
@@ -137,7 +139,7 @@ export default function ItemListStep() {
           {settings.itemPresets.map(preset => (
             <Button key={preset.id} variant="outline" size="sm" onClick={() => addPreset(preset)}>
               <Box className="mr-2 h-4 w-4" />
-              {preset.name}
+              {preset.name} (+{preset.price.toFixed(2)} {settings.rateSettings.currency})
             </Button>
           ))}
         </div>
@@ -156,8 +158,9 @@ export default function ItemListStep() {
                 <TableRow>
                   <TableHead>Item</TableHead>
                   <TableHead className="w-[100px]">Qty</TableHead>
-                  <TableHead>Dimensions ({survey.itemUnit})</TableHead>
                   <TableHead>CBM/Unit</TableHead>
+                  <TableHead>Packing Cost</TableHead>
+                  <TableHead>Total Packing</TableHead>
                   <TableHead>Total CBM</TableHead>
                   <TableHead className="w-[50px]">Action</TableHead>
                 </TableRow>
@@ -165,7 +168,7 @@ export default function ItemListStep() {
               <TableBody>
                 {survey.items.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center text-muted-foreground h-24">
+                    <TableCell colSpan={7} className="text-center text-muted-foreground h-24">
                       No items added yet.
                     </TableCell>
                   </TableRow>
@@ -182,8 +185,9 @@ export default function ItemListStep() {
                           min="0"
                         />
                       </TableCell>
-                      <TableCell>{`${item.length}x${item.width}x${item.height}`}</TableCell>
                       <TableCell>{item.cbm.toFixed(3)}</TableCell>
+                      <TableCell>{item.price.toFixed(2)}</TableCell>
+                      <TableCell>{(item.price * item.quantity).toFixed(2)}</TableCell>
                       <TableCell>{(item.cbm * item.quantity).toFixed(3)}</TableCell>
                       <TableCell>
                         <Button variant="ghost" size="icon" onClick={() => removeItem(item.id)}>
@@ -196,7 +200,7 @@ export default function ItemListStep() {
               </TableBody>
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={4} className="text-right font-bold text-lg">Total CBM</TableCell>
+                  <TableCell colSpan={5} className="text-right font-bold text-lg">Total CBM</TableCell>
                   <TableCell colSpan={2} className="font-bold text-lg text-primary">{totalCbm.toFixed(3)}</TableCell>
                 </TableRow>
               </TableFooter>

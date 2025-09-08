@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import type { MoveType, Totals } from '@/lib/types';
+import type { MoveType } from '@/lib/types';
 import { Badge } from '../ui/badge';
 
 const PriceLineItem = ({ label, value, currency, className }: { label: React.ReactNode; value: number; currency: string; className?: string }) => (
