@@ -12,7 +12,7 @@ const state = {
 };
 
 const defaultSettings = {
-    company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNFMzA1MTciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTdWNmE0IDQgMCAwIDAtOCAwIi8+PHBhdGggZD0iTTEzIDZWMTRIMyIvPjxwYXRoIGQ9Ik0zIDE0SDEiLz48cGF0aCBkPSJNNyAxNEg2Ii8+PHBhdGggZD0iTTIxIDE3SDMiLz48Y2lyY2xlIGN4PSI4IiBjeT0iMTciIHI9IjIiLz48Y2lyY2xlIGN4PSIxOCIgY3k9IjE3IiByPSIyIi8+PC9zdmc+" },
+    company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNFMzA1MTciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTdWNmE0IDQgMCAwIDAtOCAwaCIv+PHBhdGggZD0iTTEzIDZWMTRIMyIvPjxwYXRoIGQ9Ik0zIDE0SDEiLz48cGF0aCBkPSJNNyAxNEg2Ii8+PHBhdGggZD0iTTIxIDE3SDMiLz48Y2lyY2xlIGN4PSI4IiBjeT0iMTciIHI9IjIiLz48Y2lyY2xlIGN4PSIxOCIgY3k9IjE3IiByPSIyIi8+PC9zdmc+" },
     branding: { primary: '#E30B17', dark: '#111827', accent: '#0EA5E9' },
     firebaseConfig: {
       apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
@@ -420,29 +420,32 @@ function generateReceiptHtml(survey) {
                     </tr>
                 </tbody>
             </table>
-
-            <!-- Pricing & Signature -->
+            
+            <!-- This container will hold pricing and photos in a grid for screen view -->
             <div class="grid grid-cols-2 gap-8 mt-6">
-                <div>
+                 <div>
                      <h5 class="font-bold text-gray-700 mb-2">Pricing Summary</h5>
                      <div class="text-sm space-y-1">${pricingHtml}</div>
                 </div>
-                <div>
-                     <h5 class="font-bold text-gray-700 mb-2">Customer Signature</h5>
-                     <div class="p-4 border rounded-md h-40 flex items-center justify-center">${signatureHtml}</div>
+                <!-- Photos (for screen view only) -->
+                <div class="photos-section-for-screen">
+                    <h5 class="font-bold text-gray-700 mb-2">Photos</h5>
+                    <div class="flex gap-2 flex-wrap">${photoHtml}</div>
                 </div>
             </div>
-            
-            <!-- Photos -->
-            <div class="mt-6 photos-section-for-print">
-                <h5 class="font-bold text-gray-700 mb-2">Photos</h5>
-                <div class="flex gap-2 flex-wrap">${photoHtml}</div>
-            </div>
 
-            <!-- Terms -->
-            <div class="mt-6 border-t pt-4">
-                <h5 class="font-bold text-gray-700 mb-2">Terms & Conditions</h5>
-                <p class="text-xs text-gray-600 whitespace-pre-wrap">${state.settings.templates.pdfTerms}</p>
+            <!-- This container will hold signature and terms for both screen and print -->
+            <div style="page-break-inside: avoid; margin-top: 2rem;">
+                <div class="grid grid-cols-2 gap-8 pt-4">
+                     <div>
+                        <h5 class="font-bold text-gray-700 mb-2">Terms & Conditions</h5>
+                        <p class="text-xs text-gray-600 whitespace-pre-wrap">${state.settings.templates.pdfTerms}</p>
+                     </div>
+                     <div>
+                         <h5 class="font-bold text-gray-700 mb-2">Customer Signature</h5>
+                         <div class="p-2 border rounded-md h-32 flex items-center justify-center">${signatureHtml.replace('max-w-xs', 'max-h-full max-w-full')}</div>
+                     </div>
+                </div>
             </div>
         </div>
     `;
@@ -1037,3 +1040,5 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+    
