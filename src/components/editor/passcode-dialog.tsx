@@ -24,6 +24,7 @@ export default function PasscodeDialog() {
   const handleUnlock = () => {
     if (passcode === CORRECT_PASSCODE) {
       setUnlocked(true);
+      setEditorOpen(false); // Close dialog on success
     } else {
       toast({
         variant: 'destructive',
@@ -33,7 +34,6 @@ export default function PasscodeDialog() {
       setUnlocked(false);
     }
     setPasscode('');
-    setEditorOpen(false); // Close dialog regardless of success
   };
   
   const handleOpenChange = (open: boolean) => {
