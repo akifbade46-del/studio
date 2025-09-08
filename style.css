@@ -1,0 +1,21 @@
+:root {
+    --primary: #E30B17;
+    --dark: #111827;
+    --accent: #0EA5E9;
+}
+.bg-primary { background-color: var(--primary); }
+.text-primary { color: var(--primary); }
+.border-primary { border-color: var(--primary); }
+.bg-dark { background-color: var(--dark); }
+.text-dark { color: var(--dark); }
+.bg-accent { background-color: var(--accent); }
+.text-accent { color: var(--accent); }
+.step { display: none; }
+.step.active { display: block; }
+ @media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .no-print { display: none !important; }
+  #pdf-output { display: block !important; position: absolute; top: 0; left: 0; width: 100%; }
+}
+
+    
