@@ -821,5 +821,3 @@ document.addEventListener('DOMContentLoaded', function () {
     // Start the app
     initAuth();
 });
-
-    
