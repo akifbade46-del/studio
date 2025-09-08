@@ -359,7 +359,7 @@ function generateReceiptHtml(survey, type = 'office') {
             <div class="flex justify-between py-1"><span>VAT (${state.settings.rates.vatPercent}%):</span> <span>${pricing.vat.toFixed(2)}</span></div>
             <div class="flex justify-between pt-2 font-bold text-xl text-primary border-t mt-2"><span>Grand Total:</span> <span>${pricing.grandTotal.toFixed(2)} ${pricing.currency}</span></div>
         </div>
-    ` : '<p class="text-sm text-gray-500">Contact us for pricing details.</p>';
+    ` : `<p class="text-sm text-gray-500">Contact us for pricing details.</p>`;
 
     let photoHtml = '<p class="text-sm text-gray-500">No photos captured.</p>';
     if (media.photos && media.photos.length > 0) {
