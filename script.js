@@ -344,118 +344,141 @@ function calculatePricing() {
     updateFooter();
 }
 
-function generateReceiptHtml(survey, type = 'customer') { // Default to customer copy
+function generateReceiptHtml(survey, type = 'customer') {
     const { company } = state.settings;
     const { id, customer, items, totals, pricing, media } = survey;
 
     const itemsHtml = items.map(item => `
         <tr>
-            <td class="py-2 px-4 border-b">
+            <td class="py-2 px-3 border-b">
                 ${item.name}
                 <span class="text-xs text-gray-500 block">(${item.l}x${item.w}x${item.h} ${item.unit || 'cm'})</span>
             </td>
-            <td class="py-2 px-4 border-b text-center">${item.qty}</td>
-            <td class="py-2 px-4 border-b text-right">${item.cbmPerUnit.toFixed(3)}</td>
-            <td class="py-2 px-4 border-b text-right">${(item.cbmPerUnit * item.qty).toFixed(3)}</td>
+            <td class="py-2 px-3 border-b text-center">${item.qty}</td>
+            <td class="py-2 px-3 border-b text-right">${item.cbmPerUnit.toFixed(3)}</td>
+            <td class="py-2 px-3 border-b text-right">${(item.cbmPerUnit * item.qty).toFixed(3)}</td>
         </tr>
     `).join('');
 
+    const pricingRows = (pricing && type === 'office') ? [
+        { label: `CBM Cost (${customer.moveType || 'N/A'})`, value: pricing.cbmCost },
+        { label: 'Materials', value: state.settings.rates.materials },
+        { label: 'Labor', value: state.settings.rates.labor },
+        { label: 'Surcharges', value: state.settings.rates.surcharges },
+        { label: 'Subtotal', value: pricing.subtotal, isBold: true, isTopBorder: true },
+        { label: `Insurance (${state.settings.rates.insurancePercent}%)`, value: pricing.insurance },
+        { label: `Markup (${state.settings.rates.markupPercent}%)`, value: pricing.markup },
+        { label: `VAT (${state.settings.rates.vatPercent}%)`, value: pricing.vat },
+        { label: 'Grand Total', value: pricing.grandTotal, isBold: true, isTopBorder: true, isLarge: true }
+    ] : [];
+
     const pricingHtml = (pricing && type === 'office') ? `
-        <h5 class="font-bold text-gray-700 mb-2">Pricing Summary</h5>
+        <h5 class="text-sm font-bold text-gray-700 mb-2 mt-6">Pricing Summary</h5>
         <div class="text-sm space-y-1">
-            <div class="flex justify-between py-1"><span>CBM Cost (${customer.moveType || 'N/A'}):</span> <span>${pricing.cbmCost.toFixed(2)}</span></div>
-            <div class="flex justify-between py-1"><span>Materials:</span> <span>${state.settings.rates.materials.toFixed(2)}</span></div>
-            <div class="flex justify-between py-1"><span>Labor:</span> <span>${state.settings.rates.labor.toFixed(2)}</span></div>
-            <div class="flex justify-between py-1"><span>Surcharges:</span> <span>${state.settings.rates.surcharges.toFixed(2)}</span></div>
-            <div class="flex justify-between py-1 font-bold border-t mt-2 pt-2"><span>Subtotal:</span> <span>${pricing.subtotal.toFixed(2)}</span></div>
-            <div class="flex justify-between py-1"><span>Insurance (${state.settings.rates.insurancePercent}%):</span> <span>${pricing.insurance.toFixed(2)}</span></div>
-            <div class="flex justify-between py-1"><span>Markup (${state.settings.rates.markupPercent}%):</span> <span>${pricing.markup.toFixed(2)}</span></div>
-            <div class="flex justify-between py-1"><span>VAT (${state.settings.rates.vatPercent}%):</span> <span>${pricing.vat.toFixed(2)}</span></div>
-            <div class="flex justify-between pt-2 font-bold text-xl text-primary border-t mt-2"><span>Grand Total:</span> <span>${pricing.grandTotal.toFixed(2)} ${pricing.currency}</span></div>
+            ${pricingRows.map(row => `
+                <div class="flex justify-between py-1 ${row.isTopBorder ? 'border-t mt-1 pt-1' : ''} ${row.isBold ? 'font-bold' : ''} ${row.isLarge ? 'text-lg' : ''}">
+                    <span>${row.label}:</span>
+                    <span class="${row.isLarge ? 'text-primary' : ''}">${row.value.toFixed(2)} ${row.isLarge ? pricing.currency : ''}</span>
+                </div>
+            `).join('')}
         </div>
-    ` : `<div class="p-4 border rounded-lg bg-gray-50 text-center"><h5 class="font-bold">Total Volume</h5><p class="text-2xl">${totals.cbm.toFixed(3)} CBM</p></div>`;
-    
+    ` : `
+        <div class="mt-6 text-right">
+            <div class="inline-block p-3 rounded-lg bg-gray-100">
+                <h5 class="font-bold text-gray-600">Total Volume</h5>
+                <p class="text-2xl font-bold">${totals.cbm.toFixed(3)} CBM</p>
+            </div>
+        </div>
+    `;
+
     let photoHtml = '<p class="text-sm text-gray-500">No photos captured.</p>';
     if (media.photos && media.photos.length > 0) {
-         photoHtml = `<div class="photos-grid print:hidden">${media.photos.map(p => `<img src="${p.dataUrl}" class="w-20 h-20 object-cover rounded border cursor-pointer zoomable-photo" alt="Survey photo">`).join('')}</div>`;
+        photoHtml = `<div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">${media.photos.map(p => `<img src="${p.dataUrl}" class="w-full h-20 object-cover rounded border cursor-pointer zoomable-photo" alt="Survey photo">`).join('')}</div>`;
     }
-    
+
     let signatureHtml = '<p class="text-sm text-gray-500">No signature captured.</p>';
-    if(media.signature) {
-        signatureHtml = `<img src="${media.signature}" class="border bg-gray-100 rounded mix-blend-darken max-w-xs mx-auto">`;
+    if (media.signature) {
+        signatureHtml = `<img src="${media.signature}" class="border bg-gray-100 rounded mix-blend-darken w-full h-full object-contain">`;
     }
 
     return `
-        <div id="receipt" class="border rounded-lg p-6 bg-white">
+        <div class="bg-white text-gray-800 text-sm">
             <!-- Header -->
             <div class="flex justify-between items-start pb-4 border-b">
-                 <img src="${company.logo}" alt="Company Logo" class="h-16">
+                <img src="${company.logo}" alt="Company Logo" class="h-12">
                 <div class="text-right">
-                    <h4 class="text-xl font-bold">${type === 'office' ? 'QUOTATION (Office Copy)' : 'QUOTATION'}</h4>
-                    <p class="text-sm"><b>Quote #:</b> ${id.substring(id.length - 9)}</p>
-                    <p class="text-sm"><b>Date:</b> ${new Date(customer.surveyDate).toLocaleDateString()}</p>
+                    <h4 class="text-lg font-bold">${type === 'office' ? 'QUOTATION (Office Copy)' : 'QUOTATION'}</h4>
+                    <p><b>Quote #:</b> ${id.substring(id.length - 9)}</p>
+                    <p><b>Date:</b> ${new Date(customer.surveyDate).toLocaleDateString()}</p>
                 </div>
             </div>
 
-            <!-- Customer Info -->
-            <div class="grid grid-cols-2 gap-4 py-4">
+            <!-- Customer & Company Info -->
+            <div class="grid grid-cols-2 gap-4 py-4 border-b">
                 <div>
-                    <h5 class="font-bold text-gray-700">Bill To:</h5>
-                    <p>${customer.name || ''}</p>
+                    <h5 class="font-bold text-gray-500 text-xs mb-1">BILL TO</h5>
+                    <p class="font-bold">${customer.name || ''}</p>
                     <p>${customer.phone || ''}</p>
                     <p>${customer.email || ''}</p>
                 </div>
-                 <div>
-                    <h5 class="font-bold text-gray-700">Company Info:</h5>
-                    <p>${company.address.replace(/\n/g, '<br>')}</p>
+                <div class="text-right">
+                    <h5 class="font-bold text-gray-500 text-xs mb-1">COMPANY INFO</h5>
+                    <p>${company.address.replace(/\n/g, ', ')}</p>
                     <p>Tel: ${company.phone} | Email: ${company.email}</p>
-                 </div>
+                </div>
             </div>
-             <div class="text-sm py-4 border-t border-b">
-                    <p><b>Pickup:</b> ${customer.pickupAddress || ''}</p>
-                    <p><b>Destination:</b> ${customer.destinationAddress || ''}</p>
-                    <p><b>Move Type:</b> ${customer.moveType || ''}</p>
+            
+            <!-- Move Details -->
+             <div class="grid grid-cols-2 gap-4 py-3 border-b">
+                <div>
+                    <p><b class="font-semibold text-gray-600">Pickup:</b> ${customer.pickupAddress || ''}</p>
+                    <p><b class="font-semibold text-gray-600">Destination:</b> ${customer.destinationAddress || ''}</p>
+                </div>
+                <div class="text-right">
+                    <p><b class="font-semibold text-gray-600">Move Type:</b> ${customer.moveType || ''}</p>
+                </div>
              </div>
 
             <!-- Items Table -->
-            <h5 class="font-bold text-gray-700 mt-4 mb-2">Itemized List</h5>
+            <h5 class="text-sm font-bold text-gray-700 mt-6 mb-2">Itemized List</h5>
             <table class="w-full text-sm">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="py-2 px-4 text-left font-semibold">Item Description</th>
-                        <th class="py-2 px-4 text-center font-semibold">Qty</th>
-                        <th class="py-2 px-4 text-right font-semibold">CBM/Unit</th>
-                        <th class="py-2 px-4 text-right font-semibold">Total CBM</th>
+                        <th class="py-2 px-3 text-left font-semibold">Item Description</th>
+                        <th class="py-2 px-3 text-center font-semibold">Qty</th>
+                        <th class="py-2 px-3 text-right font-semibold">CBM/Unit</th>
+                        <th class="py-2 px-3 text-right font-semibold">Total CBM</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${itemsHtml}
-                    <tr class="font-bold bg-gray-50">
-                        <td colspan="3" class="py-2 px-4 text-right">Total Volume:</td>
-                        <td class="py-2 px-4 text-right">${totals.cbm.toFixed(3)} CBM</td>
-                    </tr>
                 </tbody>
+                <tfoot>
+                    <tr class="font-bold bg-gray-50">
+                        <td colspan="3" class="py-2 px-3 text-right">Total Volume:</td>
+                        <td class="py-2 px-3 text-right">${totals.cbm.toFixed(3)} CBM</td>
+                    </tr>
+                </tfoot>
             </table>
             
-             <div class="mt-6">
-                ${pricingHtml}
-             </div>
+            <!-- Pricing or Customer CBM -->
+            ${pricingHtml}
             
-            <div class="photos-section mt-6 print:hidden">
-                <h5 class="font-bold text-gray-700 mb-2">Photos</h5>
-                <div class="flex gap-2 flex-wrap">${photoHtml}</div>
+            <!-- Photos -->
+            <div class="mt-8">
+                <h5 class="text-sm font-bold text-gray-700 mb-2">Photos</h5>
+                ${photoHtml}
             </div>
 
-            <div style="page-break-inside: avoid; margin-top: 2rem;">
-                <div class="grid grid-cols-2 gap-8 pt-4">
-                     <div>
-                        <h5 class="font-bold text-gray-700 mb-2">Terms & Conditions</h5>
-                        <p class="text-xs text-gray-600 whitespace-pre-wrap">${state.settings.templates.pdfTerms}</p>
-                     </div>
-                     <div>
-                         <h5 class="font-bold text-gray-700 mb-2">Customer Signature</h5>
-                         <div class="p-2 border rounded-md h-32 flex items-center justify-center">${signatureHtml.replace('max-w-xs', 'max-h-full max-w-full')}</div>
-                     </div>
+            <!-- Footer Section -->
+            <div style="page-break-inside: avoid; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h5 class="text-sm font-bold text-gray-700 mb-2">Terms & Conditions</h5>
+                    <p class="text-xs text-gray-600 whitespace-pre-wrap">${state.settings.templates.pdfTerms}</p>
+                </div>
+                <div>
+                    <h5 class="text-sm font-bold text-gray-700 mb-2">Customer Signature</h5>
+                    <div class="border rounded-md h-32 flex items-center justify-center bg-gray-50">${signatureHtml}</div>
                 </div>
             </div>
         </div>
@@ -479,7 +502,7 @@ function printReport(content) {
     printWindow.document.write('<html><head><title>Print Survey</title>');
     printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
     printWindow.document.write('<link rel="stylesheet" href="style.css">');
-    printWindow.document.write('</head><body>');
+    printWindow.document.write('</head><body class="text-sm">');
     printWindow.document.write('<div class="p-8">');
     printWindow.document.write(content);
     printWindow.document.write('</div>');
@@ -1063,4 +1086,5 @@ function saveAndApplySettings() {
 
 document.addEventListener('DOMContentLoaded', init);
 
+    
     
