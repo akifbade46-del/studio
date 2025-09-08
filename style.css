@@ -20,12 +20,11 @@ body {
 }
 
 /* --- Glassmorphism Effect --- */
-.glass-effect {
+.glass-effect, #app-header, #sticky-footer {
     background-color: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(209, 213, 219, 0.3);
-    border-radius: var(--radius);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -34,17 +33,17 @@ body {
 /* Header */
 #app-header {
     position: sticky;
-    top: 0;
+    top: 1rem;
     z-index: 50;
-    margin: 1rem 1rem 0 1rem; /* Add margin */
+    margin: 0 1rem; /* Add margin */
     width: calc(100% - 2rem);
     border-radius: var(--radius);
     border-bottom: none;
 }
 
 /* Make the main content start below the header */
-main.p-4 {
-    padding-top: 1rem;
+main {
+    padding-top: 1rem !important;
 }
 
 /* Sticky Footer */
@@ -52,7 +51,7 @@ main.p-4 {
     position: sticky;
     bottom: 1rem;
     z-index: 50;
-    margin: 0 1rem;
+    margin: 1rem; /* Added top margin for spacing */
     width: calc(100% - 2rem);
     border-radius: var(--radius);
 }
@@ -62,7 +61,7 @@ main.p-4 {
 #passcode-modal .bg-white,
 #load-survey-modal .bg-white,
 #preview-modal .bg-white {
-    background-color: rgba(255, 255, 255, 0.75);
+    background-color: rgba(255, 255, 255, 0.75) !important;
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(209, 213, 219, 0.3);
@@ -72,34 +71,43 @@ main.p-4 {
 /* Card-like elements */
 .border.p-4, .border.rounded-lg {
     transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(209, 213, 219, 0.2);
 }
 
 .border.p-4:hover, .border.rounded-lg:hover {
      border-color: rgba(255, 255, 255, 0.8);
      transform: translateY(-2px);
+     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 /* --- Component Styling --- */
-.bg-primary { background-color: var(--primary); }
-.text-primary { color: var(--primary); }
-.border-primary { border-color: var(--primary); }
-.ring-primary { --tw-ring-color: var(--primary); }
-.bg-dark { background-color: var(--dark); }
-.text-dark { color: var(--dark); }
-.bg-accent { background-color: var(--accent); }
-.text-accent { color: var(--accent); }
-.border-accent { border-color: var(--accent); }
+.bg-primary { background-color: var(--primary) !important; }
+.text-primary { color: var(--primary) !important; }
+.border-primary { border-color: var(--primary) !important; }
+.ring-primary { --tw-ring-color: var(--primary) !important; }
+.bg-dark { background-color: var(--dark) !important; }
+.text-dark { color: var(--dark) !important; }
+.bg-accent { background-color: var(--accent) !important; }
+.text-accent { color: var(--accent) !important; }
+.border-accent { border-color: var(--accent) !important; }
 
-input, select, textarea, button {
-    border-radius: var(--radius);
-    padding: 0.75rem;
-    transition: all 0.2s ease-in-out;
-    border: 1px solid rgba(209, 213, 219, 0.3);
+input, select, textarea, button:not(#clear-signature) {
+    border-radius: var(--radius) !important;
+    padding: 0.75rem !important;
+    transition: all 0.2s ease-in-out !important;
+    border: 1px solid rgba(209, 213, 219, 0.4) !important;
+    background-color: rgba(255, 255, 255, 0.3) !important;
+}
+input, select, textarea {
+     color: #111827;
 }
 
+
 input:focus, select:focus, textarea:focus {
-    box-shadow: 0 0 0 2px var(--primary);
-    outline: none;
+    box-shadow: 0 0 0 2px var(--primary) !important;
+    outline: none !important;
+    background-color: rgba(255, 255, 255, 0.7) !important;
 }
 
 
@@ -146,15 +154,21 @@ form label {
     color: #1f2937;
 }
 #items-table td, #items-table th {
-    border-bottom: 1px solid #e5e7eb; /* border-gray-200 */
+    border-bottom: 1px solid rgba(229, 231, 235, 0.5); /* border-gray-200 */
 }
 #items-table tbody tr:last-child td {
     border-bottom: none;
 }
+#items-table {
+    background-color: transparent !important;
+}
+#items-table thead {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
 
 /* Editor */
 .editor-tab-btn.bg-gray-200 {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.8) !important;
     font-weight: 600;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
