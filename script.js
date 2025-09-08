@@ -13,7 +13,15 @@ const state = {
 const defaultSettings = {
     company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNFMzA1MTciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTdWNmE0IDQgMCAwIDAtOCAwIi8+PHBhdGggZD0iTTEzIDZWMTRIMyIvPjxwYXRoIGQ9Ik0zIDE0SDEiLz48cGF0aCBkPSJNNyAxNEg2Ii8+PHBhdGggZD0iTTIxIDE3SDMiLz48Y2lyY2xlIGN4PSI4IiBjeT0iMTciIHI9IjIiLz48Y2lyY2xlIGN4PSIxOCIgY3k9IjE3IiByPSIyIi8+PC9zdmc+" },
     branding: { primary: '#E30B17', dark: '#111827', accent: '#0EA5E9' },
-    firebaseConfig: null, // To be filled by user
+    firebaseConfig: {
+      apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
+      authDomain: "survey-bf41d.firebaseapp.com",
+      projectId: "survey-bf41d",
+      storageBucket: "survey-bf41d.firebasestorage.app",
+      messagingSenderId: "869329094353",
+      appId: "1:869329094353:web:2692f2ad3db106a95827f0",
+      measurementId: "G-GEFSXECYMQ"
+    },
     customerFields: [
         { id: 'name', label: 'Customer Name', type: 'text', required: true, enabled: true },
         { id: 'phone', label: 'Phone', type: 'tel', required: true, enabled: true },
@@ -659,15 +667,10 @@ function renderEditor(tabId) {
                 </div>`;
             G('save-firebase-config').addEventListener('click', () => {
                  try {
-                    let configStr = G('firebase-config-input').value;
+                    const configStr = G('firebase-config-input').value;
                     if (!configStr) {
                         state.settings.firebaseConfig = null;
                     } else {
-                        // Extract JSON from the JS snippet if user pastes the whole thing
-                        const jsonMatch = configStr.match(/=\s*({[\s\S]*?});/);
-                        if (jsonMatch && jsonMatch[1]) {
-                           configStr = jsonMatch[1];
-                        }
                         state.settings.firebaseConfig = JSON.parse(configStr);
                     }
                     saveAndApplySettings();
