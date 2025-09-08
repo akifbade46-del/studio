@@ -1,0 +1,11 @@
+# This is an example file for local development secrets.
+# Rename this file to .dev.vars and fill in your actual secrets.
+# This file is ignored by git and should not be committed.
+
+GH_PAT="ghp_YourGitHubPersonalAccessToken"
+GH_OWNER="your-github-username"
+GH_REPO="your-github-repo-name"
+GH_USER="Your GitHub Username"
+GH_EMAIL="your-github-email@example.com"
+ALLOWED_ORIGIN_1="https://your-github-username.github.io"
+ALLOWED_ORIGIN_2="http://127.0.0.1:8787"

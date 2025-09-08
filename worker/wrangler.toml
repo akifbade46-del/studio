@@ -1,0 +1,19 @@
+name = "qgo-cargo-api"
+main = "src/index.ts"
+compatibility_date = "2024-04-24"
+
+# Secrets required for the worker to function.
+# You must create these secrets using the wrangler CLI before deploying.
+# wrangler secret put GH_PAT
+# wrangler secret put GH_OWNER
+# wrangler secret put GH_REPO
+#
+# [[vars]]
+# GH_EMAIL = "your-github-email@example.com"
+# GH_USER = "Your GitHub Username"
+# ALLOWED_ORIGIN_1 = "https://your-user.github.io"
+# ALLOWED_ORIGIN_2 = "http://localhost:8787"
+
+# Example command:
+# wrangler secret put GH_PAT
+# Follow the prompts to enter your GitHub Personal Access Token.
