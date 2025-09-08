@@ -37,6 +37,10 @@ body {
     color: hsl(var(--foreground));
 }
 
+#sticky-footer {
+    color: hsl(var(--foreground));
+}
+
 #preview-content {
     background-color: #ffffff !important;
     color: #111827 !important;
@@ -86,8 +90,8 @@ main {
 .text-primary-foreground { color: hsl(var(--primary-foreground)) !important; }
 .border-primary { border-color: hsl(var(--primary)) !important; }
 .ring-primary { --tw-ring-color: hsl(var(--primary)) !important; }
-.bg-dark { background-color: #111827 !important; }
-.text-dark { color: #111827 !important; }
+.bg-dark { background-color: hsl(var(--primary)) !important; }
+.text-dark { color: hsl(var(--foreground)) !important; }
 .bg-accent { background-color: hsl(var(--accent)) !important; }
 .text-accent-foreground { color: hsl(var(--accent-foreground)) !important; }
 .border-accent { border-color: hsl(var(--accent)) !important; }
