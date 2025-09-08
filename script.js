@@ -335,7 +335,10 @@ function generateReceiptHtml(survey) {
 
     const itemsHtml = items.map(item => `
         <tr>
-            <td class="py-2 px-4 border-b">${item.name}</td>
+            <td class="py-2 px-4 border-b">
+                ${item.name}
+                <span class="text-xs text-gray-500 block">${item.l}x${item.w}x${item.h} ${item.unit || 'cm'}</span>
+            </td>
             <td class="py-2 px-4 border-b text-center">${item.qty}</td>
             <td class="py-2 px-4 border-b text-right">${item.cbmPerUnit.toFixed(3)}</td>
             <td class="py-2 px-4 border-b text-right">${(item.cbmPerUnit * item.qty).toFixed(3)}</td>
@@ -631,7 +634,19 @@ function setupEventListeners() {
 
     // Step 6 Actions
     G('save-survey-btn').addEventListener('click', saveSurveyToFirestore);
-    G('generate-pdf-btn').addEventListener('click', () => window.print());
+    G('generate-pdf-btn').addEventListener('click', () => {
+        const reviewContent = G('review-summary').innerHTML;
+        const originalContent = D.body.innerHTML;
+        D.body.innerHTML = reviewContent;
+        window.print();
+        D.body.innerHTML = originalContent;
+        // Re-initialize everything after print since we replaced the body
+        init(); 
+        // Go back to the last step after printing
+        state.currentStep = 6;
+        setupReview();
+        updateUI();
+    });
     G('share-whatsapp-btn').addEventListener('click', shareToWhatsApp);
 
 
@@ -651,6 +666,7 @@ function setupEventListeners() {
         init(); 
         G('preview-modal').style.display = 'flex'; // Keep the modal open
         G('preview-content').innerHTML = previewContent; // Put the content back in the modal
+        G('load-survey-modal').style.display = 'flex'; // Also keep the load survey modal open
     });
 
 }
