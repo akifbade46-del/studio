@@ -37,9 +37,12 @@ export default function PasscodeDialog() {
   };
   
   const handleOpenChange = (open: boolean) => {
+    // Only update state if it's changing to prevent loops
+    if (isEditorOpen !== open) {
+        setEditorOpen(open);
+    }
     if (!open) {
         setPasscode('');
-        setEditorOpen(false);
     }
   }
 
