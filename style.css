@@ -120,9 +120,9 @@ input, select, textarea, button:not(#clear-signature) {
     border: 1px solid hsla(var(--border), 0.4) !important;
 }
 
-/* This rule applies to buttons WITHOUT a bg- class, like Load, New, Settings */
-button:not(#clear-signature):not([class*="bg-"]) {
-    color: hsl(var(--foreground)) !important; 
+/* This rule applies to buttons WITHOUT a bg- class, like Load, New, Settings. This is the FIX */
+button:not(.bg-primary):not(.bg-dark):not(.bg-green-500):not(.bg-gray-200):not(.bg-gray-300):not(.bg-red-500):not(#clear-signature) {
+    color: hsl(var(--foreground)) !important;
     background: linear-gradient(to bottom, hsla(var(--card), 0.6), hsla(var(--card), 0.2)) !important; /* Liquid gradient */
     border: 1px solid hsla(var(--card), 0.7) !important; /* Brighter border */
     box-shadow: 0 2px 5px rgba(0,0,0,0.05), inset 0 1px 1px hsla(var(--card), 0.8); /* Outer and Inner shadow */
