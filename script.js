@@ -17,7 +17,7 @@ const defaultSettings = {
       apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
       authDomain: "survey-bf41d.firebaseapp.com",
       projectId: "survey-bf41d",
-      storageBucket: "survey-bf41d.firebasestorage.app",
+      storageBucket: "survey-bf41d.appspot.com",
       messagingSenderId: "869329094353",
       appId: "1:869329094353:web:2692f2ad3db106a95827f0",
       measurementId: "G-GEFSXECYMQ"
@@ -60,10 +60,17 @@ const defaultSettings = {
 
 function init() {
     state.settings = JSON.parse(localStorage.getItem('surveyAppSettings')) || defaultSettings;
-    const savedSurvey = localStorage.getItem('currentSurvey');
-    state.survey = savedSurvey ? JSON.parse(savedSurvey) : createNewSurvey();
     
     initFirebase();
+    
+    const savedSurvey = localStorage.getItem('currentSurvey');
+    if (savedSurvey) {
+        state.survey = JSON.parse(savedSurvey);
+        // Ensure methods/prototypes are correctly handled if they exist, though this simple object doesn't have them
+    } else {
+        state.survey = createNewSurvey();
+    }
+    
     applyBranding();
     updateUI();
     setupEventListeners();
@@ -75,7 +82,7 @@ function init() {
 }
 
 function initFirebase() {
-    if (state.settings.firebaseConfig && !state.firebase.app) {
+    if (state.settings.firebaseConfig && !firebase.apps.length) {
         try {
             state.firebase.app = firebase.initializeApp(state.settings.firebaseConfig);
             state.firebase.db = firebase.firestore();
@@ -104,7 +111,32 @@ function startNewSurvey() {
         localStorage.removeItem('currentSurvey');
         state.survey = createNewSurvey();
         state.currentStep = 1;
-        init(); // Re-initialize the app state and UI
+        // Full re-initialization
+        applyBranding();
+        updateUI();
+        renderCustomerForm();
+        renderItemPresets();
+        renderItemsTable();
+        updateFooter();
+        renderPhotos();
+    }
+}
+
+function loadSurvey(surveyData) {
+    if (confirm('Loading this survey will overwrite any current unsaved data. Continue?')) {
+        state.survey = surveyData;
+        state.currentStep = 1;
+        saveDraft(); // Save the loaded survey as the current draft
+        // Re-render everything
+        updateUI();
+        renderCustomerForm();
+        renderItemPresets();
+        renderItemsTable();
+        updateFooter();
+        renderPhotos();
+        calculateContainerPlan();
+        calculatePricing();
+        G('load-survey-modal').style.display = 'none';
     }
 }
 
@@ -497,6 +529,11 @@ function setupEventListeners() {
     });
 
     G('save-survey-btn').addEventListener('click', saveSurveyToFirestore);
+
+    // Load Survey
+    G('load-survey-btn').addEventListener('click', showLoadSurveyModal);
+    G('load-survey-cancel').addEventListener('click', () => G('load-survey-modal').style.display = 'none');
+
 }
 
 function renderPhotos() {
@@ -518,7 +555,7 @@ async function saveSurveyToFirestore() {
     const statusDiv = G('save-status');
 
     if (!state.firebase.db) {
-        alert('Firebase is not configured. Please add your Firebase config in Editor Mode.');
+        alert('Firebase is not configured. Please check your settings in the editor.');
         return;
     }
 
@@ -527,26 +564,67 @@ async function saveSurveyToFirestore() {
     statusDiv.textContent = 'Saving survey to Firebase...';
 
     try {
-        const surveyToSave = JSON.parse(JSON.stringify(state.survey)); // Deep copy
+        const surveyToSave = JSON.parse(JSON.stringify(state.survey));
         surveyToSave.meta.savedAt = new Date().toISOString();
         
+        // Use the survey ID as the document ID in Firestore
         await state.firebase.db.collection('surveys').doc(surveyToSave.id).set(surveyToSave);
 
         statusDiv.textContent = `Survey saved successfully to Firebase with ID: ${surveyToSave.id}`;
-        alert(`Survey saved successfully with ID: ${surveyToSave.id}`);
-
-        // Start a new survey after successful save
+        alert(`Survey saved successfully! A new survey has been started.`);
+        
+        // Automatically start a new survey after a successful save
         startNewSurvey();
 
     } catch (error) {
         console.error('Error saving survey to Firebase:', error);
-        statusDiv.textContent = `Error: ${error.message}`;
-        alert(`Failed to save survey. ${error.message}`);
+        statusDiv.textContent = `Error: ${error.message}. Please check Firestore rules.`;
+        alert(`Failed to save survey. Check the console and your Firestore rules. ${error.message}`);
     } finally {
         btn.disabled = false;
         btn.innerHTML = `<i class="lucide-save mr-2"></i>Save Survey`;
     }
 }
+
+
+async function showLoadSurveyModal() {
+    const modal = G('load-survey-modal');
+    const listDiv = G('load-survey-list');
+    listDiv.innerHTML = '<p>Loading surveys...</p>';
+    modal.style.display = 'flex';
+
+    if (!state.firebase.db) {
+        listDiv.innerHTML = '<p class="text-red-500">Firebase is not configured.</p>';
+        return;
+    }
+
+    try {
+        const querySnapshot = await state.firebase.db.collection('surveys').orderBy('meta.createdAt', 'desc').limit(50).get();
+        if (querySnapshot.empty) {
+            listDiv.innerHTML = '<p>No saved surveys found.</p>';
+            return;
+        }
+
+        listDiv.innerHTML = '';
+        querySnapshot.forEach(doc => {
+            const survey = doc.data();
+            const surveyDiv = D.createElement('div');
+            surveyDiv.className = 'p-2 border-b cursor-pointer hover:bg-gray-100';
+            surveyDiv.innerHTML = `
+                <p class="font-bold">${survey.customer.name || 'No Name'}</p>
+                <p class="text-sm text-gray-600">ID: ${survey.id}</p>
+                <p class="text-sm text-gray-500">Date: ${new Date(survey.meta.createdAt).toLocaleString()}</p>
+            `;
+            surveyDiv.onclick = () => loadSurvey(survey);
+            listDiv.appendChild(surveyDiv);
+        });
+
+    } catch (error) {
+        console.error("Error loading surveys:", error);
+        listDiv.innerHTML = `<p class="text-red-500">Could not load surveys. Error: ${error.message}</p>`;
+    }
+}
+
 
 function renderEditor(tabId) {
     D.querySelectorAll('.editor-tab-btn').forEach(btn => btn.classList.remove('bg-gray-200'));
@@ -580,7 +658,7 @@ function renderEditor(tabId) {
                     ${createInput('CBM Rate (Int\'l)', 'rates.cbmRates.International', state.settings.rates.cbmRates.International, 'number')}
                     ${createInput('Materials Cost', 'rates.materials', state.settings.rates.materials, 'number')}
                     ${createInput('Labor Cost', 'rates.labor', state.settings.rates.labor, 'number')}
-                    ${createInput('Surcharges', 'rates.surcharges', state.settings.rates.surcharges, 'number')}
+                    ${createInput('Surcharges', 'rates.surcharges', 'number', state.settings.rates.surcharges)}
                     ${createInput('Insurance %', 'rates.insurancePercent', state.settings.rates.insurancePercent, 'number')}
                     ${createInput('VAT %', 'rates.vatPercent', state.settings.rates.vatPercent, 'number')}
                     ${createInput('Markup %', 'rates.markupPercent', state.settings.rates.markupPercent, 'number')}
@@ -641,9 +719,13 @@ function renderEditor(tabId) {
                 </div>`;
             break;
         case 'editor-firebase':
-            content.innerHTML = `<h3 class="text-xl font-bold mb-4">Firebase &amp; Data</h3>
-                <p class="text-sm mb-4 text-gray-600">Your Firebase configuration is hardcoded in the script. To change it, you must edit the script.js file directly.</p>
+             content.innerHTML = `<h3 class="text-xl font-bold mb-4">Firebase &amp; Data</h3>
+                <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+                  <p class="font-bold">Info</p>
+                  <p>Your Firebase configuration is now hardcoded in the script. You don't need to paste it here anymore.</p>
+                </div>
                  <h4 class="font-bold pt-4">Manage App Settings</h4>
+                 <p class="text-sm text-gray-600 mb-2">You can export all your app settings (rates, presets, etc.) to a JSON file as a backup, or import them on another device.</p>
                 <div class="flex gap-2">
                     <button id="export-settings" class="bg-blue-500 text-white p-2 rounded">Export JSON</button>
                     <button onclick="G('import-settings-input').click()" class="bg-gray-200 p-2 rounded">Import JSON</button>
@@ -652,7 +734,8 @@ function renderEditor(tabId) {
 
             G('export-settings').addEventListener('click', () => {
                 const settingsToExport = {...state.settings};
-                delete settingsToExport.firebaseConfig; // Don't export hardcoded config
+                // Don't export hardcoded config, as it's part of the script now
+                delete settingsToExport.firebaseConfig; 
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settingsToExport, null, 2));
                 const downloadAnchorNode = document.createElement('a');
                 downloadAnchorNode.setAttribute("href", dataStr);
@@ -685,7 +768,7 @@ function renderEditor(tabId) {
             });
             break;
          default:
-            content.innerHTML = `<p>This editor section is under construction.</p>`;
+            content.innerHTML = `<p>Select an editor tab from the left.</p>`;
     }
     
     // Generic event listener for all setting inputs
@@ -694,7 +777,13 @@ function renderEditor(tabId) {
             const keys = e.target.dataset.setting.split('.');
             let settingObj = state.settings;
             keys.slice(0, -1).forEach(key => {
-                settingObj = settingObj[key] = settingObj[key] || {};
+                if (!settingObj[key]) {
+                    // If a nested path doesn't exist, create it.
+                    // This handles cases like `rates.cbmRates.Local` if `cbmRates` is missing.
+                    const isNumericIndex = !isNaN(parseInt(keys[keys.indexOf(key) + 1], 10));
+                    settingObj[key] = isNumericIndex ? [] : {};
+                }
+                settingObj = settingObj[key];
             });
             
             let value;
@@ -710,8 +799,8 @@ function renderEditor(tabId) {
             saveAndApplySettings();
             
             // Re-render relevant parts of the main app UI
-            if(keys.includes('itemPresets')) renderItemPresets();
-            if(keys.includes('customerFields')) renderCustomerForm();
+            if(keys[0] === 'itemPresets') renderItemPresets();
+            if(keys[0] === 'customerFields') renderCustomerForm();
 
         });
     });
@@ -726,5 +815,3 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-
-    

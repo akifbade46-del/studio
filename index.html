@@ -18,6 +18,7 @@
                 <h1 id="header-title" class="text-xl font-bold text-dark">Q'go Cargo</h1>
             </div>
             <div class="flex items-center gap-2">
+                <button id="load-survey-btn" class="p-2 rounded hover:bg-gray-200 text-sm flex items-center gap-1 no-print"><i class="lucide-folder-down"></i> Load</button>
                 <button id="new-survey-btn" class="p-2 rounded hover:bg-gray-200 text-sm flex items-center gap-1 no-print"><i class="lucide-file-plus"></i> New</button>
                 <button id="editor-mode-btn" class="p-2 rounded hover:bg-gray-200 no-print"><i class="lucide-settings"></i></button>
             </div>
@@ -179,6 +180,20 @@
             <div class="mt-4 flex justify-end gap-2">
                 <button id="passcode-cancel" class="bg-gray-200 p-2 rounded-md">Cancel</button>
                 <button id="passcode-submit" class="bg-primary text-white p-2 rounded-md">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Survey Modal -->
+    <div id="load-survey-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-2xl h-[70vh] flex flex-col">
+            <h3 class="text-lg font-medium mb-4">Load Saved Survey</h3>
+            <div id="load-survey-list" class="flex-1 overflow-y-auto border-t border-b py-2">
+                <!-- Survey list will be populated here -->
+                <p>Loading surveys...</p>
+            </div>
+            <div class="mt-4 flex justify-end gap-2">
+                <button id="load-survey-cancel" class="bg-gray-200 p-2 rounded-md">Cancel</button>
             </div>
         </div>
     </div>
