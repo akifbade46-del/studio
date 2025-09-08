@@ -1,3 +1,4 @@
+
 const D = document;
 const G = (id) => D.getElementById(id);
 
@@ -62,6 +63,7 @@ function init() {
     renderItemPresets();
     renderItemsTable();
     updateFooter();
+    renderPhotos();
 }
 
 function initFirebase() {
@@ -245,7 +247,7 @@ function calculateContainerPlan() {
     if(bestOption) {
         state.survey.containerPlan = { recommended: bestOption };
     }
-    if(state.survey.containerPlan.selected) {
+    if(state.survey.containerPlan?.selected) {
          D.querySelector(`[data-container-type="${state.survey.containerPlan.selected}"]`)?.classList.add('border-primary', 'ring-2', 'ring-primary');
     } else if (bestOption) {
         D.querySelector(`[data-container-type="${bestOption}"]`)?.classList.add('border-accent');
@@ -301,7 +303,7 @@ function setupReview() {
             <div class="border p-4 rounded-lg"><h4 class="font-bold mb-2">Customer</h4><p>${customer.name || ''}</p><p>${customer.phone || ''}</p></div>
             <div class="border p-4 rounded-lg"><h4 class="font-bold mb-2">Move Details</h4><p>From: ${customer.pickupAddress || ''}</p><p>To: ${customer.destinationAddress || ''}</p><p>Type: ${customer.moveType || ''}</p></div>
         </div>
-         <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Summary</h4><p>Total CBM: ${totals.cbm.toFixed(3)}</p><p>Container: ${containerPlan.selected || containerPlan.recommended || 'N/A'}</p></div>
+         <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Summary</h4><p>Total CBM: ${totals.cbm.toFixed(3)}</p><p>Container: ${containerPlan?.selected || containerPlan?.recommended || 'N/A'}</p></div>
         <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Pricing</h4><p class="text-primary text-lg">Grand Total: ${pricing?.grandTotal.toFixed(2) || 'N/A'} ${pricing?.currency || ''}</p></div>
         <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Photos</h4><div class="flex gap-2 flex-wrap">${photoHtml}</div></div>
         <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Signature</h4><div>${signatureHtml}</div></div>
@@ -376,6 +378,7 @@ function setupEventListeners() {
         if(card) {
             D.querySelectorAll('[data-container-type]').forEach(c => c.classList.remove('border-primary', 'ring-2', 'ring-primary'));
             card.classList.add('border-primary', 'ring-2', 'ring-primary');
+            if(!state.survey.containerPlan) state.survey.containerPlan = {};
             state.survey.containerPlan.selected = card.dataset.containerType;
             saveDraft();
         }
@@ -413,19 +416,7 @@ function setupEventListeners() {
         });
     });
 
-    function renderPhotos() {
-        const preview = G('photos-preview');
-        preview.innerHTML = '';
-        state.survey.media.photos.forEach(photo => {
-            const div = D.createElement('div');
-            div.className = 'relative group';
-            div.innerHTML = `
-                <img src="${photo.dataUrl}" class="w-full h-24 object-cover rounded-md">
-                <button data-photo-id="${photo.id}" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><i class="lucide-trash-2 w-4 h-4"></i></button>
-            `;
-            preview.appendChild(div);
-        });
-    }
+    
      G('photos-preview').addEventListener('click', e => {
         const btn = e.target.closest('[data-photo-id]');
         if(btn) {
@@ -498,6 +489,20 @@ function setupEventListeners() {
     });
 
     G('save-survey-btn').addEventListener('click', saveSurveyToFirestore);
+}
+
+function renderPhotos() {
+    const preview = G('photos-preview');
+    preview.innerHTML = '';
+    state.survey.media.photos.forEach(photo => {
+        const div = D.createElement('div');
+        div.className = 'relative group';
+        div.innerHTML = `
+            <img src="${photo.dataUrl}" class="w-full h-24 object-cover rounded-md">
+            <button data-photo-id="${photo.id}" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><i class="lucide-trash-2 w-4 h-4"></i></button>
+        `;
+        preview.appendChild(div);
+    });
 }
 
 async function saveSurveyToFirestore() {
@@ -654,10 +659,15 @@ function renderEditor(tabId) {
                 </div>`;
             G('save-firebase-config').addEventListener('click', () => {
                  try {
-                    const configStr = G('firebase-config-input').value;
+                    let configStr = G('firebase-config-input').value;
                     if (!configStr) {
                         state.settings.firebaseConfig = null;
                     } else {
+                        // Extract JSON from the JS snippet if user pastes the whole thing
+                        const jsonMatch = configStr.match(/=\s*({[\s\S]*?});/);
+                        if (jsonMatch && jsonMatch[1]) {
+                           configStr = jsonMatch[1];
+                        }
                         state.settings.firebaseConfig = JSON.parse(configStr);
                     }
                     saveAndApplySettings();
@@ -666,7 +676,8 @@ function renderEditor(tabId) {
                     initFirebase();
                     alert("Firebase configuration saved. The app will now use the new settings.");
                  } catch(e) {
-                     alert("Invalid JSON in Firebase config. Please check the format.");
+                     console.error(e);
+                     alert("Invalid Firebase config. Please paste the config JSON object directly.");
                  }
             });
             G('export-settings').addEventListener('click', () => {
@@ -740,3 +751,5 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+    
