@@ -6,10 +6,14 @@ import { INITIAL_SURVEY_DATA } from '@/lib/consts';
 import type { SurveyData } from '@/lib/types';
 import { v4 as uuidv4 } from 'uuid';
 
+type GoToStepFunction = (step: number) => void;
+
 interface SurveyContextType {
   survey: SurveyData;
   setSurvey: (survey: SurveyData) => void;
-  startNewSurvey: () => void;
+  startNewSurvey: (goToFirstStep?: boolean) => void;
+  goToStep: GoToStepFunction;
+  setGoToStep: React.Dispatch<React.SetStateAction<GoToStepFunction>>;
 }
 
 const SurveyContext = createContext<SurveyContextType | undefined>(undefined);
@@ -26,6 +30,7 @@ const setActiveSurveyId = (id: string) => {
 
 export const SurveyProvider = ({ children }: { children: ReactNode }) => {
     const [activeId, setActiveId] = useState(getActiveSurveyId());
+    const [goToStep, setGoToStep] = useState<GoToStepFunction>(() => () => {});
     
     const [survey, setSurvey] = useLocalStorage<SurveyData>(
         `qgo-cargo-survey-${activeId || 'new'}`, 
@@ -39,7 +44,7 @@ export const SurveyProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [survey.id, activeId]);
 
-  const startNewSurvey = useCallback(() => {
+  const startNewSurvey = useCallback((goToFirstStep = false) => {
     const newId = uuidv4();
     const newSurvey = {
       ...INITIAL_SURVEY_DATA,
@@ -47,10 +52,13 @@ export const SurveyProvider = ({ children }: { children: ReactNode }) => {
       createdAt: new Date().toISOString(),
     };
     setSurvey(newSurvey);
-  }, [setSurvey]);
+    if (goToFirstStep) {
+        goToStep(1);
+    }
+  }, [setSurvey, goToStep]);
   
   return (
-    <SurveyContext.Provider value={{ survey, setSurvey, startNewSurvey }}>
+    <SurveyContext.Provider value={{ survey, setSurvey, startNewSurvey, goToStep, setGoToStep }}>
       {children}
     </SurveyContext.Provider>
   );

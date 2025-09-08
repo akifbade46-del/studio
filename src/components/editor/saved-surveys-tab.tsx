@@ -41,13 +41,13 @@ export default function SavedSurveysTab() {
         localStorage.removeItem(`qgo-cargo-survey-${surveyId}`);
         setSavedSurveys(savedSurveys.filter(s => s.id !== surveyId));
         if (survey.id === surveyId) {
-            startNewSurvey();
+            startNewSurvey(true);
         }
     }
   };
   
   const handleNewSurvey = () => {
-    startNewSurvey();
+    startNewSurvey(true);
     setUnlocked(false);
   }
 

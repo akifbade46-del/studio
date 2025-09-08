@@ -23,7 +23,7 @@ const stepComponents = [
 
 export default function PageClient() {
   const [currentStep, setCurrentStep] = useState(1);
-  const { survey } = useSurvey();
+  const { survey, setGoToStep } = useSurvey();
   const totalSteps = stepComponents.length;
 
   const goToNextStep = () => setCurrentStep(prev => Math.min(prev + 1, totalSteps));
@@ -33,9 +33,14 @@ export default function PageClient() {
       setCurrentStep(step);
     }
   };
+  
+  useEffect(() => {
+    setGoToStep(() => goToStep);
+  }, [setGoToStep]);
+
 
   useEffect(() => {
-    // If the survey is reset, go back to the first step
+    // When the survey is loaded from storage, go to the first step.
     setCurrentStep(1);
   }, [survey.id]);
 
