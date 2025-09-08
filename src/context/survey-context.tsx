@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, ReactNode, useCallback, useEffect, useState } from 'react';
 import useLocalStorage from '@/hooks/use-local-storage';
 import { INITIAL_SURVEY_DATA } from '@/lib/consts';
 import type { SurveyData } from '@/lib/types';
@@ -14,12 +14,30 @@ interface SurveyContextType {
 
 const SurveyContext = createContext<SurveyContextType | undefined>(undefined);
 
+const getActiveSurveyId = (): string | null => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('qgo-cargo-active-survey-id');
+}
+
+const setActiveSurveyId = (id: string) => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('qgo-cargo-active-survey-id', id);
+}
+
 export const SurveyProvider = ({ children }: { children: ReactNode }) => {
-  const [survey, setSurvey] = useLocalStorage<SurveyData>('qgo-cargo-survey', {
-    ...INITIAL_SURVEY_DATA,
-    id: uuidv4(),
-    createdAt: new Date().toISOString(),
-  });
+    const [activeId, setActiveId] = useState(getActiveSurveyId());
+    
+    const [survey, setSurvey] = useLocalStorage<SurveyData>(
+        `qgo-cargo-survey-${activeId || 'new'}`, 
+        { ...INITIAL_SURVEY_DATA, id: activeId || uuidv4(), createdAt: new Date().toISOString() }
+    );
+
+    useEffect(() => {
+        if (activeId !== survey.id) {
+            setActiveSurveyId(survey.id);
+            setActiveId(survey.id);
+        }
+    }, [survey.id, activeId]);
 
   const startNewSurvey = useCallback(() => {
     const newId = uuidv4();

@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
-type EditorTab = 'company' | 'fields' | 'presets' | 'containers' | 'rates' | 'templates' | 'data';
+type EditorTab = 'surveys' | 'company' | 'fields' | 'presets' | 'containers' | 'rates' | 'templates' | 'data';
 
 interface EditorContextType {
   isEditorOpen: boolean;
@@ -18,7 +18,7 @@ const EditorContext = createContext<EditorContextType | undefined>(undefined);
 export const EditorProvider = ({ children }: { children: ReactNode }) => {
   const [isEditorOpen, setEditorOpen] = useState(false);
   const [isUnlocked, setUnlocked] = useState(false);
-  const [activeTab, setActiveTab] = useState<EditorTab>('company');
+  const [activeTab, setActiveTab] = useState<EditorTab>('surveys');
 
   return (
     <EditorContext.Provider value={{ isEditorOpen, setEditorOpen, isUnlocked, setUnlocked, activeTab, setActiveTab }}>

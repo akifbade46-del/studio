@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSurvey } from '@/context/survey-context';
 import MainLayout from '@/components/main-layout';
 import CustomerDetailsStep from '@/components/steps/1-customer-details';
@@ -34,12 +34,23 @@ export default function PageClient() {
     }
   };
 
+  useEffect(() => {
+    // If the survey is reset, go back to the first step
+    setCurrentStep(1);
+  }, [survey.id]);
+
   const isNextDisabled = useMemo(() => {
     if (currentStep === 1) {
-      return !survey.customer.name || !survey.customer.pickupAddress;
+      return !survey.customer.name || !survey.customer.pickupAddress || !survey.customer.destinationAddress;
     }
     if (currentStep === 2) {
       return survey.items.length === 0;
+    }
+    if (currentStep === 3) {
+      return !survey.containerPlan.recommendedContainerId;
+    }
+    if (currentStep === 4) {
+      return !survey.pricing;
     }
     return false;
   }, [currentStep, survey]);

@@ -19,8 +19,7 @@ import { Label } from '../ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { exportJson, importJson } from '@/lib/utils';
 import { DEFAULT_EDITOR_SETTINGS } from '@/lib/consts';
-import type { ContainerSettings, CustomerField, ItemPreset } from '@/lib/types';
-import { v4 as uuidv4 } from 'uuid';
+import SavedSurveysTab from './saved-surveys-tab';
 
 const CompanyInfoTab = () => {
     const { settings, setSettings } = useSettings();
@@ -158,6 +157,7 @@ export default function EditorPanel() {
   const { isUnlocked, setUnlocked } = useEditor();
   const { activeTab, setActiveTab } = useEditor();
   const tabs = [
+    { id: 'surveys', label: 'Saved Surveys' },
     { id: 'company', label: 'Company' },
     { id: 'rates', label: 'Rates' },
     { id: 'data', label: 'Data Mgmt' },
@@ -165,22 +165,23 @@ export default function EditorPanel() {
 
   return (
     <Sheet open={isUnlocked} onOpenChange={setUnlocked}>
-      <SheetContent className="w-full sm:max-w-md flex flex-col">
+      <SheetContent className="w-full sm:max-w-lg flex flex-col">
         <SheetHeader>
           <SheetTitle>Editor Mode</SheetTitle>
           <SheetDescription>
-            Modify application settings here. Changes are saved automatically.
+            Modify application settings and manage surveys here. Changes are saved automatically.
           </SheetDescription>
         </SheetHeader>
         <div className="flex-1 min-h-0">
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               {tabs.map(tab => (
                  <TabsTrigger key={tab.id} value={tab.id}>{tab.label}</TabsTrigger>
               ))}
             </TabsList>
             <ScrollArea className="flex-1">
                 <div className="py-4 px-1">
+                    <TabsContent value="surveys"><SavedSurveysTab /></TabsContent>
                     <TabsContent value="company"><CompanyInfoTab /></TabsContent>
                     <TabsContent value="rates"><RatesTab /></TabsContent>
                     <TabsContent value="data"><DataTab /></TabsContent>
