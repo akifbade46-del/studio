@@ -13,7 +13,7 @@ const state = {
 };
 
 const defaultSettings = {
-    company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNFMzA1MTciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTdWNmE0IDQgMCAwIDAtOCAwaCIv+PHBhdGggZD0iTTEzIDZWMTRIMyIvPjxwYXRoIGQ9Ik0zIDE0SDEiLz48cGF0aCBkPSJNNyAxNEg2Ii8+PHBhdGggZD0iTTIxIDE3SDMiLz48Y2lyY2xlIGN4PSI4IiBjeT0iMTciIHI9IjIiLz48Y2lyY2xlIGN4PSIxOCIgY3k9IjE3IiByPSIyIi8+PC9zdmc+" },
+    company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "https://qgocargo.com/logo.png" },
     branding: { primary: '#E30B17', dark: '#111827', accent: '#0EA5E9' },
     firebaseConfig: {
       apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
@@ -423,13 +423,13 @@ function generateReceiptHtml(survey) {
             </table>
             
             <!-- This container will hold pricing and photos in a grid for screen view -->
-            <div class="grid grid-cols-2 gap-8 mt-6">
+            <div class="grid grid-cols-2 gap-8 mt-6 print:grid-cols-1">
                  <div>
                      <h5 class="font-bold text-gray-700 mb-2">Pricing Summary</h5>
                      <div class="text-sm space-y-1">${pricingHtml}</div>
                 </div>
                 <!-- Photos (for screen view only) -->
-                <div class="photos-section-for-screen">
+                <div class="photos-section-for-screen print:hidden">
                     <h5 class="font-bold text-gray-700 mb-2">Photos</h5>
                     <div class="flex gap-2 flex-wrap">${photoHtml}</div>
                 </div>
@@ -639,17 +639,18 @@ function setupEventListeners() {
     // Step 6 Actions
     G('save-survey-btn').addEventListener('click', saveSurveyToFirestore);
     G('generate-pdf-btn').addEventListener('click', () => {
-        const reviewContent = G('review-summary').innerHTML;
-        const originalContent = D.body.innerHTML;
-        D.body.innerHTML = `<div class="p-8">${reviewContent}</div>`;
-        window.print();
-        D.body.innerHTML = originalContent;
-        // Re-initialize everything after print since we replaced the body
-        init(); 
-        // Go back to the last step after printing
-        state.currentStep = 6;
-        setupReview();
-        updateUI();
+        const previewContent = G('review-summary').innerHTML;
+        const printWindow = window.open('', '', 'height=800,width=1000');
+        printWindow.document.write('<html><head><title>Print Survey</title>');
+        printWindow.document.write('<link rel="stylesheet" href="https://cdn.tailwindcss.com/2.2.19/tailwind.min.css">');
+        printWindow.document.write('<link rel="stylesheet" href="style.css">');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write('<div class="p-8">');
+        printWindow.document.write(previewContent);
+        printWindow.document.write('</div>');
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
     });
     G('share-whatsapp-btn').addEventListener('click', shareToWhatsApp);
 
@@ -662,19 +663,17 @@ function setupEventListeners() {
     G('preview-close-btn').addEventListener('click', () => G('preview-modal').style.display = 'none');
     G('preview-print-btn').addEventListener('click', () => {
         const previewContent = G('preview-content').innerHTML;
-        const originalContent = D.body.innerHTML;
-        D.body.innerHTML = `<div class="p-8">${previewContent}</div>`;
-        window.print();
-        D.body.innerHTML = originalContent;
-        // Re-initialize everything after print since we replaced the body
-        init(); 
-        G('preview-modal').style.display = 'flex'; // Keep the modal open
-        const surveyId = G('preview-modal').dataset.surveyId;
-        const surveyToPreview = state.surveysCache.find(s => s.id === surveyId);
-        if (surveyToPreview) {
-            showPreviewModal(surveyToPreview); // Re-render preview content
-        }
-        
+        const printWindow = window.open('', '', 'height=800,width=1000');
+        printWindow.document.write('<html><head><title>Print Survey</title>');
+        printWindow.document.write('<link rel="stylesheet" href="https://cdn.tailwindcss.com/2.2.19/tailwind.min.css">');
+        printWindow.document.write('<link rel="stylesheet" href="style.css">');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write('<div class="p-8">');
+        printWindow.document.write(previewContent);
+        printWindow.document.write('</div>');
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
     });
 
     // Image Zoom Modal
