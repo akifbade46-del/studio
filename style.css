@@ -28,7 +28,7 @@ body {
 }
 
 /* --- Glassmorphism Effect --- */
-.glass-effect, #app, #app-header, #sticky-footer, #editor-modal .bg-white, #passcode-modal .bg-white, #load-survey-modal .bg-white, #preview-modal .bg-white {
+.glass-effect, #app, #app-header, #sticky-footer, #editor-modal > div, #passcode-modal > div, #load-survey-modal > div, #preview-modal > div {
     background-color: hsla(var(--card), 0.5) !important;
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -37,8 +37,9 @@ body {
     color: hsl(var(--foreground));
 }
 
-#preview-modal .bg-white {
-    border-radius: 0 !important;
+#preview-content {
+    background-color: #ffffff !important;
+    color: #111827 !important;
 }
 
 
@@ -71,9 +72,10 @@ main {
 }
 
 /* All Modals */
-#editor-modal .bg-white,
-#passcode-modal .bg-white,
-#load-survey-modal .bg-white {
+#editor-modal > div,
+#passcode-modal > div,
+#load-survey-modal > div,
+#preview-modal > div {
     background-color: hsla(var(--card), 0.75) !important;
 }
 
@@ -121,7 +123,7 @@ input, select, textarea, button:not(#clear-signature) {
 }
 
 /* This rule applies to buttons WITHOUT a bg- class, like Load, New, Settings. This is the FIX */
-button:not([class*="bg-"]):not(#clear-signature) {
+button:not([class*="bg-"]):not(#clear-signature):not(.traffic-light-btn) {
     color: hsl(var(--foreground)) !important;
     background: linear-gradient(to bottom, hsla(var(--card), 0.6), hsla(var(--card), 0.2)) !important; /* Liquid gradient */
     border: 1px solid hsla(var(--card), 0.7) !important; /* Brighter border */
@@ -204,45 +206,25 @@ form label {
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* Editor Modal Traffic Lights */
+/* Modal Traffic Lights */
 .traffic-light-btn {
     width: 12px;
     height: 12px;
     border-radius: 50%;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0 !important;
+    background-color: transparent;
 }
 .traffic-light-btn.close { background-color: #ff5f57; }
 .traffic-light-btn.minimize { background-color: #ffbd2e; }
 .traffic-light-btn.maximize { background-color: #28c940; }
-#close-editor-btn {
+
+#close-editor-btn, #close-passcode-btn, #close-load-survey-btn, #preview-close-btn {
     cursor: pointer;
     padding: 0 !important;
     border: none !important;
     background: transparent !important;
-}
-
-
-/* Preview Modal Close Button */
-.preview-close-btn-style {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background-color: hsl(var(--primary)) !important;
-    opacity: 0.8;
-    color: hsl(var(--primary-foreground));
-    width: 48px;
-    height: 48px;
-    border-radius: 9999px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    padding: 0 !important;
-    border: none !important;
-}
-.preview-close-btn-style:hover {
-    opacity: 1;
-    filter: brightness(1.1);
+    box-shadow: none !important;
 }
 
 

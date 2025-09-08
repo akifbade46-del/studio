@@ -229,6 +229,7 @@ function applyBranding() {
 
 // Helper to determine if text on a given HSL background should be light or dark
 function getContrastingColor(hsl) {
+    if (!hsl) return 0;
     const [h, s, l] = hsl.split(' ').map(parseFloat);
     // This is a simplified luminance calculation
     const C = (1 - Math.abs(2 * (l/100) - 1)) * (s/100);
@@ -465,7 +466,7 @@ function generateReceiptHtml(survey, type = 'customer') {
             ${pricingRows.map(row => `
                 <div class="flex justify-between py-1 ${row.isTopBorder ? 'border-t mt-1 pt-1' : ''} ${row.isBold ? 'font-bold' : ''} ${row.isLarge ? 'text-lg' : ''}">
                     <span>${row.label}:</span>
-                    <span class="${row.isLarge ? 'text-primary' : ''}">${row.value.toFixed(2)} ${row.isLarge ? pricing.currency : ''}</span>
+                    <span class="${row.isLarge ? 'text-blue-600' : ''}">${row.value.toFixed(2)} ${row.isLarge ? pricing.currency : ''}</span>
                 </div>
             `).join('')}
         </div>
@@ -489,7 +490,7 @@ function generateReceiptHtml(survey, type = 'customer') {
     }
 
     return `
-        <div class="bg-white text-gray-800 text-sm">
+        <div class="text-gray-800 text-sm">
             <!-- Header -->
             <div class="flex justify-between items-start pb-4 border-b">
                 <img src="${company.logo}" alt="Company Logo" class="h-12">
@@ -766,7 +767,7 @@ function setupEventListeners() {
 
     // Editor Mode
     G('editor-mode-btn').addEventListener('click', () => G('passcode-modal').style.display = 'flex');
-    G('passcode-cancel').addEventListener('click', () => G('passcode-modal').style.display = 'none');
+    G('close-passcode-btn').addEventListener('click', () => G('passcode-modal').style.display = 'none');
     G('passcode-submit').addEventListener('click', () => {
         if (G('passcode-input').value === '1234') {
             G('passcode-modal').style.display = 'none';
@@ -799,7 +800,7 @@ function setupEventListeners() {
 
     // Load Survey
     G('load-survey-btn').addEventListener('click', showLoadSurveyModal);
-    G('load-survey-cancel').addEventListener('click', () => G('load-survey-modal').style.display = 'none');
+    G('close-load-survey-btn').addEventListener('click', () => G('load-survey-modal').style.display = 'none');
 
     // Preview Modal
     G('preview-close-btn').addEventListener('click', () => G('preview-modal').style.display = 'none');
