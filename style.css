@@ -1,5 +1,5 @@
 :root {
-  /* Default Light Theme - These will be overridden by JS */
+  /* Default Light Theme - To prevent Flash of Unstyled Content */
   --background: 0 0% 100%;
   --foreground: 222.2 47.4% 11.2%;
   --card: 0 0% 100%;
@@ -12,7 +12,7 @@
   --font-size-base: 16px;
 }
 
-/* --- Base Styles & New Gradient Background --- */
+/* --- Base Styles --- */
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -23,17 +23,17 @@ body {
 }
 
 #app {
-    box-shadow: none; /* Remove main shadow */
-    min-height: 100vh;
+    background-color: hsl(var(--card));
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.1);
 }
 
-/* --- Glassmorphism Effect --- */
-.glass-effect, #app, #app-header, #sticky-footer, #editor-modal > div, #passcode-modal > div, #load-survey-modal > div, #preview-modal > div {
-    background-color: hsla(var(--card), 0.5) !important;
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border: 1px solid hsla(var(--border), 0.3) !important;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+/* --- Removing Glass Effect, Applying Clean/Solid BG --- */
+.glass-effect, #app-header, #sticky-footer, #editor-modal > div, #passcode-modal > div, #load-survey-modal > div, #preview-modal > div {
+    background-color: hsla(var(--card), 0.95) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid hsla(var(--border), 0.5) !important;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.05);
     color: hsl(var(--foreground));
 }
 
@@ -42,54 +42,41 @@ body {
     color: #111827 !important;
 }
 
-
-/* --- Applying the Effect to Elements --- */
-
-/* Header */
+/* --- Header & Footer (No longer floating) --- */
 #app-header {
     position: sticky;
-    top: 1rem;
+    top: 0;
     z-index: 50;
-    margin: 0 1rem; /* Add margin */
-    width: calc(100% - 2rem);
-    border-radius: var(--radius);
-    border-bottom: none !important;
+    margin: 0;
+    width: 100%;
+    border-radius: 0;
+    border-bottom: 1px solid hsl(var(--border)) !important;
 }
 
-/* Make the main content start below the header */
 main {
     padding-top: 1rem !important;
 }
 
-/* Sticky Footer */
 #sticky-footer {
     position: sticky;
-    bottom: 1rem;
+    bottom: 0;
     z-index: 50;
-    margin: 1rem; /* Added top margin for spacing */
-    width: calc(100% - 2rem);
-    border-radius: var(--radius);
-}
-
-/* All Modals */
-#editor-modal > div,
-#passcode-modal > div,
-#load-survey-modal > div,
-#preview-modal > div {
-    background-color: hsla(var(--card), 0.75) !important;
+    margin: 0;
+    width: 100%;
+    border-radius: 0;
+    border-top: 1px solid hsl(var(--border)) !important;
 }
 
 /* Card-like elements */
 .border.p-4, .border.rounded-lg {
     transition: all 0.3s ease;
-    background-color: hsla(var(--card), 0.4);
-    border: 1px solid hsla(var(--border), 0.2);
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
     color: hsl(var(--foreground));
 }
 
 .border.p-4:hover, .border.rounded-lg:hover {
-     border-color: hsla(var(--border), 0.8);
-     transform: translateY(-2px);
+     border-color: hsl(var(--primary));
      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
@@ -99,7 +86,7 @@ main {
 .text-primary-foreground { color: hsl(var(--primary-foreground)) !important; }
 .border-primary { border-color: hsl(var(--primary)) !important; }
 .ring-primary { --tw-ring-color: hsl(var(--primary)) !important; }
-.bg-dark { background-color: #111827 !important; } /* Kept for specific buttons */
+.bg-dark { background-color: #111827 !important; }
 .text-dark { color: #111827 !important; }
 .bg-accent { background-color: hsl(var(--accent)) !important; }
 .text-accent-foreground { color: hsl(var(--accent-foreground)) !important; }
@@ -108,59 +95,63 @@ main {
 .text-card-foreground { color: hsl(var(--foreground)) !important; }
 
 /* Muted/Gray colors */
-.bg-gray-50 { background-color: hsla(var(--accent), 0.5) !important; }
+.bg-gray-50 { background-color: hsl(var(--accent)) !important; }
 .bg-gray-100 { background: hsl(var(--background)); }
-.bg-gray-200 { background-color: hsl(var(--accent)) !important; }
-.bg-gray-300 { background-color: hsl(var(--accent)) !important; filter: brightness(0.95); }
+.bg-gray-200 { background-color: hsl(var(--accent)) !important; filter: brightness(0.97); }
+.bg-gray-300 { background-color: hsl(var(--border)) !important; filter: brightness(0.95); }
 .text-gray-500 { color: hsl(var(--foreground)); opacity: 0.6; }
-.text-gray-600 { color: hsl(var(--foreground)); opacity: 0.7; }
+.text-gray-600 { color: hsl(var(--foreground)); opacity: 0.8; }
 
-input, select, textarea, button:not(#clear-signature) {
+input, select, textarea {
     border-radius: var(--radius) !important;
     padding: 0.75rem !important;
     transition: all 0.2s ease-in-out !important;
-    border: 1px solid hsla(var(--border), 0.4) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--card)) !important;
 }
 
-/* This rule applies to buttons WITHOUT a bg- class, like Load, New, Settings. This is the FIX */
-button:not([class*="bg-"]):not(#clear-signature):not(.traffic-light-btn) {
+button {
+     border-radius: var(--radius) !important;
+    padding: 0.75rem !important;
+    transition: all 0.2s ease-in-out !important;
+    border: 1px solid transparent !important;
+    cursor: pointer;
+}
+
+button:hover {
+    filter: brightness(1.1);
+}
+button:active {
+    transform: scale(0.98);
+}
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: none;
+}
+
+/* Universal Button Fix */
+button.bg-primary, button.bg-dark, button.bg-green-500 {
+    /* These buttons with specific bg colors are already fine */
+}
+button:not([class*="bg-"]):not(#clear-signature):not(.traffic-light-btn):not([data-photo-id]):not([data-delete-id]):not([data-delete-preset]):not([data-delete-container]) {
     color: hsl(var(--foreground)) !important;
-    background: linear-gradient(to bottom, hsla(var(--card), 0.6), hsla(var(--card), 0.2)) !important; /* Liquid gradient */
-    border: 1px solid hsla(var(--card), 0.7) !important; /* Brighter border */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05), inset 0 1px 1px hsla(var(--card), 0.8); /* Outer and Inner shadow */
+    background-color: hsl(var(--card)) !important;
+    border: 1px solid hsl(var(--border)) !important;
 }
-
-input, select, textarea {
-     color: hsl(var(--foreground));
-     background-color: hsla(var(--accent), 0.3) !important;
+button:not([class*="bg-"]):hover {
+     background-color: hsl(var(--accent)) !important;
+     border-color: hsl(var(--border)) !important;
 }
 
 
 input:focus, select:focus, textarea:focus {
     box-shadow: 0 0 0 2px hsl(var(--primary)) !important;
     outline: none !important;
-    background-color: hsla(var(--accent), 0.7) !important;
+    border-color: hsl(var(--primary)) !important;
 }
 
-
-button {
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-}
-
-button:hover {
-    filter: brightness(1.1);
-}
-
-button:active {
-    transform: scale(0.98);
-}
-
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    filter: none;
-}
 
 /* --- Page Transitions & Animations --- */
 .step { display: none; }
@@ -170,7 +161,7 @@ button:disabled {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -187,7 +178,7 @@ form label {
     color: hsl(var(--foreground));
 }
 #items-table td, #items-table th {
-    border-bottom: 1px solid hsla(var(--border), 0.5); /* border-gray-200 */
+    border-bottom: 1px solid hsl(var(--border)); /* border-gray-200 */
 }
 #items-table tbody tr:last-child td {
     border-bottom: none;
@@ -196,14 +187,19 @@ form label {
     background-color: transparent !important;
 }
 #items-table thead {
-    background-color: hsla(var(--accent), 0.5) !important;
+    background-color: hsl(var(--accent)) !important;
 }
 
 /* Editor */
+#editor-tabs {
+     background-color: hsl(var(--accent)) !important;
+     filter: brightness(0.97);
+     padding: 0.5rem;
+}
 .editor-tab-btn.bg-gray-200 {
-    background-color: hsla(var(--accent), 1) !important;
+    background-color: hsl(var(--card)) !important;
     font-weight: 600;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 /* Modal Traffic Lights */
@@ -244,5 +240,3 @@ form label {
       border-radius: 0 !important;
   }
 }
-
-    

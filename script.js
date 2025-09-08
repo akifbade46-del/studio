@@ -86,6 +86,9 @@ function init() {
     
     // Always use the hardcoded logo, ignore saved one
     state.settings.company.logo = "https://qgocargo.com/logo.png";
+    
+    // Apply branding early to avoid FOUC
+    applyBranding();
 
     initFirebase();
     
@@ -96,7 +99,6 @@ function init() {
         state.survey = createNewSurvey();
     }
     
-    applyBranding();
     updateUI();
     setupEventListeners();
     renderCustomerForm();
@@ -1310,5 +1312,3 @@ function hslToHex(h, s, l) {
 
 
 document.addEventListener('DOMContentLoaded', init);
-
-    
