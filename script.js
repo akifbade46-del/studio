@@ -13,6 +13,7 @@ const state = {
 const defaultSettings = {
     company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNFMzA1MTciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTdWNmE0IDQgMCAwIDAtOCAwIi8+PHBhdGggZD0iTTEzIDZWMTRIMyIvPjxwYXRoIGQ9Ik0zIDE0SDEiLz48cGF0aCBkPSJNNyAxNEg2Ii8+PHBhdGggZD0iTTIxIDE3SDMiLz48Y2lyY2xlIGN4PSI4IiBjeT0iMTciIHI9IjIiLz48Y2lyY2xlIGN4PSIxOCIgY3k9IjE3IiByPSIyIi8+PC9zdmc+" },
     branding: { primary: '#E30B17', dark: '#111827', accent: '#0EA5E9' },
+    // Hardcoded Firebase config
     firebaseConfig: {
       apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
       authDomain: "survey-bf41d.firebaseapp.com",
@@ -66,7 +67,6 @@ function init() {
     const savedSurvey = localStorage.getItem('currentSurvey');
     if (savedSurvey) {
         state.survey = JSON.parse(savedSurvey);
-        // Ensure methods/prototypes are correctly handled if they exist, though this simple object doesn't have them
     } else {
         state.survey = createNewSurvey();
     }
@@ -111,7 +111,7 @@ function startNewSurvey() {
         localStorage.removeItem('currentSurvey');
         state.survey = createNewSurvey();
         state.currentStep = 1;
-        // Full re-initialization
+        
         applyBranding();
         updateUI();
         renderCustomerForm();
@@ -126,8 +126,8 @@ function loadSurvey(surveyData) {
     if (confirm('Loading this survey will overwrite any current unsaved data. Continue?')) {
         state.survey = surveyData;
         state.currentStep = 1;
-        saveDraft(); // Save the loaded survey as the current draft
-        // Re-render everything
+        saveDraft(); 
+        
         updateUI();
         renderCustomerForm();
         renderItemPresets();
@@ -361,10 +361,10 @@ function setupEventListeners() {
     // Navigation
     G('next-btn').addEventListener('click', () => {
         if (state.currentStep < state.totalSteps) {
-            if(state.currentStep === 2) calculateContainerPlan();
-            if(state.currentStep === 3) calculatePricing();
-            if(state.currentStep === 5) setupReview();
-            state.currentStep++;
+            state.currentStep++; // Always increment first
+            if (state.currentStep === 3) calculateContainerPlan();
+            if (state.currentStep === 4) calculatePricing();
+            if (state.currentStep === 6) setupReview();
             updateUI();
         }
     });
@@ -599,7 +599,11 @@ async function showLoadSurveyModal() {
     }
 
     try {
-        const querySnapshot = await state.firebase.db.collection('surveys').orderBy('meta.createdAt', 'desc').limit(50).get();
+        // NOTE: orderBy requires a composite index in Firestore. 
+        // Removing it to avoid runtime errors for the user. Data will not be sorted by date.
+        // const querySnapshot = await state.firebase.db.collection('surveys').orderBy('meta.createdAt', 'desc').limit(50).get();
+        const querySnapshot = await state.firebase.db.collection('surveys').limit(50).get();
+        
         if (querySnapshot.empty) {
             listDiv.innerHTML = '<p>No saved surveys found.</p>';
             return;
@@ -611,7 +615,7 @@ async function showLoadSurveyModal() {
             const surveyDiv = D.createElement('div');
             surveyDiv.className = 'p-2 border-b cursor-pointer hover:bg-gray-100';
             surveyDiv.innerHTML = `
-                <p class="font-bold">${survey.customer.name || 'No Name'}</p>
+                <p class="font-bold">${survey.customer?.name || 'No Name'}</p>
                 <p class="text-sm text-gray-600">ID: ${survey.id}</p>
                 <p class="text-sm text-gray-500">Date: ${new Date(survey.meta.createdAt).toLocaleString()}</p>
             `;
@@ -700,14 +704,26 @@ function renderEditor(tabId) {
              });
              break;
          case 'editor-containers':
-            content.innerHTML = `<h3 class="text-xl font-bold mb-4">Containers</h3><div id="containers-editor-list" class="space-y-2"></div>`;
+            content.innerHTML = `<h3 class="text-xl font-bold mb-4">Containers</h3><div id="containers-editor-list" class="space-y-2"></div><button id="add-container-btn" class="mt-4 bg-gray-200 p-2 rounded">Add Container</button>`;
             const contsList = G('containers-editor-list');
             state.settings.containers.forEach((c, i) => {
-                contsList.innerHTML += `<div class="grid grid-cols-3 gap-2 items-center border p-2 rounded">
+                contsList.innerHTML += `<div class="grid grid-cols-4 gap-2 items-center border p-2 rounded">
                     <input class="border-gray-300 rounded" data-setting="containers.${i}.type" value="${c.type}">
                     <input type="number" class="border-gray-300 rounded" data-setting="containers.${i}.capacity" value="${c.capacity}" placeholder="Capacity (CBM)">
                     <input type="number" class="border-gray-300 rounded" data-setting="containers.${i}.efficiency" value="${c.efficiency}" placeholder="Efficiency">
+                     <button class="text-red-500 hover:text-red-700" data-delete-container="${i}"><i class="lucide-trash-2"></i></button>
                 </div>`;
+            });
+             G('add-container-btn').onclick = () => {
+                state.settings.containers.push({ type: 'New Container', capacity: 10, efficiency: 0.85 });
+                renderEditor(tabId);
+            };
+            contsList.addEventListener('click', e => {
+               if (e.target.closest('[data-delete-container]')) {
+                   const index = e.target.closest('[data-delete-container]').dataset.deleteContainer;
+                   state.settings.containers.splice(index, 1);
+                   renderEditor(tabId);
+               }
             });
             break;
         case 'editor-templates':
@@ -723,6 +739,7 @@ function renderEditor(tabId) {
                 <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
                   <p class="font-bold">Info</p>
                   <p>Your Firebase configuration is now hardcoded in the script. You don't need to paste it here anymore.</p>
+                   <p class="mt-2">To get data loading to work, you may need to create a composite index in your Firebase Firestore settings. If loading fails, go to Firestore -> Indexes -> Composite and create an index for the 'surveys' collection on the 'meta.createdAt' field in 'descending' order.</p>
                 </div>
                  <h4 class="font-bold pt-4">Manage App Settings</h4>
                  <p class="text-sm text-gray-600 mb-2">You can export all your app settings (rates, presets, etc.) to a JSON file as a backup, or import them on another device.</p>
@@ -734,7 +751,6 @@ function renderEditor(tabId) {
 
             G('export-settings').addEventListener('click', () => {
                 const settingsToExport = {...state.settings};
-                // Don't export hardcoded config, as it's part of the script now
                 delete settingsToExport.firebaseConfig; 
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settingsToExport, null, 2));
                 const downloadAnchorNode = document.createElement('a');
@@ -751,13 +767,11 @@ function renderEditor(tabId) {
                     reader.onload = (ev) => {
                         try {
                             const importedSettings = JSON.parse(ev.target.result);
-                            // Keep the hardcoded firebaseConfig
                             importedSettings.firebaseConfig = state.settings.firebaseConfig;
                             state.settings = importedSettings;
                             saveAndApplySettings();
-                            // Re-render all parts of the app that depend on settings
                             init();
-                            renderEditor(tabId); // re-render editor view
+                            renderEditor(tabId);
                             alert('Settings imported successfully!');
                         } catch (err) {
                             alert('Invalid JSON file.');
@@ -778,8 +792,6 @@ function renderEditor(tabId) {
             let settingObj = state.settings;
             keys.slice(0, -1).forEach(key => {
                 if (!settingObj[key]) {
-                    // If a nested path doesn't exist, create it.
-                    // This handles cases like `rates.cbmRates.Local` if `cbmRates` is missing.
                     const isNumericIndex = !isNaN(parseInt(keys[keys.indexOf(key) + 1], 10));
                     settingObj[key] = isNumericIndex ? [] : {};
                 }
@@ -798,7 +810,6 @@ function renderEditor(tabId) {
             
             saveAndApplySettings();
             
-            // Re-render relevant parts of the main app UI
             if(keys[0] === 'itemPresets') renderItemPresets();
             if(keys[0] === 'customerFields') renderCustomerForm();
 
@@ -809,7 +820,6 @@ function renderEditor(tabId) {
 function saveAndApplySettings() {
     localStorage.setItem('surveyAppSettings', JSON.stringify(state.settings));
     applyBranding();
-    // Re-render things that depend on settings
     renderCustomerForm();
     renderItemPresets();
 }
