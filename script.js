@@ -113,18 +113,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- AUTHENTICATION ---
     function initAuth() {
-        if (!auth) return;
+        // BYPASS LOGIN SCREEN FOR DEVELOPMENT
+        elements.loginScreen.classList.add('hidden');
+        elements.appContainer.classList.remove('hidden');
+        initializeApp();
+
+        // Original Auth Logic (Kept for later)
+        if (!auth) { 
+            console.log("Firebase auth not ready, bypassing login.");
+            return;
+        }
 
         auth.onAuthStateChanged(user => {
             if (user) {
                 // User is signed in.
-                elements.loginScreen.classList.add('hidden');
-                elements.appContainer.classList.remove('hidden');
-                initializeApp();
+                // elements.loginScreen.classList.add('hidden');
+                // elements.appContainer.classList.remove('hidden');
+                // initializeApp();
             } else {
                 // User is signed out.
-                elements.loginScreen.classList.remove('hidden');
-                elements.appContainer.classList.add('hidden');
+                // elements.loginScreen.classList.remove('hidden');
+                // elements.appContainer.classList.add('hidden');
             }
         });
         

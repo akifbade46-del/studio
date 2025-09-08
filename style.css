@@ -273,5 +273,5 @@ body {
 }
 
 #login-screen {
-    display: flex; /* Make it visible by default */
+    display: none; /* Hide login screen by default */
 }
