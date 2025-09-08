@@ -2,20 +2,77 @@
     --primary: #E30B17;
     --dark: #111827;
     --accent: #0EA5E9;
+    --radius: 0.5rem;
 }
 .bg-primary { background-color: var(--primary); }
 .text-primary { color: var(--primary); }
 .border-primary { border-color: var(--primary); }
+.ring-primary { --tw-ring-color: var(--primary); }
 .bg-dark { background-color: var(--dark); }
 .text-dark { color: var(--dark); }
 .bg-accent { background-color: var(--accent); }
 .text-accent { color: var(--accent); }
+.border-accent { border-color: var(--accent); }
+
+/* General Styles */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+input, select, textarea, button {
+    border-radius: var(--radius);
+    padding: 0.75rem;
+    transition: all 0.2s ease-in-out;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .step { display: none; }
-.step.active { display: block; }
- @media print {
+.step.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+#app-header {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Form Styles */
+form label {
+    color: #374151; /* text-gray-700 */
+}
+
+/* Tables */
+#items-table th {
+    font-weight: 600;
+}
+#items-table td, #items-table th {
+    border-bottom: 1px solid #e5e7eb; /* border-gray-200 */
+}
+#items-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Editor */
+.editor-tab-btn.bg-gray-200 {
+    background-color: #e5e7eb; /* bg-gray-200 */
+    font-weight: 600;
+}
+
+/* Print Styles */
+@media print {
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .no-print { display: none !important; }
   #pdf-output { display: block !important; position: absolute; top: 0; left: 0; width: 100%; }
 }
-
-    

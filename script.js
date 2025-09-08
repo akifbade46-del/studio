@@ -51,7 +51,8 @@ const defaultSettings = {
 
 function init() {
     state.settings = JSON.parse(localStorage.getItem('surveyAppSettings')) || defaultSettings;
-    state.survey = JSON.parse(localStorage.getItem('currentSurvey')) || createNewSurvey();
+    const savedSurvey = localStorage.getItem('currentSurvey');
+    state.survey = savedSurvey ? JSON.parse(savedSurvey) : createNewSurvey();
     
     initFirebase();
     applyBranding();
@@ -87,6 +88,16 @@ function createNewSurvey() {
         media: { photos: [], signature: null }
     };
 }
+
+function startNewSurvey() {
+    if (confirm('Are you sure you want to start a new survey? Any unsaved data will be lost.')) {
+        localStorage.removeItem('currentSurvey');
+        state.survey = createNewSurvey();
+        state.currentStep = 1;
+        init(); // Re-initialize the app state and UI
+    }
+}
+
 
 function updateUI() {
     D.querySelectorAll('.step').forEach((step, i) => {
@@ -186,7 +197,7 @@ function renderItemsTable() {
             <td class="py-2 px-4"><input type="number" value="${item.qty}" min="1" class="w-16 border-gray-300 rounded" data-item-id="${item.id}"></td>
             <td class="py-2 px-4">${item.cbmPerUnit.toFixed(3)}</td>
             <td class="py-2 px-4">${(item.cbmPerUnit * item.qty).toFixed(3)}</td>
-            <td class="py-2 px-4"><button data-delete-id="${item.id}" class="text-red-500"><i class="lucide-trash-2"></i></button></td>
+            <td class="py-2 px-4"><button data-delete-id="${item.id}" class="text-red-500 hover:text-red-700"><i class="lucide-trash-2"></i></button></td>
         `;
         totalCBM += item.cbmPerUnit * item.qty;
     });
@@ -217,7 +228,7 @@ function calculateContainerPlan() {
         }
 
         const card = D.createElement('div');
-        card.className = 'border rounded-lg p-4 cursor-pointer';
+        card.className = 'border rounded-lg p-4 cursor-pointer hover:border-primary';
         card.dataset.containerType = cont.type;
         card.innerHTML = `
             <h3 class="font-bold flex items-center gap-2"><i class="lucide-truck"></i> ${cont.type}</h3>
@@ -258,17 +269,15 @@ function calculatePricing() {
     state.survey.pricing = { cbmCost, subtotal, insurance, markup, vat, grandTotal, currency: rates.currency };
 
     breakdownDiv.innerHTML = `
-        <div class="flex justify-between"><span>CBM Cost (${moveType}):</span> <span>${cbmCost.toFixed(2)}</span></div>
-        <div class="flex justify-between"><span>Materials:</span> <span>${rates.materials.toFixed(2)}</span></div>
-        <div class="flex justify-between"><span>Labor:</span> <span>${rates.labor.toFixed(2)}</span></div>
-        <div class="flex justify-between"><span>Surcharges:</span> <span>${rates.surcharges.toFixed(2)}</span></div>
-        <hr class="my-2">
-        <div class="flex justify-between font-bold"><span>Subtotal:</span> <span>${subtotal.toFixed(2)}</span></div>
-        <div class="flex justify-between"><span>Insurance (${rates.insurancePercent}%):</span> <span>${insurance.toFixed(2)}</span></div>
-         <div class="flex justify-between"><span>Markup (${rates.markupPercent}%):</span> <span>${markup.toFixed(2)}</span></div>
-        <div class="flex justify-between"><span>VAT (${rates.vatPercent}%):</span> <span>${vat.toFixed(2)}</span></div>
-        <hr class="my-2">
-        <div class="flex justify-between font-bold text-xl text-primary"><span>Grand Total:</span> <span>${grandTotal.toFixed(2)} ${rates.currency}</span></div>
+        <div class="flex justify-between py-2 border-b"><span>CBM Cost (${moveType}):</span> <span>${cbmCost.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b"><span>Materials:</span> <span>${rates.materials.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b"><span>Labor:</span> <span>${rates.labor.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b"><span>Surcharges:</span> <span>${rates.surcharges.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b font-bold"><span>Subtotal:</span> <span>${subtotal.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b"><span>Insurance (${rates.insurancePercent}%):</span> <span>${insurance.toFixed(2)}</span></div>
+         <div class="flex justify-between py-2 border-b"><span>Markup (${rates.markupPercent}%):</span> <span>${markup.toFixed(2)}</span></div>
+        <div class="flex justify-between py-2 border-b"><span>VAT (${rates.vatPercent}%):</span> <span>${vat.toFixed(2)}</span></div>
+        <div class="flex justify-between pt-4 font-bold text-xl text-primary"><span>Grand Total:</span> <span>${grandTotal.toFixed(2)} ${rates.currency}</span></div>
     `;
     updateFooter();
 }
@@ -288,14 +297,14 @@ function setupReview() {
     }
 
     reviewDiv.innerHTML = `
-        <div class="grid grid-cols-2 gap-4">
-            <div><h4 class="font-bold">Customer</h4><p>${customer.name || ''}</p><p>${customer.phone || ''}</p></div>
-            <div><h4 class="font-bold">Move Details</h4><p>From: ${customer.pickupAddress || ''}</p><p>To: ${customer.destinationAddress || ''}</p><p>Type: ${customer.moveType || ''}</p></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="border p-4 rounded-lg"><h4 class="font-bold mb-2">Customer</h4><p>${customer.name || ''}</p><p>${customer.phone || ''}</p></div>
+            <div class="border p-4 rounded-lg"><h4 class="font-bold mb-2">Move Details</h4><p>From: ${customer.pickupAddress || ''}</p><p>To: ${customer.destinationAddress || ''}</p><p>Type: ${customer.moveType || ''}</p></div>
         </div>
-        <div><h4 class="font-bold">Summary</h4><p>Total CBM: ${totals.cbm.toFixed(3)}</p><p>Container: ${containerPlan.selected || containerPlan.recommended || 'N/A'}</p></div>
-        <div><h4 class="font-bold">Pricing</h4><p class="text-primary text-lg">Grand Total: ${pricing?.grandTotal.toFixed(2) || 'N/A'} ${pricing?.currency || ''}</p></div>
-        <div><h4 class="font-bold">Photos</h4><div class="flex gap-2 flex-wrap">${photoHtml}</div></div>
-        <div><h4 class="font-bold">Signature</h4><div>${signatureHtml}</div></div>
+         <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Summary</h4><p>Total CBM: ${totals.cbm.toFixed(3)}</p><p>Container: ${containerPlan.selected || containerPlan.recommended || 'N/A'}</p></div>
+        <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Pricing</h4><p class="text-primary text-lg">Grand Total: ${pricing?.grandTotal.toFixed(2) || 'N/A'} ${pricing?.currency || ''}</p></div>
+        <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Photos</h4><div class="flex gap-2 flex-wrap">${photoHtml}</div></div>
+        <div class="border p-4 rounded-lg mt-4"><h4 class="font-bold mb-2">Signature</h4><div>${signatureHtml}</div></div>
     `;
 }
 
@@ -304,6 +313,9 @@ function saveDraft() {
 }
 
 function setupEventListeners() {
+    // New Survey
+    G('new-survey-btn').addEventListener('click', startNewSurvey);
+
     // Navigation
     G('next-btn').addEventListener('click', () => {
         if (state.currentStep < state.totalSteps) {
@@ -333,6 +345,7 @@ function setupEventListeners() {
             unit: G('item-unit').value
         });
         e.target.reset();
+        G('item-name').focus();
     });
 
     // Items Table Delegation
@@ -408,7 +421,7 @@ function setupEventListeners() {
             div.className = 'relative group';
             div.innerHTML = `
                 <img src="${photo.dataUrl}" class="w-full h-24 object-cover rounded-md">
-                <button data-photo-id="${photo.id}" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100"><i class="lucide-trash-2 w-4 h-4"></i></button>
+                <button data-photo-id="${photo.id}" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><i class="lucide-trash-2 w-4 h-4"></i></button>
             `;
             preview.appendChild(div);
         });
@@ -509,12 +522,8 @@ async function saveSurveyToFirestore() {
         statusDiv.textContent = `Survey saved successfully to Firebase with ID: ${surveyToSave.id}`;
         alert(`Survey saved successfully with ID: ${surveyToSave.id}`);
 
-        state.survey = createNewSurvey();
-        saveDraft();
-        state.currentStep = 1;
-        updateUI();
-        renderCustomerForm();
-        renderItemsTable();
+        // Start a new survey after successful save
+        startNewSurvey();
 
     } catch (error) {
         console.error('Error saving survey to Firebase:', error);
@@ -573,7 +582,7 @@ function renderEditor(tabId) {
                     <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.l" value="${p.l}" placeholder="L">
                     <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.w" value="${p.w}" placeholder="W">
                     <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.h" value="${p.h}" placeholder="H">
-                    <button class="text-red-500" data-delete-preset="${i}"><i class="lucide-trash-2"></i></button>
+                    <button class="text-red-500 hover:text-red-700" data-delete-preset="${i}"><i class="lucide-trash-2"></i></button>
                 </div>`;
             });
             G('add-preset-btn').onclick = () => {
@@ -731,5 +740,3 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-
-    

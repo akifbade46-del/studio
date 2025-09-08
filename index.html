@@ -13,11 +13,12 @@
     <div id="app" class="max-w-4xl mx-auto bg-white min-h-screen shadow-lg">
         <!-- Header -->
         <header id="app-header" class="p-4 border-b flex justify-between items-center bg-white sticky top-0 z-50">
-             <div class="flex items-center gap-2">
+             <div class="flex items-center gap-3">
                 <img id="header-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNFMzA1MTciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTdWNmE0IDQgMCAwIDAtOCAwIi8+PHBhdGggZD0iTTEzIDZWMTRIMyIvPjxwYXRoIGQ9Ik0zIDE0SDEiLz48cGF0aCBkPSJNNyAxNEg2Ii8+PHBhdGggZD0iTTIxIDE3SDMiLz48Y2lyY2xlIGN4PSI4IiBjeT0iMTciIHI9IjIiLz48Y2lyY2xlIGN4PSIxOCIgY3k9IjE3IiByPSIyIi8+PC9zdmc+" alt="Logo" class="h-8 w-8">
                 <h1 id="header-title" class="text-xl font-bold text-dark">Q'go Cargo</h1>
             </div>
-            <div>
+            <div class="flex items-center gap-2">
+                <button id="new-survey-btn" class="p-2 rounded hover:bg-gray-200 text-sm flex items-center gap-1 no-print"><i class="lucide-file-plus"></i> New</button>
                 <button id="editor-mode-btn" class="p-2 rounded hover:bg-gray-200 no-print"><i class="lucide-settings"></i></button>
             </div>
         </header>
@@ -41,7 +42,7 @@
                     <div id="item-presets" class="flex flex-wrap gap-2"></div>
                 </div>
                 <!-- Item Form -->
-                <div class="border p-4 rounded-lg mb-4">
+                <div class="border p-4 rounded-lg mb-4 bg-gray-50">
                     <h3 class="font-semibold mb-2">Add Custom Item</h3>
                     <form id="add-item-form" class="grid grid-cols-2 md:grid-cols-5 gap-4 items-end">
                         <div class="col-span-2">
@@ -194,5 +195,3 @@
     <script type="module" src="script.js"></script>
 </body>
 </html>
-
-    
