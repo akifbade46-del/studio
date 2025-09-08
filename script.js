@@ -619,13 +619,44 @@ function setupEventListeners() {
         }
     });
 
+    // Step 6 Actions
     G('save-survey-btn').addEventListener('click', saveSurveyToFirestore);
+    G('generate-pdf-btn').addEventListener('click', () => window.print());
+    G('share-whatsapp-btn').addEventListener('click', shareToWhatsApp);
+
 
     // Load Survey
     G('load-survey-btn').addEventListener('click', showLoadSurveyModal);
     G('load-survey-cancel').addEventListener('click', () => G('load-survey-modal').style.display = 'none');
 
 }
+
+function shareToWhatsApp() {
+    const { customer, pricing } = state.survey;
+    const { company } = state.settings;
+    let template = state.settings.templates.whatsapp;
+
+    if (!customer.phone) {
+        alert("Please enter a customer phone number first.");
+        return;
+    }
+
+    // Replace placeholders
+    const replacements = {
+        '{{customerName}}': customer.name || '',
+        '{{grandTotal}}': (pricing?.grandTotal || 0).toFixed(2),
+        '{{currency}}': pricing?.currency || '',
+        '{{companyName}}': company.name || ''
+    };
+    
+    for (const key in replacements) {
+        template = template.replace(new RegExp(key, 'g'), replacements[key]);
+    }
+    
+    const whatsappUrl = `https://wa.me/${customer.phone}?text=${encodeURIComponent(template)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
 
 function renderPhotos() {
     const preview = G('photos-preview');
