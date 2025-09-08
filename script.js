@@ -571,7 +571,7 @@ function renderEditor(tabId) {
                 </div>`;
             break;
         case 'editor-rates':
-            content.innerHTML = `<h3 class="text-xl font-bold mb-4">Rates & Pricing</h3>
+            content.innerHTML = `<h3 class="text-xl font-bold mb-4">Rates &amp; Pricing</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     ${createInput('Currency', 'rates.currency', state.settings.rates.currency)}
                     ${createInput('Min Charge', 'rates.minCharge', state.settings.rates.minCharge, 'number')}
@@ -635,56 +635,25 @@ function renderEditor(tabId) {
         case 'editor-templates':
             content.innerHTML = `<h3 class="text-xl font-bold mb-4">Templates</h3>
                 <div class="space-y-4">
-                    ${createTextarea('PDF Terms & Conditions', 'templates.pdfTerms', state.settings.templates.pdfTerms)}
+                    ${createTextarea('PDF Terms &amp; Conditions', 'templates.pdfTerms', state.settings.templates.pdfTerms)}
                     ${createTextarea('WhatsApp Message', 'templates.whatsapp', state.settings.templates.whatsapp)}
                     <p class="text-xs text-gray-500">Use placeholders like {{customerName}}, {{grandTotal}}, {{currency}}, {{companyName}}.</p>
                 </div>`;
             break;
         case 'editor-firebase':
-            content.innerHTML = `<h3 class="text-xl font-bold mb-4">Firebase Configuration</h3>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block mb-1 font-medium">Firebase Config (JSON)</label>
-                        <div class="p-2 bg-blue-50 border border-blue-200 rounded-md text-sm text-blue-800 mb-4">
-                          <h4 class="font-bold">How to get the config:</h4>
-                          <ol class="list-decimal list-inside">
-                              <li>Go to your Firebase project: <a href="https://console.firebase.google.com" target="_blank" class="underline">console.firebase.google.com</a></li>
-                              <li>Click the <strong>Project Overview</strong> settings gear <i class="lucide-settings text-xs"></i> icon, then select <strong>Project settings</strong>.</li>
-                              <li>In the "Your apps" card, select the web app.</li>
-                              <li>Select <strong>Config</strong>, then copy the JSON object.</li>
-                          </ol>
-                        </div>
-                        <textarea id="firebase-config-input" class="w-full border-gray-300 rounded h-48 font-mono text-sm">${JSON.stringify(state.settings.firebaseConfig, null, 2) || ''}</textarea>
-                        <p class="text-xs text-gray-500 mt-1">This is saved in your browser. You only need to set it once.</p>
-                    </div>
-                    <button id="save-firebase-config" class="bg-primary text-white p-2 rounded">Save & Re-initialize Firebase</button>
-                     <h4 class="font-bold pt-4">Manage App Settings</h4>
-                    <div class="flex gap-2">
-                        <button id="export-settings" class="bg-blue-500 text-white p-2 rounded">Export JSON</button>
-                        <button onclick="G('import-settings-input').click()" class="bg-gray-200 p-2 rounded">Import JSON</button>
-                        <input type="file" id="import-settings-input" class="hidden" accept=".json">
-                    </div>
+            content.innerHTML = `<h3 class="text-xl font-bold mb-4">Firebase &amp; Data</h3>
+                <p class="text-sm mb-4 text-gray-600">Your Firebase configuration is hardcoded in the script. To change it, you must edit the script.js file directly.</p>
+                 <h4 class="font-bold pt-4">Manage App Settings</h4>
+                <div class="flex gap-2">
+                    <button id="export-settings" class="bg-blue-500 text-white p-2 rounded">Export JSON</button>
+                    <button onclick="G('import-settings-input').click()" class="bg-gray-200 p-2 rounded">Import JSON</button>
+                    <input type="file" id="import-settings-input" class="hidden" accept=".json">
                 </div>`;
-            G('save-firebase-config').addEventListener('click', () => {
-                 try {
-                    const configStr = G('firebase-config-input').value;
-                    if (!configStr) {
-                        state.settings.firebaseConfig = null;
-                    } else {
-                        state.settings.firebaseConfig = JSON.parse(configStr);
-                    }
-                    saveAndApplySettings();
-                    // Force re-initialization
-                    state.firebase.app = null; 
-                    initFirebase();
-                    alert("Firebase configuration saved. The app will now use the new settings.");
-                 } catch(e) {
-                     console.error(e);
-                     alert("Invalid Firebase config. Please paste the config JSON object directly.");
-                 }
-            });
+
             G('export-settings').addEventListener('click', () => {
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.settings, null, 2));
+                const settingsToExport = {...state.settings};
+                delete settingsToExport.firebaseConfig; // Don't export hardcoded config
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settingsToExport, null, 2));
                 const downloadAnchorNode = document.createElement('a');
                 downloadAnchorNode.setAttribute("href", dataStr);
                 downloadAnchorNode.setAttribute("download", "qgo-cargo-settings.json");
@@ -698,7 +667,10 @@ function renderEditor(tabId) {
                     const reader = new FileReader();
                     reader.onload = (ev) => {
                         try {
-                            state.settings = JSON.parse(ev.target.result);
+                            const importedSettings = JSON.parse(ev.target.result);
+                            // Keep the hardcoded firebaseConfig
+                            importedSettings.firebaseConfig = state.settings.firebaseConfig;
+                            state.settings = importedSettings;
                             saveAndApplySettings();
                             // Re-render all parts of the app that depend on settings
                             init();
