@@ -119,6 +119,11 @@ function startNewSurvey() {
         renderItemsTable();
         updateFooter();
         renderPhotos();
+        
+        // Clear signature pad
+        const canvas = G('signature-pad');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 }
 
@@ -838,7 +843,7 @@ function renderEditor(tabId) {
                     ${createInput('CBM Rate (Int\'l)', 'rates.cbmRates.International', state.settings.rates.cbmRates.International, 'number')}
                     ${createInput('Materials Cost', 'rates.materials', state.settings.rates.materials, 'number')}
                     ${createInput('Labor Cost', 'rates.labor', state.settings.rates.labor, 'number')}
-                    ${createInput('Surcharges', 'rates.surcharges', 'number', state.settings.rates.surcharges)}
+                    ${createInput('Surcharges', 'rates.surcharges', state.settings.rates.surcharges, 'number')}
                     ${createInput('Insurance %', 'rates.insurancePercent', state.settings.rates.insurancePercent, 'number')}
                     ${createInput('VAT %', 'rates.vatPercent', state.settings.rates.vatPercent, 'number')}
                     ${createInput('Markup %', 'rates.markupPercent', state.settings.rates.markupPercent, 'number')}
