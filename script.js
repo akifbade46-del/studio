@@ -1,4 +1,5 @@
 
+
 const D = document;
 const G = (id) => D.getElementById(id);
 
@@ -1040,5 +1041,7 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+    
 
     
