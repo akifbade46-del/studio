@@ -170,7 +170,6 @@ function applyBranding() {
     root.style.setProperty('--primary', primary);
     root.style.setProperty('--dark', dark);
     root.style.setProperty('--accent', accent);
-    G('header-title').innerText = state.settings.company.name;
     G('header-logo').src = state.settings.company.logo;
 }
 
@@ -373,9 +372,8 @@ function generateReceiptHtml(survey) {
             <!-- Header -->
             <div class="flex justify-between items-start pb-4 border-b">
                 <div class="flex items-center gap-4">
-                     <img src="${company.logo}" alt="Company Logo" class="h-16 w-16">
+                     <img src="${company.logo}" alt="Company Logo" class="h-16">
                      <div>
-                        <h3 class="text-2xl font-bold text-dark">${company.name}</h3>
                         <p class="text-sm text-gray-600">${company.address.replace(/\n/g, '<br>')}</p>
                         <p class="text-sm text-gray-600">Tel: ${company.phone} | Email: ${company.email}</p>
                      </div>
@@ -1044,3 +1042,4 @@ document.addEventListener('DOMContentLoaded', init);
     
 
     
+
