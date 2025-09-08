@@ -99,8 +99,12 @@ input, select, textarea, button:not(#clear-signature) {
     border: 1px solid rgba(209, 213, 219, 0.4) !important;
 }
 
+/* This rule applies to buttons WITHOUT a bg- class, like Load, New, Settings */
 button:not(#clear-signature):not([class*="bg-"]) {
-    background-color: rgba(255, 255, 255, 0.3) !important;
+    color: #111827 !important; /* Make text black/dark-gray */
+    background: linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.2)) !important; /* Liquid gradient */
+    border: 1px solid rgba(255, 255, 255, 0.7) !important; /* Brighter border */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.8); /* Outer and Inner shadow */
 }
 
 input, select, textarea {
