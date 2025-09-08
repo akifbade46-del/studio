@@ -12,7 +12,24 @@ const state = {
 
 const defaultSettings = {
     company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "https://qgocargo.com/logo.png" },
-    branding: { primary: '#007AFF', dark: '#111827', accent: '#6B7280' },
+    branding: {
+        primary: '210 40% 50%', // HSL format
+        accent: '210 40% 90%',
+        background: '0 0% 100%',
+        foreground: '222.2 47.4% 11.2%',
+        card: '0 0% 100%',
+        card_foreground: '222.2 47.4% 11.2%',
+        popover: '0 0% 100%',
+        popover_foreground: '222.2 47.4% 11.2%',
+        secondary: '210 40% 96.1%',
+        secondary_foreground: '215 20.2% 65.1%',
+        muted: '210 40% 96.1%',
+        muted_foreground: '215.4 16.3% 46.9%',
+        border: '214.3 31.8% 91.4%',
+        input: '214.3 31.8% 91.4%',
+        ring: '215 20.2% 65.1%',
+        radius: 0.75,
+    },
     firebaseConfig: {
       apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
       authDomain: "survey-bf41d.firebaseapp.com",
@@ -192,11 +209,11 @@ function updateUI() {
 }
 
 function applyBranding() {
-    const { primary, dark, accent } = state.settings.branding;
-    const root = D.documentElement;
-    root.style.setProperty('--primary', primary);
-    root.style.setProperty('--dark', dark);
-    root.style.setProperty('--accent', accent);
+    const root = document.documentElement;
+    const branding = state.settings.branding;
+    for (const key in branding) {
+        root.style.setProperty(`--${key}`, branding[key]);
+    }
     G('header-logo').src = state.settings.company.logo;
 }
 
@@ -257,7 +274,7 @@ function renderItemPresets() {
         groupedPresets[category].forEach(preset => {
             const btn = D.createElement('button');
             const isHighlighted = ['Boxes'].includes(category);
-            btn.className = `text-sm p-3 rounded-md flex-grow md:flex-grow-0 ${isHighlighted ? 'bg-primary text-white' : 'bg-white text-gray-800'}`;
+            btn.className = `text-sm p-3 rounded-md flex-grow md:flex-grow-0 ${isHighlighted ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground'}`;
             btn.innerHTML = `<i class="lucide-box mr-1"></i> ${preset.name}`;
             btn.onclick = () => {
                 addItem({ name: preset.name, qty: 1, l: preset.l, w: preset.w, h: preset.h, unit: 'cm' });
@@ -951,6 +968,10 @@ function renderEditor(tabId) {
     
     const createInput = (label, settingPath, value, type = 'text') => `<div><label class="block text-sm font-medium mb-1">${label}</label><input type="${type}" step="any" class="w-full border-gray-300 rounded" data-setting="${settingPath}" value="${value}"></div>`;
     const createTextarea = (label, settingPath, value) => `<div><label class="block text-sm font-medium mb-1">${label}</label><textarea class="w-full border-gray-300 rounded" rows="3" data-setting="${settingPath}">${value}</textarea></div>`;
+    const createColorInput = (label, settingPath, value) => {
+        const hex = hslToHex.apply(null, value.split(' ').map(parseFloat));
+        return `<div><label class="block text-sm font-medium mb-1">${label}</label><input type="color" class="w-full h-10 border-gray-300 rounded" data-color-setting="${settingPath}" value="${hex}"></div>`;
+    };
 
     switch (tabId) {
         case 'editor-company':
@@ -1048,8 +1069,13 @@ function renderEditor(tabId) {
             break;
         case 'editor-theme':
             content.innerHTML = `
-                <h3 class="text-xl font-bold mb-4">Theme & Appearance</h3>
-                <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4" role="alert">
+                <h3 class="text-xl font-bold mb-4">Theme</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    ${createColorInput('Primary Color', 'branding.primary', state.settings.branding.primary)}
+                    ${createColorInput('Background Color', 'branding.background', state.settings.branding.background)}
+                    ${createColorInput('Accent Color', 'branding.accent', state.settings.branding.accent)}
+                </div>
+                 <div class="mt-4 bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4" role="alert">
                   <p class="font-bold">Coming Soon!</p>
                   <p>Full theme customization, including light/dark modes and controls for blur and transparency, is under development.</p>
                 </div>`;
@@ -1135,6 +1161,20 @@ function renderEditor(tabId) {
 
         });
     });
+
+    content.querySelectorAll('input[data-color-setting]').forEach(input => {
+        input.addEventListener('input', (e) => {
+            const keys = e.target.dataset.colorSetting.split('.');
+            let settingObj = state.settings;
+            keys.slice(0, -1).forEach(key => {
+                if (!settingObj[key]) settingObj[key] = {};
+                settingObj = settingObj[key];
+            });
+            const hsl = hexToHsl(e.target.value);
+            settingObj[keys.pop()] = `${hsl[0]} ${hsl[1]}% ${hsl[2]}%`;
+            saveAndApplySettings();
+        });
+    });
 }
 
 function saveAndApplySettings() {
@@ -1143,5 +1183,62 @@ function saveAndApplySettings() {
     renderCustomerForm();
     renderItemPresets();
 }
+
+// Color conversion helpers
+function hexToHsl(H) {
+  let r = 0, g = 0, b = 0;
+  if (H.length == 4) {
+    r = "0x" + H[1] + H[1];
+    g = "0x" + H[2] + H[2];
+    b = "0x" + H[3] + H[3];
+  } else if (H.length == 7) {
+    r = "0x" + H[1] + H[2];
+    g = "0x" + H[3] + H[4];
+    b = "0x" + H[5] + H[6];
+  }
+  r /= 255; g /= 255; b /= 255;
+  let cmin = Math.min(r,g,b), cmax = Math.max(r,g,b), delta = cmax - cmin, h = 0, s = 0, l = 0;
+  if (delta == 0) h = 0;
+  else if (cmax == r) h = ((g - b) / delta) % 6;
+  else if (cmax == g) h = (b - r) / delta + 2;
+  else h = (r - g) / delta + 4;
+  h = Math.round(h * 60);
+  if (h < 0) h += 360;
+  l = (cmax + cmin) / 2;
+  s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+  s = +(s * 100).toFixed(1);
+  l = +(l * 100).toFixed(1);
+  return [h, s, l];
+}
+
+function hslToHex(h, s, l) {
+  s /= 100;
+  l /= 100;
+  let c = (1 - Math.abs(2 * l - 1)) * s,
+      x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+      m = l - c/2,
+      r = 0, g = 0, b = 0;
+  if (0 <= h && h < 60) {
+    r = c; g = x; b = 0;
+  } else if (60 <= h && h < 120) {
+    r = x; g = c; b = 0;
+  } else if (120 <= h && h < 180) {
+    r = 0; g = c; b = x;
+  } else if (180 <= h && h < 240) {
+    r = 0; g = x; b = c;
+  } else if (240 <= h && h < 300) {
+    r = x; g = 0; b = c;
+  } else if (300 <= h && h < 360) {
+    r = c; g = 0; b = x;
+  }
+  r = Math.round((r + m) * 255).toString(16);
+  g = Math.round((g + m) * 255).toString(16);
+  b = Math.round((b + m) * 255).toString(16);
+  if (r.length == 1) r = "0" + r;
+  if (g.length == 1) g = "0" + g;
+  if (b.length == 1) b = "0" + b;
+  return "#" + r + g + b;
+}
+
 
 document.addEventListener('DOMContentLoaded', init);

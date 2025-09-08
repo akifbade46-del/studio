@@ -1,16 +1,56 @@
 :root {
-    --primary: #007AFF;
-    --dark: #111827;
-    --accent: #6B7280;
-    --radius: 0.75rem; /* Slightly larger radius for a softer look */
+  --background: 0 0% 100%;
+  --foreground: 222.2 47.4% 11.2%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 47.4% 11.2%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 47.4% 11.2%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 100% 50%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 215 20.2% 65.1%;
+  --radius: 0.75rem;
 }
+
+.dark {
+  --background: 224 71% 4%;
+  --foreground: 213 31% 91%;
+  --card: 224 71% 4%;
+  --card-foreground: 213 31% 91%;
+  --popover: 224 71% 4%;
+  --popover-foreground: 213 31% 91%;
+  --primary: 210 40% 98%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 215 28% 17%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 215 28% 17%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 215 28% 17%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 215 28% 17%;
+  --input: 215 28% 17%;
+  --ring: 215 28% 17%;
+}
+
 
 /* --- Base Styles & New Gradient Background --- */
 body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: linear-gradient(to top right, #f3f4f6, #e5e7eb);
+    background: linear-gradient(to top right, hsl(var(--secondary)), hsl(var(--muted)));
     background-attachment: fixed;
+    color: hsl(var(--foreground));
 }
 
 #app {
@@ -21,11 +61,12 @@ body {
 
 /* --- Glassmorphism Effect --- */
 .glass-effect, #app-header, #sticky-footer, #editor-modal .bg-white, #passcode-modal .bg-white, #load-survey-modal .bg-white, #preview-modal .bg-white {
-    background-color: rgba(255, 255, 255, 0.5) !important;
+    background-color: hsla(var(--card), 0.5) !important;
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border: 1px solid rgba(209, 213, 219, 0.3) !important;
+    border: 1px solid hsla(var(--border), 0.3) !important;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+    color: hsl(var(--card-foreground));
 }
 
 #preview-modal .bg-white {
@@ -65,58 +106,65 @@ main {
 #editor-modal .bg-white,
 #passcode-modal .bg-white,
 #load-survey-modal .bg-white {
-    background-color: rgba(255, 255, 255, 0.75) !important;
+    background-color: hsla(var(--popover), 0.75) !important;
 }
 
 /* Card-like elements */
 .border.p-4, .border.rounded-lg {
     transition: all 0.3s ease;
-    background-color: rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(209, 213, 219, 0.2);
+    background-color: hsla(var(--card), 0.4);
+    border: 1px solid hsla(var(--border), 0.2);
+    color: hsl(var(--card-foreground));
 }
 
 .border.p-4:hover, .border.rounded-lg:hover {
-     border-color: rgba(255, 255, 255, 0.8);
+     border-color: hsla(var(--border), 0.8);
      transform: translateY(-2px);
      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 /* --- Component Styling --- */
-.bg-primary { background-color: var(--primary) !important; }
-.text-primary { color: var(--primary) !important; }
-.border-primary { border-color: var(--primary) !important; }
-.ring-primary { --tw-ring-color: var(--primary) !important; }
-.bg-dark { background-color: var(--dark) !important; }
-.text-dark { color: var(--dark) !important; }
-.bg-accent { background-color: var(--accent) !important; }
-.text-accent { color: var(--accent) !important; }
-.border-accent { border-color: var(--accent) !important; }
+.bg-primary { background-color: hsl(var(--primary)) !important; }
+.text-primary { color: hsl(var(--primary)) !important; }
+.text-primary-foreground { color: hsl(var(--primary-foreground)) !important; }
+.border-primary { border-color: hsl(var(--primary)) !important; }
+.ring-primary { --tw-ring-color: hsl(var(--primary)) !important; }
+.bg-dark { background-color: #111827 !important; } /* Kept for specific buttons */
+.text-dark { color: #111827 !important; }
+.bg-accent { background-color: hsl(var(--accent)) !important; }
+.text-accent { color: hsl(var(--accent-foreground)) !important; }
+.border-accent { border-color: hsl(var(--accent)) !important; }
+.bg-card { background-color: hsl(var(--card)) !important; }
+.text-card-foreground { color: hsl(var(--card-foreground)) !important; }
+.bg-gray-200 { background-color: hsl(var(--muted)) !important; }
+.bg-gray-300 { background-color: hsl(var(--secondary)) !important; }
+
 
 input, select, textarea, button:not(#clear-signature) {
     border-radius: var(--radius) !important;
     padding: 0.75rem !important;
     transition: all 0.2s ease-in-out !important;
-    border: 1px solid rgba(209, 213, 219, 0.4) !important;
+    border: 1px solid hsla(var(--border), 0.4) !important;
 }
 
 /* This rule applies to buttons WITHOUT a bg- class, like Load, New, Settings */
 button:not(#clear-signature):not([class*="bg-"]) {
-    color: #111827 !important; /* Make text black/dark-gray */
-    background: linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.2)) !important; /* Liquid gradient */
-    border: 1px solid rgba(255, 255, 255, 0.7) !important; /* Brighter border */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.8); /* Outer and Inner shadow */
+    color: hsl(var(--foreground)) !important; 
+    background: linear-gradient(to bottom, hsla(var(--card), 0.6), hsla(var(--card), 0.2)) !important; /* Liquid gradient */
+    border: 1px solid hsla(var(--card), 0.7) !important; /* Brighter border */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05), inset 0 1px 1px hsla(var(--card), 0.8); /* Outer and Inner shadow */
 }
 
 input, select, textarea {
-     color: #111827;
-     background-color: rgba(255, 255, 255, 0.3) !important;
+     color: hsl(var(--foreground));
+     background-color: hsla(var(--input), 0.3) !important;
 }
 
 
 input:focus, select:focus, textarea:focus {
-    box-shadow: 0 0 0 2px var(--primary) !important;
+    box-shadow: 0 0 0 2px hsl(var(--ring)) !important;
     outline: none !important;
-    background-color: rgba(255, 255, 255, 0.7) !important;
+    background-color: hsla(var(--input), 0.7) !important;
 }
 
 
@@ -153,17 +201,17 @@ button:disabled {
 
 /* Form Styles */
 form label {
-    color: #374151; /* text-gray-700 */
+    color: hsl(var(--muted-foreground)); /* text-gray-700 */
     font-weight: 500;
 }
 
 /* Tables */
 #items-table th {
     font-weight: 600;
-    color: #1f2937;
+    color: hsl(var(--foreground));
 }
 #items-table td, #items-table th {
-    border-bottom: 1px solid rgba(229, 231, 235, 0.5); /* border-gray-200 */
+    border-bottom: 1px solid hsla(var(--border), 0.5); /* border-gray-200 */
 }
 #items-table tbody tr:last-child td {
     border-bottom: none;
@@ -171,13 +219,13 @@ form label {
 #items-table {
     background-color: transparent !important;
 }
-#items-table thead {
-    background-color: rgba(255, 255, 255, 0.2) !important;
+#items-table thead, .bg-gray-50 {
+    background-color: hsla(var(--muted), 0.5) !important;
 }
 
 /* Editor */
 .editor-tab-btn.bg-gray-200 {
-    background-color: rgba(255, 255, 255, 0.8) !important;
+    background-color: hsla(var(--accent), 1) !important;
     font-weight: 600;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
@@ -187,8 +235,8 @@ form label {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background-color: #ef4444 !important; /* bg-red-500 */
-    color: white;
+    background-color: hsl(var(--destructive)) !important;
+    color: hsl(var(--destructive-foreground));
     width: 48px;
     height: 48px;
     border-radius: 9999px;
@@ -200,8 +248,7 @@ form label {
     border: none !important;
 }
 .preview-close-btn-style:hover {
-    background-color: #dc2626 !important; /* bg-red-600 */
-    filter: none;
+    filter: brightness(1.1);
 }
 
 
