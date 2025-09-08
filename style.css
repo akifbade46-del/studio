@@ -23,13 +23,12 @@ body {
 }
 
 #app {
-    background-color: transparent; /* App container is now transparent */
     box-shadow: none; /* Remove main shadow */
     min-height: 100vh;
 }
 
 /* --- Glassmorphism Effect --- */
-.glass-effect, #app-header, #sticky-footer, #editor-modal .bg-white, #passcode-modal .bg-white, #load-survey-modal .bg-white, #preview-modal .bg-white {
+.glass-effect, #app, #app-header, #sticky-footer, #editor-modal .bg-white, #passcode-modal .bg-white, #load-survey-modal .bg-white, #preview-modal .bg-white {
     background-color: hsla(var(--card), 0.5) !important;
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
