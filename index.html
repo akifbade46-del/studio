@@ -181,7 +181,7 @@
                      <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-fields">Customer Fields</button>
                      <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-containers">Containers</button>
                      <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-templates">Templates</button>
-                     <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-data">Data & API</button>
+                     <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-firebase">Firebase & Data</button>
                 </div>
                 <div class="w-3/4 p-4 overflow-y-auto">
                     <div id="editor-content"></div>
@@ -205,11 +205,13 @@
     <!-- PDF Generation Area -->
     <div id="pdf-output-container" class="hidden"></div>
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+
     <!-- Main App Logic -->
     <script type="module">
-        // This is a simplified, single-file representation.
-        // In a real scenario, this would be broken into modules.
-        
         const D = document;
         const G = (id) => D.getElementById(id);
 
@@ -218,14 +220,13 @@
             totalSteps: 6,
             survey: {},
             settings: {},
+            firebase: { app: null, db: null, storage: null },
         };
 
-        // Default settings structure
         const defaultSettings = {
             company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNFMzA1MTciIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjEgMTdWNmE0IDQgMCAwIDAtOCAwIi8+PHBhdGggZD0iTTEzIDZWMTRIMyIvPjxwYXRoIGQ9Ik0zIDE0SDEiLz48cGF0aCBkPSJNNyAxNEg2Ii8+PHBhdGggZD0iTTIxIDE3SDMiLz48Y2lyY2xlIGN4PSI4IiBjeT0iMTciIHI9IjIiLz48Y2lyY2xlIGN4PSIxOCIgY3k9IjE3IiByPSIyIi8+PC9zdmc+" },
             branding: { primary: '#E30B17', dark: '#111827', accent: '#0EA5E9' },
-            github: { owner: 'akifbade46-del', repo: 'studio', data_folder: 'data/surveys/' },
-            api: { worker_base_url: '' },
+            firebaseConfig: null, // To be filled by user
             customerFields: [
                 { id: 'name', label: 'Customer Name', type: 'text', required: true, enabled: true },
                 { id: 'phone', label: 'Phone', type: 'tel', required: true, enabled: true },
@@ -263,10 +264,10 @@
         };
 
         function init() {
-            // Load from localStorage or use defaults
             state.settings = JSON.parse(localStorage.getItem('surveyAppSettings')) || defaultSettings;
             state.survey = JSON.parse(localStorage.getItem('currentSurvey')) || createNewSurvey();
             
+            initFirebase();
             applyBranding();
             updateUI();
             setupEventListeners();
@@ -274,6 +275,20 @@
             renderItemPresets();
             renderItemsTable();
             updateFooter();
+        }
+
+        function initFirebase() {
+            if (state.settings.firebaseConfig && !state.firebase.app) {
+                try {
+                    state.firebase.app = firebase.initializeApp(state.settings.firebaseConfig);
+                    state.firebase.db = firebase.firestore();
+                    state.firebase.storage = firebase.storage();
+                    console.log("Firebase initialized successfully.");
+                } catch (e) {
+                    console.error("Could not initialize Firebase. Check your config.", e);
+                    alert("Could not initialize Firebase. Please check your configuration in the Editor.");
+                }
+            }
         }
 
         function createNewSurvey() {
@@ -288,7 +303,6 @@
         }
 
         function updateUI() {
-            // Steps
             D.querySelectorAll('.step').forEach((step, i) => {
                 step.classList.toggle('active', i + 1 === state.currentStep);
             });
@@ -296,7 +310,6 @@
             G('next-btn').disabled = state.currentStep === state.totalSteps;
             G('next-btn').innerText = state.currentStep === state.totalSteps ? 'Finish' : 'Next';
 
-            // Step indicators
             const indicatorContainer = G('step-indicator');
             indicatorContainer.innerHTML = '';
             for(let i=1; i <= state.totalSteps; i++) {
@@ -432,7 +445,6 @@
                 containerDiv.appendChild(card);
             });
             
-            // Highlight recommended
             if(bestOption) {
                 state.survey.containerPlan = { recommended: bestOption };
             }
@@ -578,7 +590,6 @@
                 Array.from(files).forEach(file => {
                     const reader = new FileReader();
                     reader.onload = (event) => {
-                        // Simple client-side compression
                         const img = new Image();
                         img.src = event.target.result;
                         img.onload = () => {
@@ -687,47 +698,43 @@
                 }
             });
 
-            // Share buttons
-            G('save-survey-btn').addEventListener('click', saveSurveyToGitHub);
+            G('save-survey-btn').addEventListener('click', saveSurveyToFirestore);
         }
         
-        async function saveSurveyToGitHub() {
+        async function saveSurveyToFirestore() {
             const btn = G('save-survey-btn');
             const statusDiv = G('save-status');
-            const { worker_base_url } = state.settings.api;
-            if (!worker_base_url) {
-                alert('Worker Base URL is not set in Editor > Data & API.');
+
+            if (!state.firebase.db) {
+                alert('Firebase is not configured. Please add your Firebase config in Editor Mode.');
                 return;
             }
-            
+
             btn.disabled = true;
             btn.innerHTML = `<i class="lucide-loader-2 animate-spin mr-2"></i>Saving...`;
-            statusDiv.textContent = 'Saving survey to GitHub...';
+            statusDiv.textContent = 'Saving survey to Firebase...';
 
             try {
-                const response = await fetch(`${worker_base_url}/survey`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(state.survey)
-                });
-                
-                const result = await response.json();
+                const surveyToSave = JSON.parse(JSON.stringify(state.survey)); // Deep copy
+                surveyToSave.meta.savedAt = new Date().toISOString();
 
-                if (!response.ok) {
-                    throw new Error(result.error || `HTTP error! status: ${response.status}`);
-                }
+                // Handle media separately if needed (e.g., upload to Firebase Storage)
+                // For simplicity, we'll store DataURLs in Firestore, but this is not recommended for large images.
                 
-                statusDiv.textContent = `Survey saved! Commit: ${result.commitSha.slice(0, 7)}. ID: ${result.id}`;
-                // After saving, start a new survey
+                await state.firebase.db.collection('surveys').doc(surveyToSave.id).set(surveyToSave);
+
+                statusDiv.textContent = `Survey saved successfully to Firebase with ID: ${surveyToSave.id}`;
+                alert(`Survey saved successfully with ID: ${surveyToSave.id}`);
+
                 state.survey = createNewSurvey();
-                saveDraft(); // save new empty draft
+                saveDraft();
                 state.currentStep = 1;
                 updateUI();
                 renderCustomerForm();
                 renderItemsTable();
 
             } catch (error) {
-                console.error('Error saving survey:', error);
+                console.error('Error saving survey to Firebase:', error);
                 statusDiv.textContent = `Error: ${error.message}`;
                 alert(`Failed to save survey. ${error.message}`);
             } finally {
@@ -769,19 +776,39 @@
                             <div><label class="block">Markup %</label><input type="number" class="w-full border-gray-300 rounded" data-setting="rates.markupPercent" value="${state.settings.rates.markupPercent}"></div>
                         </div>`;
                     break;
-                case 'editor-data':
-                    content.innerHTML = `<h3 class="text-xl font-bold mb-4">Data, API & GitHub</h3>
+                case 'editor-firebase':
+                    content.innerHTML = `<h3 class="text-xl font-bold mb-4">Firebase Configuration</h3>
                         <div class="space-y-4">
-                            <div><label class="block">Worker Base URL</label><input type="text" class="w-full border-gray-300 rounded" data-setting="api.worker_base_url" value="${state.settings.api.worker_base_url}"></div>
-                             <div><label class="block">GitHub Owner</label><input type="text" class="w-full border-gray-300 rounded" data-setting="github.owner" value="${state.settings.github.owner}"></div>
-                              <div><label class="block">GitHub Repo</label><input type="text" class="w-full border-gray-300 rounded" data-setting="github.repo" value="${state.settings.github.repo}"></div>
-                            <h4 class="font-bold pt-4">Manage Settings</h4>
+                            <div>
+                                <label class="block mb-1 font-medium">Firebase Config (JSON)</label>
+                                <textarea id="firebase-config-input" class="w-full border-gray-300 rounded h-48 font-mono text-sm">${JSON.stringify(state.settings.firebaseConfig, null, 2) || ''}</textarea>
+                                <p class="text-xs text-gray-500 mt-1">Paste your Firebase project's web configuration object here.</p>
+                            </div>
+                            <button id="save-firebase-config" class="bg-primary text-white p-2 rounded">Save & Re-initialize Firebase</button>
+                             <h4 class="font-bold pt-4">Manage App Settings</h4>
                             <div class="flex gap-2">
                                 <button id="export-settings" class="bg-blue-500 text-white p-2 rounded">Export JSON</button>
                                 <button onclick="G('import-settings-input').click()" class="bg-gray-200 p-2 rounded">Import JSON</button>
                                 <input type="file" id="import-settings-input" class="hidden" accept=".json">
                             </div>
                         </div>`;
+                    G('save-firebase-config').addEventListener('click', () => {
+                         try {
+                            const configStr = G('firebase-config-input').value;
+                            if (!configStr) {
+                                state.settings.firebaseConfig = null;
+                            } else {
+                                state.settings.firebaseConfig = JSON.parse(configStr);
+                            }
+                            saveAndApplySettings();
+                            // Force re-initialization
+                            state.firebase.app = null; 
+                            initFirebase();
+                            alert("Firebase configuration saved. The app will now use the new settings.");
+                         } catch(e) {
+                             alert("Invalid JSON in Firebase config. Please check the format.");
+                         }
+                    });
                     G('export-settings').addEventListener('click', () => {
                         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.settings, null, 2));
                         const downloadAnchorNode = document.createElement('a');
@@ -799,7 +826,9 @@
                                 try {
                                     state.settings = JSON.parse(ev.target.result);
                                     saveAndApplySettings();
-                                    renderEditor(tabId); // Re-render
+                                    renderEditor(tabId);
+                                    state.firebase.app = null;
+                                    initFirebase();
                                 } catch (err) {
                                     alert('Invalid JSON file.');
                                 }
@@ -812,8 +841,7 @@
                     content.innerHTML = `<p>This editor section is under construction.</p>`;
             }
             
-            // Add event listeners for saving settings
-            content.querySelectorAll('input, textarea').forEach(input => {
+            content.querySelectorAll('input[data-setting], textarea[data-setting]').forEach(input => {
                 input.addEventListener('change', (e) => {
                     const keys = e.target.dataset.setting.split('.');
                     let settingObj = state.settings;
@@ -833,10 +861,7 @@
             renderCustomerForm();
         }
 
-        // Initialize the app
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
-
-    
