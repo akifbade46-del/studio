@@ -16,6 +16,7 @@ export default function StepIndicator({ steps, currentStep, onStepClick }: StepI
         {steps.map((step, stepIdx) => {
           const isCompleted = currentStep > step.id;
           const isCurrent = currentStep === step.id;
+          const isAccessible = currentStep >= step.id;
 
           return (
             <li key={step.name} className={cn("relative", stepIdx !== steps.length - 1 ? "pr-8 sm:pr-20 flex-1" : "")}>
@@ -28,13 +29,18 @@ export default function StepIndicator({ steps, currentStep, onStepClick }: StepI
               <button
                 type="button"
                 onClick={() => onStepClick(step.id)}
-                className="relative flex h-8 w-8 items-center justify-center rounded-full"
+                disabled={!isAccessible}
+                className={cn(
+                  "relative flex h-8 w-8 items-center justify-center rounded-full",
+                  isAccessible ? "cursor-pointer" : "cursor-not-allowed"
+                )}
                 aria-current={isCurrent ? 'step' : undefined}
               >
                 <div className={cn("absolute flex h-9 w-9 items-center justify-center rounded-full transition-colors", 
                   isCompleted ? "bg-primary hover:bg-primary/90" : 
                   isCurrent ? "border-2 border-primary bg-background" : 
-                  "border-2 border-border bg-background hover:border-muted-foreground"
+                  "border-2 border-border bg-background",
+                  isAccessible && !isCurrent && !isCompleted ? "hover:border-muted-foreground" : ""
                 )}>
                   {isCompleted ? (
                     <Check className="h-5 w-5 text-primary-foreground" />
