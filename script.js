@@ -8,6 +8,7 @@ const state = {
     survey: {},
     settings: {},
     firebase: { app: null, db: null, storage: null },
+    surveysCache: [], // To cache loaded surveys
 };
 
 const defaultSettings = {
@@ -323,10 +324,9 @@ function calculatePricing() {
     updateFooter();
 }
 
-function setupReview() {
-    const reviewDiv = G('review-summary');
+function generateReceiptHtml(survey) {
     const { company } = state.settings;
-    const { id, customer, items, totals, pricing, media } = state.survey;
+    const { id, customer, items, totals, pricing, media } = survey;
 
     const itemsHtml = items.map(item => `
         <tr>
@@ -358,8 +358,8 @@ function setupReview() {
     if(media.signature) {
         signatureHtml = `<img src="${media.signature}" class="border bg-gray-100 rounded mix-blend-darken max-w-xs mx-auto">`;
     }
-    
-    reviewDiv.innerHTML = `
+
+    return `
         <div id="receipt" class="border rounded-lg p-6 bg-white">
             <!-- Header -->
             <div class="flex justify-between items-start pb-4 border-b">
@@ -438,6 +438,11 @@ function setupReview() {
             </div>
         </div>
     `;
+}
+
+function setupReview() {
+    const reviewDiv = G('review-summary');
+    reviewDiv.innerHTML = generateReceiptHtml(state.survey);
 }
 
 
@@ -629,6 +634,20 @@ function setupEventListeners() {
     G('load-survey-btn').addEventListener('click', showLoadSurveyModal);
     G('load-survey-cancel').addEventListener('click', () => G('load-survey-modal').style.display = 'none');
 
+    // Preview Modal
+    G('preview-close-btn').addEventListener('click', () => G('preview-modal').style.display = 'none');
+    G('preview-print-btn').addEventListener('click', () => {
+        const previewContent = G('preview-content').innerHTML;
+        const originalContent = D.body.innerHTML;
+        D.body.innerHTML = previewContent;
+        window.print();
+        D.body.innerHTML = originalContent;
+        // Re-initialize everything after print since we replaced the body
+        init(); 
+        G('preview-modal').style.display = 'flex'; // Keep the modal open
+        G('preview-content').innerHTML = previewContent; // Put the content back in the modal
+    });
+
 }
 
 function shareToWhatsApp() {
@@ -721,10 +740,8 @@ async function showLoadSurveyModal() {
     }
 
     try {
-        // NOTE: orderBy requires a composite index in Firestore. 
-        // Removing it to avoid runtime errors for the user. Data will not be sorted by date.
-        // const querySnapshot = await state.firebase.db.collection('surveys').orderBy('meta.createdAt', 'desc').limit(50).get();
         const querySnapshot = await state.firebase.db.collection('surveys').limit(50).get();
+        state.surveysCache = []; // Clear cache
         
         if (querySnapshot.empty) {
             listDiv.innerHTML = '<p>No saved surveys found.</p>';
@@ -734,21 +751,58 @@ async function showLoadSurveyModal() {
         listDiv.innerHTML = '';
         querySnapshot.forEach(doc => {
             const survey = doc.data();
+            state.surveysCache.push(survey); // Cache the loaded survey data
             const surveyDiv = D.createElement('div');
-            surveyDiv.className = 'p-2 border-b cursor-pointer hover:bg-gray-100';
+            surveyDiv.className = 'flex justify-between items-center p-2 border-b hover:bg-gray-100';
             surveyDiv.innerHTML = `
-                <p class="font-bold">${survey.customer?.name || 'No Name'}</p>
-                <p class="text-sm text-gray-600">ID: ${survey.id}</p>
-                <p class="text-sm text-gray-500">Date: ${new Date(survey.meta.createdAt).toLocaleString()}</p>
+                <div>
+                    <p class="font-bold">${survey.customer?.name || 'No Name'}</p>
+                    <p class="text-sm text-gray-600">ID: ${survey.id.substring(survey.id.length - 9)}</p>
+                    <p class="text-sm text-gray-500">Date: ${new Date(survey.meta.createdAt).toLocaleString()}</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="preview-btn text-sm bg-gray-200 p-2 rounded" data-survey-id="${survey.id}">Preview</button>
+                    <button class="load-btn text-sm bg-primary text-white p-2 rounded" data-survey-id="${survey.id}">Load</button>
+                </div>
             `;
-            surveyDiv.onclick = () => loadSurvey(survey);
             listDiv.appendChild(surveyDiv);
+        });
+        
+        // Add event listeners for the new buttons
+        listDiv.querySelectorAll('.preview-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const surveyId = e.target.dataset.surveyId;
+                const surveyToPreview = state.surveysCache.find(s => s.id === surveyId);
+                if (surveyToPreview) {
+                    showPreviewModal(surveyToPreview);
+                }
+            });
+        });
+
+        listDiv.querySelectorAll('.load-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const surveyId = e.target.dataset.surveyId;
+                const surveyToLoad = state.surveysCache.find(s => s.id === surveyId);
+                if (surveyToLoad) {
+                    loadSurvey(surveyToLoad);
+                }
+            });
         });
 
     } catch (error) {
         console.error("Error loading surveys:", error);
         listDiv.innerHTML = `<p class="text-red-500">Could not load surveys. Error: ${error.message}</p>`;
     }
+}
+
+function showPreviewModal(surveyData) {
+    const modal = G('preview-modal');
+    const contentDiv = G('preview-content');
+    
+    // Generate the same receipt HTML used in Step 6
+    contentDiv.innerHTML = generateReceiptHtml(surveyData);
+    
+    modal.style.display = 'flex';
 }
 
 
@@ -947,5 +1001,3 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-
-    
