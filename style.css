@@ -1,0 +1,263 @@
+:root {
+    --primary-color: #007AFF;
+    --secondary-color: #F2F2F7;
+    --text-color: #1c1c1e;
+    --background-color: #f0f2f5;
+    --glass-background: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.3);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--background-color);
+    background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    color: var(--text-color);
+    -webkit-tap-highlight-color: transparent;
+}
+
+#header, #footer {
+    background: var(--glass-background);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+#footer {
+    border-top: 1px solid var(--glass-border);
+    border-bottom: none;
+}
+
+.step {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.app-button, .app-button-secondary {
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.app-button {
+    background-color: var(--primary-color);
+    color: white;
+}
+.app-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 122, 255, 0.3);
+}
+.app-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.app-button-secondary {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+.app-button-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.app-input, .item-button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background-color: var(--glass-background);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05) inset;
+    transition: all 0.2s ease-in-out;
+}
+
+.app-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+}
+
+
+.item-button {
+    text-align: center;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.item-button.added {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+}
+
+#itemList div, #packingList div, #servicesList div {
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--glass-background);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Modal Styling */
+.modal, #login-screen {
+    display: none;
+    position: fixed;
+    z-index: 50;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background: var(--glass-background);
+    margin: 20% auto;
+    padding: 20px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    border: 1px solid var(--glass-border);
+}
+
+
+#previewModal {
+    padding: 0;
+    background-color: var(--background-color);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+#preview-content {
+    background-color: #ffffff;
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1rem;
+}
+
+
+/* Signature Pad */
+#signatureCanvas {
+    cursor: crosshair;
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+
+#photoPreviewContainer img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Receipt Styles */
+.receipt-container {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #000000;
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: #fff;
+}
+.receipt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+.receipt-header img {
+    max-width: 150px;
+}
+.receipt-header .company-info-main {
+    text-align: right;
+}
+.receipt-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+.receipt-details div {
+    max-width: 45%;
+}
+.receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+.receipt-table th, .receipt-table td {
+    border-bottom: 1px solid #eee;
+    padding: 10px 5px;
+    text-align: left;
+}
+.receipt-table th {
+    background-color: #f9f9f9;
+    font-weight: bold;
+}
+.receipt-table .text-right {
+    text-align: right;
+}
+.totals-table {
+    width: 100%;
+    margin-top: 20px;
+}
+.totals-table td {
+    padding: 5px;
+}
+.totals-table .label {
+    text-align: right;
+    font-weight: bold;
+    padding-right: 20px;
+}
+.totals-table .value {
+    text-align: right;
+}
+.grand-total {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+.receipt-footer {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+}
+.receipt-footer div {
+    width: 45%;
+}
+
+.receipt-photos img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+#login-screen {
+    display: flex; /* Make it visible by default */
+}
