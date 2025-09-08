@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode, useCallback, useEffect, useState } from 'react';
+import React, { createContext, useContext, ReactNode, useCallback, useState } from 'react';
 import useLocalStorage from '@/hooks/use-local-storage';
 import { INITIAL_SURVEY_DATA } from '@/lib/consts';
 import type { SurveyData } from '@/lib/types';
@@ -38,39 +38,34 @@ export const SurveyProvider = ({ children }: { children: ReactNode }) => {
         { ...INITIAL_SURVEY_DATA, id: activeId || uuidv4(), createdAt: new Date().toISOString() }
     );
 
-    useEffect(() => {
-        // This effect ensures that if the activeId changes (e.g. by loading a survey),
-        // the `useLocalStorage` hook is now targetting the correct key,
-        // and we can now read the correct data from it.
-        const storedSurvey = localStorage.getItem(`qgo-cargo-survey-${activeId}`);
-        if (storedSurvey) {
-            setSurvey(JSON.parse(storedSurvey));
-        }
-    }, [activeId, setSurvey]);
-
-
     const startNewSurvey = useCallback((goToFirstStep = false) => {
         const newId = uuidv4();
-        setActiveSurveyId(newId);
         const newSurvey = {
-        ...INITIAL_SURVEY_DATA,
-        id: newId,
-        createdAt: new Date().toISOString(),
+            ...INITIAL_SURVEY_DATA,
+            id: newId,
+            createdAt: new Date().toISOString(),
         };
-        setSurvey(newSurvey);
+        // We set the survey data for the *new* key first.
+        window.localStorage.setItem(`qgo-cargo-survey-${newId}`, JSON.stringify(newSurvey));
+        
+        // Then, we update the active ID, which will cause useLocalStorage to pick up the new data.
+        setActiveSurveyId(newId);
         setActiveId(newId);
 
         if (goToFirstStep) {
             goToStep(1);
         }
-    }, [setSurvey, goToStep]);
+    }, [goToStep]);
 
     const loadSurvey = useCallback((surveyData: SurveyData) => {
+        // Set the active ID, which will trigger the useLocalStorage hook to read the correct survey.
         setActiveSurveyId(surveyData.id);
-        setSurvey(surveyData);
         setActiveId(surveyData.id);
-        goToStep(1);
-    }, [setSurvey, goToStep]);
+        
+        if (goToStep) {
+            goToStep(1);
+        }
+    }, [goToStep]);
   
   return (
     <SurveyContext.Provider value={{ survey, setSurvey, loadSurvey, startNewSurvey, goToStep, setGoToStep }}>
