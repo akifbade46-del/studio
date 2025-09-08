@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const totalSteps = 6;
     
     // --- FIREBASE CONFIG ---
-    // IMPORTANT: Replace with your actual Firebase config
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_AUTH_DOMAIN",
@@ -69,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         logoutBtn: document.getElementById('logoutBtn'),
         loginError: document.getElementById('login-error'),
         appContainer: document.getElementById('app-container'),
+        signupLink: document.getElementById('signup-link'),
 
         // Main App
         steps: document.querySelectorAll('.step'),
@@ -139,6 +139,12 @@ document.addEventListener('DOMContentLoaded', function () {
         elements.passwordInput.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') handleLogin();
         });
+        
+        // Placeholder for signup functionality
+        elements.signupLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleSignUp();
+        });
     }
 
     function handleLogin() {
@@ -158,6 +164,30 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
     
+    function handleSignUp() {
+        if (!auth) return;
+        const email = elements.emailInput.value;
+        const password = elements.passwordInput.value;
+
+        if (!email || !password) {
+            showLoginError("Please enter email and password to sign up.");
+            return;
+        }
+
+        // For now, we'll just create the user. We will add admin approval later.
+        auth.createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // Signed in 
+                console.log("User created:", userCredential.user);
+                alert("Sign up successful! Please log in.");
+                // You might want to automatically log them in, or redirect to login
+            })
+            .catch((error) => {
+                console.error("SignUp Error:", error);
+                showLoginError(error.message);
+            });
+    }
+
     function handleLogout() {
         if (auth) auth.signOut();
     }
@@ -799,3 +829,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // Start the app
     initAuth();
 });
+
+    
