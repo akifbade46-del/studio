@@ -1,5 +1,5 @@
 :root {
-    --primary: #E30B17;
+    --primary: #007AFF;
     --dark: #111827;
     --accent: #6B7280;
     --radius: 0.75rem; /* Slightly larger radius for a softer look */
@@ -20,12 +20,12 @@ body {
 }
 
 /* --- Glassmorphism Effect --- */
-.glass-effect, #app-header, #sticky-footer {
-    background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(209, 213, 219, 0.3);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.glass-effect, #app-header, #sticky-footer, #editor-modal .bg-white, #passcode-modal .bg-white, #load-survey-modal .bg-white, #preview-modal .bg-white {
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(209, 213, 219, 0.3) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
 }
 
 /* --- Applying the Effect to Elements --- */
@@ -38,7 +38,7 @@ body {
     margin: 0 1rem; /* Add margin */
     width: calc(100% - 2rem);
     border-radius: var(--radius);
-    border-bottom: none;
+    border-bottom: none !important;
 }
 
 /* Make the main content start below the header */
@@ -62,10 +62,6 @@ main {
 #load-survey-modal .bg-white,
 #preview-modal .bg-white {
     background-color: rgba(255, 255, 255, 0.75) !important;
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(209, 213, 219, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
 }
 
 /* Card-like elements */
