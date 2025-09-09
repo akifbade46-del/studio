@@ -70,7 +70,7 @@ body {
 .text-primary-foreground { color: hsl(var(--primary-foreground)) !important; }
 .border-primary { border-color: hsl(var(--primary)) !important; }
 .ring-primary { --tw-ring-color: hsl(var(--primary)) !important; }
-.bg-dark { background-color: hsl(var(--primary)) !important; } /* Kept for login button backward compatibility */
+.bg-dark { background-color: hsl(var(--primary)) !important; } /* Kept for backward compatibility */
 .text-dark { color: hsl(var(--foreground)) !important; }
 .bg-accent { background-color: hsl(var(--accent)) !important; }
 .border-accent { border-color: hsl(var(--accent)) !important; }
@@ -172,9 +172,7 @@ input:focus, select:focus, textarea:focus {
 
 /* Modals */
 #editor-modal > div, #passcode-modal > div, #load-survey-modal > div, #preview-modal > div {
-    background-color: hsla(var(--card), 0.8);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background-color: hsl(var(--card));
     border: 1px solid hsl(var(--border));
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     color: hsl(var(--foreground));
@@ -218,5 +216,3 @@ input:focus, select:focus, textarea:focus {
       border-color: #e5e7eb !important;
   }
 }
-
-    
