@@ -41,14 +41,15 @@ body {
     border-top: 1px solid #e5e7eb;
 }
 
-/* --- Component Styling --- */
-/* Primary buttons like Login, Add, Next, Save */
-.bg-blue-600 { background-color: #2563eb !important; }
-.text-blue-600 { color: #2563eb !important; }
+/* --- Component Styling based on qgocargo.com --- */
+/* Primary buttons like Login, Next, Add, Save */
+.bg-blue-600 { background-color: #1C204F !important; } /* Q'Go Dark Blue */
+.text-blue-600 { color: #1C204F !important; }
+.border-blue-500 { border-color: #F26422 !important; } /* Q'Go Orange */
+.ring-blue-500 { --tw-ring-color: #F26422 !important; }
 
-/* General inputs and other elements */
-.border-blue-500 { border-color: #3b82f6 !important; }
-.ring-blue-500 { --tw-ring-color: #3b82f6 !important; }
+/* Accent color for important actions */
+.bg-orange-accent { background-color: #F26422 !important; color: #ffffff !important; }
 
 /* General background colors */
 .bg-gray-50 { background-color: #f9fafb !important; }
@@ -89,17 +90,17 @@ button:disabled {
 }
 
 /* Specific Button Styles */
-button.bg-blue-600, button.bg-green-500 {
+button.bg-blue-600, button.bg-green-500, button.bg-orange-accent {
     color: #ffffff !important;
     border-color: transparent !important;
 }
 
-button.bg-blue-600:hover {
+button.bg-blue-600:hover, button.bg-orange-accent:hover {
     filter: brightness(1.1);
 }
 
 /* Default button style for non-primary actions */
-button:not([class*="bg-"]):not(#clear-signature):not(.traffic-light-btn):not([data-photo-id]):not([data-delete-id]):not([data-delete-preset]):not([data-delete-container]) {
+button:not([class*="bg-"]):not(#clear-signature):not(.traffic-light-btn):not([data-photo-id]):not([data-delete-id]):not([data-delete-preset]):not([data-delete-container]):not(.move-type-btn) {
     color: #1f2937 !important;
     background-color: #ffffff !important;
     border: 1px solid #d1d5db !important;
@@ -111,9 +112,9 @@ button:not([class*="bg-"]):hover {
 
 
 input:focus, select:focus, textarea:focus {
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5) !important;
+    box-shadow: 0 0 0 2px rgba(242, 100, 34, 0.5) !important; /* Ring with Q'Go Orange */
     outline: none !important;
-    border-color: #3b82f6 !important; /* border-blue-500 */
+    border-color: #F26422 !important; /* Q'Go Orange */
 }
 
 
@@ -181,6 +182,32 @@ input:focus, select:focus, textarea:focus {
 #login-screen {
     background-color: #f3f4f6;
 }
+
+/* New Visual Move Type Selector */
+.move-type-btn {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    gap: 0.5rem;
+    background-color: #f9fafb !important; /* bg-gray-50 */
+    border: 2px solid #e5e7eb !important; /* border-gray-200 */
+    color: #374151 !important; /* text-gray-700 */
+    font-weight: 600;
+    padding: 1rem 0.5rem !important;
+}
+
+.move-type-btn i {
+    font-size: 1.5rem; /* Make icon bigger */
+    line-height: 1;
+}
+
+.move-type-btn.selected {
+    border-color: #1C204F !important; /* Q'Go Dark Blue */
+    background-color: #eef2ff !important; /* A light blue to indicate selection */
+    color: #1C204F !important;
+}
+
 
 /* Print Styles */
 @media print {

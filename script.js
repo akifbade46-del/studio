@@ -19,7 +19,7 @@ const defaultSettings = {
         { id: 'pickupAddress', label: 'Pickup Address', type: 'text', required: true, enabled: true },
         { id: 'destinationAddress', label: 'Destination Address', type: 'text', required: true, enabled: true },
         { id: 'surveyDate', label: 'Survey Date', type: 'datetime-local', required: true, enabled: true },
-        { id: 'moveType', label: 'Move Type', type: 'select', options: ['Local', 'GCC', 'International'], required: true, enabled: true },
+        // { id: 'moveType', label: 'Move Type', type: 'select', options: ['Local', 'GCC', 'International'], required: true, enabled: true },
     ],
     itemPresets: [
         // Boxes
@@ -46,7 +46,7 @@ const defaultSettings = {
     ],
     rates: {
         currency: 'KWD',
-        cbmRates: { Local: 15, GCC: 25, International: 40 },
+        cbmRates: { 'Local': 15, 'GCC': 25, 'International Sea': 40, 'International Air': 80 },
         minCharge: 100,
         materials: 5,
         labor: 50,
@@ -127,7 +127,7 @@ function createNewSurvey() {
     return {
         id: `survey-${new Date().toISOString()}-${Math.random().toString(36).substr(2, 9)}`,
         meta: { createdAt: new Date().toISOString() },
-        customer: { surveyDate: new Date().toISOString().slice(0, 16) },
+        customer: { surveyDate: new Date().toISOString().slice(0, 16), moveType: 'Local' }, // Default moveType
         items: [],
         totals: { cbm: 0 },
         media: { photos: [], signature: null }
@@ -216,7 +216,41 @@ function renderCustomerForm() {
             saveDraft();
         });
     });
+    renderMoveTypeSelector();
 }
+
+function renderMoveTypeSelector() {
+    const container = G('move-type-visual-selector');
+    container.innerHTML = '';
+    const moveTypes = [
+        { id: 'Local', label: 'Local/GCC', icon: 'truck' },
+        { id: 'International Sea', label: 'Sea Freight', icon: 'ship' },
+        { id: 'International Air', label: 'Air Freight', icon: 'plane' },
+    ];
+
+    moveTypes.forEach(type => {
+        const btn = D.createElement('button');
+        btn.type = 'button';
+        btn.className = 'flex items-center justify-center p-4 rounded-md move-type-btn';
+        btn.dataset.moveType = type.id;
+        btn.innerHTML = `<i class="lucide-${type.icon}"></i><span>${type.label}</span>`;
+        
+        if (state.survey.customer.moveType === type.id) {
+            btn.classList.add('selected');
+        }
+
+        btn.addEventListener('click', () => {
+            state.survey.customer.moveType = type.id;
+            // Remove 'selected' from all buttons and add to the clicked one
+            container.querySelectorAll('.move-type-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            saveDraft();
+        });
+
+        container.appendChild(btn);
+    });
+}
+
 
 function renderItemPresets() {
     const container = G('item-presets');
@@ -963,9 +997,9 @@ function renderEditor(tabId) {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     ${createInput('Currency', 'rates.currency', state.settings.rates.currency)}
                     ${createInput('Min Charge', 'rates.minCharge', state.settings.rates.minCharge, 'number')}
-                    ${createInput('CBM Rate (Local)', 'rates.cbmRates.Local', state.settings.rates.cbmRates.Local, 'number')}
-                    ${createInput('CBM Rate (GCC)', 'rates.cbmRates.GCC', state.settings.rates.cbmRates.GCC, 'number')}
-                    ${createInput('CBM Rate (Int\'l)', 'rates.cbmRates.International', state.settings.rates.cbmRates.International, 'number')}
+                    ${createInput('CBM Rate (Local/GCC)', 'rates.cbmRates.Local', state.settings.rates.cbmRates['Local'], 'number')}
+                    ${createInput('CBM Rate (Sea)', 'rates.cbmRates.International Sea', state.settings.rates.cbmRates['International Sea'], 'number')}
+                    ${createInput('CBM Rate (Air)', 'rates.cbmRates.International Air', state.settings.rates.cbmRates['International Air'], 'number')}
                     ${createInput('Materials Cost', 'rates.materials', state.settings.rates.materials, 'number')}
                     ${createInput('Labor Cost', 'rates.labor', state.settings.rates.labor, 'number')}
                     ${createInput('Surcharges', 'rates.surcharges', state.settings.rates.surcharges, 'number')}
@@ -1097,9 +1131,12 @@ function renderEditor(tabId) {
             let settingObj = state.settings;
             keys.slice(0, -1).forEach(key => {
                 if (!settingObj[key]) {
+                    // Check if the next key is a number, to create an array if needed
                     const nextKey = keys[keys.indexOf(key) + 1];
                     settingObj[key] = !isNaN(parseInt(nextKey)) ? [] : {};
                 }
+                // Handle cases where a setting path might be 'rates.cbmRates.International Sea'
+                const fullKey = key.includes(' ') ? `['${key}']` : key;
                 settingObj = settingObj[key];
             });
             
@@ -1111,7 +1148,9 @@ function renderEditor(tabId) {
             } else {
                 value = e.target.value;
             }
-            settingObj[keys.pop()] = value;
+
+            const finalKey = keys.pop();
+            settingObj[finalKey] = value;
             
             saveAndApplySettings();
         });
