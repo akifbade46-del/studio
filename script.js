@@ -134,24 +134,34 @@ function createNewSurvey() {
 }
 
 function startNewSurvey() {
-    if (confirm('Are you sure you want to start a new survey? Any unsaved data will be lost.')) {
-        localStorage.removeItem('currentSurvey');
-        state.survey = createNewSurvey();
-        state.currentStep = 1;
-        
-        updateUI();
-        renderCustomerForm();
-        renderItemPresets();
-        renderItemsTable();
-        updateFooter();
-        renderPhotos();
-        
-        const canvas = G('signature-pad');
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (Object.keys(state.survey.customer).length > 2 || state.survey.items.length > 0) { // Check if it's not a fresh survey
+        if (!confirm('Are you sure you want to start a new survey? Any unsaved data will be lost.')) {
+            return;
         }
     }
+    localStorage.removeItem('currentSurvey');
+    state.survey = createNewSurvey();
+    state.currentStep = 1;
+    
+    updateUI();
+    renderCustomerForm();
+    renderItemPresets();
+    renderItemsTable();
+    updateFooter();
+    renderPhotos();
+    
+    const canvas = G('signature-pad');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    G('save-status').textContent = 'New survey started.';
+    // Reset save button in case it was left in a 'Saved' state
+    const saveBtn = G('save-survey-btn');
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = `<i class="lucide-save mr-2"></i>Save Survey`;
+    saveBtn.classList.remove('bg-green-500');
+    saveBtn.classList.add('bg-orange-accent');
 }
 
 function loadSurvey(surveyData) {
@@ -785,6 +795,10 @@ function setupEventListeners() {
     // Load Survey
     G('load-survey-btn').addEventListener('click', showLoadSurveyModal);
     G('close-load-survey-btn').addEventListener('click', () => G('load-survey-modal').style.display = 'none');
+    G('survey-search-input').addEventListener('input', (e) => {
+        renderSurveyList(e.target.value);
+    });
+
 
     // Preview Modal
     G('preview-close-btn').addEventListener('click', () => G('preview-modal').style.display = 'none');
@@ -865,6 +879,10 @@ async function saveSurveyToFirestore() {
         alert('Firebase is not configured. Please check your settings in the editor.');
         return;
     }
+    if (!state.survey.customer.name) {
+        alert('Please enter a customer name before saving.');
+        return;
+    }
 
     btn.disabled = true;
     btn.innerHTML = `<i class="lucide-loader-2 animate-spin mr-2"></i>Saving...`;
@@ -876,27 +894,90 @@ async function saveSurveyToFirestore() {
         
         await state.firebase.db.collection('surveys').doc(surveyToSave.id).set(surveyToSave);
 
-        statusDiv.textContent = `Survey saved successfully! ID: ${surveyToSave.id.substring(surveyToSave.id.length-6)}`;
-        alert(`Survey saved successfully! A new survey has been started.`);
-        
-        startNewSurvey();
+        // Success state
+        G('success-sound').play();
+        statusDiv.textContent = `Survey for ${surveyToSave.customer.name} saved successfully! ID: ${surveyToSave.id.substring(surveyToSave.id.length-6)}`;
+        btn.innerHTML = `<i class="lucide-check mr-2"></i>Saved!`;
+        btn.classList.remove('bg-orange-accent');
+        btn.classList.add('bg-green-500');
+
+        // Wait for 2 seconds then start a new survey
+        setTimeout(() => {
+            startNewSurvey();
+        }, 2000);
 
     } catch (error) {
         console.error('Error saving survey to Firebase:', error);
         statusDiv.textContent = `Error: ${error.message}. Please check Firestore rules.`;
         alert(`Failed to save survey. Check the console and your Firestore rules. ${error.message}`);
-    } finally {
         btn.disabled = false;
         btn.innerHTML = `<i class="lucide-save mr-2"></i>Save Survey`;
     }
+}
+
+function renderSurveyList(searchTerm = '') {
+    const listDiv = G('load-survey-list');
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+    const filteredSurveys = state.surveysCache.filter(survey => {
+        const customerName = (survey.customer?.name || '').toLowerCase();
+        const surveyId = survey.id.toLowerCase();
+        return customerName.includes(lowerCaseSearchTerm) || surveyId.includes(lowerCaseSearchTerm);
+    });
+
+    if (filteredSurveys.length === 0) {
+        listDiv.innerHTML = '<p>No matching surveys found.</p>';
+        return;
+    }
+
+    listDiv.innerHTML = '';
+    filteredSurveys.forEach(survey => {
+        const surveyDiv = D.createElement('div');
+        surveyDiv.className = 'flex justify-between items-center p-2 border-b hover:bg-gray-100';
+        surveyDiv.innerHTML = `
+            <div>
+                <p class="font-bold">${survey.customer?.name || 'No Name'}</p>
+                <p class="text-sm text-gray-600">ID: ${survey.id.substring(survey.id.length - 9)}</p>
+                <p class="text-sm text-gray-500">Date: ${new Date(survey.meta.createdAt).toLocaleString()}</p>
+            </div>
+            <div class="flex gap-2">
+                <button class="preview-btn text-sm bg-gray-200 p-2 rounded" data-survey-id="${survey.id}">Preview</button>
+                <button class="load-btn text-sm bg-blue-600 text-white p-2 rounded" data-survey-id="${survey.id}">Load</button>
+            </div>
+        `;
+        listDiv.appendChild(surveyDiv);
+    });
+    
+    // Re-attach event listeners for the newly created buttons
+    listDiv.querySelectorAll('.preview-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const surveyId = e.target.dataset.surveyId;
+            const surveyToPreview = state.surveysCache.find(s => s.id === surveyId);
+            if (surveyToPreview) {
+                showPreviewModal(surveyToPreview);
+            }
+        });
+    });
+
+    listDiv.querySelectorAll('.load-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const surveyId = e.target.dataset.surveyId;
+            const surveyToLoad = state.surveysCache.find(s => s.id === surveyId);
+            if (surveyToLoad) {
+                loadSurvey(surveyToLoad);
+            }
+        });
+    });
 }
 
 
 async function showLoadSurveyModal() {
     const modal = G('load-survey-modal');
     const listDiv = G('load-survey-list');
-    listDiv.innerHTML = '<p>Loading surveys...</p>';
+    listDiv.innerHTML = '<p class="text-center"><i class="lucide-loader-2 animate-spin inline-block"></i> Loading surveys...</p>';
     modal.style.display = 'flex';
+    G('survey-search-input').value = '';
+
 
     if (!state.firebase.db) {
         listDiv.innerHTML = '<p class="text-red-500">Firebase is not configured.</p>';
@@ -904,7 +985,7 @@ async function showLoadSurveyModal() {
     }
 
     try {
-        const querySnapshot = await state.firebase.db.collection('surveys').orderBy('meta.createdAt', 'desc').limit(50).get();
+        const querySnapshot = await state.firebase.db.collection('surveys').orderBy('meta.createdAt', 'desc').limit(100).get();
         state.surveysCache = [];
         
         if (querySnapshot.empty) {
@@ -912,49 +993,15 @@ async function showLoadSurveyModal() {
             return;
         }
 
-        listDiv.innerHTML = '';
         querySnapshot.forEach(doc => {
-            const survey = doc.data();
-            state.surveysCache.push(survey); 
-            const surveyDiv = D.createElement('div');
-            surveyDiv.className = 'flex justify-between items-center p-2 border-b hover:bg-gray-100';
-            surveyDiv.innerHTML = `
-                <div>
-                    <p class="font-bold">${survey.customer?.name || 'No Name'}</p>
-                    <p class="text-sm text-gray-600">ID: ${survey.id.substring(survey.id.length - 9)}</p>
-                    <p class="text-sm text-gray-500">Date: ${new Date(survey.meta.createdAt).toLocaleString()}</p>
-                </div>
-                <div class="flex gap-2">
-                    <button class="preview-btn text-sm bg-gray-200 p-2 rounded" data-survey-id="${survey.id}">Preview</button>
-                    <button class="load-btn text-sm bg-blue-600 text-white p-2 rounded" data-survey-id="${survey.id}">Load</button>
-                </div>
-            `;
-            listDiv.appendChild(surveyDiv);
+            state.surveysCache.push(doc.data());
         });
         
-        listDiv.querySelectorAll('.preview-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const surveyId = e.target.dataset.surveyId;
-                const surveyToPreview = state.surveysCache.find(s => s.id === surveyId);
-                if (surveyToPreview) {
-                    showPreviewModal(surveyToPreview);
-                }
-            });
-        });
-
-        listDiv.querySelectorAll('.load-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const surveyId = e.target.dataset.surveyId;
-                const surveyToLoad = state.surveysCache.find(s => s.id === surveyId);
-                if (surveyToLoad) {
-                    loadSurvey(surveyToLoad);
-                }
-            });
-        });
+        renderSurveyList(); // Initial render of the full list
 
     } catch (error) {
         console.error("Error loading surveys:", error);
-        listDiv.innerHTML = `<p class="text-red-500">Could not load surveys. Error: ${error.message}</p>`;
+        listDiv.innerHTML = `<p class="text-red-500">Could not load surveys. Error: ${error.message}</p><p class="text-sm text-gray-600 mt-2">You might need to create a composite index in Firestore for the 'surveys' collection on 'meta.createdAt' (descending).</p>`;
     }
 }
 
