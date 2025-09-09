@@ -2,7 +2,7 @@ name: Deploy to Hostinger (qgoproject)
 
 on:
   push:
-    branches: [ "main" ]    # agar branch 'master' hai to yahan master likh do
+    branches: [ "main" ]     # master ho to yahan master
   workflow_dispatch:
 
 concurrency:
@@ -16,17 +16,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 👉 Agar poora repo root upload karna ho to local-dir: . kar do
       - name: FTP Deploy to Hostinger
-        uses: SamKirkland/FTP-Deploy-Action@v4
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5   # 👈 correct repo + pinned version
         with:
-          server: ${{ secrets.FTP_HOST }}          # e.g. ftp.forestgreen-elephant-353388.hostingersite.com
-          username: ${{ secrets.FTP_USERNAME }}    # u345343285.aakkiiff
+          server: ${{ secrets.FTP_HOST }}            # ftp.forestgreen-elephant-353388.hostingersite.com
+          username: ${{ secrets.FTP_USERNAME }}      # u345343285.aakkiiff
           password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}            # 21
+          port: ${{ secrets.FTP_PORT }}              # 21
           protocol: ftp
-          server-dir: .                            # user ka default dir = public_html/qgoproject/
-          local-dir: .                       # repo ka 'public/' upload hoga
+          server-dir: .                              # this user is jailed to public_html/qgoproject/
+          local-dir: public                          # repo ka 'public/' upload hoga ('.' kar sakte ho)
           exclude: |
             **/.git*
             **/.github/**
