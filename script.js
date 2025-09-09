@@ -13,14 +13,14 @@ const state = {
 const defaultSettings = {
     company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "https://qgocargo.com/logo.png" },
     branding: {
-        primary: '222.2 47.4% 11.2%', // HSL format for shadcn theming
-        background: '0 0% 100%',
-        foreground: '222.2 47.4% 11.2%',
-        card: '0 0% 100%',
-        border: '214.3 31.8% 91.4%',
-        accent: '210 40% 96.1%',
-        radius: 0.75,
-        fontFamily: 'sans-serif',
+        primary: '222.2 47.4% 11.2%', // HSL: Dark Blue
+        background: '0 0% 98%', // HSL: Almost white
+        foreground: '222.2 47.4% 11.2%', // HSL: Dark Blue
+        card: '0 0% 100%', // HSL: White
+        border: '214.3 31.8% 91.4%', // HSL: Light Grey
+        accent: '210 40% 96.1%', // HSL: Very Light Blue/Grey
+        radius: 0.5, // rem
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
         fontSizeBase: 16, // in pixels
     },
     firebaseConfig: {
@@ -84,11 +84,13 @@ const defaultSettings = {
 function init() {
     state.settings = JSON.parse(localStorage.getItem('surveyAppSettings')) || defaultSettings;
     
-    // Always use the hardcoded logo, ignore saved one
-    state.settings.company.logo = "https://qgocargo.com/logo.png";
-    
-    // Apply branding early to avoid FOUC
+    // Crucially, apply branding settings from JS as early as possible.
+    // The CSS file already has a solid default theme, so this just overrides it.
     applyBranding();
+    
+    // Set logos from settings
+    G('header-logo').src = state.settings.company.logo;
+    D.querySelector('#login-screen img').src = state.settings.company.logo;
 
     initFirebase();
     
@@ -152,7 +154,9 @@ function startNewSurvey() {
         state.survey = createNewSurvey();
         state.currentStep = 1;
         
+        // Re-apply settings in case they were changed
         applyBranding();
+        
         updateUI();
         renderCustomerForm();
         renderItemPresets();
@@ -160,10 +164,11 @@ function startNewSurvey() {
         updateFooter();
         renderPhotos();
         
-        // Clear signature pad
         const canvas = G('signature-pad');
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
     }
 }
 
@@ -173,6 +178,8 @@ function loadSurvey(surveyData) {
         state.currentStep = 1;
         saveDraft(); 
         
+        // Re-apply settings and re-render everything
+        applyBranding();
         updateUI();
         renderCustomerForm();
         renderItemPresets();
@@ -216,37 +223,47 @@ function applyBranding() {
     });
 
     // Set other CSS variables
-    root.style.setProperty('--radius', `${branding.radius || 0.75}rem`);
+    root.style.setProperty('--radius', `${branding.radius || 0.5}rem`);
     root.style.setProperty('--font-family', branding.fontFamily || 'sans-serif');
     root.style.setProperty('--font-size-base', `${branding.fontSizeBase || 16}px`);
 
     // Set derived colors
-    const primaryFg = getContrastingColor(branding.primary) > 128 ? '222.2 47.4% 11.2%' : '210 40% 98%';
+    // This logic determines if text on a primary-colored button should be light or dark
+    const primaryFg = getLuminance(branding.primary) > 0.5 ? '222.2 47.4% 11.2%' : '210 40% 98%';
     root.style.setProperty('--primary-foreground', primaryFg);
-    
-    // Apply logo
-    G('header-logo').src = state.settings.company.logo;
 }
 
 
-// Helper to determine if text on a given HSL background should be light or dark
-function getContrastingColor(hsl) {
+// Helper to get luminance from an HSL string to decide on contrasting text color.
+// Returns a value between 0 (black) and 1 (white).
+function getLuminance(hsl) {
     if (!hsl) return 0;
-    const [h, s, l] = hsl.split(' ').map(parseFloat);
-    // This is a simplified luminance calculation
-    const C = (1 - Math.abs(2 * (l/100) - 1)) * (s/100);
-    const X = C * (1 - Math.abs((h / 60) % 2 - 1));
-    const m = (l/100) - C/2;
-    let r, g, b;
-    if (h < 60) [r, g, b] = [C, X, 0];
-    else if (h < 120) [r, g, b] = [X, C, 0];
-    else if (h < 180) [r, g, b] = [0, C, X];
-    else if (h < 240) [r, g, b] = [0, X, C];
-    else if (h < 300) [r, g, b] = [X, 0, C];
-    else [r, g, b] = [C, 0, X];
+    let [h, s, l] = hsl.split(' ').map(val => parseFloat(val.replace('%', '')));
+    s /= 100;
+    l /= 100;
     
-    const lum = ((r+m) * 0.299 + (g+m) * 0.587 + (b+m) * 0.114) * 255;
-    return lum;
+    function hue2rgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+    }
+
+    let r, g, b;
+    if (s === 0) {
+        r = g = b = l; // achromatic
+    } else {
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h / 360 + 1/3);
+        g = hue2rgb(p, q, h / 360);
+        b = hue2rgb(p, q, h / 360 - 1/3);
+    }
+    
+    // Formula for relative luminance
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
 function renderCustomerForm() {
@@ -257,11 +274,11 @@ function renderCustomerForm() {
         const div = D.createElement('div');
         let inputHtml = '';
         if (field.type === 'select') {
-            inputHtml = `<select id="customer-${field.id}" name="${field.id}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" ${field.required ? 'required' : ''}>
+            inputHtml = `<select id="customer-${field.id}" name="${field.id}" class="mt-1 block w-full" ${field.required ? 'required' : ''}>
                 ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
             </select>`;
         } else {
-            inputHtml = `<input type="${field.type}" id="customer-${field.id}" name="${field.id}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" ${field.required ? 'required' : ''}>`;
+            inputHtml = `<input type="${field.type}" id="customer-${field.id}" name="${field.id}" class="mt-1 block w-full" ${field.required ? 'required' : ''}>`;
         }
         div.innerHTML = `<label for="customer-${field.id}" class="block text-sm font-medium">${field.label}${field.required ? ' <span class="text-red-500">*</span>' : ''}</label>${inputHtml}`;
         form.appendChild(div);
@@ -280,23 +297,19 @@ function renderItemPresets() {
     const container = G('item-presets');
     container.innerHTML = '';
     
-    // Group presets by category
     const groupedPresets = state.settings.itemPresets.reduce((acc, preset) => {
         const category = preset.category || 'General';
-        if (!acc[category]) {
-            acc[category] = [];
-        }
+        if (!acc[category]) acc[category] = [];
         acc[category].push(preset);
         return acc;
     }, {});
 
-    // Render each category
     for (const category in groupedPresets) {
         const categoryWrapper = D.createElement('div');
         categoryWrapper.className = 'w-full mb-4';
         
         const categoryTitle = D.createElement('h3');
-        categoryTitle.className = 'font-semibold mb-2 text-lg';
+        categoryTitle.className = 'font-semibold mb-2 text-base';
         categoryTitle.textContent = category;
         categoryWrapper.appendChild(categoryTitle);
 
@@ -305,8 +318,7 @@ function renderItemPresets() {
 
         groupedPresets[category].forEach(preset => {
             const btn = D.createElement('button');
-            const isHighlighted = ['Boxes'].includes(category);
-            btn.className = `text-sm p-3 rounded-md flex-grow md:flex-grow-0 ${isHighlighted ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground border'}`;
+            btn.className = 'text-sm p-2 rounded-md flex-grow md:flex-grow-0 bg-accent text-accent-foreground border-transparent';
             btn.innerHTML = `<i class="lucide-box mr-1"></i> ${preset.name}`;
             btn.onclick = () => {
                 addItem({ name: preset.name, qty: 1, l: preset.l, w: preset.w, h: preset.h, unit: 'cm' });
@@ -346,10 +358,10 @@ function renderItemsTable() {
         const row = tbody.insertRow();
         row.innerHTML = `
             <td class="py-2 px-4">${item.name}</td>
-            <td class="py-2 px-4"><input type="number" value="${item.qty}" min="1" class="w-16 border-gray-300 rounded" data-item-id="${item.id}"></td>
+            <td class="py-2 px-4"><input type="number" value="${item.qty}" min="1" class="w-16" data-item-id="${item.id}"></td>
             <td class="py-2 px-4">${item.cbmPerUnit.toFixed(3)}</td>
             <td class="py-2 px-4">${(item.cbmPerUnit * item.qty).toFixed(3)}</td>
-            <td class="py-2 px-4"><button data-delete-id="${item.id}" class="text-red-500 hover:text-red-700"><i class="lucide-trash-2"></i></button></td>
+            <td class="py-2 px-4"><button data-delete-id="${item.id}" class="text-red-500 hover:text-red-700 p-1"><i class="lucide-trash-2"></i></button></td>
         `;
         totalCBM += item.cbmPerUnit * item.qty;
     });
@@ -372,8 +384,8 @@ function calculateContainerPlan() {
 
     state.settings.containers.forEach(cont => {
         const effectiveCapacity = cont.capacity * cont.efficiency;
-        const utilization = (totalCbm / effectiveCapacity) * 100;
-        const containersNeeded = Math.ceil(totalCbm / effectiveCapacity);
+        const utilization = totalCbm > 0 ? (totalCbm / effectiveCapacity) * 100 : 0;
+        const containersNeeded = totalCbm > 0 ? Math.ceil(totalCbm / effectiveCapacity) : 0;
         
         if (containersNeeded === 1 && (!bestOption || cont.capacity < bestOption.capacity)) {
             bestOption = cont.type;
@@ -531,25 +543,27 @@ function generateReceiptHtml(survey, type = 'customer') {
 
             <!-- Items Table -->
             <h5 class="text-sm font-bold text-gray-700 mt-6 mb-2">Itemized List</h5>
-            <table class="w-full text-sm">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="py-2 px-3 text-left font-semibold">Item Description</th>
-                        <th class="py-2 px-3 text-center font-semibold">Qty</th>
-                        <th class="py-2 px-3 text-right font-semibold">CBM/Unit</th>
-                        <th class="py-2 px-3 text-right font-semibold">Total CBM</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${itemsHtml}
-                </tbody>
-                <tfoot>
-                    <tr class="font-bold bg-gray-50">
-                        <td colspan="3" class="py-2 px-3 text-right">Total Volume:</td>
-                        <td class="py-2 px-3 text-right">${totals.cbm.toFixed(3)} CBM</td>
-                    </tr>
-                </tfoot>
-            </table>
+            <div class="overflow-x-auto border rounded-lg">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="py-2 px-3 text-left font-semibold">Item Description</th>
+                            <th class="py-2 px-3 text-center font-semibold">Qty</th>
+                            <th class="py-2 px-3 text-right font-semibold">CBM/Unit</th>
+                            <th class="py-2 px-3 text-right font-semibold">Total CBM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsHtml}
+                    </tbody>
+                    <tfoot>
+                        <tr class="font-bold bg-gray-50">
+                            <td colspan="3" class="py-2 px-3 text-right">Total Volume:</td>
+                            <td class="py-2 px-3 text-right">${totals.cbm.toFixed(3)} CBM</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
             
             <!-- Pricing or Customer CBM -->
             ${pricingHtml}
@@ -578,7 +592,6 @@ function generateReceiptHtml(survey, type = 'customer') {
 
 function setupReview() {
     const reviewDiv = G('review-summary');
-    // Default to office copy for on-screen review
     reviewDiv.innerHTML = generateReceiptHtml(state.survey, 'office');
 }
 
@@ -590,15 +603,22 @@ function saveDraft() {
 function printReport(content) {
     const printWindow = window.open('', '', 'height=800,width=1000');
     printWindow.document.write('<html><head><title>Print Survey</title>');
-    printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
-    printWindow.document.write('<link rel="stylesheet" href="style.css">');
+    printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>'); // Tailwind for utility classes
+    printWindow.document.write('<style> body { font-family: ' + state.settings.branding.fontFamily + '; } </style>');
     printWindow.document.write('</head><body class="text-sm">');
     printWindow.document.write('<div class="p-8">');
     printWindow.document.write(content);
     printWindow.document.write('</div>');
     printWindow.document.write('</body></html>');
     printWindow.document.close();
-    setTimeout(() => { printWindow.print(); }, 500);
+    setTimeout(() => { 
+        try {
+            printWindow.print(); 
+        } catch(e) {
+            console.error("Print failed", e);
+            printWindow.close();
+        }
+    }, 500);
 }
 
 
@@ -655,7 +675,7 @@ function setupEventListeners() {
             const itemId = e.target.dataset.itemId;
             const newQty = parseInt(e.target.value);
             const item = state.survey.items.find(i => i.id === itemId);
-            if(item) {
+            if(item && newQty > 0) {
                 item.qty = newQty;
                 renderItemsTable();
                 saveDraft();
@@ -663,8 +683,9 @@ function setupEventListeners() {
         }
     });
      G('items-table').addEventListener('click', (e) => {
-        if(e.target.closest('button[data-delete-id]')) {
-            const itemId = e.target.closest('button[data-delete-id]').dataset.deleteId;
+        const deleteBtn = e.target.closest('button[data-delete-id]');
+        if(deleteBtn) {
+            const itemId = deleteBtn.dataset.deleteId;
             state.survey.items = state.survey.items.filter(i => i.id !== itemId);
             renderItemsTable();
             saveDraft();
@@ -713,6 +734,7 @@ function setupEventListeners() {
             };
             reader.readAsDataURL(file);
         });
+        photoInput.value = ''; // Reset input to allow re-uploading the same file
     });
 
     
@@ -729,11 +751,12 @@ function setupEventListeners() {
     const canvas = G('signature-pad');
     const ctx = canvas.getContext('2d');
     let drawing = false;
-    function getMousePos(canvas, evt) {
-        const rect = canvas.getBoundingClientRect();
+    function getPos(canvasEl, event) {
+        const rect = canvasEl.getBoundingClientRect();
+        const evt = event.touches ? event.touches[0] : event;
         return {
-            x: (evt.clientX || evt.touches[0].clientX) - rect.left,
-            y: (evt.clientY || evt.touches[0].clientY) - rect.top
+            x: evt.clientX - rect.left,
+            y: evt.clientY - rect.top
         };
     }
     function startDrawing(e) { drawing = true; draw(e); }
@@ -746,7 +769,7 @@ function setupEventListeners() {
     function draw(e) {
         e.preventDefault();
         if (!drawing) return;
-        const pos = getMousePos(canvas, e);
+        const pos = getPos(canvas, e);
         ctx.lineWidth = 3;
         ctx.lineCap = 'round';
         ctx.strokeStyle = '#111827';
@@ -758,16 +781,17 @@ function setupEventListeners() {
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mouseup', stopDrawing);
     canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
     canvas.addEventListener('touchend', stopDrawing);
-    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    
     G('clear-signature').addEventListener('click', () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         state.survey.media.signature = null;
         saveDraft();
     });
 
-    // Editor Mode
+    // Editor Mode & Modals
     G('editor-mode-btn').addEventListener('click', () => G('passcode-modal').style.display = 'flex');
     G('close-passcode-btn').addEventListener('click', () => G('passcode-modal').style.display = 'none');
     G('passcode-submit').addEventListener('click', () => {
@@ -845,7 +869,6 @@ function shareToWhatsApp() {
         return;
     }
 
-    // Replace placeholders
     const replacements = {
         '{{customerName}}': customer.name || '',
         '{{grandTotal}}': (pricing?.grandTotal || 0).toFixed(2),
@@ -857,7 +880,7 @@ function shareToWhatsApp() {
         template = template.replace(new RegExp(key, 'g'), replacements[key]);
     }
     
-    const whatsappUrl = `https://wa.me/${customer.phone}?text=${encodeURIComponent(template)}`;
+    const whatsappUrl = `https://wa.me/${customer.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(template)}`;
     window.open(whatsappUrl, '_blank');
 }
 
@@ -869,7 +892,7 @@ function renderPhotos() {
         const div = D.createElement('div');
         div.className = 'relative group';
         div.innerHTML = `
-            <img src="${photo.dataUrl}" class="w-full h-24 object-cover rounded-md">
+            <img src="${photo.dataUrl}" class="w-full h-24 object-cover rounded-md border">
             <button data-photo-id="${photo.id}" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><i class="lucide-trash-2 w-4 h-4"></i></button>
         `;
         preview.appendChild(div);
@@ -893,13 +916,11 @@ async function saveSurveyToFirestore() {
         const surveyToSave = JSON.parse(JSON.stringify(state.survey));
         surveyToSave.meta.savedAt = new Date().toISOString();
         
-        // Use the survey ID as the document ID in Firestore
         await state.firebase.db.collection('surveys').doc(surveyToSave.id).set(surveyToSave);
 
-        statusDiv.textContent = `Survey saved successfully to Firebase with ID: ${surveyToSave.id}`;
+        statusDiv.textContent = `Survey saved successfully! ID: ${surveyToSave.id.substring(surveyToSave.id.length-6)}`;
         alert(`Survey saved successfully! A new survey has been started.`);
         
-        // Automatically start a new survey after a successful save
         startNewSurvey();
 
     } catch (error) {
@@ -926,7 +947,7 @@ async function showLoadSurveyModal() {
 
     try {
         const querySnapshot = await state.firebase.db.collection('surveys').orderBy('meta.createdAt', 'desc').limit(50).get();
-        state.surveysCache = []; // Clear cache
+        state.surveysCache = [];
         
         if (querySnapshot.empty) {
             listDiv.innerHTML = '<p>No saved surveys found.</p>';
@@ -936,7 +957,7 @@ async function showLoadSurveyModal() {
         listDiv.innerHTML = '';
         querySnapshot.forEach(doc => {
             const survey = doc.data();
-            state.surveysCache.push(survey); // Cache the loaded survey data
+            state.surveysCache.push(survey); 
             const surveyDiv = D.createElement('div');
             surveyDiv.className = 'flex justify-between items-center p-2 border-b hover:bg-gray-100';
             surveyDiv.innerHTML = `
@@ -953,7 +974,6 @@ async function showLoadSurveyModal() {
             listDiv.appendChild(surveyDiv);
         });
         
-        // Add event listeners for the new buttons
         listDiv.querySelectorAll('.preview-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const surveyId = e.target.dataset.surveyId;
@@ -984,8 +1004,8 @@ function showPreviewModal(surveyData) {
     const modal = G('preview-modal');
     const contentDiv = G('preview-content');
     
-    modal.dataset.surveyId = surveyData.id; // Store survey ID for re-printing
-    contentDiv.innerHTML = generateReceiptHtml(surveyData, 'office'); // Default to office copy in preview
+    modal.dataset.surveyId = surveyData.id;
+    contentDiv.innerHTML = generateReceiptHtml(surveyData, 'office');
     
     modal.style.display = 'flex';
 }
@@ -996,10 +1016,10 @@ function renderEditor(tabId) {
     D.querySelector(`.editor-tab-btn[data-tab="${tabId}"]`).classList.add('bg-gray-200');
 
     const content = G('editor-content');
-    content.innerHTML = ''; // Clear previous content
+    content.innerHTML = '';
     
-    const createInput = (label, settingPath, value, type = 'text') => `<div><label class="block text-sm font-medium mb-1">${label}</label><input type="${type}" step="any" class="w-full border-gray-300 rounded" data-setting="${settingPath}" value="${value}"></div>`;
-    const createTextarea = (label, settingPath, value) => `<div><label class="block text-sm font-medium mb-1">${label}</label><textarea class="w-full border-gray-300 rounded" rows="3" data-setting="${settingPath}">${value}</textarea></div>`;
+    const createInput = (label, settingPath, value, type = 'text') => `<div><label class="block text-sm font-medium mb-1">${label}</label><input type="${type}" step="any" class="w-full" data-setting="${settingPath}" value="${value}"></div>`;
+    const createTextarea = (label, settingPath, value) => `<div><label class="block text-sm font-medium mb-1">${label}</label><textarea class="w-full" rows="3" data-setting="${settingPath}">${value}</textarea></div>`;
     const createColorInput = (label, settingPath, value) => {
         const hex = hslToHex.apply(null, value.split(' ').map(parseFloat));
         return `<div class="flex items-center justify-between"><label class="block text-sm font-medium">${label}</label><input type="color" class="w-24 h-10 border-gray-300 rounded" data-color-setting="${settingPath}" value="${hex}"></div>`;
@@ -1011,10 +1031,10 @@ function renderEditor(tabId) {
                 <h3 class="text-xl font-bold mb-4">Company Info</h3>
                 <div class="space-y-4">
                     ${createInput('Company Name', 'company.name', state.settings.company.name)}
-                    ${createInput('Address', 'company.address', state.settings.company.address)}
+                    ${createTextarea('Address', 'company.address', state.settings.company.address)}
                     ${createInput('Phone', 'company.phone', state.settings.company.phone)}
                     ${createInput('Email', 'company.email', state.settings.company.email)}
-                    ${createTextarea('Logo URL (or Data URL)', 'company.logo', state.settings.company.logo)}
+                    ${createTextarea('Logo URL', 'company.logo', state.settings.company.logo)}
                 </div>`;
             break;
         case 'editor-rates':
@@ -1037,34 +1057,34 @@ function renderEditor(tabId) {
             content.innerHTML = `<h3 class="text-xl font-bold mb-4">Item Presets</h3><div id="presets-editor-list" class="space-y-2"></div><button id="add-preset-btn" class="mt-4 bg-gray-200 p-2 rounded">Add Preset</button>`;
             const presetsList = G('presets-editor-list');
             state.settings.itemPresets.forEach((p, i) => {
-                presetsList.innerHTML += `<div class="grid grid-cols-5 gap-2 items-center border p-2 rounded">
-                    <input class="col-span-2 border-gray-300 rounded" data-setting="itemPresets.${i}.name" value="${p.name}">
-                    <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.l" value="${p.l}" placeholder="L">
-                    <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.w" value="${p.w}" placeholder="W">
-                    <input type="number" class="border-gray-300 rounded" data-setting="itemPresets.${i}.h" value="${p.h}" placeholder="H">
+                presetsList.innerHTML += `<div class="grid grid-cols-6 gap-2 items-center border p-2 rounded">
+                    <input class="col-span-2" data-setting="itemPresets.${i}.name" value="${p.name}">
+                    <input class="col-span-2" data-setting="itemPresets.${i}.category" value="${p.category || ''}" placeholder="Category">
+                    <input type="number" data-setting="itemPresets.${i}.l" value="${p.l}" placeholder="L">
+                    <input type="number" data-setting="itemPresets.${i}.w" value="${p.w}" placeholder="W">
+                    <input type="number" data-setting="itemPresets.${i}.h" value="${p.h}" placeholder="H">
                     <button class="text-red-500 hover:text-red-700" data-delete-preset="${i}"><i class="lucide-trash-2"></i></button>
                 </div>`;
             });
             G('add-preset-btn').onclick = () => {
-                state.settings.itemPresets.push({ name: 'New Item', l: 10, w: 10, h: 10 });
+                state.settings.itemPresets.push({ name: 'New Item', category: 'General', l: 10, w: 10, h: 10 });
                 renderEditor(tabId);
             };
             presetsList.addEventListener('click', e => {
                if (e.target.closest('[data-delete-preset]')) {
                    const index = e.target.closest('[data-delete-preset]').dataset.deletePreset;
                    state.settings.itemPresets.splice(index, 1);
-                   renderEditor(tabId); // Re-render to reflect deletion
+                   renderEditor(tabId);
                }
             });
             break;
         case 'editor-fields':
-             content.innerHTML = `<h3 class="text-xl font-bold mb-4">Customer Form Fields</h3><p class="text-sm mb-4 text-gray-600">Drag to reorder. Uncheck to disable.</p><div id="fields-editor-list" class="space-y-2"></div>`;
+             content.innerHTML = `<h3 class="text-xl font-bold mb-4">Customer Form Fields</h3><p class="text-sm mb-4 text-gray-600">Uncheck to disable a field.</p><div id="fields-editor-list" class="space-y-2"></div>`;
              const fieldsList = G('fields-editor-list');
              state.settings.customerFields.forEach((f, i) => {
                  fieldsList.innerHTML += `<div class="flex items-center gap-2 border p-2 rounded bg-white">
-                     <i class="lucide-grip-vertical cursor-move"></i>
-                     <input type="checkbox" class="h-4 w-4 rounded border-gray-300" data-setting="customerFields.${i}.enabled" ${f.enabled ? 'checked' : ''}>
-                     <input class="flex-grow border-gray-300 rounded" data-setting="customerFields.${i}.label" value="${f.label}">
+                     <input type="checkbox" class="h-4 w-4" data-setting="customerFields.${i}.enabled" ${f.enabled ? 'checked' : ''}>
+                     <input class="flex-grow" data-setting="customerFields.${i}.label" value="${f.label}">
                  </div>`;
              });
              break;
@@ -1073,9 +1093,9 @@ function renderEditor(tabId) {
             const contsList = G('containers-editor-list');
             state.settings.containers.forEach((c, i) => {
                 contsList.innerHTML += `<div class="grid grid-cols-4 gap-2 items-center border p-2 rounded">
-                    <input class="border-gray-300 rounded" data-setting="containers.${i}.type" value="${c.type}">
-                    <input type="number" class="border-gray-300 rounded" data-setting="containers.${i}.capacity" value="${c.capacity}" placeholder="Capacity (CBM)">
-                    <input type="number" class="border-gray-300 rounded" data-setting="containers.${i}.efficiency" value="${c.efficiency}" placeholder="Efficiency">
+                    <input data-setting="containers.${i}.type" value="${c.type}">
+                    <input type="number" data-setting="containers.${i}.capacity" value="${c.capacity}" placeholder="CBM">
+                    <input type="number" step="0.01" data-setting="containers.${i}.efficiency" value="${c.efficiency}" placeholder="Efficiency">
                      <button class="text-red-500 hover:text-red-700" data-delete-container="${i}"><i class="lucide-trash-2"></i></button>
                 </div>`;
             });
@@ -1116,49 +1136,42 @@ function renderEditor(tabId) {
                         </div>
                     </div>
                     <div>
-                        <h4 class="text-lg font-semibold mb-2">Typography</h4>
+                        <h4 class="text-lg font-semibold mb-2">Typography & Sizing</h4>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <label for="font-family-select" class="block text-sm font-medium">Font Family</label>
-                                <select id="font-family-select" data-setting="branding.fontFamily" class="w-48 border-gray-300 rounded">
-                                    <option value="sans-serif" ${branding.fontFamily === 'sans-serif' ? 'selected' : ''}>Sans-serif</option>
-                                    <option value="serif" ${branding.fontFamily === 'serif' ? 'selected' : ''}>Serif</option>
-                                    <option value="monospace" ${branding.fontFamily === 'monospace' ? 'selected' : ''}>Monospace</option>
+                                <select id="font-family-select" data-setting="branding.fontFamily" class="w-48">
+                                    <option value='-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'>System Default</option>
+                                    <option value="sans-serif">Sans-serif</option>
+                                    <option value="serif">Serif</option>
+                                    <option value="monospace">Monospace</option>
                                 </select>
                             </div>
                             <div class="flex items-center justify-between">
                                 <label for="font-size-slider" class="block text-sm font-medium">Font Size (<span id="font-size-label">${branding.fontSizeBase}</span>px)</label>
                                 <input type="range" id="font-size-slider" data-setting="branding.fontSizeBase" min="12" max="20" step="1" class="w-48" value="${branding.fontSizeBase}">
                             </div>
-                        </div>
-                    </div>
-                     <div>
-                        <h4 class="text-lg font-semibold mb-2">Borders & Spacing</h4>
-                        <div class="flex items-center justify-between">
-                            <label for="radius-slider" class="block text-sm font-medium">Corner Radius (<span id="radius-label">${branding.radius}</span>rem)</label>
-                            <input type="range" id="radius-slider" data-setting="branding.radius" min="0" max="2" step="0.1" class="w-48" value="${branding.radius}">
+                            <div class="flex items-center justify-between">
+                                <label for="radius-slider" class="block text-sm font-medium">Corner Radius (<span id="radius-label">${branding.radius}</span>rem)</label>
+                                <input type="range" id="radius-slider" data-setting="branding.radius" min="0" max="2" step="0.1" class="w-48" value="${branding.radius}">
+                            </div>
                         </div>
                     </div>
                 </div>`;
             
-             // Add event listener for live feedback on sliders
-            const fontSizeSlider = G('font-size-slider');
-            const fontSizeLabel = G('font-size-label');
-            fontSizeSlider.addEventListener('input', () => fontSizeLabel.textContent = fontSizeSlider.value);
-
-            const radiusSlider = G('radius-slider');
-            const radiusLabel = G('radius-label');
-            radiusSlider.addEventListener('input', () => radiusLabel.textContent = radiusSlider.value);
+            G('font-family-select').value = branding.fontFamily;
+            G('font-size-slider').addEventListener('input', (e) => G('font-size-label').textContent = e.target.value);
+            G('radius-slider').addEventListener('input', (e) => G('radius-label').textContent = e.target.value);
             break;
         case 'editor-firebase':
              content.innerHTML = `<h3 class="text-xl font-bold mb-4">Firebase &amp; Data</h3>
                 <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
                   <p class="font-bold">Info</p>
-                  <p>Your Firebase configuration is now hardcoded in the script. You don't need to paste it here anymore.</p>
-                   <p class="mt-2">To get data loading to work, you may need to create a composite index in your Firebase Firestore settings. If loading fails, go to Firestore -> Indexes -> Composite and create an index for the 'surveys' collection on the 'meta.createdAt' field in 'descending' order.</p>
+                  <p>Your Firebase configuration is hardcoded in the script. You don't need to change it.</p>
+                   <p class="mt-2">If data loading fails, you may need to create a composite index in Firestore. Go to Firestore -> Indexes -> Composite and create an index for the 'surveys' collection on 'meta.createdAt' (descending).</p>
                 </div>
                  <h4 class="font-bold pt-4">Manage App Settings</h4>
-                 <p class="text-sm text-gray-600 mb-2">You can export all your app settings (rates, presets, etc.) to a JSON file as a backup, or import them on another device.</p>
+                 <p class="text-sm text-gray-600 mb-2">Export your app settings (rates, presets, etc.) as a backup, or import them on another device.</p>
                 <div class="flex gap-2">
                     <button id="export-settings" class="bg-blue-500 text-white p-2 rounded">Export JSON</button>
                     <button onclick="G('import-settings-input').click()" class="bg-gray-200 p-2 rounded">Import JSON</button>
@@ -1183,11 +1196,13 @@ function renderEditor(tabId) {
                     reader.onload = (ev) => {
                         try {
                             const importedSettings = JSON.parse(ev.target.result);
+                            // Preserve the hardcoded firebase config
                             importedSettings.firebaseConfig = state.settings.firebaseConfig;
                             state.settings = importedSettings;
                             saveAndApplySettings();
+                            // Re-initialize the entire app to reflect all settings
                             init();
-                            renderEditor(tabId);
+                            renderEditor(tabId); // Re-render editor with new values
                             alert('Settings imported successfully!');
                         } catch (err) {
                             alert('Invalid JSON file.');
@@ -1203,13 +1218,13 @@ function renderEditor(tabId) {
     
     // Generic event listener for all setting inputs
     content.querySelectorAll('input[data-setting], textarea[data-setting], select[data-setting]').forEach(input => {
-        input.addEventListener('change', (e) => {
+        input.addEventListener('input', (e) => { // 'input' for live updates on sliders/text, 'change' is also fine
             const keys = e.target.dataset.setting.split('.');
             let settingObj = state.settings;
             keys.slice(0, -1).forEach(key => {
                 if (!settingObj[key]) {
-                    const isNumericIndex = !isNaN(parseInt(keys[keys.indexOf(key) + 1], 10));
-                    settingObj[key] = isNumericIndex ? [] : {};
+                    const nextKey = keys[keys.indexOf(key) + 1];
+                    settingObj[key] = !isNaN(parseInt(nextKey)) ? [] : {};
                 }
                 settingObj = settingObj[key];
             });
@@ -1225,23 +1240,16 @@ function renderEditor(tabId) {
             settingObj[keys.pop()] = value;
             
             saveAndApplySettings();
-            
-            if(keys[0] === 'itemPresets') renderItemPresets();
-            if(keys[0] === 'customerFields') renderCustomerForm();
-
         });
     });
 
     content.querySelectorAll('input[data-color-setting]').forEach(input => {
         input.addEventListener('input', (e) => {
             const keys = e.target.dataset.colorSetting.split('.');
-            let settingObj = state.settings;
-            keys.slice(0, -1).forEach(key => {
-                if (!settingObj[key]) settingObj[key] = {};
-                settingObj = settingObj[key];
-            });
+            let settingObj = state.settings.branding;
+            const key = keys.pop();
             const hsl = hexToHsl(e.target.value);
-            settingObj[keys.pop()] = `${hsl[0]} ${hsl[1]}% ${hsl[2]}%`;
+            settingObj[key] = `${hsl.h} ${hsl.s}% ${hsl.l}%`;
             saveAndApplySettings();
         });
     });
@@ -1250,21 +1258,22 @@ function renderEditor(tabId) {
 function saveAndApplySettings() {
     localStorage.setItem('surveyAppSettings', JSON.stringify(state.settings));
     applyBranding();
+    
+    // Some components need a full re-render when settings change
     renderCustomerForm();
     renderItemPresets();
+    G('header-logo').src = state.settings.company.logo;
+    D.querySelector('#login-screen img').src = state.settings.company.logo;
+
 }
 
 // Color conversion helpers
 function hexToHsl(H) {
   let r = 0, g = 0, b = 0;
   if (H.length == 4) {
-    r = "0x" + H[1] + H[1];
-    g = "0x" + H[2] + H[2];
-    b = "0x" + H[3] + H[3];
+    r = "0x" + H[1] + H[1]; g = "0x" + H[2] + H[2]; b = "0x" + H[3] + H[3];
   } else if (H.length == 7) {
-    r = "0x" + H[1] + H[2];
-    g = "0x" + H[3] + H[4];
-    b = "0x" + H[5] + H[6];
+    r = "0x" + H[1] + H[2]; g = "0x" + H[3] + H[4]; b = "0x" + H[5] + H[6];
   }
   r /= 255; g /= 255; b /= 255;
   let cmin = Math.min(r,g,b), cmax = Math.max(r,g,b), delta = cmax - cmin, h = 0, s = 0, l = 0;
@@ -1278,29 +1287,20 @@ function hexToHsl(H) {
   s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
   s = +(s * 100).toFixed(1);
   l = +(l * 100).toFixed(1);
-  return [h, s, l];
+  return {h, s, l};
 }
 
 function hslToHex(h, s, l) {
-  s /= 100;
-  l /= 100;
+  s /= 100; l /= 100;
   let c = (1 - Math.abs(2 * l - 1)) * s,
       x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-      m = l - c/2,
-      r = 0, g = 0, b = 0;
-  if (0 <= h && h < 60) {
-    r = c; g = x; b = 0;
-  } else if (60 <= h && h < 120) {
-    r = x; g = c; b = 0;
-  } else if (120 <= h && h < 180) {
-    r = 0; g = c; b = x;
-  } else if (180 <= h && h < 240) {
-    r = 0; g = x; b = c;
-  } else if (240 <= h && h < 300) {
-    r = x; g = 0; b = c;
-  } else if (300 <= h && h < 360) {
-    r = c; g = 0; b = x;
-  }
+      m = l - c/2, r = 0, g = 0, b = 0;
+  if (0 <= h && h < 60) { [r,g,b] = [c,x,0]; } 
+  else if (60 <= h && h < 120) { [r,g,b] = [x,c,0]; } 
+  else if (120 <= h && h < 180) { [r,g,b] = [0,c,x]; } 
+  else if (180 <= h && h < 240) { [r,g,b] = [0,x,c]; } 
+  else if (240 <= h && h < 300) { [r,g,b] = [x,0,c]; } 
+  else if (300 <= h && h < 360) { [r,g,b] = [c,0,x]; }
   r = Math.round((r + m) * 255).toString(16);
   g = Math.round((g + m) * 255).toString(16);
   b = Math.round((b + m) * 255).toString(16);
