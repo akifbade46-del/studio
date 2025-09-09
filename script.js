@@ -12,17 +12,6 @@ const state = {
 
 const defaultSettings = {
     company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "https://qgocargo.com/logo.png" },
-    branding: {
-        primary: '222.2 47.4% 11.2%', // HSL: Dark Blue
-        background: '0 0% 98%', // HSL: Almost white
-        foreground: '222.2 47.4% 11.2%', // HSL: Dark Blue
-        card: '0 0% 100%', // HSL: White
-        border: '214.3 31.8% 91.4%', // HSL: Light Grey
-        accent: '210 40% 96.1%', // HSL: Very Light Blue/Grey
-        radius: 0.5, // rem
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-        fontSizeBase: 16, // in pixels
-    },
     firebaseConfig: {
       apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
       authDomain: "survey-bf41d.firebaseapp.com",
@@ -83,10 +72,6 @@ const defaultSettings = {
 
 function init() {
     state.settings = JSON.parse(localStorage.getItem('surveyAppSettings')) || defaultSettings;
-    
-    // Crucially, apply branding settings from JS as early as possible.
-    // The CSS file already has a solid default theme, so this just overrides it.
-    applyBranding();
     
     // Set logos from settings
     G('header-logo').src = state.settings.company.logo;
@@ -154,9 +139,6 @@ function startNewSurvey() {
         state.survey = createNewSurvey();
         state.currentStep = 1;
         
-        // Re-apply settings in case they were changed
-        applyBranding();
-        
         updateUI();
         renderCustomerForm();
         renderItemPresets();
@@ -178,8 +160,6 @@ function loadSurvey(surveyData) {
         state.currentStep = 1;
         saveDraft(); 
         
-        // Re-apply settings and re-render everything
-        applyBranding();
         updateUI();
         renderCustomerForm();
         renderItemPresets();
@@ -205,65 +185,9 @@ function updateUI() {
     indicatorContainer.innerHTML = '';
     for(let i=1; i <= state.totalSteps; i++) {
         const dot = D.createElement('div');
-        dot.className = `w-3 h-3 rounded-full ${i === state.currentStep ? 'bg-primary' : 'bg-gray-300'}`;
+        dot.className = `w-3 h-3 rounded-full ${i === state.currentStep ? 'bg-blue-600' : 'bg-gray-300'}`;
         indicatorContainer.appendChild(dot);
     }
-}
-
-function applyBranding() {
-    const root = document.documentElement;
-    const branding = state.settings.branding;
-
-    // Set color variables
-    const colors = ['background', 'foreground', 'primary', 'accent', 'card', 'border'];
-    colors.forEach(color => {
-         if (branding[color]) {
-            root.style.setProperty(`--${color}`, branding[color]);
-        }
-    });
-
-    // Set other CSS variables
-    root.style.setProperty('--radius', `${branding.radius || 0.5}rem`);
-    root.style.setProperty('--font-family', branding.fontFamily || 'sans-serif');
-    root.style.setProperty('--font-size-base', `${branding.fontSizeBase || 16}px`);
-
-    // Set derived colors
-    // This logic determines if text on a primary-colored button should be light or dark
-    const primaryFg = getLuminance(branding.primary) > 0.5 ? '222.2 47.4% 11.2%' : '210 40% 98%';
-    root.style.setProperty('--primary-foreground', primaryFg);
-}
-
-
-// Helper to get luminance from an HSL string to decide on contrasting text color.
-// Returns a value between 0 (black) and 1 (white).
-function getLuminance(hsl) {
-    if (!hsl) return 0;
-    let [h, s, l] = hsl.split(' ').map(val => parseFloat(val.replace('%', '')));
-    s /= 100;
-    l /= 100;
-    
-    function hue2rgb(p, q, t) {
-        if (t < 0) t += 1;
-        if (t > 1) t -= 1;
-        if (t < 1/6) return p + (q - p) * 6 * t;
-        if (t < 1/2) return q;
-        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-        return p;
-    }
-
-    let r, g, b;
-    if (s === 0) {
-        r = g = b = l; // achromatic
-    } else {
-        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        const p = 2 * l - q;
-        r = hue2rgb(p, q, h / 360 + 1/3);
-        g = hue2rgb(p, q, h / 360);
-        b = hue2rgb(p, q, h / 360 - 1/3);
-    }
-    
-    // Formula for relative luminance
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
 function renderCustomerForm() {
@@ -318,7 +242,7 @@ function renderItemPresets() {
 
         groupedPresets[category].forEach(preset => {
             const btn = D.createElement('button');
-            btn.className = 'text-sm p-2 rounded-md flex-grow md:flex-grow-0 bg-accent text-accent-foreground border-transparent';
+            btn.className = 'text-sm p-2 rounded-md flex-grow md:flex-grow-0 bg-gray-200 border-transparent';
             btn.innerHTML = `<i class="lucide-box mr-1"></i> ${preset.name}`;
             btn.onclick = () => {
                 addItem({ name: preset.name, qty: 1, l: preset.l, w: preset.w, h: preset.h, unit: 'cm' });
@@ -392,7 +316,7 @@ function calculateContainerPlan() {
         }
 
         const card = D.createElement('div');
-        card.className = 'border rounded-lg p-4 cursor-pointer hover:border-primary';
+        card.className = 'border rounded-lg p-4 cursor-pointer hover:border-blue-500';
         card.dataset.containerType = cont.type;
         card.innerHTML = `
             <h3 class="font-bold flex items-center gap-2"><i class="lucide-truck"></i> ${cont.type}</h3>
@@ -410,9 +334,9 @@ function calculateContainerPlan() {
         state.survey.containerPlan = { recommended: bestOption };
     }
     if(state.survey.containerPlan?.selected) {
-         D.querySelector(`[data-container-type="${state.survey.containerPlan.selected}"]`)?.classList.add('border-primary', 'ring-2', 'ring-primary');
+         D.querySelector(`[data-container-type="${state.survey.containerPlan.selected}"]`)?.classList.add('border-blue-500', 'ring-2', 'ring-blue-500');
     } else if (bestOption) {
-        D.querySelector(`[data-container-type="${bestOption}"]`)?.classList.add('border-accent');
+        D.querySelector(`[data-container-type="${bestOption}"]`)?.classList.add('border-gray-300');
     }
 }
 
@@ -441,7 +365,7 @@ function calculatePricing() {
         <div class="flex justify-between py-2 border-b"><span>Insurance (${rates.insurancePercent}%):</span> <span>${insurance.toFixed(2)}</span></div>
          <div class="flex justify-between py-2 border-b"><span>Markup (${rates.markupPercent}%):</span> <span>${markup.toFixed(2)}</span></div>
         <div class="flex justify-between py-2 border-b"><span>VAT (${rates.vatPercent}%):</span> <span>${vat.toFixed(2)}</span></div>
-        <div class="flex justify-between pt-4 font-bold text-xl text-primary"><span>Grand Total:</span> <span>${grandTotal.toFixed(2)} ${rates.currency}</span></div>
+        <div class="flex justify-between pt-4 font-bold text-xl text-blue-600"><span>Grand Total:</span> <span>${grandTotal.toFixed(2)} ${rates.currency}</span></div>
     `;
     updateFooter();
 }
@@ -603,8 +527,8 @@ function saveDraft() {
 function printReport(content) {
     const printWindow = window.open('', '', 'height=800,width=1000');
     printWindow.document.write('<html><head><title>Print Survey</title>');
-    printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>'); // Tailwind for utility classes
-    printWindow.document.write('<style> body { font-family: ' + state.settings.branding.fontFamily + '; } </style>');
+    printWindow.document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
+    printWindow.document.write('<style> body { font-family: sans-serif; } </style>');
     printWindow.document.write('</head><body class="text-sm">');
     printWindow.document.write('<div class="p-8">');
     printWindow.document.write(content);
@@ -696,8 +620,8 @@ function setupEventListeners() {
     G('container-options').addEventListener('click', e => {
         const card = e.target.closest('[data-container-type]');
         if(card) {
-            D.querySelectorAll('[data-container-type]').forEach(c => c.classList.remove('border-primary', 'ring-2', 'ring-primary'));
-            card.classList.add('border-primary', 'ring-2', 'ring-primary');
+            D.querySelectorAll('[data-container-type]').forEach(c => c.classList.remove('border-blue-500', 'ring-2', 'ring-blue-500'));
+            card.classList.add('border-blue-500', 'ring-2', 'ring-blue-500');
             if(!state.survey.containerPlan) state.survey.containerPlan = {};
             state.survey.containerPlan.selected = card.dataset.containerType;
             saveDraft();
@@ -968,7 +892,7 @@ async function showLoadSurveyModal() {
                 </div>
                 <div class="flex gap-2">
                     <button class="preview-btn text-sm bg-gray-200 p-2 rounded" data-survey-id="${survey.id}">Preview</button>
-                    <button class="load-btn text-sm bg-primary text-white p-2 rounded" data-survey-id="${survey.id}">Load</button>
+                    <button class="load-btn text-sm bg-blue-600 text-white p-2 rounded" data-survey-id="${survey.id}">Load</button>
                 </div>
             `;
             listDiv.appendChild(surveyDiv);
@@ -1020,10 +944,6 @@ function renderEditor(tabId) {
     
     const createInput = (label, settingPath, value, type = 'text') => `<div><label class="block text-sm font-medium mb-1">${label}</label><input type="${type}" step="any" class="w-full" data-setting="${settingPath}" value="${value}"></div>`;
     const createTextarea = (label, settingPath, value) => `<div><label class="block text-sm font-medium mb-1">${label}</label><textarea class="w-full" rows="3" data-setting="${settingPath}">${value}</textarea></div>`;
-    const createColorInput = (label, settingPath, value) => {
-        const hex = hslToHex.apply(null, value.split(' ').map(parseFloat));
-        return `<div class="flex items-center justify-between"><label class="block text-sm font-medium">${label}</label><input type="color" class="w-24 h-10 border-gray-300 rounded" data-color-setting="${settingPath}" value="${hex}"></div>`;
-    };
 
     switch (tabId) {
         case 'editor-company':
@@ -1119,50 +1039,6 @@ function renderEditor(tabId) {
                     <p class="text-xs text-gray-500">Use placeholders like {{customerName}}, {{grandTotal}}, {{currency}}, {{companyName}}.</p>
                 </div>`;
             break;
-        case 'editor-theme':
-            const { branding } = state.settings;
-            content.innerHTML = `
-                <h3 class="text-xl font-bold mb-4">Theme & Appearance</h3>
-                <div class="space-y-6">
-                    <div>
-                        <h4 class="text-lg font-semibold mb-2">Colors</h4>
-                        <div class="space-y-2">
-                           ${createColorInput('Primary', 'branding.primary', branding.primary)}
-                           ${createColorInput('Background', 'branding.background', branding.background)}
-                           ${createColorInput('Foreground', 'branding.foreground', branding.foreground)}
-                           ${createColorInput('Card', 'branding.card', branding.card)}
-                           ${createColorInput('Accent', 'branding.accent', branding.accent)}
-                           ${createColorInput('Border', 'branding.border', branding.border)}
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-2">Typography & Sizing</h4>
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <label for="font-family-select" class="block text-sm font-medium">Font Family</label>
-                                <select id="font-family-select" data-setting="branding.fontFamily" class="w-48">
-                                    <option value='-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'>System Default</option>
-                                    <option value="sans-serif">Sans-serif</option>
-                                    <option value="serif">Serif</option>
-                                    <option value="monospace">Monospace</option>
-                                </select>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <label for="font-size-slider" class="block text-sm font-medium">Font Size (<span id="font-size-label">${branding.fontSizeBase}</span>px)</label>
-                                <input type="range" id="font-size-slider" data-setting="branding.fontSizeBase" min="12" max="20" step="1" class="w-48" value="${branding.fontSizeBase}">
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <label for="radius-slider" class="block text-sm font-medium">Corner Radius (<span id="radius-label">${branding.radius}</span>rem)</label>
-                                <input type="range" id="radius-slider" data-setting="branding.radius" min="0" max="2" step="0.1" class="w-48" value="${branding.radius}">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-            
-            G('font-family-select').value = branding.fontFamily;
-            G('font-size-slider').addEventListener('input', (e) => G('font-size-label').textContent = e.target.value);
-            G('radius-slider').addEventListener('input', (e) => G('radius-label').textContent = e.target.value);
-            break;
         case 'editor-firebase':
              content.innerHTML = `<h3 class="text-xl font-bold mb-4">Firebase &amp; Data</h3>
                 <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
@@ -1242,22 +1118,10 @@ function renderEditor(tabId) {
             saveAndApplySettings();
         });
     });
-
-    content.querySelectorAll('input[data-color-setting]').forEach(input => {
-        input.addEventListener('input', (e) => {
-            const keys = e.target.dataset.colorSetting.split('.');
-            let settingObj = state.settings.branding;
-            const key = keys.pop();
-            const hsl = hexToHsl(e.target.value);
-            settingObj[key] = `${hsl.h} ${hsl.s}% ${hsl.l}%`;
-            saveAndApplySettings();
-        });
-    });
 }
 
 function saveAndApplySettings() {
     localStorage.setItem('surveyAppSettings', JSON.stringify(state.settings));
-    applyBranding();
     
     // Some components need a full re-render when settings change
     renderCustomerForm();
@@ -1267,50 +1131,4 @@ function saveAndApplySettings() {
 
 }
 
-// Color conversion helpers
-function hexToHsl(H) {
-  let r = 0, g = 0, b = 0;
-  if (H.length == 4) {
-    r = "0x" + H[1] + H[1]; g = "0x" + H[2] + H[2]; b = "0x" + H[3] + H[3];
-  } else if (H.length == 7) {
-    r = "0x" + H[1] + H[2]; g = "0x" + H[3] + H[4]; b = "0x" + H[5] + H[6];
-  }
-  r /= 255; g /= 255; b /= 255;
-  let cmin = Math.min(r,g,b), cmax = Math.max(r,g,b), delta = cmax - cmin, h = 0, s = 0, l = 0;
-  if (delta == 0) h = 0;
-  else if (cmax == r) h = ((g - b) / delta) % 6;
-  else if (cmax == g) h = (b - r) / delta + 2;
-  else h = (r - g) / delta + 4;
-  h = Math.round(h * 60);
-  if (h < 0) h += 360;
-  l = (cmax + cmin) / 2;
-  s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-  s = +(s * 100).toFixed(1);
-  l = +(l * 100).toFixed(1);
-  return {h, s, l};
-}
-
-function hslToHex(h, s, l) {
-  s /= 100; l /= 100;
-  let c = (1 - Math.abs(2 * l - 1)) * s,
-      x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-      m = l - c/2, r = 0, g = 0, b = 0;
-  if (0 <= h && h < 60) { [r,g,b] = [c,x,0]; } 
-  else if (60 <= h && h < 120) { [r,g,b] = [x,c,0]; } 
-  else if (120 <= h && h < 180) { [r,g,b] = [0,c,x]; } 
-  else if (180 <= h && h < 240) { [r,g,b] = [0,x,c]; } 
-  else if (240 <= h && h < 300) { [r,g,b] = [x,0,c]; } 
-  else if (300 <= h && h < 360) { [r,g,b] = [c,0,x]; }
-  r = Math.round((r + m) * 255).toString(16);
-  g = Math.round((g + m) * 255).toString(16);
-  b = Math.round((b + m) * 255).toString(16);
-  if (r.length == 1) r = "0" + r;
-  if (g.length == 1) g = "0" + g;
-  if (b.length == 1) b = "0" + b;
-  return "#" + r + g + b;
-}
-
-
 document.addEventListener('DOMContentLoaded', init);
-
-    

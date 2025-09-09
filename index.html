@@ -16,11 +16,11 @@
     <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div class="w-full max-w-sm text-center">
             <img src="https://qgocargo.com/logo.png" alt="Logo" class="h-24 mx-auto mb-6">
-            <h1 class="text-2xl font-bold mb-2 text-dark">Survey App Access</h1>
+            <h1 class="text-2xl font-bold mb-2 text-gray-800">Survey App Access</h1>
             <p class="text-gray-600 mb-6">Please enter the password to continue.</p>
             <form id="login-form" class="space-y-4">
                 <input type="password" id="login-password" placeholder="Password" class="w-full text-center" required>
-                <button type="submit" class="w-full bg-primary text-primary-foreground font-bold">Login</button>
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold">Login</button>
             </form>
         </div>
     </div>
@@ -82,7 +82,7 @@
                                 <input type="number" step="any" placeholder="H" id="item-h" class="block w-full border-gray-300 rounded-md shadow-sm" required>
                             </div>
                         </div>
-                        <button type="submit" class="bg-primary text-primary-foreground p-2 rounded-md hover:bg-opacity-90 col-span-2 md:col-span-1"><i class="lucide-plus-circle mr-2"></i>Add</button>
+                        <button type="submit" class="bg-blue-600 text-white p-2 rounded-md hover:bg-opacity-90 col-span-2 md:col-span-1"><i class="lucide-plus-circle mr-2"></i>Add</button>
                     </form>
                 </div>
                 <!-- Items Table -->
@@ -140,10 +140,10 @@
                 <h2 class="text-2xl font-bold mb-4">Review & Share</h2>
                 <div id="review-summary" class="space-y-4"></div>
                 <div class="mt-6 flex flex-wrap gap-2">
-                    <button id="generate-customer-pdf-btn" class="bg-primary text-primary-foreground p-2 rounded-md"><i class="lucide-file-text mr-2"></i>Generate Customer PDF</button>
-                     <button id="generate-office-pdf-btn" class="bg-primary text-primary-foreground p-2 rounded-md"><i class="lucide-file-text mr-2"></i>Generate Office PDF</button>
+                    <button id="generate-customer-pdf-btn" class="bg-blue-600 text-white p-2 rounded-md"><i class="lucide-file-text mr-2"></i>Generate Customer PDF</button>
+                     <button id="generate-office-pdf-btn" class="bg-blue-600 text-white p-2 rounded-md"><i class="lucide-file-text mr-2"></i>Generate Office PDF</button>
                     <button id="share-whatsapp-btn" class="bg-green-500 text-white p-2 rounded-md"><i class="lucide-send mr-2"></i>Share to WhatsApp</button>
-                    <button id="save-survey-btn" class="bg-primary text-primary-foreground p-2 rounded-md"><i class="lucide-save mr-2"></i>Save Survey</button>
+                    <button id="save-survey-btn" class="bg-blue-600 text-white p-2 rounded-md"><i class="lucide-save mr-2"></i>Save Survey</button>
                 </div>
                  <div id="save-status" class="mt-2 text-sm text-gray-500"></div>
             </div>
@@ -152,7 +152,7 @@
             <div class="mt-8 flex justify-between no-print">
                 <button id="prev-btn" class="bg-gray-300 p-2 rounded-md">Previous</button>
                 <div id="step-indicator" class="flex items-center gap-2"></div>
-                <button id="next-btn" class="bg-primary text-primary-foreground p-2 rounded-md">Next</button>
+                <button id="next-btn" class="bg-blue-600 text-white p-2 rounded-md">Next</button>
             </div>
         </main>
 
@@ -183,7 +183,6 @@
                      <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-fields">Customer Fields</button>
                      <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-containers">Containers</button>
                      <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-templates">Templates</button>
-                     <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-theme">Theme</button>
                      <button class="w-full text-left p-2 rounded editor-tab-btn" data-tab="editor-firebase">Firebase & Data</button>
                 </div>
                 <div class="w-3/4 p-4 overflow-y-auto">
@@ -204,7 +203,7 @@
             <h3 class="text-lg font-medium mb-4 text-center pt-8">Enter Passcode</h3>
             <input type="password" id="passcode-input" class="w-full border-gray-300 rounded-md">
             <div class="mt-4 flex justify-end gap-2">
-                <button id="passcode-submit" class="bg-primary text-primary-foreground p-2 rounded-md">Unlock</button>
+                <button id="passcode-submit" class="bg-blue-600 text-white p-2 rounded-md">Unlock</button>
             </div>
         </div>
     </div>
