@@ -12,15 +12,6 @@ const state = {
 
 const defaultSettings = {
     company: { name: "Q'go Cargo", address: "123 Cargo Lane, Kuwait City, Kuwait", phone: "+965 1234 5678", email: "contact@qgocargo.com", logo: "https://qgocargo.com/logo.png" },
-    firebaseConfig: {
-      apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
-      authDomain: "survey-bf41d.firebaseapp.com",
-      projectId: "survey-bf41d",
-      storageBucket: "survey-bf41d.appspot.com",
-      messagingSenderId: "869329094353",
-      appId: "1:869329094353:web:2692f2ad3db106a95827f0",
-      measurementId: "G-GEFSXECYMQ"
-    },
     customerFields: [
         { id: 'name', label: 'Customer Name', type: 'text', required: true, enabled: true },
         { id: 'phone', label: 'Phone', type: 'tel', required: true, enabled: true },
@@ -70,6 +61,16 @@ const defaultSettings = {
     }
 };
 
+const hardcodedFirebaseConfig = {
+      apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
+      authDomain: "survey-bf41d.firebaseapp.com",
+      projectId: "survey-bf41d",
+      storageBucket: "survey-bf41d.appspot.com",
+      messagingSenderId: "869329094353",
+      appId: "1:869329094353:web:2692f2ad3db106a95827f0",
+      measurementId: "G-GEFSXECYMQ"
+};
+
 function init() {
     state.settings = JSON.parse(localStorage.getItem('surveyAppSettings')) || defaultSettings;
     
@@ -97,9 +98,9 @@ function init() {
 }
 
 function initFirebase() {
-    if (state.settings.firebaseConfig && !firebase.apps.length) {
+    if (hardcodedFirebaseConfig && !firebase.apps.length) {
         try {
-            state.firebase.app = firebase.initializeApp(state.settings.firebaseConfig);
+            state.firebase.app = firebase.initializeApp(hardcodedFirebaseConfig);
             state.firebase.db = firebase.firestore();
             state.firebase.storage = firebase.storage();
             console.log("Firebase initialized successfully.");
@@ -1056,7 +1057,6 @@ function renderEditor(tabId) {
 
             G('export-settings').addEventListener('click', () => {
                 const settingsToExport = {...state.settings};
-                delete settingsToExport.firebaseConfig; 
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settingsToExport, null, 2));
                 const downloadAnchorNode = document.createElement('a');
                 downloadAnchorNode.setAttribute("href", dataStr);
@@ -1072,8 +1072,6 @@ function renderEditor(tabId) {
                     reader.onload = (ev) => {
                         try {
                             const importedSettings = JSON.parse(ev.target.result);
-                            // Preserve the hardcoded firebase config
-                            importedSettings.firebaseConfig = state.settings.firebaseConfig;
                             state.settings = importedSettings;
                             saveAndApplySettings();
                             // Re-initialize the entire app to reflect all settings
