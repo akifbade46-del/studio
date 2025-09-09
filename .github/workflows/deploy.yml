@@ -1,0 +1,35 @@
+name: Deploy to Hostinger (qgoproject)
+
+on:
+  push:
+    branches: [ "main" ]    # agar branch 'master' hai to yahan master likh do
+  workflow_dispatch:
+
+concurrency:
+  group: hostinger-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 👉 Agar poora repo root upload karna ho to local-dir: . kar do
+      - name: FTP Deploy to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+          server: ${{ secrets.FTP_HOST }}          # e.g. ftp.forestgreen-elephant-353388.hostingersite.com
+          username: ${{ secrets.FTP_USERNAME }}    # u345343285.aakkiiff
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}            # 21
+          protocol: ftp
+          server-dir: .                            # user ka default dir = public_html/qgoproject/
+          local-dir: .                       # repo ka 'public/' upload hoga
+          exclude: |
+            **/.git*
+            **/.github/**
+            **/node_modules/**
+            **/README.md
+            **/.env
