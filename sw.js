@@ -1,3 +1,4 @@
+
 const CACHE_NAME = 'qgo-cargo-cache-v2'; // Incremented cache version
 const urlsToCache = [
   '/',
@@ -94,3 +95,5 @@ self.addEventListener('activate', event => {
     })
   );
 });
+
+    
