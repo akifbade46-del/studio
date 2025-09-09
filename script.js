@@ -19,7 +19,6 @@ const defaultSettings = {
         { id: 'pickupAddress', label: 'Pickup Address', type: 'text', required: true, enabled: true },
         { id: 'destinationAddress', label: 'Destination Address', type: 'text', required: true, enabled: true },
         { id: 'surveyDate', label: 'Survey Date', type: 'datetime-local', required: true, enabled: true },
-        // { id: 'moveType', label: 'Move Type', type: 'select', options: ['Local', 'GCC', 'International'], required: true, enabled: true },
     ],
     itemPresets: [
         // Boxes
@@ -1169,3 +1168,5 @@ function saveAndApplySettings() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+    
