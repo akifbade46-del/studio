@@ -1120,12 +1120,11 @@ function renderEditor(tabId) {
                     <p class="text-xs text-gray-500">Use placeholders like {{customerName}}, {{grandTotal}}, {{currency}}, {{companyName}}.</p>
                 </div>`;
             break;
-        case 'editor-firebase':
-             content.innerHTML = `<h3 class="text-xl font-bold mb-4">Firebase &amp; Data</h3>
+        case 'editor-data':
+             content.innerHTML = `<h3 class="text-xl font-bold mb-4">App Data Management</h3>
                 <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
                   <p class="font-bold">Info</p>
-                  <p>Your Firebase configuration is hardcoded in the script. You don't need to change it.</p>
-                   <p class="mt-2">If data loading fails, you may need to create a composite index in Firestore. Go to Firestore -> Indexes -> Composite and create an index for the 'surveys' collection on 'meta.createdAt' (descending).</p>
+                  <p>Your Firebase configuration is hardcoded and does not need to be changed. For data to load, ensure you have created a composite index in Firestore for the 'surveys' collection on 'meta.createdAt' (descending).</p>
                 </div>
                  <h4 class="font-bold pt-4">Manage App Settings</h4>
                  <p class="text-sm text-gray-600 mb-2">Export your app settings (rates, presets, etc.) as a backup, or import them on another device.</p>
@@ -1136,8 +1135,7 @@ function renderEditor(tabId) {
                 </div>`;
 
             G('export-settings').addEventListener('click', () => {
-                const settingsToExport = {...state.settings};
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settingsToExport, null, 2));
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.settings, null, 2));
                 const downloadAnchorNode = document.createElement('a');
                 downloadAnchorNode.setAttribute("href", dataStr);
                 downloadAnchorNode.setAttribute("download", "qgo-cargo-settings.json");
@@ -1181,8 +1179,6 @@ function renderEditor(tabId) {
                     const nextKey = keys[keys.indexOf(key) + 1];
                     settingObj[key] = !isNaN(parseInt(nextKey)) ? [] : {};
                 }
-                // Handle cases where a setting path might be 'rates.cbmRates.International Sea'
-                const fullKey = key.includes(' ') ? `['${key}']` : key;
                 settingObj = settingObj[key];
             });
             
