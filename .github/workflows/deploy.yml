@@ -1,8 +1,8 @@
-name: Deploy to Hostinger (qgoproject)
+name: Deploy to Hostinger (Default FTP)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" ]   # agar tumhara branch master hai to "master" likh do
   workflow_dispatch:
 
 concurrency:
@@ -19,13 +19,14 @@ jobs:
       - name: FTP Deploy to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_HOST }}           # ftp.forestgreen-elephant-353388.hostingersite.com
-          username: ${{ secrets.FTP_USERNAME }}     # u345343285.aakkiiff
+          server: ${{ secrets.FTP_HOST }}           # 82.25.96.246
+          username: ${{ secrets.FTP_USERNAME }}     # u345343285
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}             # 21
-          protocol: ftp
-          server-dir: ./                            # jailed to public_html/qgoproject/ (note the /)
-          local-dir: public/                        # NOTE: trailing slash
+          protocol: ftps                            # TLS secure
+          server-dir: public_html/                  # root folder
+          local-dir: public/                        # repo ke public folder se deploy
+          timeout: 120000
           exclude: |
             **/.git*
             **/.github/**
