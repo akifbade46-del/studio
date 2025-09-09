@@ -865,7 +865,7 @@ function renderPhotos() {
         const div = D.createElement('div');
         div.className = 'relative group';
         div.innerHTML = `
-            <img src="${photo.dataUrl}" class="w-full h-24 object-cover rounded-md border">
+            <img src="${photo.dataUrl}" class="w-full h-24 object-cover rounded-md border cursor-pointer zoomable-photo">
             <button data-photo-id="${photo.id}" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"><i class="lucide-trash-2 w-4 h-4"></i></button>
         `;
         preview.appendChild(div);
