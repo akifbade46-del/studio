@@ -1,6 +1,19 @@
-
+// This script is intentionally left blank. The user wants to revert to a previous state that used Firebase. I will restore the full Firebase logic here.
 const D = document;
 const G = (id) => D.getElementById(id);
+
+// --- Firebase Configuration ---
+// IMPORTANT: Replace with your actual Firebase configuration
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+let db; // To hold the Firestore instance
 
 const state = {
     currentStep: 1,
@@ -8,10 +21,6 @@ const state = {
     survey: {},
     settings: {},
     surveysCache: [], // To cache loaded surveys
-    apiEndpoints: { // New: Centralized API endpoints
-        save: './api/save-survey.php',
-        load: './api/load-surveys.php'
-    }
 };
 
 const defaultSettings = {
@@ -64,6 +73,20 @@ const defaultSettings = {
     }
 };
 
+function initFirebase() {
+    try {
+        if (firebase.apps.length === 0) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        db = firebase.firestore();
+        console.log("Firebase initialized successfully.");
+    } catch (e) {
+        console.error("Error initializing Firebase: ", e);
+        alert("Could not connect to Firebase. Please check your configuration and internet connection.");
+    }
+}
+
+
 function init() {
     state.settings = JSON.parse(localStorage.getItem('surveyAppSettings')) || defaultSettings;
     
@@ -86,6 +109,7 @@ function init() {
     updateFooter();
     renderPhotos();
     registerServiceWorker();
+    initFirebase();
 }
 
 function registerServiceWorker() {
@@ -758,7 +782,7 @@ function setupEventListeners() {
     });
 
     // Step 6 Actions
-    G('save-survey-btn').addEventListener('click', saveSurveyWithPHP);
+    G('save-survey-btn').addEventListener('click', saveSurveyToFirestore);
     G('generate-customer-pdf-btn').addEventListener('click', () => {
         const customerReceipt = generateReceiptHtml(state.survey, 'customer');
         printReport(customerReceipt);
@@ -849,10 +873,14 @@ function renderPhotos() {
     });
 }
 
-async function saveSurveyWithPHP() {
+async function saveSurveyToFirestore() {
     const btn = G('save-survey-btn');
     const statusDiv = G('save-status');
 
+    if (!db) {
+        alert('Firebase is not connected. Cannot save survey.');
+        return;
+    }
     if (!state.survey.customer.name) {
         alert('Please enter a customer name before saving.');
         return;
@@ -866,20 +894,9 @@ async function saveSurveyWithPHP() {
         const surveyToSave = JSON.parse(JSON.stringify(state.survey));
         surveyToSave.meta.savedAt = new Date().toISOString();
 
-        const response = await fetch(state.apiEndpoints.save, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(surveyToSave)
-        });
+        // Save to Firestore
+        await db.collection("surveys").doc(surveyToSave.id).set(surveyToSave);
 
-        const result = await response.json();
-
-        if (result.status !== 'success') {
-            throw new Error(result.message || 'Unknown error occurred on the server.');
-        }
-        
         // Success state
         G('success-sound').play();
         statusDiv.textContent = `Survey for ${surveyToSave.customer.name} saved successfully! ID: ${surveyToSave.id.substring(surveyToSave.id.length-6)}`;
@@ -893,9 +910,9 @@ async function saveSurveyWithPHP() {
         }, 2000);
 
     } catch (error) {
-        console.error('Error saving survey:', error);
-        statusDiv.textContent = `Error: ${error.message}. Please check server logs and permissions.`;
-        alert(`Failed to save survey. Check the console and server configuration. ${error.message}`);
+        console.error('Error saving survey to Firestore:', error);
+        statusDiv.textContent = `Error: ${error.message}. Please check console for details.`;
+        alert(`Failed to save survey. Check the console and Firebase configuration. ${error.message}`);
         btn.disabled = false;
         btn.innerHTML = `<i class="lucide-save mr-2"></i>Save Survey`;
     }
@@ -968,15 +985,14 @@ async function showLoadSurveyModal() {
     modal.style.display = 'flex';
     G('survey-search-input').value = '';
 
+    if (!db) {
+        listDiv.innerHTML = '<p class="text-red-500">Firebase not connected. Cannot load surveys.</p>';
+        return;
+    }
+
     try {
-        const response = await fetch(state.apiEndpoints.load);
-        const result = await response.json();
-
-        if (result.status !== 'success') {
-            throw new Error(result.message || 'Failed to load surveys from server.');
-        }
-
-        state.surveysCache = result.surveys;
+        const snapshot = await db.collection("surveys").orderBy("meta.createdAt", "desc").get();
+        state.surveysCache = snapshot.docs.map(doc => doc.data());
         
         if (state.surveysCache.length === 0) {
             listDiv.innerHTML = '<p>No saved surveys found.</p>';
@@ -986,8 +1002,8 @@ async function showLoadSurveyModal() {
         renderSurveyList(); // Initial render of the full list
 
     } catch (error) {
-        console.error("Error loading surveys:", error);
-        listDiv.innerHTML = `<p class="text-red-500">Could not load surveys. Error: ${error.message}</p><p class="text-sm text-gray-600 mt-2">Please check the API endpoint and server permissions.</p>`;
+        console.error("Error loading surveys from Firestore:", error);
+        listDiv.innerHTML = `<p class="text-red-500">Could not load surveys. Error: ${error.message}</p><p class="text-sm text-gray-600 mt-2">Please check your Firebase configuration and security rules.</p>`;
     }
 }
 
@@ -1110,7 +1126,7 @@ function renderEditor(tabId) {
              content.innerHTML = `<h3 class="text-xl font-bold mb-4">App Data Management</h3>
                 <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
                   <p class="font-bold">Info</p>
-                  <p>Configure the PHP API endpoints in script.js if they are not in the default './api/' location. Ensure the 'surveys' directory on your server is writable by PHP.</p>
+                  <p>Remember to set up your Firebase project and update the firebaseConfig object in script.js. You will also need to configure Firestore security rules to allow read/write access.</p>
                 </div>
                  <h4 class="font-bold pt-4">Manage App Settings</h4>
                  <p class="text-sm text-gray-600 mb-2">Export your app settings (rates, presets, etc.) as a backup, or import them on another device.</p>
