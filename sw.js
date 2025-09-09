@@ -1,10 +1,10 @@
 const CACHE_NAME = 'qgo-cargo-cache-v2'; // Incremented cache version
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/style.css',
-  '/script.js',
-  '/manifest.webmanifest', // Added manifest to cache
+  'index.html', // Explicitly cache index.html
+  'style.css',
+  'script.js',
+  'manifest.webmanifest', // Added manifest to cache
   'https://qgocargo.com/logo.png', // Using the logo from settings
   'https://cdn.tailwindcss.com',
   'https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css',
@@ -47,7 +47,7 @@ self.addEventListener('fetch', event => {
         return fetch(fetchRequest).then(
           response => {
             // Check if we received a valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
+            if (!response || response.status !== 200) {
               return response;
             }
 
@@ -59,12 +59,23 @@ self.addEventListener('fetch', event => {
 
             caches.open(CACHE_NAME)
               .then(cache => {
-                cache.put(event.request, responseToCache);
+                // Only cache GET requests.
+                if (event.request.method === 'GET') {
+                    cache.put(event.request, responseToCache);
+                }
               });
 
             return response;
           }
-        );
+        ).catch(err => {
+            // Network request failed, try to serve a fallback page from cache.
+            // For navigation requests, fallback to index.html
+            if (event.request.mode === 'navigate') {
+                return caches.match('index.html');
+            }
+            // For other requests, just fail.
+            return;
+        })
       })
     );
 });

@@ -1,21 +1,21 @@
 {
-  "name": "Q'go Cargo Survey App",
-  "short_name": "Q'go Survey",
-  "start_url": "/index.html",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
-  "description": "A simple app for conducting cargo surveys.",
-  "icons": [
-    {
-      "src": "https://qgocargo.com/logo.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "https://qgocargo.com/logo.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+    "name": "Q'go Cargo Survey",
+    "short_name": "Q'go Survey",
+    "description": "A survey companion app for Q'go Cargo.",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#1C204F",
+    "icons": [
+        {
+            "src": "https://qgocargo.com/logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://qgocargo.com/logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
 }
