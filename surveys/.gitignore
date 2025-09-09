@@ -1,0 +1,5 @@
+# Ignore all survey data files
+*.json
+
+# Keep this file so the directory can be committed
+!.gitignore

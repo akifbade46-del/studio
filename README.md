@@ -4,31 +4,24 @@ This project is a comprehensive tool for creating and managing moving surveys, c
 
 ## Architecture
 
-*   **Frontend**: A single `index.html` file built with vanilla HTML, CSS, and JavaScript, using TailwindCSS via CDN. It is designed to be deployed as a static site on GitHub Pages.
-*   **Backend**: A Cloudflare Worker that acts as a REST API.
-*   **Data Storage**: The backend worker saves and retrieves survey data as JSON files directly in a GitHub repository.
+*   **Frontend**: A single `index.html` file built with vanilla HTML, CSS (Tailwind via CDN), and JavaScript.
+*   **Backend**: A simple PHP-based REST API that saves and retrieves survey data as JSON files on the server.
+*   **Data Storage**: The backend scripts store survey data as individual `.json` files in a `surveys/` directory.
+
+## Deployment on Hostinger (or similar hosting)
+
+1.  **Create a new site** on your Hostinger account.
+2.  **Upload all project files** (`index.html`, `style.css`, `script.js`, `sw.js`, `manifest.webmanifest`) to the main directory of your site (e.g., `public_html`).
+3.  **Create an `api/` directory** and upload `save-survey.php` and `load-surveys.php` into it.
+4.  **Create a `surveys/` directory** in the root of your project.
+5.  **Set Permissions**: Ensure that the `surveys/` directory has the correct permissions to allow the PHP scripts to write files. In most cases, permissions `755` or `775` should work. If you face issues, you might need to try `777`, but be aware of the security implications.
+6.  **Test**: Open your website's URL. The app should now be live and fully functional, saving data directly to your hosting server.
 
 ## Project Details & Configuration
 
 These values are placeholders. You can change them in the app's "Editor Mode".
 
-*   **GitHub Owner**: `akifbade46-del`
-*   **GitHub Repo**: `studio`
 *   **Company Name**: Q'go Cargo
 *   **Company Address**: 123 Cargo Lane, Kuwait City, Kuwait
 *   **Company Phone**: +965 1234 5678
 *   **Company Email**: contact@qgocargo.com
-
-## Frontend Deployment (GitHub Pages)
-
-1.  Push `index.html` to your GitHub repository.
-2.  Enable GitHub Pages in your repository settings to serve from the `main` branch and `/` (root) directory.
-3.  Your live app will be available at: `https://akifbade46-del.github.io/studio/`.
-
-## Backend Deployment (Cloudflare Worker)
-
-1.  Navigate to the `worker/` directory.
-2.  Run `npm install` to install dependencies.
-3.  Rename `.dev.vars.example` to `.dev.vars` and fill in the required secrets, especially your GitHub Personal Access Token (`GH_PAT`).
-4.  Run `npx wrangler deploy` to publish your worker.
-5.  After deployment, copy the worker URL and paste it into the "Worker Base URL" field in the frontend app's Editor settings.

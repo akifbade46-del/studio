@@ -7,8 +7,11 @@ const state = {
     totalSteps: 6,
     survey: {},
     settings: {},
-    firebase: { app: null, db: null, storage: null },
     surveysCache: [], // To cache loaded surveys
+    apiEndpoints: { // New: Centralized API endpoints
+        save: './api/save-survey.php',
+        load: './api/load-surveys.php'
+    }
 };
 
 const defaultSettings = {
@@ -61,16 +64,6 @@ const defaultSettings = {
     }
 };
 
-const hardcodedFirebaseConfig = {
-      apiKey: "AIzaSyAdXAZ_-I6Fg3Sn9bY8wPFpQ-NlrKNy6LU",
-      authDomain: "survey-bf41d.firebaseapp.com",
-      projectId: "survey-bf41d",
-      storageBucket: "survey-bf41d.appspot.com",
-      messagingSenderId: "869329094353",
-      appId: "1:869329094353:web:2692f2ad3db106a95827f0",
-      measurementId: "G-GEFSXECYMQ"
-};
-
 function init() {
     state.settings = JSON.parse(localStorage.getItem('surveyAppSettings')) || defaultSettings;
     
@@ -78,8 +71,6 @@ function init() {
     G('header-logo').src = state.settings.company.logo;
     D.querySelector('#login-screen img').src = state.settings.company.logo;
 
-    initFirebase();
-    
     const savedSurvey = localStorage.getItem('currentSurvey');
     if (savedSurvey) {
         state.survey = JSON.parse(savedSurvey);
@@ -95,20 +86,6 @@ function init() {
     updateFooter();
     renderPhotos();
     registerServiceWorker();
-}
-
-function initFirebase() {
-    if (hardcodedFirebaseConfig && !firebase.apps.length) {
-        try {
-            state.firebase.app = firebase.initializeApp(hardcodedFirebaseConfig);
-            state.firebase.db = firebase.firestore();
-            state.firebase.storage = firebase.storage();
-            console.log("Firebase initialized successfully.");
-        } catch (e) {
-            console.error("Could not initialize Firebase. Check your config.", e);
-            alert("Could not initialize Firebase. Please check your configuration in the Editor.");
-        }
-    }
 }
 
 function registerServiceWorker() {
@@ -781,7 +758,7 @@ function setupEventListeners() {
     });
 
     // Step 6 Actions
-    G('save-survey-btn').addEventListener('click', saveSurveyToFirestore);
+    G('save-survey-btn').addEventListener('click', saveSurveyWithPHP);
     G('generate-customer-pdf-btn').addEventListener('click', () => {
         const customerReceipt = generateReceiptHtml(state.survey, 'customer');
         printReport(customerReceipt);
@@ -872,14 +849,10 @@ function renderPhotos() {
     });
 }
 
-async function saveSurveyToFirestore() {
+async function saveSurveyWithPHP() {
     const btn = G('save-survey-btn');
     const statusDiv = G('save-status');
 
-    if (!state.firebase.db) {
-        alert('Firebase is not configured. Please check your settings in the editor.');
-        return;
-    }
     if (!state.survey.customer.name) {
         alert('Please enter a customer name before saving.');
         return;
@@ -887,14 +860,26 @@ async function saveSurveyToFirestore() {
 
     btn.disabled = true;
     btn.innerHTML = `<i class="lucide-loader-2 animate-spin mr-2"></i>Saving...`;
-    statusDiv.textContent = 'Saving survey to Firebase...';
+    statusDiv.textContent = 'Saving survey to server...';
 
     try {
         const surveyToSave = JSON.parse(JSON.stringify(state.survey));
         surveyToSave.meta.savedAt = new Date().toISOString();
-        
-        await state.firebase.db.collection('surveys').doc(surveyToSave.id).set(surveyToSave);
 
+        const response = await fetch(state.apiEndpoints.save, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(surveyToSave)
+        });
+
+        const result = await response.json();
+
+        if (result.status !== 'success') {
+            throw new Error(result.message || 'Unknown error occurred on the server.');
+        }
+        
         // Success state
         G('success-sound').play();
         statusDiv.textContent = `Survey for ${surveyToSave.customer.name} saved successfully! ID: ${surveyToSave.id.substring(surveyToSave.id.length-6)}`;
@@ -908,13 +893,14 @@ async function saveSurveyToFirestore() {
         }, 2000);
 
     } catch (error) {
-        console.error('Error saving survey to Firebase:', error);
-        statusDiv.textContent = `Error: ${error.message}. Please check Firestore rules.`;
-        alert(`Failed to save survey. Check the console and your Firestore rules. ${error.message}`);
+        console.error('Error saving survey:', error);
+        statusDiv.textContent = `Error: ${error.message}. Please check server logs and permissions.`;
+        alert(`Failed to save survey. Check the console and server configuration. ${error.message}`);
         btn.disabled = false;
         btn.innerHTML = `<i class="lucide-save mr-2"></i>Save Survey`;
     }
 }
+
 
 function renderSurveyList(searchTerm = '') {
     const listDiv = G('load-survey-list');
@@ -932,6 +918,9 @@ function renderSurveyList(searchTerm = '') {
     }
 
     listDiv.innerHTML = '';
+    // Sort by creation date, newest first
+    filteredSurveys.sort((a, b) => new Date(b.meta.createdAt) - new Date(a.meta.createdAt));
+
     filteredSurveys.forEach(survey => {
         const surveyDiv = D.createElement('div');
         surveyDiv.className = 'flex justify-between items-center p-2 border-b hover:bg-gray-100';
@@ -979,30 +968,26 @@ async function showLoadSurveyModal() {
     modal.style.display = 'flex';
     G('survey-search-input').value = '';
 
-
-    if (!state.firebase.db) {
-        listDiv.innerHTML = '<p class="text-red-500">Firebase is not configured.</p>';
-        return;
-    }
-
     try {
-        const querySnapshot = await state.firebase.db.collection('surveys').orderBy('meta.createdAt', 'desc').limit(100).get();
-        state.surveysCache = [];
+        const response = await fetch(state.apiEndpoints.load);
+        const result = await response.json();
+
+        if (result.status !== 'success') {
+            throw new Error(result.message || 'Failed to load surveys from server.');
+        }
+
+        state.surveysCache = result.surveys;
         
-        if (querySnapshot.empty) {
+        if (state.surveysCache.length === 0) {
             listDiv.innerHTML = '<p>No saved surveys found.</p>';
             return;
         }
-
-        querySnapshot.forEach(doc => {
-            state.surveysCache.push(doc.data());
-        });
         
         renderSurveyList(); // Initial render of the full list
 
     } catch (error) {
         console.error("Error loading surveys:", error);
-        listDiv.innerHTML = `<p class="text-red-500">Could not load surveys. Error: ${error.message}</p><p class="text-sm text-gray-600 mt-2">You might need to create a composite index in Firestore for the 'surveys' collection on 'meta.createdAt' (descending).</p>`;
+        listDiv.innerHTML = `<p class="text-red-500">Could not load surveys. Error: ${error.message}</p><p class="text-sm text-gray-600 mt-2">Please check the API endpoint and server permissions.</p>`;
     }
 }
 
@@ -1125,7 +1110,7 @@ function renderEditor(tabId) {
              content.innerHTML = `<h3 class="text-xl font-bold mb-4">App Data Management</h3>
                 <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
                   <p class="font-bold">Info</p>
-                  <p>Your Firebase configuration is hardcoded and does not need to be changed. For data to load, ensure you have created a composite index in Firestore for the 'surveys' collection on 'meta.createdAt' (descending).</p>
+                  <p>Configure the PHP API endpoints in script.js if they are not in the default './api/' location. Ensure the 'surveys' directory on your server is writable by PHP.</p>
                 </div>
                  <h4 class="font-bold pt-4">Manage App Settings</h4>
                  <p class="text-sm text-gray-600 mb-2">Export your app settings (rates, presets, etc.) as a backup, or import them on another device.</p>
