@@ -25,7 +25,7 @@ jobs:
           port: ${{ secrets.FTP_PORT }}             # 21
           protocol: ftps                            # TLS secure
           server-dir: public_html/                  # root folder
-          local-dir: public/                        # repo ke public folder se deploy
+          local-dir: ./                        # repo ke root folder se deploy
           timeout: 120000
           exclude: |
             **/.git*
@@ -33,3 +33,4 @@ jobs:
             **/node_modules/**
             **/README.md
             **/.env
+            **/A/**

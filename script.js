@@ -3,7 +3,7 @@
 // =================================================================================
 // This script manages the entire application logic for LocalPOD.
 // It handles authentication, UI rendering, and data management using localStorage.
-// This approach allows the app to function without a server-side backend for now.
+// This approach allows the app to function without a server-side backend.
 // =================================================================================
 
 const D = document;
@@ -25,8 +25,9 @@ const UI = {
         G(elementId).innerHTML = html;
     },
     showError: (elementId, message) => {
-        G(elementId).textContent = message;
-        setTimeout(() => { G(elementId).textContent = ''; }, 3000);
+        const el = G(elementId);
+        el.textContent = message;
+        setTimeout(() => { el.textContent = ''; }, 3000);
     },
     showModal: (content) => {
         G('modal-body').innerHTML = content;
@@ -53,7 +54,6 @@ const DB = {
     },
     findUser: (email) => DB.getUsers().find(user => user.email === email),
 
-    // Placeholder for future data types
     getPods: () => DB._get('pods'),
     savePod: (pod) => {
         const pods = DB.getPods();
@@ -79,8 +79,8 @@ const Auth = {
 
     login(email, password) {
         const user = DB.findUser(email);
-        // In a real app, 'password' would be a hashed password to check.
-        if (user && user.password === password) {
+        // In a real app, 'password' would be checked against a hashed password.
+        if (user && user.password === password) { 
             this.currentUser = { email: user.email, name: user.name, role: user.role };
             sessionStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             return true;
@@ -93,7 +93,7 @@ const Auth = {
             return { success: false, message: 'User with this email already exists.' };
         }
         const users = DB.getUsers();
-        // The first user to register becomes an admin.
+        // The first user to register becomes an admin. All subsequent users are drivers.
         const role = users.length === 0 ? 'admin' : 'driver'; 
         
         const newUser = {
@@ -145,6 +145,7 @@ const App = {
     },
     
     renderAdminDashboard() {
+        const drivers = DB.getUsers().filter(u => u.role ==='driver').length;
         const adminHtml = `
             <div class="dashboard-grid">
                 <div class="dashboard-card">
@@ -157,11 +158,11 @@ const App = {
                 </div>
                  <div class="dashboard-card">
                     <h3>Drivers</h3>
-                    <p class="stat">${DB.getUsers().filter(u => u.role ==='driver').length}</p>
+                    <p class="stat">${drivers}</p>
                 </div>
                 <div class="dashboard-card full-width">
                    <h3>Create New POD</h3>
-                   <button class="btn">Create POD</button>
+                   <p>Feature coming soon...</p>
                 </div>
             </div>
         `;
@@ -215,7 +216,7 @@ const App = {
             const password = G('register-password').value;
             const result = Auth.register(name, email, password);
             if(result.success) {
-                alert(result.message);
+                alert(result.message); // Simple alert for now
                 UI.showAuthForm('login-form');
                 G('register-form').reset();
             } else {
@@ -229,6 +230,7 @@ const App = {
         // --- Modal Event Listeners ---
         G('modal-close-btn').addEventListener('click', UI.hideModal);
         G('modal').addEventListener('click', (e) => {
+            // Close modal if clicking on the background overlay
             if (e.target.id === 'modal') UI.hideModal();
         });
     }
