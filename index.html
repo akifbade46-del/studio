@@ -3,94 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LocalPOD - Delivery Management</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css" rel="stylesheet">
+    <title>New Project</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
-    <div id="app-container" class="app-container">
-        <!-- Login/Register Screen (Initially visible) -->
-        <div id="auth-screen" class="screen active">
-            <div class="auth-container">
-                <div id="auth-form-container">
-                    <!-- Login Form -->
-                    <form id="login-form" class="auth-form active">
-                        <h2 class="form-title">Welcome Back</h2>
-                        <p class="form-subtitle">Login to your account</p>
-                        <div class="input-group">
-                            <i class="lucide-mail"></i>
-                            <input type="email" id="login-email" placeholder="Email" required>
-                        </div>
-                        <div class="input-group">
-                            <i class="lucide-lock"></i>
-                            <input type="password" id="login-password" placeholder="Password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Login</button>
-                        <p id="login-error" class="error-message"></p>
-                        <p class="toggle-form">Don't have an account? <span id="show-register">Register</span></p>
-                    </form>
-                    <!-- Register Form -->
-                    <form id="register-form" class="auth-form">
-                        <h2 class="form-title">Create Account</h2>
-                        <p class="form-subtitle">Get started with LocalPOD</p>
-                         <div class="input-group">
-                            <i class="lucide-user"></i>
-                            <input type="text" id="register-name" placeholder="Full Name" required>
-                        </div>
-                        <div class="input-group">
-                            <i class="lucide-mail"></i>
-                            <input type="email" id="register-email" placeholder="Email" required>
-                        </div>
-                        <div class="input-group">
-                            <i class="lucide-lock"></i>
-                            <input type="password" id="register-password" placeholder="Password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Register</button>
-                        <p id="register-error" class="error-message"></p>
-                        <p class="toggle-form">Already have an account? <span id="show-login">Login</span></p>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main App Screen (Initially hidden) -->
-        <div id="main-app" class="screen">
-            <header class="app-header">
-                <h1 class="app-title">LocalPOD</h1>
-                <div class="header-user">
-                    <span id="user-greeting">Hello, User</span>
-                    <button id="logout-btn" class="btn btn-icon"><i class="lucide-log-out"></i></button>
-                </div>
-            </header>
-            <main id="app-content" class="app-content">
-                <!-- Content will be injected by JavaScript based on user role -->
-            </main>
-        </div>
-        
-        <!-- A generic modal for popups -->
-        <div id="modal" class="modal-container">
-            <div class="modal-content">
-                <button id="modal-close-btn" class="modal-close">&times;</button>
-                <div id="modal-body"></div>
-            </div>
-        </div>
-
-    </div>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(registration => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, err => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
-    </script>
-    <script type="module" src="script.js"></script>
+    <h1>Welcome to your new project!</h1>
+    
+    <script src="script.js"></script>
 </body>
 </html>
