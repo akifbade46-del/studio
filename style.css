@@ -1,236 +1,246 @@
-/* --- Base Styles --- */
+:root {
+    --sky-blue: #87CEEB;
+    --background: #F0F0F0;
+    --accent: #008080;
+    --text-dark: #333;
+    --text-light: #777;
+    --white: #FFFFFF;
+    --border-color: #DDDDDD;
+    --error: #D32F2F;
+    --success: #388E3C;
+    --font-family: 'PT Sans', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: #f3f4f6; /* bg-gray-100 */
-    color: #1f2937; /* text-gray-800 */
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    font-size: 16px;
+    font-family: var(--font-family);
+    background-color: var(--background);
+    color: var(--text-dark);
+    line-height: 1.6;
 }
 
-#app {
-    background-color: #ffffff; /* bg-white */
-    box-shadow: 0 10px 30px -15px rgba(0,0,0,0.1);
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
 }
 
-#preview-content {
-    background-color: #ffffff !important;
-    color: #111827 !important;
+/* --- Screen Management --- */
+.screen {
+    display: none;
+    flex-direction: column;
+    animation: fadeIn 0.5s ease-in-out;
+}
+.screen.active {
+    display: flex;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Header & Footer --- */
-#app-header, #sticky-footer {
-    background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border-color: #e5e7eb; /* border-gray-200 */
-    color: #1f2937; /* text-gray-800 */
+/* --- Auth Screen --- */
+#auth-screen {
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
 }
-
-#app-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    border-bottom: 1px solid #e5e7eb;
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+    background-color: var(--white);
+    padding: 2.5rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
-
-#sticky-footer {
-    position: sticky;
-    bottom: 0;
-    z-index: 50;
-    border-top: 1px solid #e5e7eb;
+.auth-form {
+    display: none;
 }
-
-/* --- Component Styling based on qgocargo.com --- */
-/* Primary buttons like Login, Next, Add, Save */
-.bg-blue-600 { background-color: #1C204F !important; } /* Q'Go Dark Blue */
-.text-blue-600 { color: #1C204F !important; }
-.border-blue-500 { border-color: #F26422 !important; } /* Q'Go Orange */
-.ring-blue-500 { --tw-ring-color: #F26422 !important; }
-
-/* Accent color for important actions */
-.bg-orange-accent { background-color: #F26422 !important; color: #ffffff !important; }
-
-/* General background colors */
-.bg-gray-50 { background-color: #f9fafb !important; }
-.bg-gray-100 { background: #f3f4f6; }
-.bg-gray-200 { background-color: #e5e7eb !important; }
-.bg-gray-300 { background-color: #d1d5db !important; }
-
-/* General text colors */
-.text-gray-500 { color: #6b7280; }
-.text-gray-600 { color: #4b5563; }
-.text-gray-800 { color: #1f2937; }
-
-
-input, select, textarea, button {
-    border-radius: 0.375rem !important; /* rounded-md */
-    padding: 0.65rem 0.75rem !important;
-    transition: all 0.2s ease-in-out !important;
-    border: 1px solid #d1d5db !important; /* border-gray-300 */
-    color: #1f2937; /* text-gray-800 */
-    background-color: #ffffff !important;
+.auth-form.active {
+    display: block;
 }
-
-button {
+.form-title {
+    text-align: center;
+    font-size: 1.8rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+.form-subtitle {
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+}
+.input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+}
+.input-group input {
+    width: 100%;
+    padding: 12px 12px 12px 45px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: var(--font-family);
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+.input-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+.btn {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 4px;
+    font-family: var(--font-family);
+    font-size: 1rem;
     cursor: pointer;
-    font-weight: 500;
+    transition: background-color 0.3s, transform 0.1s;
 }
-
-button:hover {
-    filter: brightness(0.95);
+.btn-primary {
+    width: 100%;
+    background-color: var(--accent);
+    color: var(--white);
+    font-weight: 700;
 }
-button:active {
+.btn-primary:hover {
+    background-color: #006666;
+}
+.btn:active {
     transform: scale(0.98);
 }
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    filter: none;
+.error-message {
+    color: var(--error);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 1rem;
+    height: 1.2em;
 }
-
-/* Specific Button Styles */
-button.bg-blue-600, button.bg-green-500, button.bg-orange-accent {
-    color: #ffffff !important;
-    border-color: transparent !important;
+.toggle-form {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
 }
-
-button.bg-blue-600:hover, button.bg-orange-accent:hover {
-    filter: brightness(1.1);
-}
-
-/* Default button style for non-primary actions */
-button:not([class*="bg-"]):not(#clear-signature):not(.traffic-light-btn):not([data-photo-id]):not([data-delete-id]):not([data-delete-preset]):not([data-delete-container]):not(.move-type-btn) {
-    color: #1f2937 !important;
-    background-color: #ffffff !important;
-    border: 1px solid #d1d5db !important;
-}
-button:not([class*="bg-"]):hover {
-     background-color: #f9fafb !important; /* bg-gray-50 */
-     filter: none;
-}
-
-
-input:focus, select:focus, textarea:focus {
-    box-shadow: 0 0 0 2px rgba(242, 100, 34, 0.5) !important; /* Ring with Q'Go Orange */
-    outline: none !important;
-    border-color: #F26422 !important; /* Q'Go Orange */
-}
-
-
-/* --- Page Transitions & Animations --- */
-.step { display: none; }
-.step.active {
-    display: block;
-    animation: fadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Tables */
-#items-table th {
-    font-weight: 600;
-    color: #374151; /* text-gray-700 */
-}
-#items-table td, #items-table th {
-    border-bottom: 1px solid #e5e7eb; /* border-gray-200 */
-}
-#items-table tbody tr:last-child td {
-    border-bottom: none;
-}
-#items-table {
-    background-color: transparent !important;
-}
-#items-table thead {
-    background-color: #f9fafb !important; /* bg-gray-50 */
-}
-
-/* Modals */
-#editor-modal > div, #passcode-modal > div, #load-survey-modal > div, #preview-modal > div {
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    color: #1f2937;
-}
-
-/* Modal Traffic Lights */
-.traffic-light-btn {
-    display: block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 0 !important;
-    background-color: #f0f0f0;
-}
-.traffic-light-btn.close { background-color: #ff5f57; }
-.traffic-light-btn.minimize { background-color: #ffbd2e; }
-.traffic-light-btn.maximize { background-color: #28c940; }
-
-#close-editor-btn, #close-passcode-btn, #close-load-survey-btn, #preview-close-btn {
+.toggle-form span {
+    color: var(--accent);
+    font-weight: 700;
     cursor: pointer;
-    padding: 0 !important;
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
 }
 
-/* Login Screen */
-#login-screen {
-    background-color: #f3f4f6;
+/* --- Main App Screen --- */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border-color);
+}
+.app-title {
+    color: var(--accent);
+    font-size: 1.5rem;
+}
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.btn-icon {
+    background: none;
+    color: var(--text-light);
+    font-size: 1.2rem;
+}
+.btn-icon:hover {
+    color: var(--accent);
+}
+.app-content {
+    padding: 1.5rem;
 }
 
-/* New Visual Move Type Selector */
-.move-type-btn {
-    flex-direction: column;
+/* --- Dashboard --- */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+.dashboard-card {
+    background-color: var(--white);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+.dashboard-card h3 {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+.dashboard-card .stat {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+.dashboard-card.full-width {
+    grid-column: 1 / -1;
+}
+
+/* --- Modal --- */
+.modal-container {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
     align-items: center;
     justify-content: center;
-    height: 80px;
-    gap: 0.5rem;
-    background-color: #f9fafb !important; /* bg-gray-50 */
-    border: 2px solid #e5e7eb !important; /* border-gray-200 */
-    color: #374151 !important; /* text-gray-700 */
-    font-weight: 600;
-    padding: 1rem 0.5rem !important;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.modal-container.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.modal-content {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-container.active .modal-content {
+    transform: scale(1);
+}
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-light);
 }
 
-.move-type-btn i {
-    font-size: 1.5rem; /* Make icon bigger */
-    line-height: 1;
-}
-
-.move-type-btn.selected {
-    border-color: #1C204F !important; /* Q'Go Dark Blue */
-    background-color: #eef2ff !important; /* A light blue to indicate selection */
-    color: #1C204F !important;
-}
-
-
-/* Print Styles */
-@media print {
-  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #fff !important; font-size: 14px; }
-  .no-print { display: none !important; }
-  #app-header, #sticky-footer {
-      background: #fff !important;
-      backdrop-filter: none !important;
-      box-shadow: none !important;
-      border-color: #e5e7eb !important;
-  }
-}
-
-/* Lucide icon animation */
-.animate-spin {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
+/* Mobile First */
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 2rem 1.5rem;
     }
-    to {
-        transform: rotate(360deg);
+    .app-header, .app-content {
+        padding: 1rem;
     }
 }
