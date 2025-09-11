@@ -64,8 +64,6 @@ export async function initializeAppLogic() {
                 let userDoc = await getDoc(userDocRef);
                 
                 if (!userDoc.exists()) {
-                    // This case handles a user who signed up but might not have a doc yet.
-                    // Let's create a basic one, which will be set to inactive.
                     const usersCollectionRef = collection(db, 'users');
                     const userQuerySnapshot = await getDocs(usersCollectionRef);
                     const isFirstUser = userQuerySnapshot.size === 0;
@@ -99,14 +97,12 @@ export async function initializeAppLogic() {
                     return;
                 }
                 
-                console.log("User logged in:", currentUserData);
                 setCurrentUser(currentUserData);
                 showApp();
                 loadJobFiles();
                 loadClients();
             } else {
                 setCurrentUser(null);
-                console.log("User logged out");
                 showLogin();
             }
         });
