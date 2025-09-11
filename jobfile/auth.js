@@ -24,21 +24,21 @@ const auth = getAuth(app);
 export { db, auth };
 
 function setupAuthEventListeners() {
-    document.getElementById('jfn-auth-link').addEventListener('click', (e) => {
+    document.getElementById('auth-link').addEventListener('click', (e) => {
         e.preventDefault();
         const isLoginView = e.target.textContent.includes('Sign in');
         toggleAuthView(!isLoginView);
     });
 
-    document.getElementById('jfn-auth-btn').addEventListener('click', () => {
-        const email = document.getElementById('jfn-email-address').value;
-        const password = document.getElementById('jfn-password').value;
-        const isLogin = document.getElementById('jfn-auth-btn').textContent.includes('Sign in');
+    document.getElementById('auth-btn').addEventListener('click', () => {
+        const email = document.getElementById('email-address').value;
+        const password = document.getElementById('password').value;
+        const isLogin = document.getElementById('auth-btn').textContent.includes('Sign in');
 
         if (isLogin) {
             handleLogin(email, password);
         } else {
-            const displayName = document.getElementById('jfn-full-name').value;
+            const displayName = document.getElementById('full-name').value;
              if (!email || !password || !displayName) {
                  showNotification("Please fill all fields to sign up.", true);
                  return;
@@ -47,8 +47,8 @@ function setupAuthEventListeners() {
         }
     });
     
-    document.getElementById('jfn-forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
-    document.getElementById('jfn-send-reset-link-btn').addEventListener('click', handleForgotPassword);
+    document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
+    document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
     document.getElementById('close-forgot-password-btn').addEventListener('click', () => closeModal('forgot-password-modal'));
 }
 
@@ -81,16 +81,16 @@ export function initializeAppLogic() {
             
             if (currentUserData.status === 'inactive') {
                 showLogin();
-                document.getElementById('jfn-approval-message').style.display = 'block';
-                document.getElementById('jfn-blocked-message').style.display = 'none';
+                document.getElementById('approval-message').style.display = 'block';
+                document.getElementById('blocked-message').style.display = 'none';
                 await signOut(auth); 
                 return;
             }
 
             if (currentUserData.status === 'blocked') {
                 showLogin();
-                document.getElementById('jfn-approval-message').style.display = 'none';
-                document.getElementById('jfn-blocked-message').style.display = 'block';
+                document.getElementById('approval-message').style.display = 'none';
+                document.getElementById('blocked-message').style.display = 'block';
                 await signOut(auth);
                 return;
             }
@@ -157,7 +157,7 @@ export async function handleLogin(email, password) {
 }
 
 export async function handleForgotPassword() {
-    const email = document.getElementById('jfn-reset-email').value.trim();
+    const email = document.getElementById('reset-email').value.trim();
     if (!email) {
         showNotification("Please enter your email address.", true);
         return;
@@ -184,13 +184,13 @@ export function handleLogout() {
 }
 
 export function toggleAuthView(showLoginView) {
-    const nameField = document.getElementById('jfn-signup-name-field');
-    const emailField = document.getElementById('jfn-email-address');
-    const passwordField = document.getElementById('jfn-password');
+    const nameField = document.getElementById('signup-name-field');
+    const emailField = document.getElementById('email-address');
+    const passwordField = document.getElementById('password');
     
-    document.getElementById('jfn-auth-title').textContent = showLoginView ? 'Sign in to your account' : 'Create a new account';
-    document.getElementById('jfn-auth-btn').textContent = showLoginView ? 'Sign in' : 'Sign up';
-    document.getElementById('jfn-auth-link').textContent = showLoginView ? 'Create a new account' : 'Already have an account? Sign in';
+    document.getElementById('auth-title').textContent = showLoginView ? 'Sign in to your account' : 'Create a new account';
+    document.getElementById('auth-btn').textContent = showLoginView ? 'Sign in' : 'Sign up';
+    document.getElementById('auth-link').textContent = showLoginView ? 'Create a new account' : 'Already have an account? Sign in';
     nameField.style.display = showLoginView ? 'none' : 'block';
     
     if (showLoginView) {
@@ -205,6 +205,8 @@ export function toggleAuthView(showLoginView) {
         passwordField.classList.remove('rounded-md');
     }
 
-    document.getElementById('jfn-approval-message').style.display = 'none';
-    document.getElementById('jfn-blocked-message').style.display = 'none';
+    document.getElementById('approval-message').style.display = 'none';
+    document.getElementById('blocked-message').style.display = 'none';
 }
+
+    

@@ -149,7 +149,7 @@ export function showApp() {
     
     initializeUIData();
     clearForm();
-    setupAppEventListeners(); // This is the critical fix
+    setupAppEventListeners(); 
 }
 
 // --- Modals ---
@@ -851,3 +851,5 @@ export function openAnalyticsDashboard() {}
 export function closeAnalyticsDashboard() {}
 export function refreshOpenModals() {}
 export function getPrintViewHtml() {}
+
+    
