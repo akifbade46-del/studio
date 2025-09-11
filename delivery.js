@@ -196,6 +196,9 @@ export function loadDriverTasks() {
             return (b.createdAt?.toDate() || 0) - (a.createdAt?.toDate() || 0);
         });
         
+        // Cache the driver's deliveries. This can be used by other functions.
+        setDeliveriesCache(driverTasks);
+        
         const listEl = document.getElementById('driver-tasks-list');
         listEl.innerHTML = '';
         if (driverTasks.length > 0) {
