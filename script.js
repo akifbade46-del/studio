@@ -2,7 +2,6 @@ import { initializeAppLogic, handleLogout } from './auth.js';
 import { 
     openModal, 
     closeModal,
-    renderAllDeliveryViews,
     openReceiptModal,
     downloadReceiptAsPDF,
     printReceipt,
@@ -19,6 +18,7 @@ import {
     handleCompleteDelivery,
     handleGetLocation,
     handlePhotoUpload,
+    handleSkipFeedback,
     completionSignaturePad
 } from './ui.js';
 import { handleAssignDelivery, handleJobFileSearch, selectJobFile } from './delivery.js';
@@ -62,12 +62,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const getLocationBtn = document.getElementById('get-location-btn');
     const takePhotoBtn = document.getElementById('take-photo-btn');
     const photoUploadInput = document.getElementById('photo-upload-input');
+    const skipFeedbackBtn = document.getElementById('skip-feedback-btn');
 
     if(completionForm) completionForm.addEventListener('submit', handleCompleteDelivery);
     if(clearSignatureBtn) clearSignatureBtn.addEventListener('click', () => completionSignaturePad.clear());
     if(getLocationBtn) getLocationBtn.addEventListener('click', handleGetLocation);
     if(takePhotoBtn) takePhotoBtn.addEventListener('click', () => photoUploadInput.click());
     if(photoUploadInput) photoUploadInput.addEventListener('change', handlePhotoUpload);
+    if(skipFeedbackBtn) skipFeedbackBtn.addEventListener('click', handleSkipFeedback);
     
     // Receipt actions
     const pdfReceiptBtn = document.getElementById('pdf-receipt-btn');
