@@ -1,4 +1,4 @@
-import { getFirestore, doc, getDocs, collection, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, doc, getDocs, collection, onSnapshot, addDoc, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { db } from './auth.js';
 import { showLoader, hideLoader, showNotification, renderAllDeliveryViews, createDriverTaskCard, displayDriverPerformanceSummary } from './ui.js';
 import { 
@@ -179,11 +179,16 @@ export async function handleAssignDelivery(e) {
 // --- Driver Logic ---
 export function loadDriverTasks() {
     if (driverTasksUnsubscribe) driverTasksUnsubscribe();
-    const q = collection(db, "deliveries"); // Query all deliveries
+    
+    if (!currentUser || !currentUser.uid) {
+        console.error("No current user found for loading tasks.");
+        return;
+    }
+
+    const q = query(collection(db, "deliveries"), where("driverUid", "==", currentUser.uid));
     
     driverTasksUnsubscribe = onSnapshot(q, (snapshot) => {
-        const allDeliveries = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-        const driverTasks = allDeliveries.filter(d => d.driverUid === currentUser.uid);
+        const driverTasks = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
 
         driverTasks.sort((a,b) => {
             if (a.status === 'Pending' && b.status !== 'Pending') return -1;
