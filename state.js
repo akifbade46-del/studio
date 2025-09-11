@@ -10,6 +10,7 @@ export let selectedJobFile = null;
 export let currentGeolocation = null;
 export let activeDeliveryForReceipt = null;
 export let activeDeliveryForCompletion = null;
+export let capturedPhotoDataUrl = null;
 
 export function setGlobalCurrentUser(user) {
     currentUser = user;
@@ -45,4 +46,8 @@ export function setActiveDeliveryForReceipt(delivery) {
 
 export function setActiveDeliveryForCompletion(delivery) {
     activeDeliveryForCompletion = delivery;
+}
+
+export function setCapturedPhotoDataUrl(dataUrl) {
+    capturedPhotoDataUrl = dataUrl;
 }

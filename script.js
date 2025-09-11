@@ -18,6 +18,7 @@ import {
     generateQRCodes,
     handleCompleteDelivery,
     handleGetLocation,
+    handlePhotoUpload,
     completionSignaturePad
 } from './ui.js';
 import { handleAssignDelivery, handleJobFileSearch, selectJobFile } from './delivery.js';
@@ -59,9 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const completionForm = document.getElementById('completion-form');
     const clearSignatureBtn = document.getElementById('clear-completion-signature-btn');
     const getLocationBtn = document.getElementById('get-location-btn');
+    const takePhotoBtn = document.getElementById('take-photo-btn');
+    const photoUploadInput = document.getElementById('photo-upload-input');
+
     if(completionForm) completionForm.addEventListener('submit', handleCompleteDelivery);
     if(clearSignatureBtn) clearSignatureBtn.addEventListener('click', () => completionSignaturePad.clear());
     if(getLocationBtn) getLocationBtn.addEventListener('click', handleGetLocation);
+    if(takePhotoBtn) takePhotoBtn.addEventListener('click', () => photoUploadInput.click());
+    if(photoUploadInput) photoUploadInput.addEventListener('change', handlePhotoUpload);
     
     // Receipt actions
     const pdfReceiptBtn = document.getElementById('pdf-receipt-btn');
