@@ -21,21 +21,21 @@ import { getJobFileById } from './utils.js';
 initializeAppLogic();
 
 // --- Auth ---
-document.getElementById('auth-link').addEventListener('click', (e) => {
+document.getElementById('jfn-auth-link').addEventListener('click', (e) => {
     e.preventDefault();
-    const isLogin = e.target.textContent.includes('Sign in');
-    toggleAuthView(!isLogin);
+    const isLoginView = e.target.textContent.includes('Sign in');
+    toggleAuthView(!isLoginView);
 });
 
-document.getElementById('auth-btn').addEventListener('click', () => {
-    const email = document.getElementById('email-address').value;
-    const password = document.getElementById('password').value;
-    const isLogin = document.getElementById('auth-btn').textContent.includes('Sign in');
+document.getElementById('jfn-auth-btn').addEventListener('click', () => {
+    const email = document.getElementById('jfn-email-address').value;
+    const password = document.getElementById('jfn-password').value;
+    const isLogin = document.getElementById('jfn-auth-btn').textContent.includes('Sign in');
 
     if (isLogin) {
         handleLogin(email, password);
     } else {
-        const displayName = document.getElementById('full-name').value;
+        const displayName = document.getElementById('jfn-full-name').value;
          if (!email || !password || !displayName) {
              showNotification("Please fill all fields to sign up.", true);
              return;
@@ -45,8 +45,8 @@ document.getElementById('auth-btn').addEventListener('click', () => {
 });
 
 document.getElementById('logout-btn').addEventListener('click', handleLogout);
-document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
-document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
+document.getElementById('jfn-forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
+document.getElementById('jfn-send-reset-link-btn').addEventListener('click', handleForgotPassword);
 document.getElementById('close-forgot-password-btn').addEventListener('click', () => closeModal('forgot-password-modal'));
 
 

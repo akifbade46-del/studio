@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job File Management System with Database</title>
+    <title>Job File Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -18,41 +18,41 @@
         <div class="max-w-md w-full space-y-8">
             <div>
                 <div class="text-center text-5xl font-extrabold" style="color: #0E639C;">Q'go<span style="color: #4FB8AF;">Cargo</span></div>
-                <h2 id="auth-title" class="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+                <h2 id="jfn-auth-title" class="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
             </div>
             <div class="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-md">
-                <div id="approval-message" class="hidden p-4 text-center text-yellow-800 bg-yellow-100 rounded-lg">
+                <div id="jfn-approval-message" class="hidden p-4 text-center text-yellow-800 bg-yellow-100 rounded-lg">
                     Your account is awaiting admin approval.
                 </div>
-                 <div id="blocked-message" class="hidden p-4 text-center text-red-800 bg-red-100 rounded-lg">
+                 <div id="jfn-blocked-message" class="hidden p-4 text-center text-red-800 bg-red-100 rounded-lg">
                     Your account has been blocked by an administrator.
                 </div>
                 <div class="rounded-md shadow-sm -space-y-px">
-                    <div id="signup-name-field" style="display: none;">
-                        <label for="full-name" class="sr-only">Full Name</label>
-                        <input id="full-name" name="name" type="text" autocomplete="name" required class="input-field rounded-t-md" placeholder="Full Name">
+                    <div id="jfn-signup-name-field" style="display: none;">
+                        <label for="jfn-full-name" class="sr-only">Full Name</label>
+                        <input id="jfn-full-name" name="name" type="text" autocomplete="name" required class="input-field rounded-t-md" placeholder="Full Name">
                     </div>
                     <div>
-                        <label for="email-address" class="sr-only">Email address</label>
-                        <input id="email-address" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
+                        <label for="jfn-email-address" class="sr-only">Email address</label>
+                        <input id="jfn-email-address" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
                     </div>
                     <div>
-                        <label for="password" class="sr-only">Password</label>
-                        <input id="password" name="password" type="password" autocomplete="current-password" required class="input-field rounded-b-md" placeholder="Password">
+                        <label for="jfn-password" class="sr-only">Password</label>
+                        <input id="jfn-password" name="password" type="password" autocomplete="current-password" required class="input-field rounded-b-md" placeholder="Password">
                     </div>
                 </div>
                 <div>
-                    <button id="auth-btn" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button id="jfn-auth-btn" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Sign in
                     </button>
                 </div>
                 <p class="mt-2 text-center text-sm text-gray-600">
-                    <a href="#" id="auth-link" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    <a href="#" id="jfn-auth-link" class="font-medium text-indigo-600 hover:text-indigo-500">
                         Create a new account
                     </a>
                 </p>
                 <div class="text-center mt-2 text-sm">
-                    <a href="#" id="forgot-password-link" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    <a href="#" id="jfn-forgot-password-link" class="font-medium text-indigo-600 hover:text-indigo-500">
                         Forgot your password?
                     </a>
                 </div>
@@ -405,11 +405,11 @@
             </div>
             <p class="mb-4 text-gray-600">Enter your email address and we will send you a link to reset your password.</p>
             <div>
-                <label for="reset-email" class="sr-only">Email address</label>
-                <input id="reset-email" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
+                <label for="jfn-reset-email" class="sr-only">Email address</label>
+                <input id="jfn-reset-email" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
             </div>
             <div class="text-right mt-6">
-                <button id="send-reset-link-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                <button id="jfn-send-reset-link-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
                     Send Password Reset Link
                 </button>
             </div>

@@ -51,16 +51,16 @@ export async function initializeAppLogic() {
                 
                 if (currentUserData.status === 'inactive') {
                     showLogin();
-                    document.getElementById('approval-message').style.display = 'block';
-                    document.getElementById('blocked-message').style.display = 'none';
+                    document.getElementById('jfn-approval-message').style.display = 'block';
+                    document.getElementById('jfn-blocked-message').style.display = 'none';
                     signOut(auth);
                     return;
                 }
 
                 if (currentUserData.status === 'blocked') {
                     showLogin();
-                    document.getElementById('approval-message').style.display = 'none';
-                    document.getElementById('blocked-message').style.display = 'block';
+                    document.getElementById('jfn-approval-message').style.display = 'none';
+                    document.getElementById('jfn-blocked-message').style.display = 'block';
                     signOut(auth);
                     return;
                 }
@@ -113,7 +113,7 @@ export async function handleLogin(email, password) {
 }
 
 export async function handleForgotPassword() {
-    const email = document.getElementById('reset-email').value.trim();
+    const email = document.getElementById('jfn-reset-email').value.trim();
     if (!email) {
         showNotification("Please enter your email address.", true);
         return;
@@ -139,18 +139,18 @@ export function handleLogout() {
     signOut(auth);
 }
 
-export function toggleAuthView(showLogin) {
-    const nameField = document.getElementById('signup-name-field');
-    const emailField = document.getElementById('email-address');
-    const passwordField = document.getElementById('password');
+export function toggleAuthView(showLoginView) {
+    const nameField = document.getElementById('jfn-signup-name-field');
+    const emailField = document.getElementById('jfn-email-address');
+    const passwordField = document.getElementById('jfn-password');
     
-    document.getElementById('auth-title').textContent = showLogin ? 'Sign in to your account' : 'Create a new account';
-    document.getElementById('auth-btn').textContent = showLogin ? 'Sign in' : 'Sign up';
-    document.getElementById('auth-link').textContent = showLogin ? 'Create a new account' : 'Already have an account? Sign in';
-    nameField.style.display = showLogin ? 'none' : 'block';
+    document.getElementById('jfn-auth-title').textContent = showLoginView ? 'Sign in to your account' : 'Create a new account';
+    document.getElementById('jfn-auth-btn').textContent = showLoginView ? 'Sign in' : 'Sign up';
+    document.getElementById('jfn-auth-link').textContent = showLoginView ? 'Create a new account' : 'Already have an account? Sign in';
+    nameField.style.display = showLoginView ? 'none' : 'block';
     
     // Adjust classes for rounded corners
-    if (showLogin) {
+    if (showLoginView) {
         emailField.classList.remove('rounded-t-md');
         emailField.classList.add('rounded-md');
         passwordField.classList.remove('rounded-b-md');
@@ -162,5 +162,6 @@ export function toggleAuthView(showLogin) {
         passwordField.classList.remove('rounded-md');
     }
 
-    document.getElementById('approval-message').style.display = 'none';
+    document.getElementById('jfn-approval-message').style.display = 'none';
+    document.getElementById('jfn-blocked-message').style.display = 'none';
 }
