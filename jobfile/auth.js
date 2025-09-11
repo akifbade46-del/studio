@@ -64,6 +64,8 @@ export async function initializeAppLogic() {
                 let userDoc = await getDoc(userDocRef);
                 
                 if (!userDoc.exists()) {
+                    // This case handles a user who signed up but might not have a doc yet.
+                    // Let's create a basic one, which will be set to inactive.
                     const usersCollectionRef = collection(db, 'users');
                     const userQuerySnapshot = await getDocs(usersCollectionRef);
                     const isFirstUser = userQuerySnapshot.size === 0;
@@ -76,7 +78,7 @@ export async function initializeAppLogic() {
                         createdAt: serverTimestamp()
                     };
                     await setDoc(userDocRef, newUser);
-                    userDoc = await getDoc(userDocRef);
+                    userDoc = await getDoc(userDocRef); // Re-fetch the doc
                 }
                 
                 const currentUserData = { uid: user.uid, email: user.email, ...userDoc.data() };
@@ -120,8 +122,8 @@ export async function handleSignUp(email, password, displayName) {
     try {
         await createUserWithEmailAndPassword(auth, email, password);
         showNotification("Account created! Please wait for admin approval.", false);
-        await signOut(auth);
-        toggleAuthView(true);
+        await signOut(auth); // Sign out immediately so admin has to approve
+        toggleAuthView(true); // Switch back to login view
     } catch (error) {
         console.error("Sign up error:", error);
         showNotification(error.message, true);
