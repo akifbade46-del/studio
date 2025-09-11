@@ -3,10 +3,112 @@ import { db } from './auth.js';
 import { currentUser, jobFilesCache, clientsCache, chargeDescriptions, analyticsDataCache, currentFilteredJobs, profitChartInstance } from './state.js';
 import { setChargeDescriptions, setAnalyticsDataCache, setCurrentFilteredJobs, setProfitChartInstance, setFileIdToReject } from './state.js';
 import { getFormData, getJobFileById, getPrintViewHtmlForPreview } from './utils.js';
-import { loadJobFileById, deleteClient, moveToRecycleBin, permanentlyDeleteJobFile, restoreJobFile } from './firestore.js';
+import { loadJobFileById, deleteClient, moveToRecycleBin, permanentlyDeleteJobFile, restoreJobFile, saveJobFile, checkJobFile, approveJobFile, rejectJobFile, saveClient, openAdminPanel, saveUserChanges, backupAllData, handleRestoreFile, uncheckJobFile } from './firestore.js';
+import { handleLogout } from './auth.js';
+import { generateRemarks, suggestCharges } from './gemini.js';
+import { fileIdToReject } from './state.js';
+
+let appEventListenersAdded = false;
+
+function setupAppEventListeners() {
+    if (appEventListenersAdded) return;
+
+    // --- Main Action Buttons ---
+    document.getElementById('save-job-file-btn').addEventListener('click', saveJobFile);
+    document.getElementById('new-job-btn').addEventListener('click', clearForm);
+    document.getElementById('print-page-btn').addEventListener('click', printPage);
+    document.getElementById('client-manager-btn').addEventListener('click', () => openModal('client-manager-modal'));
+    document.getElementById('file-manager-btn').addEventListener('click', () => openModal('file-manager-modal'));
+    document.getElementById('analytics-btn').addEventListener('click', openAnalyticsDashboard);
+
+    // --- Job File Actions ---
+    document.getElementById('approve-btn').addEventListener('click', () => approveJobFile());
+    document.getElementById('reject-btn').addEventListener('click', () => promptForRejection(null));
+    document.getElementById('confirm-reject-btn').addEventListener('click', () => {
+        rejectJobFile(fileIdToReject);
+        setFileIdToReject(null);
+    });
+    document.getElementById('check-btn').addEventListener('click', () => checkJobFile());
+
+    // --- AI Buttons ---
+    document.getElementById('generate-remarks-btn').addEventListener('click', generateRemarks);
+    document.getElementById('suggest-charges-btn').addEventListener('click', suggestCharges);
+
+    // --- Charges Table ---
+    document.getElementById('add-charge-row-btn').addEventListener('click', () => addChargeRow());
+
+    // --- Admin Panel & Backup ---
+    document.getElementById('admin-panel-btn').addEventListener('click', openAdminPanel);
+    document.getElementById('save-user-changes-btn').addEventListener('click', saveUserChanges);
+    document.getElementById('backup-data-btn').addEventListener('click', backupAllData);
+    document.getElementById('restore-file-input').addEventListener('change', handleRestoreFile);
+    document.getElementById('activity-log-btn').addEventListener('click', openUserActivityLog);
+
+    // --- File Manager ---
+    document.getElementById('search-bar').addEventListener('input', applyFiltersAndDisplay);
+    document.getElementById('filter-status').addEventListener('change', applyFiltersAndDisplay);
+    document.getElementById('filter-date-from').addEventListener('change', applyFiltersAndDisplay);
+    document.getElementById('filter-date-to').addEventListener('change', applyFiltersAndDisplay);
+    document.getElementById('clear-filters-btn').addEventListener('click', () => {
+        document.getElementById('search-bar').value = '';
+        document.getElementById('filter-status').value = '';
+        document.getElementById('filter-date-from').value = '';
+        document.getElementById('filter-date-to').value = '';
+        applyFiltersAndDisplay();
+    });
+
+    // --- Client Manager ---
+    document.getElementById('client-form').addEventListener('submit', saveClient);
+    document.getElementById('clear-client-form-btn').addEventListener('click', clearClientForm);
+    document.getElementById('client-search-bar').addEventListener('input', (e) => {
+        filterClients(e.target.value);
+    });
+    setupAutocomplete('shipper-name', 'shipper-suggestions', 'Shipper');
+    setupAutocomplete('consignee-name', 'consignee-suggestions', 'Consignee');
+
+    // --- Charge Manager ---
+    document.getElementById('charge-manager-btn').addEventListener('click', openChargeManager);
+    document.getElementById('save-charge-description-btn').addEventListener('click', saveChargeDescription);
+
+    // --- Analytics ---
+    document.getElementById('close-analytics-btn').addEventListener('click', closeAnalyticsDashboard);
+    document.getElementById('print-analytics-btn').addEventListener('click', printAnalytics);
+
+    // --- Recycle Bin ---
+    document.getElementById('recycle-bin-btn').addEventListener('click', openRecycleBin);
+
+    // --- Preview Modal ---
+    document.getElementById('print-preview-btn').addEventListener('click', printPreview);
+
+    // --- Window & Close Buttons ---
+    window.addEventListener('afterprint', () => {
+        document.getElementById('main-container').style.display = 'block';
+        document.getElementById('print-output').style.display = 'none';
+        const analyticsContainer = document.getElementById('analytics-container');
+        if (analyticsContainer && analyticsContainer.style.display === 'block') {
+            // only show analytics if it was open
+        } else {
+           if(document.getElementById('app-container')) document.getElementById('app-container').style.display = 'block';
+        }
+    });
+
+    document.getElementById('close-file-manager-btn').addEventListener('click', () => closeModal('file-manager-modal'));
+    document.getElementById('close-preview-btn').addEventListener('click', () => closeModal('preview-modal'));
+    document.getElementById('close-admin-panel-btn').addEventListener('click', () => closeModal('admin-panel-modal'));
+    document.getElementById('cancel-reject-btn').addEventListener('click', () => closeModal('reject-reason-modal'));
+    document.getElementById('close-client-manager-btn').addEventListener('click', () => closeModal('client-manager-modal'));
+    document.getElementById('close-charge-manager-btn').addEventListener('click', () => closeModal('charge-manager-modal'));
+    document.getElementById('close-activity-log-btn').addEventListener('click', () => closeModal('activity-log-modal'));
+    documentgetElementById('close-user-jobs-btn').addEventListener('click', () => closeModal('user-jobs-modal'));
+    document.getElementById('close-recycle-bin-btn').addEventListener('click', () => closeModal('recycle-bin-modal'));
+    document.getElementById('confirm-cancel').addEventListener('click', () => closeModal('confirm-modal'));
+    document.getElementById('logout-btn').addEventListener('click', handleLogout);
+
+    appEventListenersAdded = true;
+}
 
 // --- UI Initialization ---
-export function initializeUIData() {
+function initializeUIData() {
     const storedDescriptions = localStorage.getItem('chargeDescriptions');
     if (storedDescriptions) {
         setChargeDescriptions(JSON.parse(storedDescriptions));
@@ -49,6 +151,7 @@ export function showApp() {
     
     initializeUIData();
     clearForm();
+    setupAppEventListeners();
 }
 
 // --- Modals ---
@@ -100,27 +203,32 @@ export function clearForm() {
         form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
     }
     
-    if (document.getElementById('date')) {
-        document.getElementById('date').valueAsDate = new Date();
+    const dateEl = document.getElementById('date');
+    if (dateEl) {
+        dateEl.valueAsDate = new Date();
     }
-    if (document.getElementById('job-file-no')) {
-        document.getElementById('job-file-no').disabled = false;
+    const jobFileNoEl = document.getElementById('job-file-no');
+    if (jobFileNoEl) {
+        jobFileNoEl.disabled = false;
     }
 
     populateTable();
     
-    if (document.getElementById('prepared-by') && currentUser) {
-        document.getElementById('prepared-by').value = currentUser.displayName;
+    const preparedByEl = document.getElementById('prepared-by');
+    if (preparedByEl && currentUser) {
+        preparedByEl.value = currentUser.displayName;
     }
     
     const fieldsToClear = ['created-by-info', 'last-updated-by-info', 'approved-by', 'checked-by'];
     fieldsToClear.forEach(id => {
-        if(document.getElementById(id)) document.getElementById(id).textContent = '';
+        const el = document.getElementById(id);
+        if(el) el.textContent = '';
     });
 
     const elementsToHide = ['checked-stamp', 'approved-stamp', 'rejected-stamp', 'rejection-banner'];
     elementsToHide.forEach(id => {
-        if(document.getElementById(id)) document.getElementById(id).style.display = 'none';
+        const el = document.getElementById(id);
+        if(el) el.style.display = 'none';
     });
 
 

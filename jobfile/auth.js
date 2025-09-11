@@ -2,8 +2,8 @@
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { showLogin, showApp, showNotification, showLoader, hideLoader, closeModal } from './ui.js';
-import { setCurrentUser, setJobFilesCache, setClientsCache } from './state.js';
+import { showLogin, showApp, showNotification, showLoader, hideLoader, closeModal, openModal } from './ui.js';
+import { setCurrentUser } from './state.js';
 import { loadJobFiles, loadClients } from './firestore.js';
 
 // --- Firebase Configuration ---
@@ -23,6 +23,36 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 export { db, auth };
+
+function setupAuthEventListeners() {
+    document.getElementById('jfn-auth-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        const isLoginView = e.target.textContent.includes('Sign in');
+        toggleAuthView(!isLoginView);
+    });
+
+    document.getElementById('jfn-auth-btn').addEventListener('click', () => {
+        const email = document.getElementById('jfn-email-address').value;
+        const password = document.getElementById('jfn-password').value;
+        const isLogin = document.getElementById('jfn-auth-btn').textContent.includes('Sign in');
+
+        if (isLogin) {
+            handleLogin(email, password);
+        } else {
+            const displayName = document.getElementById('jfn-full-name').value;
+             if (!email || !password || !displayName) {
+                 showNotification("Please fill all fields to sign up.", true);
+                 return;
+            }
+            handleSignUp(email, password, displayName);
+        }
+    });
+    
+    document.getElementById('jfn-forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
+    document.getElementById('jfn-send-reset-link-btn').addEventListener('click', handleForgotPassword);
+    document.getElementById('close-forgot-password-btn').addEventListener('click', () => closeModal('forgot-password-modal'));
+}
+
 
 export async function initializeAppLogic() {
     try {
@@ -51,6 +81,7 @@ export async function initializeAppLogic() {
                 
                 if (currentUserData.status === 'inactive') {
                     showLogin();
+                    setupAuthEventListeners();
                     document.getElementById('jfn-approval-message').style.display = 'block';
                     document.getElementById('jfn-blocked-message').style.display = 'none';
                     signOut(auth);
@@ -59,6 +90,7 @@ export async function initializeAppLogic() {
 
                 if (currentUserData.status === 'blocked') {
                     showLogin();
+                    setupAuthEventListeners();
                     document.getElementById('jfn-approval-message').style.display = 'none';
                     document.getElementById('jfn-blocked-message').style.display = 'block';
                     signOut(auth);
@@ -74,6 +106,7 @@ export async function initializeAppLogic() {
                 setCurrentUser(null);
                 console.log("User logged out");
                 showLogin();
+                setupAuthEventListeners();
             }
         });
     } catch (error) {
