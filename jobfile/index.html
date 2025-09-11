@@ -116,18 +116,18 @@
             }, 3000);
         }
 
-        function toggleAuthView(showLoginView) {
+        function toggleAuthView(isLoginView) {
             const nameField = document.getElementById('signup-name-field');
             const emailField = document.getElementById('email-address');
             const passwordField = document.getElementById('password');
             
-            document.getElementById('auth-title').textContent = showLoginView ? 'Sign in to your account' : 'Create a new account';
-            document.getElementById('auth-btn').textContent = showLoginView ? 'Sign in' : 'Sign up';
-            document.getElementById('auth-link').textContent = showLoginView ? 'Create a new account' : 'Already have an account? Sign in';
-            nameField.style.display = showLoginView ? 'none' : 'block';
+            document.getElementById('auth-title').textContent = isLoginView ? 'Sign in to your account' : 'Create a new account';
+            document.getElementById('auth-btn').textContent = isLoginView ? 'Sign in' : 'Sign up';
+            document.getElementById('auth-link').textContent = isLoginView ? 'Create a new account' : 'Already have an account? Sign in';
+            nameField.style.display = isLoginView ? 'none' : 'block';
             
             // Adjust input field borders for rounded corners
-            if (showLoginView) {
+            if (isLoginView) {
                 emailField.classList.remove('rounded-t-md');
                 passwordField.classList.remove('rounded-b-md');
             } else {
@@ -218,7 +218,7 @@
             document.getElementById('auth-link').addEventListener('click', (e) => {
                 e.preventDefault();
                 const isCreatingAccount = e.target.textContent.includes('Create a new account');
-                toggleAuthView(isCreatingAccount);
+                toggleAuthView(!isCreatingAccount);
             });
 
             document.getElementById('auth-btn').addEventListener('click', () => {
@@ -253,13 +253,9 @@
                     let userDoc = await getDoc(userDocRef);
                     
                     if (!userDoc.exists()) {
-                        // This case handles a user that exists in Auth but not Firestore.
-                        // This might happen if a user was created but the Firestore doc creation failed.
-                        // We will treat them as a new user.
-                         const usersCollectionRef = collection(db, 'users');
+                        const usersCollectionRef = collection(db, 'users');
                         const userQuerySnapshot = await getDocs(usersCollectionRef);
                         const isFirstUser = userQuerySnapshot.empty;
-
                         const newUser = {
                             email: user.email,
                             displayName: user.displayName || user.email.split('@')[0],
@@ -273,24 +269,21 @@
                     
                     const currentUserData = userDoc.data();
                     
-                    if (currentUserData.status === 'inactive') {
-                        document.getElementById('approval-message').style.display = 'block';
-                        document.getElementById('blocked-message').style.display = 'none';
-                        await signOut(auth);
+                    if (currentUserData.status === 'active') {
+                        // User is active and approved, redirect to the main app
+                        window.location.href = 'app.html';
+                    } else {
+                        // User is inactive or blocked, show message and log them out
+                        if (currentUserData.status === 'inactive') {
+                            document.getElementById('approval-message').style.display = 'block';
+                            document.getElementById('blocked-message').style.display = 'none';
+                        } else if (currentUserData.status === 'blocked') {
+                            document.getElementById('approval-message').style.display = 'none';
+                            document.getElementById('blocked-message').style.display = 'block';
+                        }
+                        await signOut(auth); // Sign out to prevent redirect loop
                         hideLoader();
-                        return;
                     }
-
-                    if (currentUserData.status === 'blocked') {
-                        document.getElementById('approval-message').style.display = 'none';
-                        document.getElementById('blocked-message').style.display = 'block';
-                        await signOut(auth);
-                        hideLoader();
-                        return;
-                    }
-                    
-                    // User is active and approved, redirect to the main app
-                    window.location.href = 'app.html';
 
                 } else {
                     // User is logged out, ensure login screen is visible and loader is hidden.
