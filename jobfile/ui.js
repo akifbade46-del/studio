@@ -1,5 +1,4 @@
 
-import { db } from './auth.js';
 import { currentUser, jobFilesCache, clientsCache, chargeDescriptions, analyticsDataCache, currentFilteredJobs, profitChartInstance } from './state.js';
 import { setChargeDescriptions, setAnalyticsDataCache, setCurrentFilteredJobs, setProfitChartInstance, setFileIdToReject } from './state.js';
 import { getFormData, getJobFileById, getPrintViewHtmlForPreview } from './utils.js';
@@ -99,7 +98,7 @@ function setupAppEventListeners() {
     document.getElementById('close-client-manager-btn').addEventListener('click', () => closeModal('client-manager-modal'));
     document.getElementById('close-charge-manager-btn').addEventListener('click', () => closeModal('charge-manager-modal'));
     document.getElementById('close-activity-log-btn').addEventListener('click', () => closeModal('activity-log-modal'));
-    documentgetElementById('close-user-jobs-btn').addEventListener('click', () => closeModal('user-jobs-modal'));
+    document.getElementById('close-user-jobs-btn').addEventListener('click', () => closeModal('user-jobs-modal'));
     document.getElementById('close-recycle-bin-btn').addEventListener('click', () => closeModal('recycle-bin-modal'));
     document.getElementById('confirm-cancel').addEventListener('click', () => closeModal('confirm-modal'));
     document.getElementById('logout-btn').addEventListener('click', handleLogout);
@@ -843,6 +842,7 @@ export function openUserActivityLog() {
 
     openModal('activity-log-modal');
 }
+
 export function updateStatusSummary() {}
 export function openRecycleBin() {}
 export function confirmPermanentDelete() {}
@@ -851,3 +851,4 @@ export function printAnalytics() {}
 export function openAnalyticsDashboard() {}
 export function closeAnalyticsDashboard() {}
 export function refreshOpenModals() {}
+export function getPrintViewHtml() {}

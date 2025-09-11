@@ -658,5 +658,3 @@ export async function permanentlyDeleteJobFile(docId) {
         hideLoader();
     }
 }
-
-    

@@ -154,5 +154,3 @@ export function getPrintViewHtmlForPreview(data, isPublicView = false) {
             </div>
         </div>`;
 }
-
-    
