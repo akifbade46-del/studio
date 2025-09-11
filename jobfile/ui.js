@@ -1,4 +1,3 @@
-
 import { currentUser, jobFilesCache, clientsCache, chargeDescriptions, analyticsDataCache, currentFilteredJobs, profitChartInstance } from './state.js';
 import { setChargeDescriptions, setAnalyticsDataCache, setCurrentFilteredJobs, setProfitChartInstance, setFileIdToReject } from './state.js';
 import { getFormData, getJobFileById, getPrintViewHtmlForPreview } from './utils.js';
@@ -150,7 +149,7 @@ export function showApp() {
     
     initializeUIData();
     clearForm();
-    setupAppEventListeners();
+    setupAppEventListeners(); // This is the critical fix
 }
 
 // --- Modals ---

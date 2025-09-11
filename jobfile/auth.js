@@ -55,6 +55,9 @@ function setupAuthEventListeners() {
 
 export async function initializeAppLogic() {
     try {
+        // This is the critical fix: Setup listeners immediately on app load.
+        setupAuthEventListeners();
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDocRef = doc(db, 'users', user.uid);
@@ -80,7 +83,6 @@ export async function initializeAppLogic() {
                 
                 if (currentUserData.status === 'inactive') {
                     showLogin();
-                    setupAuthEventListeners();
                     document.getElementById('jfn-approval-message').style.display = 'block';
                     document.getElementById('jfn-blocked-message').style.display = 'none';
                     signOut(auth);
@@ -89,7 +91,6 @@ export async function initializeAppLogic() {
 
                 if (currentUserData.status === 'blocked') {
                     showLogin();
-                    setupAuthEventListeners();
                     document.getElementById('jfn-approval-message').style.display = 'none';
                     document.getElementById('jfn-blocked-message').style.display = 'block';
                     signOut(auth);
@@ -105,7 +106,6 @@ export async function initializeAppLogic() {
                 setCurrentUser(null);
                 console.log("User logged out");
                 showLogin();
-                setupAuthEventListeners();
             }
         });
     } catch (error) {
