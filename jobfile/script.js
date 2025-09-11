@@ -1,24 +1,11 @@
-
 import { initializeAppLogic } from './auth.js';
-import { 
-    openModal, closeModal, clearForm, printPage, 
-    applyFiltersAndDisplay, openUserActivityLog, editClient,
-    confirmDelete, promptForRejection, openChargeManager, saveChargeDescription, deleteChargeDescription,
-    setupAutocomplete, openRecycleBin, confirmPermanentDelete, restoreJobFile,
-    printPreview, printAnalytics, openAnalyticsDashboard, closeAnalyticsDashboard,
-    clearClientForm, previewJobFileById, showStatusJobs, showUserJobs, showSalesmanJobs, showMonthlyJobs, sortAnalyticsTable, downloadAnalyticsCsv
-} from './ui.js';
-import { 
-    saveJobFile, checkJobFile, uncheckJobFile, approveJobFile, rejectJobFile, 
-    saveClient, openAdminPanel, saveUserChanges, backupAllData, handleRestoreFile,
-    loadJobFileById
-} from './firestore.js';
-import { generateRemarks, suggestCharges } from './gemini.js';
-import { setFileIdToReject, fileIdToReject } from './state.js';
-import { getJobFileById } from './utils.js';
 
 // --- Make functions globally available for dynamic content ---
 // This allows inline onclick attributes in dynamically generated HTML to call these functions.
+import { previewJobFileById, confirmDelete, editClient, showStatusJobs, showUserJobs, showSalesmanJobs, showMonthlyJobs, sortAnalyticsTable, downloadAnalyticsCsv } from './ui.js';
+import { loadJobFileById, checkJobFile, uncheckJobFile, approveJobFile, promptForRejection, restoreJobFile, confirmPermanentDelete } from './firestore.js';
+import { deleteChargeDescription } from './ui.js';
+
 window.previewJobFileById = previewJobFileById;
 window.loadJobFileById = loadJobFileById;
 window.confirmDelete = confirmDelete;
