@@ -47,6 +47,7 @@ export function showApp() {
         document.getElementById('checker-info-banner').style.display = 'block';
     }
     
+    initializeUIData();
     clearForm();
 }
 
@@ -332,25 +333,6 @@ function createPrintWindow(title, content) {
         printWindow.print();
         printWindow.close();
     }, 750);
-}
-
-// --- Public & Preview Views ---
-export async function showPublicJobView(jobId) {
-    try {
-        const data = await getJobFileById(jobId);
-        if (data) {
-            const publicViewHtml = getPrintViewHtmlForPreview(data, true); 
-            const publicViewContainer = document.getElementById('public-view-container');
-            publicViewContainer.innerHTML = publicViewHtml;
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app-container').style.display = 'none';
-        } else {
-            document.body.innerHTML = `<div class="p-4 text-center text-yellow-700 bg-yellow-100">Job File with ID "${jobId}" not found.</div>`;
-        }
-    } catch (error) {
-        console.error("Error fetching public job file:", error);
-        document.body.innerHTML = `<div class="p-4 text-center text-red-700 bg-red-100">Error loading job file.</div>`;
-    }
 }
 
 export async function previewJobFileById(docId) {
