@@ -1,3 +1,4 @@
+
 import { initializeAppLogic, handleLogout } from './auth.js';
 import { 
     openModal, 
