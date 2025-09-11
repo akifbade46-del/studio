@@ -4,8 +4,8 @@ import { chargeDescriptions } from './state.js';
 import { addChargeRow } from './ui.js';
 
 async function callGeminiApi(payload, retries = 3, delay = 1000) {
-    const apiKey = ""; // IMPORTANT: This key is intentionally left blank for security reasons.
-    if (!apiKey) {
+    const apiKey = "PASTE_YOUR_GEMINI_API_KEY_HERE"; // IMPORTANT: Add your key here.
+    if (!apiKey || apiKey === "PASTE_YOUR_GEMINI_API_KEY_HERE") {
         throw new Error("Gemini API key is missing.");
     }
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
@@ -148,5 +148,3 @@ export async function suggestCharges() {
         hideLoader();
     }
 }
-
-    
