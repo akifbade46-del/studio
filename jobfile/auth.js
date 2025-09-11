@@ -2,7 +2,7 @@
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { showLogin, showApp, showNotification, showLoader, hideLoader, showPublicJobView, closeModal } from './ui.js';
+import { showLogin, showApp, showNotification, showLoader, hideLoader, closeModal } from './ui.js';
 import { setCurrentUser, setJobFilesCache, setClientsCache } from './state.js';
 import { loadJobFiles, loadClients } from './firestore.js';
 
@@ -142,11 +142,25 @@ export function handleLogout() {
 export function toggleAuthView(showLogin) {
     const nameField = document.getElementById('signup-name-field');
     const emailField = document.getElementById('email-address');
+    const passwordField = document.getElementById('password');
     
     document.getElementById('auth-title').textContent = showLogin ? 'Sign in to your account' : 'Create a new account';
     document.getElementById('auth-btn').textContent = showLogin ? 'Sign in' : 'Sign up';
     document.getElementById('auth-link').textContent = showLogin ? 'Create a new account' : 'Already have an account? Sign in';
     nameField.style.display = showLogin ? 'none' : 'block';
-    emailField.classList.toggle('rounded-t-md', !showLogin);
+    
+    // Adjust classes for rounded corners
+    if (showLogin) {
+        emailField.classList.remove('rounded-t-md');
+        emailField.classList.add('rounded-md');
+        passwordField.classList.remove('rounded-b-md');
+        passwordField.classList.add('rounded-md');
+    } else {
+        emailField.classList.add('rounded-t-md');
+        emailField.classList.remove('rounded-md');
+        passwordField.classList.add('rounded-b-md');
+        passwordField.classList.remove('rounded-md');
+    }
+
     document.getElementById('approval-message').style.display = 'none';
 }

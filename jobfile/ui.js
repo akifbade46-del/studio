@@ -1,3 +1,4 @@
+
 import { db } from './auth.js';
 import { currentUser, jobFilesCache, clientsCache, chargeDescriptions, analyticsDataCache, currentFilteredJobs, profitChartInstance } from './state.js';
 import { setChargeDescriptions, setAnalyticsDataCache, setCurrentFilteredJobs, setProfitChartInstance, setFileIdToReject } from './state.js';
@@ -17,8 +18,6 @@ export function initializeUIData() {
         localStorage.setItem('chargeDescriptions', JSON.stringify(defaultDescriptions));
     }
     populateTable();
-    calculate();
-    document.getElementById('date').valueAsDate = new Date();
 }
 
 // --- View Toggling ---
@@ -30,8 +29,9 @@ export function showLogin() {
 
 export function showApp() {
     document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('public-view-container').style.display = 'none';
     document.getElementById('app-container').style.display = 'block';
-    document.getElementById('analytics-container').style.display = 'none';
+    
     document.getElementById('user-display-name').textContent = currentUser.displayName;
     document.getElementById('user-role').textContent = currentUser.role;
 
@@ -95,35 +95,50 @@ export function showNotification(message, isError = false) {
 // --- Form & Table Management ---
 export function clearForm() {
     const form = document.querySelector('#main-container');
-    form.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(input => input.value = '');
-    form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+    if (form) {
+        form.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(input => input.value = '');
+        form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+    }
     
-    document.getElementById('date').valueAsDate = new Date();
-    document.getElementById('job-file-no').disabled = false;
+    if (document.getElementById('date')) {
+        document.getElementById('date').valueAsDate = new Date();
+    }
+    if (document.getElementById('job-file-no')) {
+        document.getElementById('job-file-no').disabled = false;
+    }
+
     populateTable();
-    calculate();
     
-    document.getElementById('prepared-by').value = currentUser.displayName;
+    if (document.getElementById('prepared-by') && currentUser) {
+        document.getElementById('prepared-by').value = currentUser.displayName;
+    }
     
-    document.getElementById('created-by-info').textContent = '';
-    document.getElementById('last-updated-by-info').textContent = '';
+    const fieldsToClear = ['created-by-info', 'last-updated-by-info', 'approved-by', 'checked-by'];
+    fieldsToClear.forEach(id => {
+        if(document.getElementById(id)) document.getElementById(id).textContent = '';
+    });
 
-    document.getElementById('approved-by').value = '';
-    document.getElementById('checked-by').value = '';
-    document.getElementById('check-btn').disabled = false;
-    document.getElementById('check-btn').textContent = 'Check Job File';
-    document.getElementById('approve-btn').disabled = false;
-    document.getElementById('reject-btn').disabled = false;
+    const elementsToHide = ['checked-stamp', 'approved-stamp', 'rejected-stamp', 'rejection-banner'];
+    elementsToHide.forEach(id => {
+        if(document.getElementById(id)) document.getElementById(id).style.display = 'none';
+    });
 
-    document.getElementById('checked-stamp').style.display = 'none';
-    document.getElementById('approved-stamp').style.display = 'none';
-    document.getElementById('rejected-stamp').style.display = 'none';
-    document.getElementById('rejection-banner').style.display = 'none';
 
-    const isChecker = ['admin', 'checker'].includes(currentUser.role);
-    const isAdmin = currentUser.role === 'admin';
-    document.getElementById('check-btn').style.display = isChecker ? 'block' : 'none';
-    document.getElementById('approval-buttons').style.display = isAdmin ? 'flex' : 'none';
+    const checkBtn = document.getElementById('check-btn');
+    if (checkBtn) {
+        checkBtn.disabled = false;
+        checkBtn.textContent = 'Check Job File';
+        const isChecker = currentUser && ['admin', 'checker'].includes(currentUser.role);
+        checkBtn.style.display = isChecker ? 'block' : 'none';
+    }
+
+    const approvalButtons = document.getElementById('approval-buttons');
+    if (approvalButtons) {
+        const isAdmin = currentUser && currentUser.role === 'admin';
+        approvalButtons.style.display = isAdmin ? 'flex' : 'none';
+        approvalButtons.querySelectorAll('button').forEach(btn => btn.disabled = false);
+    }
+
 
     showNotification("Form cleared. Ready for a new job file.");
 }
@@ -216,20 +231,30 @@ export function populateFormFromData(data) {
 
 function calculate() {
     let totalCost = 0, totalSelling = 0, totalProfit = 0;
-    document.querySelectorAll('#charges-table-body tr:not(#total-row)').forEach(row => {
-        const cost = parseFloat(row.querySelector('.cost-input').value) || 0;
-        const selling = parseFloat(row.querySelector('.selling-input').value) || 0;
+    const tableBody = document.getElementById('charges-table-body');
+    if (!tableBody) return;
+
+    tableBody.querySelectorAll('tr:not(#total-row)').forEach(row => {
+        const costInput = row.querySelector('.cost-input');
+        const sellingInput = row.querySelector('.selling-input');
+        const cost = costInput ? parseFloat(costInput.value) || 0 : 0;
+        const selling = sellingInput ? parseFloat(sellingInput.value) || 0 : 0;
         const profit = selling - cost;
-        row.cells[3].textContent = profit.toFixed(3);
+        if(row.cells[3]) row.cells[3].textContent = profit.toFixed(3);
         totalCost += cost; totalSelling += selling; totalProfit += profit;
     });
-    document.getElementById('total-cost').textContent = totalCost.toFixed(3);
-    document.getElementById('total-selling').textContent = totalSelling.toFixed(3);
-    document.getElementById('total-profit').textContent = totalProfit.toFixed(3);
+
+    const totalCostEl = document.getElementById('total-cost');
+    const totalSellingEl = document.getElementById('total-selling');
+    const totalProfitEl = document.getElementById('total-profit');
+    if(totalCostEl) totalCostEl.textContent = totalCost.toFixed(3);
+    if(totalSellingEl) totalSellingEl.textContent = totalSelling.toFixed(3);
+    if(totalProfitEl) totalProfitEl.textContent = totalProfit.toFixed(3);
 }
 
 export function populateTable() {
     const table = document.getElementById('charges-table');
+    if (!table) return;
     table.innerHTML = `
         <thead>
             <tr class="bg-gray-100">
@@ -261,10 +286,12 @@ export function populateTable() {
         }
     });
      for(let i=0; i<5; i++) addChargeRow();
+     calculate();
 }
 
 export function addChargeRow(data = {}) {
     const tableBody = document.getElementById('charges-table-body');
+    if (!tableBody) return;
     const newRow = document.createElement('tr');
 
     newRow.innerHTML = `
@@ -314,6 +341,12 @@ export function printPage() {
     setTimeout(() => { window.print(); }, 500);
 }
 
+export function printPreview(){
+    const printContent = document.getElementById('preview-body').innerHTML;
+    const title = "Job File Preview";
+    createPrintWindow(title, printContent);
+}
+
 function createPrintWindow(title, content) {
     let styles = '';
     document.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
@@ -324,6 +357,7 @@ function createPrintWindow(title, content) {
     
     printWindow.document.write(`<html><head><title>${title}</title>`);
     printWindow.document.write(styles);
+    printWindow.document.write('</head><body>');
     printWindow.document.write(content);
     printWindow.document.write('</body></html>');
     printWindow.document.close();
@@ -701,5 +735,11 @@ export function openUserActivityLog() {
 
     openModal('activity-log-modal');
 }
-
-    
+export function updateStatusSummary() {}
+export function openRecycleBin() {}
+export function confirmPermanentDelete() {}
+export function restoreJobFileFromBin() {}
+export function printAnalytics() {}
+export function openAnalyticsDashboard() {}
+export function closeAnalyticsDashboard() {}
+export function refreshOpenModals() {}

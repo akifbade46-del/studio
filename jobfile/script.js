@@ -1,3 +1,4 @@
+
 import { initializeAppLogic, handleLogin, handleSignUp, handleLogout, handleForgotPassword, toggleAuthView } from './auth.js';
 import { 
     openModal, closeModal, clearForm, printPage, showNotification, 
@@ -47,6 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('logout-btn').addEventListener('click', handleLogout);
     document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
     document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
+    document.getElementById('close-forgot-password-btn').addEventListener('click', () => closeModal('forgot-password-modal'));
+
 
     // --- Main Action Buttons ---
     document.getElementById('save-job-file-btn').addEventListener('click', saveJobFile);
@@ -126,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('close-preview-btn').addEventListener('click', () => closeModal('preview-modal'));
     document.getElementById('close-admin-panel-btn').addEventListener('click', () => closeModal('admin-panel-modal'));
     document.getElementById('cancel-reject-btn').addEventListener('click', () => closeModal('reject-reason-modal'));
-    document.getElementById('close-forgot-password-btn').addEventListener('click', () => closeModal('forgot-password-modal'));
     document.getElementById('close-client-manager-btn').addEventListener('click', () => closeModal('client-manager-modal'));
     document.getElementById('close-charge-manager-btn').addEventListener('click', () => closeModal('charge-manager-modal'));
     document.getElementById('close-activity-log-btn').addEventListener('click', () => closeModal('activity-log-modal'));
@@ -153,5 +155,3 @@ document.addEventListener('DOMContentLoaded', () => {
     window.sortAnalyticsTable = (sortBy) => import('./ui.js').then(ui => ui.sortAnalyticsTable(sortBy));
     window.downloadAnalyticsCsv = () => import('./ui.js').then(ui => ui.downloadAnalyticsCsv());
 });
-
-    
