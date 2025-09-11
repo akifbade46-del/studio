@@ -126,7 +126,6 @@
             document.getElementById('auth-link').textContent = isLoginView ? 'Create a new account' : 'Already have an account? Sign in';
             nameField.style.display = isLoginView ? 'none' : 'block';
             
-            // Adjust input field borders for rounded corners
             if (isLoginView) {
                 emailField.classList.remove('rounded-t-md');
                 passwordField.classList.remove('rounded-b-md');
@@ -245,50 +244,52 @@
 
         // --- App Initialization ---
         function initializeAppLogic() {
+            // Set up button clicks immediately
             setupEventListeners();
 
+            // Then, check auth state
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
+                    // A user is signed in. Check their status in Firestore.
+                    showLoader();
                     const userDocRef = doc(db, 'users', user.uid);
-                    let userDoc = await getDoc(userDocRef);
-                    
-                    if (!userDoc.exists()) {
-                        const usersCollectionRef = collection(db, 'users');
-                        const userQuerySnapshot = await getDocs(usersCollectionRef);
-                        const isFirstUser = userQuerySnapshot.empty;
-                        const newUser = {
-                            email: user.email,
-                            displayName: user.displayName || user.email.split('@')[0],
-                            role: isFirstUser ? 'admin' : 'user',
-                            status: isFirstUser ? 'active' : 'inactive', 
-                            createdAt: serverTimestamp()
-                        };
-                        await setDoc(userDocRef, newUser);
-                        userDoc = await getDoc(userDocRef);
-                    }
-                    
-                    const currentUserData = userDoc.data();
-                    
-                    if (currentUserData.status === 'active') {
-                        // User is active and approved, redirect to the main app
-                        window.location.href = 'app.html';
-                    } else {
-                        // User is inactive or blocked, show message and log them out
-                        if (currentUserData.status === 'inactive') {
-                            document.getElementById('approval-message').style.display = 'block';
-                            document.getElementById('blocked-message').style.display = 'none';
-                        } else if (currentUserData.status === 'blocked') {
-                            document.getElementById('approval-message').style.display = 'none';
-                            document.getElementById('blocked-message').style.display = 'block';
+                    try {
+                        const userDoc = await getDoc(userDocRef);
+                        
+                        if (userDoc.exists()) {
+                            const currentUserData = userDoc.data();
+                            if (currentUserData.status === 'active') {
+                                // User is active and approved, redirect to the main app
+                                window.location.href = 'app.html';
+                            } else {
+                                // User is inactive or blocked, show message and log them out
+                                if (currentUserData.status === 'inactive') {
+                                    document.getElementById('approval-message').style.display = 'block';
+                                    document.getElementById('blocked-message').style.display = 'none';
+                                } else if (currentUserData.status === 'blocked') {
+                                    document.getElementById('approval-message').style.display = 'none';
+                                    document.getElementById('blocked-message').style.display = 'block';
+                                }
+                                await signOut(auth); // Sign out to prevent redirect loop
+                                hideLoader();
+                            }
+                        } else {
+                           // This case is for when a user exists in Auth but not Firestore. 
+                           // This can happen on first sign-up with social providers, etc.
+                           // For this app, we just log them out.
+                           await signOut(auth);
+                           hideLoader();
                         }
-                        await signOut(auth); // Sign out to prevent redirect loop
+                    } catch (error) {
+                        console.error("Error fetching user data:", error);
+                        showNotification("Could not verify user status. Please try again.", true);
+                        await signOut(auth);
                         hideLoader();
                     }
 
                 } else {
                     // User is logged out, ensure login screen is visible and loader is hidden.
                     hideLoader();
-                    document.getElementById('login-screen').style.display = 'flex';
                 }
             });
         }
