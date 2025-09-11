@@ -1,3 +1,4 @@
+
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -25,65 +26,56 @@ export { db, auth };
 
 export async function initializeAppLogic() {
     try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const jobIdFromUrl = urlParams.get('jobId');
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDocRef = doc(db, 'users', user.uid);
+                let userDoc = await getDoc(userDocRef);
+                
+                if (!userDoc.exists()) {
+                    const usersCollectionRef = collection(db, 'users');
+                    const userQuerySnapshot = await getDocs(usersCollectionRef);
+                    const isFirstUser = userQuerySnapshot.size === 0;
 
-        if (jobIdFromUrl) {
-            showLoader();
-            await showPublicJobView(jobIdFromUrl);
-            hideLoader();
-        } else {
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    const userDocRef = doc(db, 'users', user.uid);
-                    let userDoc = await getDoc(userDocRef);
-                    
-                    if (!userDoc.exists()) {
-                        const usersCollectionRef = collection(db, 'users');
-                        const userQuerySnapshot = await getDocs(usersCollectionRef);
-                        const isFirstUser = userQuerySnapshot.size === 0;
-
-                        const newUser = {
-                            email: user.email,
-                            displayName: user.displayName || user.email.split('@')[0],
-                            role: isFirstUser ? 'admin' : 'user',
-                            status: isFirstUser ? 'active' : 'inactive',
-                            createdAt: serverTimestamp()
-                        };
-                        await setDoc(userDocRef, newUser);
-                        userDoc = await getDoc(userDocRef);
-                    }
-                    
-                    const currentUserData = { uid: user.uid, email: user.email, ...userDoc.data() };
-                    
-                    if (currentUserData.status === 'inactive') {
-                        showLogin();
-                        document.getElementById('approval-message').style.display = 'block';
-                        document.getElementById('blocked-message').style.display = 'none';
-                        signOut(auth);
-                        return;
-                    }
-
-                    if (currentUserData.status === 'blocked') {
-                        showLogin();
-                        document.getElementById('approval-message').style.display = 'none';
-                        document.getElementById('blocked-message').style.display = 'block';
-                        signOut(auth);
-                        return;
-                    }
-                    
-                    console.log("User logged in:", currentUserData);
-                    setCurrentUser(currentUserData);
-                    showApp();
-                    loadJobFiles();
-                    loadClients();
-                } else {
-                    setCurrentUser(null);
-                    console.log("User logged out");
-                    showLogin();
+                    const newUser = {
+                        email: user.email,
+                        displayName: user.displayName || user.email.split('@')[0],
+                        role: isFirstUser ? 'admin' : 'user',
+                        status: isFirstUser ? 'active' : 'inactive',
+                        createdAt: serverTimestamp()
+                    };
+                    await setDoc(userDocRef, newUser);
+                    userDoc = await getDoc(userDocRef);
                 }
-            });
-        }
+                
+                const currentUserData = { uid: user.uid, email: user.email, ...userDoc.data() };
+                
+                if (currentUserData.status === 'inactive') {
+                    showLogin();
+                    document.getElementById('approval-message').style.display = 'block';
+                    document.getElementById('blocked-message').style.display = 'none';
+                    signOut(auth);
+                    return;
+                }
+
+                if (currentUserData.status === 'blocked') {
+                    showLogin();
+                    document.getElementById('approval-message').style.display = 'none';
+                    document.getElementById('blocked-message').style.display = 'block';
+                    signOut(auth);
+                    return;
+                }
+                
+                console.log("User logged in:", currentUserData);
+                setCurrentUser(currentUserData);
+                showApp();
+                loadJobFiles();
+                loadClients();
+            } else {
+                setCurrentUser(null);
+                console.log("User logged out");
+                showLogin();
+            }
+        });
     } catch (error) {
         console.error("Firebase initialization failed:", error);
         showNotification("Could not connect to the database.", true);
@@ -158,5 +150,3 @@ export function toggleAuthView(showLogin) {
     emailField.classList.toggle('rounded-t-md', !showLogin);
     document.getElementById('approval-message').style.display = 'none';
 }
-
-    
