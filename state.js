@@ -11,6 +11,7 @@ export let currentGeolocation = null;
 export let activeDeliveryForReceipt = null;
 export let activeDeliveryForCompletion = null;
 export let capturedPhotoDataUrl = null;
+export let locationWatchId = null;
 
 export function setGlobalCurrentUser(user) {
     currentUser = user;
@@ -50,4 +51,8 @@ export function setActiveDeliveryForCompletion(delivery) {
 
 export function setCapturedPhotoDataUrl(dataUrl) {
     capturedPhotoDataUrl = dataUrl;
+}
+
+export function setLocationWatchId(id) {
+    locationWatchId = id;
 }

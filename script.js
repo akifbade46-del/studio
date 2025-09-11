@@ -20,7 +20,9 @@ import {
     handleGetLocation,
     handlePhotoUpload,
     handleSkipFeedback,
-    completionSignaturePad
+    completionSignaturePad,
+    handleStartDelivery,
+    openCompletionModal
 } from './ui.js';
 import { handleAssignDelivery, handleJobFileSearch, selectJobFile, renderAllDeliveryViews } from './delivery.js';
 
@@ -143,3 +145,5 @@ window.saveUserChanges = saveUserChanges;
 window.openReceiptModal = openReceiptModal;
 window.showDriverDeliveries = showDriverDeliveries;
 window.showDriverFeedback = showDriverFeedback;
+window.openCompletionModal = openCompletionModal;
+window.handleStartDelivery = handleStartDelivery;

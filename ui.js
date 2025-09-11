@@ -16,7 +16,9 @@ import {
     currentGeolocation,
     setCurrentGeolocation,
     capturedPhotoDataUrl,
-    setCapturedPhotoDataUrl
+    setCapturedPhotoDataUrl,
+    locationWatchId,
+    setLocationWatchId
 } from './state.js';
 import { loadAdminData, loadDriverTasks, renderAllDeliveryViews } from './delivery.js';
 
@@ -97,13 +99,25 @@ export function createDeliveryCard(delivery) {
     card.className = 'border p-3 rounded-lg bg-gray-50 delivery-card';
     const jobData = delivery.jobFileData || {};
     let actionButtons = '';
+    const status = delivery.status;
 
-    if (delivery.status === 'Delivered') {
+    if (status === 'Delivered') {
         if (currentUser.role === 'admin') {
             actionButtons += `<button data-action="cancel-pod" data-id="${delivery.id}" data-job="${jobData.jfn}" class="btn btn-danger btn-xs text-xs">Cancel POD</button>`;
         }
         actionButtons += `${delivery.podId ? `<button data-action="view-receipt" data-id="${delivery.id}" class="btn btn-secondary btn-xs text-xs">View Receipt</button>` : ''}`;
+    } else if (status === 'In Progress' && (currentUser.role === 'admin' || currentUser.role === 'staff')) {
+        actionButtons += `<button data-action="track-driver" data-id="${delivery.id}" class="btn btn-primary btn-xs text-xs">Track Driver</button>`;
     }
+
+
+    const statusColors = {
+        'Pending': 'bg-yellow-200 text-yellow-800',
+        'In Progress': 'bg-blue-200 text-blue-800',
+        'Delivered': 'bg-green-200 text-green-800',
+    };
+    const statusColor = statusColors[status] || 'bg-gray-200 text-gray-800';
+
 
     const deliveredInfo = delivery.status === 'Delivered' ? `
         <div class="mt-2 pt-2 border-t flex flex-col sm:flex-row justify-between items-start sm:items-center">
@@ -115,7 +129,13 @@ export function createDeliveryCard(delivery) {
                ${actionButtons}
             </div>
         </div>
-        ` : '';
+        ` : `
+         <div class="mt-2 pt-2 border-t flex justify-end">
+            <div class="flex gap-2">
+               ${actionButtons}
+            </div>
+        </div>
+        `;
 
     card.innerHTML = `
         <div class="flex justify-between items-start">
@@ -124,7 +144,7 @@ export function createDeliveryCard(delivery) {
                 <p class="text-sm text-gray-700">${jobData.sh || 'N/A'} to ${jobData.co || 'N/A'}</p>
                 <p class="text-xs text-gray-500">Assigned to: <strong>${delivery.driverName || 'N/A'}</strong></p>
             </div>
-            <span class="text-xs font-semibold px-2 py-1 rounded-full ${delivery.status === 'Delivered' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}">
+            <span class="text-xs font-semibold px-2 py-1 rounded-full ${statusColor}">
                 ${delivery.status}
             </span>
         </div>
@@ -137,12 +157,19 @@ export function createDeliveryCard(delivery) {
 
         const action = target.dataset.action;
         const id = target.dataset.id;
+        const deliveryData = deliveriesCache.find(d => d.id === id);
 
         if (action === 'view-receipt') {
             openReceiptModal(id);
         } else if (action === 'cancel-pod') {
             const jobNo = target.dataset.job;
             confirmPodCancel(id, jobNo);
+        } else if (action === 'track-driver') {
+            if (deliveryData && deliveryData.liveCoordinates) {
+                 window.open(`https://www.google.com/maps?q=${deliveryData.liveCoordinates.lat},${deliveryData.liveCoordinates.lng}`, '_blank');
+            } else {
+                showNotification("Driver's location is not available yet.", true);
+            }
         }
     });
 
@@ -153,15 +180,25 @@ export function createDeliveryCard(delivery) {
 // --- Driver UI ---
 export function createDriverTaskCard(task) {
     const taskCard = document.createElement('div');
-    taskCard.className = `border p-4 rounded-lg shadow-sm delivery-card ${task.status === 'Pending' ? 'bg-white' : 'bg-gray-200'}`;
     const jobData = task.jobFileData || {};
+    const status = task.status;
+    taskCard.className = `border p-4 rounded-lg shadow-sm delivery-card ${status === 'Pending' || status === 'In Progress' ? 'bg-white' : 'bg-gray-200'}`;
 
     let actionButton = '';
-    if (task.status === 'Pending') {
-        actionButton = `<button class="btn btn-primary text-sm">Complete Delivery</button>`;
-    } else {
-        actionButton = `<button class="btn btn-secondary text-sm">View Receipt</button>`;
+    if (status === 'Pending') {
+        actionButton = `<button data-action="start-delivery" data-id="${task.id}" class="btn btn-primary text-sm">Start Delivery</button>`;
+    } else if (status === 'In Progress') {
+        actionButton = `<button data-action="complete-delivery" data-id="${task.id}" class="btn btn-success text-sm">Complete Delivery</button>`;
+    } else { // Delivered
+        actionButton = `<button data-action="view-receipt" data-id="${task.id}" class="btn btn-secondary text-sm">View Receipt</button>`;
     }
+    
+    const statusColors = {
+        'Pending': 'bg-yellow-200 text-yellow-800',
+        'In Progress': 'bg-blue-200 text-blue-800',
+        'Delivered': 'bg-green-200 text-green-800',
+    };
+    const statusColor = statusColors[status] || 'bg-gray-200 text-gray-800';
 
     taskCard.innerHTML = `
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
@@ -171,8 +208,8 @@ export function createDriverTaskCard(task) {
                 <p class="text-xs text-gray-500"><strong>Assigned:</strong> ${task.createdAt?.toDate().toLocaleString()}</p>
             </div>
             <div class="flex flex-col items-start sm:items-end gap-2 w-full sm:w-auto">
-                <span class="text-sm font-semibold px-2 py-1 rounded-full ${task.status === 'Delivered' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}">
-                    ${task.status}
+                <span class="text-sm font-semibold px-2 py-1 rounded-full ${statusColor}">
+                    ${status}
                 </span>
                 ${actionButton}
             </div>
@@ -180,10 +217,16 @@ export function createDriverTaskCard(task) {
     `;
     taskCard.querySelector('button')?.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (task.status === 'Pending') {
-            openCompletionModal(task)
-        } else {
-            openReceiptModal(task.id)
+        const action = e.target.dataset.action;
+        const id = e.target.dataset.id;
+        const deliveryTask = deliveriesCache.find(t => t.id === id);
+
+        if (action === 'start-delivery') {
+            handleStartDelivery(id);
+        } else if (action === 'complete-delivery') {
+            openCompletionModal(deliveryTask);
+        } else if (action === 'view-receipt') {
+            openReceiptModal(id);
         }
     });
     return taskCard;
@@ -232,7 +275,7 @@ export async function displayDriverPerformanceSummary(driverId, tasks) {
 
 
 // --- Delivery Completion ---
-function openCompletionModal(delivery) {
+export function openCompletionModal(delivery) {
     setActiveDeliveryForCompletion(delivery); 
     document.getElementById('delivery-id-input').value = delivery.id;
     document.getElementById('modal-job-no').textContent = delivery.jobFileData.jfn;
@@ -301,6 +344,12 @@ export async function handleCompleteDelivery(e) {
         if (!activeDeliveryForCompletion) {
             throw new Error("Could not find the delivery data to process.");
         }
+        
+        // Stop location tracking if it's active
+        if (locationWatchId) {
+            navigator.geolocation.clearWatch(locationWatchId);
+            setLocationWatchId(null);
+        }
 
         const podData = {
             deliveryId: deliveryId,
@@ -328,7 +377,9 @@ export async function handleCompleteDelivery(e) {
             status: 'Delivered',
             completedAt: serverTimestamp(),
             podId: deliveryId,
-            receiverName: receiverName
+            receiverName: receiverName,
+            trackingStatus: deleteField(),
+            liveCoordinates: deleteField()
         });
 
         document.getElementById('completion-form-wrapper').style.display = 'none';
@@ -518,7 +569,7 @@ export function generateReceipt(isCopy = false) {
     
     const copyWatermark = isCopy ? `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 8rem; color: rgba(255, 0, 0, 0.15); font-weight: bold; z-index: 1000; pointer-events: none;">COPY</div>` : '';
     const iataLogo = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDMwMCI+PHBhdGggZD0iTTc0LjggMjY2LjR2LTkyLjNINjAuMXY5Mi4zSDIzdjI4LjdoMTA1di0yOC43SDc0Ljh6bTIwOC42LTI4LjdsMTcuMy05Mi4zaDE4LjlsLTE3LjMgOTIuM0gyODMuNHptNDMuMSAwTDMxMS4xIDc0aDQ0bC0xNS40IDk5LjgtMTUuMyA5Mi42aC00My4xbDE1LjQtOTkuNyAxNS4yLTkyLjdoNDQuMmwzMi44IDE5Mi40aC00My41bC0xNS4yLTkyLjZMMzU1IDc0aC00My42bDE1LjQgOTkuOCAxNS4yIDkyLjZoNDMuMXptMTkxLjYgMjguN2g0My44VjI2Nkg1MTguMnYtOTIuM2gtNDMuOHY5Mi4zaC0yMi41djI4LjdoODYuOHYtMjguN3ptOTYuNSAwaDQzLjdWMTAyLjRoLTM4LjlMNjA0IDc0aDk0djIyMC43aDQzLjh2MjguN0g2MDJWMzAwaC0xLjR6bTE5NS4yLTI4LjdsMTcuMy05Mi4zaDE4LjlsLTE3LjMgOTIuM0g4MTUuM3ptNDMuMSAwTjg0MyA3NGg0NC4xbC0xNS40IDk5LjgtMTUuMyA5Mi42aC00My4xbDE1LjQtOTkuNyAxNS4yLTkyLjdoNDQuMmwzMi44IDE5Mi40aC00My41bC0xNS4yLTkyLjZMOTAwLjUgNzRoLTQzLjZsMTUuNCA5OS44IDE1LjIgOTIuNmg0My4xek0xMDY5LjQgNzRoLTM1LjdsLTU0LjUgMzAwaDQ1LjNsMTEuNC02My42aDUzLjVsMTEuMyA2My42aDQ1LjRMMTA2OS40IDc0em0tNi40IDE4NC4xbC0xOC44LTExMC4xLTE4LjggMTEwLjFoMzcuNnoiLz48L3N2Zz4=";
-    const wcaLogo = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACACAMAAABrZuVzAAAAYFBMVEX///8AQ4sAQIsAP4oAO4kAN4gANIcAOYgAOIkAOYoAN4sAOIjp7fUAOIlso9EAM4a/x94gS5QAT5sAUJgAQYpUkcYAQ4zp7vMAYqEAL4AAKnsALoEAMYIAJ3UAKn4AKX/q7/cAUIyTAAADcklEQVR4nO3b63aqOBSG4fAQQkBtqU3tde//ikdbS1sLtTSS5+z9fn+x504yE8jDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYF/2+0vV/Vn2+z88G/291v+2F/V21d01q/09A6t/Qf0h1l/a/n7t9X+wn8pP1W2v/c/9mY5Xf2h/a/1r/Vv+1/oV+/sZ+ysdVf+k/lr/tL61/pH+rf4b/Wv9e/3b/jf6z5003V/sB7DPqg81v1V/qf/aP1r/TP+2/5b+y/qP3v6d/rf6H/Uf6596+3f65/pf3t/Z/13/tfenbX9v/2t/W//S3sB+7M820n/Wz/S39lf2h/ZH9lv21/b39v/29/bP9s862j/b79u/21/ar9jf2d/bH9i/2b/bb9u/6l/Zf1f+y/q/9l/Uf6T/Rf1b+i/rH9B/s/1H+i/pH+i/vP6v/Tf13+k/tv6n/R+bY/v/LMP2/8M0/b/1L+yv7J+w/8k+JP/V/kn7D/e/uv+L/f/tP9l/6f9X/Tf6X/6v+d/n/p/6n/d/zv/T/yP/b/xP+h/r/8h/6v+g/4n+g/23+v/3/7X/f/1/8B/d/w7+o/xP81/lv4r+K/iv6b+a/ov5b+u/tv47+e/mv5b+S/kv7b+K/hv4b+G/tv4b+C/gv6L+C/iv57+a/mv5r+a/lv6L+W/rv7b+u/tv6T+k/pP7b+k/pP6L+i/ov6L+i/rv6r+6/qv7j+o/uP7T+0/pP7T+0/ov6L+i/ov5r+a/mv5r+a/mv5b+W/lv67+W/rv7T+w/sP7b+w/pP6T+k/tP6L+k/ov6r+q/uv6r+6/tP7T+2/rP+A/uP4D+w/vP6D+8/tP7L+y/tv6b+m/tv6b+o/sP7D+o/ov6T+s/rP4z+M/rP6T+w/sP7T+s/rP6z+s/rP7z+8/tP6L+i/tv6r+u/pv6b+m/tv6b+m/tv6T+o/rP7D+o/rP6z+o/vP7L+i/sv67+q/ru6r+u/uv6j+o/rP4j+I/vP6j+q/uP4j+0/pP6T+0/pP7T+i/qv6L+q/kv5r+a/mv5r+a/kv6b+u/tu6b+u/tu47+e/tv47+O/jv5r+K/tv4b+G/hv4b+e/gv4L+K/gv4b+e/lv5r+a/mv5b+a/mv5r+O/jv67+e/rv7T+g/tP6j+o/qP6j+g/pP6j+k/qP7T+g/tP6T+8/qP7j+q/uP6z+s/vP6z+u/vP67+w/sP7T+w/sP7T+y/sv6j+i/qP6L+m/qP6r+m/rP4D+w/oP6L+y/sP7L+o/pP6T+i/tP6L+0/pP6T+2/pP7b+2/rP67+u/uP4j+4/pP7j+s/pP7z+4/uP6j+w/sP7T+g/pP6z+y/uP6j+8/qP7z+i/rP6z+g/qP6z+o/qP6z+k/rP6T+8/qP7T+k/qP6T+k/qP6T+k/qP6L+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgH/9A7aQ4B/4cQ/qAAAAAElFTkSuQmCC";
+    const wcaLogo = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACACAMAAABrZuVzAAAAYFBMVEX///8AQ4sAQIsAP4oAO4kAN4gANIcAOYgAOIkAOYoAN4sAOIjp7fUAOIlso9EAM4a/x94gS5QAT5sAUJgAQYpUkcYAQ4zp7vMAYqEAL4AAKnsALoEAMYIAJ3UAKn4AKX/q7/cAUIyTAAADcklEQVR4nO3b63aqOBSG4fAQQkBtqU3tde//ikdbS1sLtTSS5+z9fn+x504yE8jDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYF/2+0vV/Vn2+z88G/291v+2F/V21d01q/09A6t/Qf0h1l/a/n7t9X+wn8pP1W2v/c/9mY5Xf2h/a/1r/Vv+1/oV+/sZ+ysdVf+k/lr/tL61/pH+rf4b/Wv9e/3b/jf6z5003V/sB7DPqg81v1V/qf/aP1r/TP+2/5b+y/qP3v6d/rf6H/Uf6596+3f65/pf3t/Z/13/tfenbX9v/2t/W//S3sB+7M820n/Wz/S39lf2h/ZH9lv21/b39v/29/bP9s862j/b79u/21/ar9jf2d/bH9i/2b/bb9u/6l/Zf1f+y/q/9l/Uf6T/Rf1b+i/rH9B/s/1H+i/pH+i/vP6v/Tf13+k/tv6n/R+bY/v/LMP2/8M0/b/1L+yv7J+w/8k+JP/V/kn7D/e/uv+L/f/tP9l/6f9X/Tf6X/6v+d/n/p/6n/d/zv/T/yP/b/xP+h/r/8h/6v+g/4n+g/23+v/3/7X/f/1/8B/d/w7+o/xP81/lv4r+K/iv6b+a/ov5b+u/tv47+e/mv5b+S/kv7b+K/hv4b+G/tv4b+C/gv6L+C/iv57+a/mv5r+a/lv6L+W/rv7b+u/tv6T+k/pP7b+k/pP6L+i/ov6L+i/rv6r+6/qv7j+o/uP7T+0/pP7T+0/ov6L+i/ov5r+a/mv5r+a/mv5b+W/lv67+W/rv7T+w/sP7b+w/pP6T+k/tP6L+k/ov6r+q/uv6r+6/tP7T+2/rP+A/uP4D+w/vP6D+8/tP7L+y/tv6b+m/tv6b+o/sP7D+o/ov6T+s/rP4z+M/rP6T+w/sP7T+s/rP6z+s/rP7z+8/tP6L+i/tv6r+u/pv6b+m/tv6b+m/tv6T+o/rP7D+o/rP6z+o/vP7L+i/sv67+q/ru6r+u/uv6j+o/rP4j+I/vP6j+q/uP4j+0/pP6T+0/pP7T+i/qv6L+q/kv5r+a/mv5r+a/kv6b+u/tu6b+u/tu47+e/tv47+O/jv5r+K/tv4b+G/hv4b+e/gv4L+K/gv4b+e/lv5r+a/mv5b+a/mv5r+O/jv67+e/rv7T+g/tP6j+o/qP6j+o/pP6j+k/qP7T+g/tP6T+8/qP7j+q/uP6z+s/vP6z+u/vP67+w/sP7T+w/sP7T+y/sv6j+i/qP6L+m/qP6r+m/rP4D+w/oP6L+y/sP7L+o/pP6T+i/tP6L+0/pP6T+2/pP7b+2/rP67+u/uP4j+4/pP7j+s/pP7z+4/uP6j+w/sP7T+g/pP6z+y/uP6j+8/qP7z+i/rP6z+g/qP6z+o/qP6z+k/rP6T+8/qP7T+k/qP6T+k/qP6T+k/qP6L+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgH/9A7aQ4B/4cQ/qAAAAAElFTkSuQmCC";
     const iamLogo = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARgAAACACAMAAAB49WnWAAAAQlBMVEX////AADcAAADa2tsAADOysrL6+voAAAb29vYAAAnMzMzp6ekAAAjh4eEAABBMS0toamp+fn4AAATExMSlpaWbm5s2NjZLS0s6ODgI5M0QAAAD0klEQVR4nO2byXaCMAxFIVsJsbrD/V/hAvJpMu6Nplk5/29EDgp6cFAggAAAAAAAAAAAAAAAAAAAAAAAIzY+np29PX5qQ+kPkD6/uG58S+pD3A+hPjH3R8W/tD6Yen3n/5+gr8l/b30x9cfsH/V35n6A+ovU39p/bX1D63/YP/n/S+rv7z+o/tvqn9y/3f+B/kf/L/r/4T/Jf8h98f8P/Nf83/V/zn/Q/4L/z/V/0f/F/1/+b/j/1r/zP+h/wP/R/y//x+3f7b/1/6v/h/6v+P/kP+x/4P/v/o/4f+c/1v+D/0/7X/w/1n/uP5b/g/97/A/1P/d/yn/f/v/2v/j/h/7f+z/iP/X/wP/9/1f8v/A/7v/T//w8//+v5X/P/u/8H/e/+H/d/wv/F/wv+7/X/3//x/7f+D/j/9r/Gf/P/j/+r/6f8//T/t/+D/h/9v/Bf4r/f/2/9v/S/+f+B/8P+v/r/9//T/v/5X/d/yv+l/3f9//Vf8H/N/xf+T/qf+n/rf9//I/8/+X/4P+T/h/6v/N/7v/B/2f9L/2/8p/2/+T/6v/J/wP/F/wv/7/B/5v/5/5v/x/6v+l/5v/1/zP/T/rf/z/p/4v/b/3/+7/t/+f+D/6v9b/w/+D/3v+D/3v8T/t/7f9T/t/7v/r/yP/h/yP/7/8H/h/+H/5f8X/r/5X/v/2/8v/P/w//r/j/8//Gf8//lf+f+r/2/+n/f/zP/H/0P+H/9/+r/6/9P/e/+H/D/0P+B/3P/J/0v+3/l/6v/V/0f+z/m/63/b/yP+n/0f9//X/9v+3/r/8H/H/7f/P/wv+T/9f8X/H/4v+f/n/6X/h/7P/T/xv+X/w/+b/gP+p/w/9X/N/5v+x/yP/p/z/9D/g/57/O/7P+j/sf+D/g/53/E/5/+T/pf9n/W/6v+B/8f+d/yv+7/2f8f/e/6/+P/x//F//P+v/of+n/h/5P+f/kf+X/pf8n/S/5v+v/of9n/Q/9P/a/7P+t/w/8v/U/5P+l/xf9P/I/6X/B/4v/R/y//H/if9v/Q/4P+T/sf/D/9/+t/3f+D/lf93/D/9/+d/3f8v/W/9v+n/v/43/e/yv/L/8f8v/d/0f/b/sf/7/l/+n/x/6v/L/zP/d/3P/H/s/73/n/y//n/z/8n/Q/93/b/w//n/9/7/9D/4f+j/z/8z/f/7v/D/wf+D/qf/z/j/6n/d/y/+b/2/+T/if+H/k/4H/m/5H/i/+v/b/+f+3/l/4X/9/wf+j/of93/N/8P/f/wf87/O/8//E/7/+H/lf8n/F/wf9T/Gf9X/E/6H/F/0P+7/z/+x/z/+l/3/8j/T/yv+x/wv+z/r/8P/H/y//n/l/8v/v/4P+x/8P/p/7f9n/n/6H/e/+H/u/7v+x/8f+L/3f+D/2/+D/uf+L/g/7H/s/8v/V/7f+z/wf9z/N/8H/h/+3/n/9v/f/of+n/if9X/U/9v/s/4v/j/xv/9/zv9D/q/93/q/5n/l/2/9j/x/+T/sf9P/X/iv/h/x//B/4v+x/8/9T/c/8f/+/4n/+/4n/i/8X/Q/9v/e/6H/l/43/K/8X/y/6X/D/1P+H/3/+z/m/+r/p/+3/g/4H/p/73/1/6f+v/qf9X/QAAAAAAAAAAAAAAAAAAAAAAAOCZf9t2f3r9c8sCAAAAAElFTkSuQmCC";
 
     // Add photo to the receipt if it exists
@@ -1243,4 +1294,37 @@ export function copyReceiptLink() {
     }, () => {
         showNotification("Could not copy link.", true);
     });
+}
+
+// --- Live Location ---
+export async function handleStartDelivery(deliveryId) {
+    if (locationWatchId) {
+        navigator.geolocation.clearWatch(locationWatchId);
+    }
+
+    const deliveryRef = doc(db, 'deliveries', deliveryId);
+    await updateDoc(deliveryRef, { status: 'In Progress' });
+    showNotification("Delivery started. Live location is now active.", false);
+
+    const watchId = navigator.geolocation.watchPosition(
+        async (position) => {
+            const coords = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+            };
+            await updateDoc(deliveryRef, { liveCoordinates: coords });
+        },
+        (error) => {
+            console.error("Location watch error:", error);
+            showNotification("Could not get live location. Tracking stopped.", true);
+            navigator.geolocation.clearWatch(watchId);
+            setLocationWatchId(null);
+        },
+        {
+            enableHighAccuracy: true,
+            maximumAge: 10000,
+            timeout: 27000, // Important for reliability
+        }
+    );
+    setLocationWatchId(watchId);
 }
