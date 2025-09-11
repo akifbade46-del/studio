@@ -12,6 +12,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.5.3/signature_pad.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
 
     <!-- PWA Manifest and Theme Color -->
     <link rel="manifest" href="/manifest.json">
@@ -445,6 +448,17 @@
         <!-- Feedback list will be populated here -->
     </div>
 </div>
+</div>
+
+<!-- Live Tracking Map Modal -->
+<div id="map-modal" class="overlay">
+    <div class="modal-content max-w-none w-full h-full p-0">
+        <div class="absolute top-0 left-0 right-0 flex justify-between items-center p-4 bg-white/70 backdrop-blur-sm z-[1001]">
+            <h3 class="text-xl font-bold">Live Driver Tracking</h3>
+            <button onclick="closeMapModal()" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+        </div>
+        <div id="map-container" class="w-full h-full z-[1000]"></div>
+    </div>
 </div>
 
 

@@ -188,7 +188,23 @@ export function loadDriverTasks() {
     const q = query(collection(db, "deliveries"), where("driverUid", "==", currentUser.uid));
     
     driverTasksUnsubscribe = onSnapshot(q, (snapshot) => {
-        const driverTasks = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+        let driverTasks = [];
+        snapshot.docChanges().forEach((change) => {
+             const taskData = { id: change.doc.id, ...change.doc.data() };
+             const existingTaskIndex = deliveriesCache.findIndex(t => t.id === taskData.id);
+
+            if (change.type === "added") {
+                if(existingTaskIndex === -1) deliveriesCache.push(taskData);
+            }
+            if (change.type === "modified") {
+                if(existingTaskIndex > -1) deliveriesCache[existingTaskIndex] = taskData;
+            }
+            if (change.type === "removed") {
+                if(existingTaskIndex > -1) deliveriesCache.splice(existingTaskIndex, 1);
+            }
+        });
+        
+        driverTasks = [...deliveriesCache];
 
         driverTasks.sort((a,b) => {
             if (a.status === 'Pending' && b.status !== 'Pending') return -1;
@@ -196,7 +212,6 @@ export function loadDriverTasks() {
             return (b.createdAt?.toDate() || 0) - (a.createdAt?.toDate() || 0);
         });
         
-        // Cache the driver's deliveries. This can be used by other functions.
         setDeliveriesCache(driverTasks);
         
         const listEl = document.getElementById('driver-tasks-list');

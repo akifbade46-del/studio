@@ -22,7 +22,8 @@ import {
     handleSkipFeedback,
     completionSignaturePad,
     handleStartDelivery,
-    openCompletionModal
+    openCompletionModal,
+    closeMapModal
 } from './ui.js';
 import { handleAssignDelivery, handleJobFileSearch, selectJobFile, renderAllDeliveryViews } from './delivery.js';
 
@@ -122,7 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'forgot-password-modal',
         'driver-performance-modal',
         'user-jobs-modal',
-        'view-feedback-modal'
+        'view-feedback-modal',
+        'map-modal'
     ];
     simpleCloseButtons.forEach(modalId => {
         const modal = document.getElementById(modalId);
@@ -130,7 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const closeBtn = modal.querySelector('button[onclick^="closeModal"]');
             if (closeBtn) {
                 closeBtn.removeAttribute('onclick');
-                closeBtn.addEventListener('click', () => closeModal(modalId));
+                if(modalId === 'map-modal') {
+                     closeBtn.addEventListener('click', () => closeMapModal());
+                } else {
+                     closeBtn.addEventListener('click', () => closeModal(modalId));
+                }
             }
         }
     });
@@ -147,3 +153,4 @@ window.showDriverDeliveries = showDriverDeliveries;
 window.showDriverFeedback = showDriverFeedback;
 window.openCompletionModal = openCompletionModal;
 window.handleStartDelivery = handleStartDelivery;
+window.closeMapModal = closeMapModal;
