@@ -53,7 +53,7 @@ function setupAuthEventListeners() {
 }
 
 
-export async function initializeAppLogic() {
+export function initializeAppLogic() {
     setupAuthEventListeners();
 
     onAuthStateChanged(auth, async (user) => {
