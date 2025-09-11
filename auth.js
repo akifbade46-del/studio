@@ -29,9 +29,9 @@ export async function initializeAppLogic() {
         const feedbackId = urlParams.get('feedbackId');
 
         if (feedbackId) {
-            showPublicFeedbackView(feedbackId);
+            await showPublicFeedbackView(feedbackId);
         } else if (podId) {
-            showPublicPodView(podId);
+            await showPublicPodView(podId);
         } else {
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
@@ -57,12 +57,14 @@ export async function initializeAppLogic() {
                 document.body.classList.remove('loading');
             });
         }
-        // Add auth-related event listeners here
-        document.getElementById('auth-btn').addEventListener('click', handleLogin);
-        document.getElementById('driver-signup-link').addEventListener('click', (e) => { e.preventDefault(); openModal('signup-modal'); });
-        document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
-        document.getElementById('signup-form').addEventListener('submit', handleSignup);
-        document.getElementById('forgot-password-form').addEventListener('submit', handleForgotPassword);
+        // Add auth-related event listeners here, but only for non-public views
+        if (!podId && !feedbackId) {
+            document.getElementById('auth-btn').addEventListener('click', handleLogin);
+            document.getElementById('driver-signup-link').addEventListener('click', (e) => { e.preventDefault(); openModal('signup-modal'); });
+            document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
+            document.getElementById('signup-form').addEventListener('submit', handleSignup);
+            document.getElementById('forgot-password-form').addEventListener('submit', handleForgotPassword);
+        }
 
     } catch (error) {
         console.error("Firebase initialization failed:", error);

@@ -2,9 +2,13 @@ const CACHE_NAME = 'qgo-cargo-cache-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  // NOTE: We are not caching external resources like Firebase, Tailwind, etc.
-  // as they are best handled by browser cache and might change.
-  // We can add local CSS and JS files here if we split the app later.
+  '/style.css',
+  '/script.js',
+  '/auth.js',
+  '/delivery.js',
+  '/state.js',
+  '/ui.js',
+  '/manifest.json'
 ];
 
 // Install a service worker
@@ -20,12 +24,23 @@ self.addEventListener('install', event => {
 
 // Cache and return requests
 self.addEventListener('fetch', event => {
-    // We only want to cache GET requests for our own assets.
-    if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+    // We only want to cache GET requests.
+    if (event.request.method !== 'GET') {
         event.respondWith(fetch(event.request));
         return;
     }
 
+    // For HTML navigation requests, use a network-first strategy.
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request).catch(() => {
+                return caches.match('/');
+            })
+        );
+        return;
+    }
+    
+    // For other assets, use a cache-first strategy.
     event.respondWith(
         caches.match(event.request)
         .then(response => {
@@ -37,7 +52,8 @@ self.addEventListener('fetch', event => {
             return fetch(event.request).then(
                 response => {
                     // Check if we received a valid response
-                    if (!response || response.status !== 200 || response.type !== 'basic') {
+                    // We don't cache opaque responses (from external CDNs without CORS)
+                    if (!response || response.status !== 200 || response.type === 'opaque') {
                         return response;
                     }
 
@@ -74,5 +90,3 @@ self.addEventListener('activate', event => {
     })
   );
 });
-
-    

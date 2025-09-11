@@ -38,28 +38,43 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeAppLogic();
     
     // Auth related listeners are in auth.js
-    document.getElementById('logout-btn').addEventListener('click', handleLogout);
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
 
     // Delivery assignment
-    document.getElementById('job-file-search').addEventListener('input', handleJobFileSearch);
-    document.getElementById('job-file-suggestions').addEventListener('click', selectJobFile);
-    document.getElementById('delivery-form').addEventListener('submit', handleAssignDelivery);
+    const jobFileSearch = document.getElementById('job-file-search');
+    const jobFileSuggestions = document.getElementById('job-file-suggestions');
+    const deliveryForm = document.getElementById('delivery-form');
+    if(jobFileSearch) jobFileSearch.addEventListener('input', handleJobFileSearch);
+    if(jobFileSuggestions) jobFileSuggestions.addEventListener('click', selectJobFile);
+    if(deliveryForm) deliveryForm.addEventListener('submit', handleAssignDelivery);
     
     // Delivery list searching
-    document.getElementById('pending-search').addEventListener('input', renderAllDeliveryViews);
-    document.getElementById('completed-search').addEventListener('input', renderAllDeliveryViews);
+    const pendingSearch = document.getElementById('pending-search');
+    const completedSearch = document.getElementById('completed-search');
+    if(pendingSearch) pendingSearch.addEventListener('input', renderAllDeliveryViews);
+    if(completedSearch) completedSearch.addEventListener('input', renderAllDeliveryViews);
 
     // Delivery completion
-    document.getElementById('completion-form').addEventListener('submit', handleCompleteDelivery);
-    document.getElementById('clear-completion-signature-btn').addEventListener('click', () => completionSignaturePad.clear());
-    document.getElementById('get-location-btn').addEventListener('click', handleGetLocation);
+    const completionForm = document.getElementById('completion-form');
+    const clearSignatureBtn = document.getElementById('clear-completion-signature-btn');
+    const getLocationBtn = document.getElementById('get-location-btn');
+    if(completionForm) completionForm.addEventListener('submit', handleCompleteDelivery);
+    if(clearSignatureBtn) clearSignatureBtn.addEventListener('click', () => completionSignaturePad.clear());
+    if(getLocationBtn) getLocationBtn.addEventListener('click', handleGetLocation);
     
     // Receipt actions
-    document.getElementById('pdf-receipt-btn').addEventListener('click', downloadReceiptAsPDF);
-    document.getElementById('print-receipt-btn').addEventListener('click', printReceipt);
-    document.getElementById('share-btn').addEventListener('click', shareReceipt);
-    document.getElementById('copy-link-btn').addEventListener('click', copyReceiptLink);
-    document.getElementById('generate-as-copy').addEventListener('change', (e) => {
+    const pdfReceiptBtn = document.getElementById('pdf-receipt-btn');
+    const printReceiptBtn = document.getElementById('print-receipt-btn');
+    const shareBtn = document.getElementById('share-btn');
+    const copyLinkBtn = document.getElementById('copy-link-btn');
+    const generateAsCopy = document.getElementById('generate-as-copy');
+
+    if(pdfReceiptBtn) pdfReceiptBtn.addEventListener('click', downloadReceiptAsPDF);
+    if(printReceiptBtn) printReceiptBtn.addEventListener('click', printReceipt);
+    if(shareBtn) shareBtn.addEventListener('click', shareReceipt);
+    if(copyLinkBtn) copyLinkBtn.addEventListener('click', copyReceiptLink);
+    if(generateAsCopy) generateAsCopy.addEventListener('change', (e) => {
         const isCopy = e.target.checked;
         const receiptHTML = generateReceipt(isCopy);
         document.getElementById('receipt-content').innerHTML = receiptHTML;
@@ -67,20 +82,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Admin/Staff actions
-    document.getElementById('admin-panel-btn').addEventListener('click', openAdminPanel);
-    document.getElementById('driver-dashboard-btn').addEventListener('click', openDriverPerformanceDashboard);
+    const adminPanelBtn = document.getElementById('admin-panel-btn');
+    const driverDashboardBtn = document.getElementById('driver-dashboard-btn');
+    if(adminPanelBtn) adminPanelBtn.addEventListener('click', openAdminPanel);
+    if(driverDashboardBtn) driverDashboardBtn.addEventListener('click', openDriverPerformanceDashboard);
     
     // Driver actions
-    document.getElementById('my-feedback-btn').addEventListener('click', showMyFeedback);
+    const myFeedbackBtn = document.getElementById('my-feedback-btn');
+    if(myFeedbackBtn) myFeedbackBtn.addEventListener('click', showMyFeedback);
 
     // General Modal close actions
-    document.getElementById('confirm-cancel').addEventListener('click', () => {
-        const okButton = document.getElementById('confirm-ok');
-        // A better way to remove event listeners is to clone the node
-        const newOkButton = okButton.cloneNode(true);
-        okButton.parentNode.replaceChild(newOkButton, okButton);
-        closeModal('confirm-modal');
-    });
+    const confirmCancel = document.getElementById('confirm-cancel');
+    if (confirmCancel) {
+        confirmCancel.addEventListener('click', () => {
+            const okButton = document.getElementById('confirm-ok');
+            // A better way to remove event listeners is to clone the node
+            const newOkButton = okButton.cloneNode(true);
+            okButton.parentNode.replaceChild(newOkButton, okButton);
+            closeModal('confirm-modal');
+        });
+    }
 
     const simpleCloseButtons = [
         'admin-panel-modal', 
@@ -94,10 +115,12 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     simpleCloseButtons.forEach(modalId => {
         const modal = document.getElementById(modalId);
-        const closeBtn = modal.querySelector('button[onclick^="closeModal"]');
-        if (closeBtn) {
-            closeBtn.removeAttribute('onclick');
-            closeBtn.addEventListener('click', () => closeModal(modalId));
+        if (modal) {
+            const closeBtn = modal.querySelector('button[onclick^="closeModal"]');
+            if (closeBtn) {
+                closeBtn.removeAttribute('onclick');
+                closeBtn.addEventListener('click', () => closeModal(modalId));
+            }
         }
     });
 
