@@ -18,7 +18,7 @@ import {
     capturedPhotoDataUrl,
     setCapturedPhotoDataUrl
 } from './state.js';
-import { loadAdminData, loadDriverTasks } from './delivery.js';
+import { loadAdminData, loadDriverTasks, renderAllDeliveryViews } from './delivery.js';
 
 // --- Global variables for UI state ---
 export let completionSignaturePad;
@@ -92,60 +92,6 @@ export function showApp() {
 }
 
 // --- Delivery List Rendering ---
-export function renderAllDeliveryViews() {
-    renderDashboardMetrics();
-    
-    const pendingList = document.getElementById('pending-deliveries-list');
-    const completedList = document.getElementById('completed-deliveries-list');
-    pendingList.innerHTML = '';
-    completedList.innerHTML = '';
-
-    const pendingSearchTerm = document.getElementById('pending-search').value.toLowerCase();
-    const completedSearchTerm = document.getElementById('completed-search').value.toLowerCase();
-
-    const searchFilter = (delivery, term) => {
-        if (!term) return true;
-        const job = delivery.jobFileData || {};
-        return (
-            (job.jfn && job.jfn.toLowerCase().includes(term)) ||
-            (job.sh && job.sh.toLowerCase().includes(term)) ||
-            (job.co && job.co.toLowerCase().includes(term)) ||
-            (delivery.driverName && delivery.driverName.toLowerCase().includes(term)) ||
-            (delivery.receiverName && delivery.receiverName.toLowerCase().includes(term))
-        );
-    };
-
-    const pendingDeliveries = deliveriesCache
-        .filter(d => d.status !== 'Delivered')
-        .filter(d => searchFilter(d, pendingSearchTerm));
-
-    const completedDeliveries = deliveriesCache
-        .filter(d => d.status === 'Delivered')
-        .filter(d => searchFilter(d, completedSearchTerm));
-
-
-    if (pendingDeliveries.length > 0) {
-        pendingDeliveries.forEach(delivery => pendingList.appendChild(createDeliveryCard(delivery)));
-    } else {
-        pendingList.innerHTML = '<p class="text-gray-500 text-center py-4">No pending deliveries found.</p>';
-    }
-
-    if (completedDeliveries.length > 0) {
-        completedDeliveries.forEach(delivery => completedList.appendChild(createDeliveryCard(delivery)));
-    } else {
-        completedList.innerHTML = '<p class="text-gray-500 text-center py-4">No completed deliveries found.</p>';
-    }
-}
-
-function renderDashboardMetrics() {
-    const pendingCount = deliveriesCache.filter(d => d.status !== 'Delivered').length;
-    const completedCount = deliveriesCache.filter(d => d.status === 'Delivered').length;
-    
-    document.getElementById('stat-pending').textContent = pendingCount;
-    document.getElementById('stat-completed').textContent = completedCount;
-    document.getElementById('stat-total').textContent = deliveriesCache.length;
-}
-
 export function createDeliveryCard(delivery) {
     const card = document.createElement('div');
     card.className = 'border p-3 rounded-lg bg-gray-50 delivery-card';

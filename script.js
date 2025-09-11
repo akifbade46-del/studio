@@ -21,7 +21,7 @@ import {
     handleSkipFeedback,
     completionSignaturePad
 } from './ui.js';
-import { handleAssignDelivery, handleJobFileSearch, selectJobFile } from './delivery.js';
+import { handleAssignDelivery, handleJobFileSearch, selectJobFile, renderAllDeliveryViews } from './delivery.js';
 
 // --- Event Listeners ---
 document.addEventListener('DOMContentLoaded', () => {

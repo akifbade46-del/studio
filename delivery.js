@@ -1,6 +1,6 @@
 import { getFirestore, doc, getDocs, collection, onSnapshot, addDoc, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { db } from './auth.js';
-import { showLoader, hideLoader, showNotification, renderAllDeliveryViews, createDriverTaskCard, displayDriverPerformanceSummary } from './ui.js';
+import { showLoader, hideLoader, showNotification, createDeliveryCard, createDriverTaskCard, displayDriverPerformanceSummary } from './ui.js';
 import { 
     currentUser, 
     jobFilesCache,
@@ -164,7 +164,7 @@ export async function handleAssignDelivery(e) {
         showNotification("Delivery assigned successfully!");
         document.getElementById('delivery-form').reset();
         document.getElementById('form-job-file-no').textContent = 'Select a job';
-        document.getElementById('form-job-shipper-consignee').textContent = 'N/A';
+        document.getElementById('form-shipper-consignee').textContent = 'N/A';
         document.getElementById('job-file-search').value = '';
         setSelectedJobFile(null);
 
@@ -213,4 +213,59 @@ export function loadDriverTasks() {
         console.error("Firestore Error (Driver Tasks):", error);
         showNotification("Permission error: Could not load your assigned tasks.", true);
     });
+}
+
+// --- Delivery List Rendering (for Admin) ---
+export function renderAllDeliveryViews() {
+    renderDashboardMetrics();
+    
+    const pendingList = document.getElementById('pending-deliveries-list');
+    const completedList = document.getElementById('completed-deliveries-list');
+    pendingList.innerHTML = '';
+    completedList.innerHTML = '';
+
+    const pendingSearchTerm = document.getElementById('pending-search').value.toLowerCase();
+    const completedSearchTerm = document.getElementById('completed-search').value.toLowerCase();
+
+    const searchFilter = (delivery, term) => {
+        if (!term) return true;
+        const job = delivery.jobFileData || {};
+        return (
+            (job.jfn && job.jfn.toLowerCase().includes(term)) ||
+            (job.sh && job.sh.toLowerCase().includes(term)) ||
+            (job.co && job.co.toLowerCase().includes(term)) ||
+            (delivery.driverName && delivery.driverName.toLowerCase().includes(term)) ||
+            (delivery.receiverName && delivery.receiverName.toLowerCase().includes(term))
+        );
+    };
+
+    const pendingDeliveries = deliveriesCache
+        .filter(d => d.status !== 'Delivered')
+        .filter(d => searchFilter(d, pendingSearchTerm));
+
+    const completedDeliveries = deliveriesCache
+        .filter(d => d.status === 'Delivered')
+        .filter(d => searchFilter(d, completedSearchTerm));
+
+
+    if (pendingDeliveries.length > 0) {
+        pendingDeliveries.forEach(delivery => pendingList.appendChild(createDeliveryCard(delivery)));
+    } else {
+        pendingList.innerHTML = '<p class="text-gray-500 text-center py-4">No pending deliveries found.</p>';
+    }
+
+    if (completedDeliveries.length > 0) {
+        completedDeliveries.forEach(delivery => completedList.appendChild(createDeliveryCard(delivery)));
+    } else {
+        completedList.innerHTML = '<p class="text-gray-500 text-center py-4">No completed deliveries found.</p>';
+    }
+}
+
+function renderDashboardMetrics() {
+    const pendingCount = deliveriesCache.filter(d => d.status !== 'Delivered').length;
+    const completedCount = deliveriesCache.filter(d => d.status === 'Delivered').length;
+    
+    document.getElementById('stat-pending').textContent = pendingCount;
+    document.getElementById('stat-completed').textContent = completedCount;
+    document.getElementById('stat-total').textContent = deliveriesCache.length;
 }
