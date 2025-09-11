@@ -54,7 +54,6 @@ function setupAuthEventListeners() {
 
 
 export async function initializeAppLogic() {
-    // This is the critical fix: Setup listeners immediately on app load, before checking auth state.
     setupAuthEventListeners();
 
     onAuthStateChanged(auth, async (user) => {
@@ -62,7 +61,6 @@ export async function initializeAppLogic() {
             const userDocRef = doc(db, 'users', user.uid);
             let userDoc = await getDoc(userDocRef);
             
-            // This logic handles new users created via Firebase Console or other means
             if (!userDoc.exists()) {
                 const usersCollectionRef = collection(db, 'users');
                 const userQuerySnapshot = await getDocs(usersCollectionRef);
@@ -72,11 +70,11 @@ export async function initializeAppLogic() {
                     email: user.email,
                     displayName: user.displayName || user.email.split('@')[0],
                     role: isFirstUser ? 'admin' : 'user',
-                    status: isFirstUser ? 'active' : 'inactive', // First user is active, others must be approved
+                    status: isFirstUser ? 'active' : 'inactive', 
                     createdAt: serverTimestamp()
                 };
                 await setDoc(userDocRef, newUser);
-                userDoc = await getDoc(userDocRef); // Re-fetch the doc
+                userDoc = await getDoc(userDocRef);
             }
             
             const currentUserData = { uid: user.uid, email: user.email, ...userDoc.data() };
@@ -85,7 +83,7 @@ export async function initializeAppLogic() {
                 showLogin();
                 document.getElementById('jfn-approval-message').style.display = 'block';
                 document.getElementById('jfn-blocked-message').style.display = 'none';
-                await signOut(auth); // Sign out so they have to wait for approval
+                await signOut(auth); 
                 return;
             }
 
@@ -97,13 +95,11 @@ export async function initializeAppLogic() {
                 return;
             }
             
-            // If user is active, show the app
             setCurrentUser(currentUserData);
             showApp();
             loadJobFiles();
             loadClients();
         } else {
-            // No user is logged in, show the login screen
             setCurrentUser(null);
             showLogin();
         }
@@ -119,7 +115,6 @@ export async function handleSignUp(email, password, displayName) {
 
         const usersCollectionRef = collection(db, 'users');
         const userQuerySnapshot = await getDocs(usersCollectionRef);
-        // We check for size 1 because the new user is already created in Auth, but their doc isn't in Firestore yet.
         const isFirstUser = userQuerySnapshot.size === 0;
 
         const newUser = {
@@ -134,11 +129,10 @@ export async function handleSignUp(email, password, displayName) {
         hideLoader();
         if (isFirstUser) {
              showNotification("Admin account created successfully! Logging in...", false);
-             // onAuthStateChanged will handle login
         } else {
             showNotification("Account created! Please wait for admin approval.", false);
-            await signOut(auth); // Sign out immediately so admin has to approve
-            toggleAuthView(true); // Switch back to login view
+            await signOut(auth); 
+            toggleAuthView(true);
         }
     } catch (error) {
         hideLoader();
@@ -151,7 +145,6 @@ export async function handleLogin(email, password) {
     showLoader();
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        // onAuthStateChanged will handle showing the app or error messages for inactive/blocked users
     } catch (error) {
         console.error("Login error:", error);
         let message = "Login failed. Please check your email and password.";
@@ -200,7 +193,6 @@ export function toggleAuthView(showLoginView) {
     document.getElementById('jfn-auth-link').textContent = showLoginView ? 'Create a new account' : 'Already have an account? Sign in';
     nameField.style.display = showLoginView ? 'none' : 'block';
     
-    // Adjust classes for rounded corners
     if (showLoginView) {
         emailField.classList.remove('rounded-t-md');
         emailField.classList.add('rounded-md');
