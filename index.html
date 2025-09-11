@@ -455,7 +455,10 @@
     <div class="modal-content max-w-none w-full h-full p-0">
         <div class="absolute top-0 left-0 right-0 flex justify-between items-center p-4 bg-white/70 backdrop-blur-sm z-[1001]">
             <h3 class="text-xl font-bold">Live Driver Tracking</h3>
-            <button onclick="closeMapModal()" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            <div class="flex items-center gap-4">
+                <button id="refresh-map-btn" class="btn btn-secondary text-sm">Refresh</button>
+                <button onclick="closeMapModal()" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
         </div>
         <div id="map-container" class="w-full h-full z-[1000]"></div>
     </div>
