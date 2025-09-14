@@ -27,15 +27,15 @@
                 <div class="rounded-md shadow-sm -space-y-px">
                     <div id="signup-name-field" style="display: none;">
                         <label for="full-name" class="sr-only">Full Name</label>
-                        <input id="full-name" name="name" type="text" autocomplete="name" required class="input-field rounded-t-md" placeholder="Full Name">
+                        <input id="full-name" name="name" type="text" autocomplete="name" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Full Name">
                     </div>
                     <div>
                         <label for="email-address" class="sr-only">Email address</label>
-                        <input id="email-address" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
+                        <input id="email-address" name="email" type="email" autocomplete="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Email address">
                     </div>
                     <div>
                         <label for="password" class="sr-only">Password</label>
-                        <input id="password" name="password" type="password" autocomplete="current-password" required class="input-field rounded-b-md" placeholder="Password">
+                        <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password">
                     </div>
                 </div>
                 <div>
@@ -101,6 +101,9 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // --- State ---
+        let isLoginView = true;
+
         // --- UI Helper Functions ---
         function showLoader() { document.getElementById('loader-overlay').classList.add('visible'); }
         function hideLoader() { document.getElementById('loader-overlay').classList.remove('visible'); }
@@ -116,24 +119,17 @@
             }, 3000);
         }
 
-        function toggleAuthView(isLoginView) {
+        function toggleAuthView(showLogin) {
+            isLoginView = showLogin;
             const nameField = document.getElementById('signup-name-field');
             const emailField = document.getElementById('email-address');
-            const passwordField = document.getElementById('password');
             
-            document.getElementById('auth-title').textContent = isLoginView ? 'Sign in to your account' : 'Create a new account';
-            document.getElementById('auth-btn').textContent = isLoginView ? 'Sign in' : 'Sign up';
-            document.getElementById('auth-link').textContent = isLoginView ? 'Create a new account' : 'Already have an account? Sign in';
-            nameField.style.display = isLoginView ? 'none' : 'block';
+            document.getElementById('auth-title').textContent = showLogin ? 'Sign in to your account' : 'Create a new account';
+            document.getElementById('auth-btn').textContent = showLogin ? 'Sign in' : 'Sign up';
+            document.getElementById('auth-link').textContent = showLogin ? 'Create a new account' : 'Already have an account? Sign in';
+            nameField.style.display = showLogin ? 'none' : 'block';
+            emailField.classList.toggle('rounded-t-md', showLogin);
             
-            if (isLoginView) {
-                emailField.classList.remove('rounded-t-md');
-                passwordField.classList.remove('rounded-b-md');
-            } else {
-                emailField.classList.add('rounded-t-md');
-                passwordField.classList.add('rounded-b-md');
-            }
-
             document.getElementById('approval-message').style.display = 'none';
             document.getElementById('blocked-message').style.display = 'none';
         }
@@ -212,20 +208,19 @@
             }
         }
 
-        // --- Event Listeners Setup ---
-        function setupEventListeners() {
+        // --- App Initialization ---
+        function initializeAppLogic() {
+            // Setup Event Listeners
             document.getElementById('auth-link').addEventListener('click', (e) => {
                 e.preventDefault();
-                const isCreatingAccount = e.target.textContent.includes('Create a new account');
-                toggleAuthView(!isCreatingAccount);
+                toggleAuthView(!isLoginView);
             });
 
             document.getElementById('auth-btn').addEventListener('click', () => {
                 const email = document.getElementById('email-address').value;
                 const password = document.getElementById('password').value;
-                const isLogin = document.getElementById('auth-btn').textContent.includes('Sign in');
 
-                if (isLogin) {
+                if (isLoginView) {
                     handleLogin(email, password);
                 } else {
                     const displayName = document.getElementById('full-name').value;
@@ -240,33 +235,24 @@
             document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
             document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
             document.getElementById('close-forgot-password-btn').addEventListener('click', () => closeModal('forgot-password-modal'));
-        }
-
-        // --- App Initialization ---
-        function initializeAppLogic() {
-            // Set up button clicks immediately
-            setupEventListeners();
-
-            // Then, check auth state
+        
+            // Check Auth State
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
-                    // A user is signed in. Check their status in Firestore.
                     showLoader();
-                    const userDocRef = doc(db, 'users', user.uid);
                     try {
+                        const userDocRef = doc(db, 'users', user.uid);
                         const userDoc = await getDoc(userDocRef);
                         
                         if (userDoc.exists()) {
-                            const currentUserData = userDoc.data();
-                            if (currentUserData.status === 'active') {
-                                // User is active and approved, redirect to the main app
+                            const userData = userDoc.data();
+                            if (userData.status === 'active') {
                                 window.location.href = 'app.html';
                             } else {
-                                // User is inactive or blocked, show message and log them out
-                                if (currentUserData.status === 'inactive') {
+                                if (userData.status === 'inactive') {
                                     document.getElementById('approval-message').style.display = 'block';
                                     document.getElementById('blocked-message').style.display = 'none';
-                                } else if (currentUserData.status === 'blocked') {
+                                } else if (userData.status === 'blocked') {
                                     document.getElementById('approval-message').style.display = 'none';
                                     document.getElementById('blocked-message').style.display = 'block';
                                 }
@@ -274,9 +260,6 @@
                                 hideLoader();
                             }
                         } else {
-                           // This case is for when a user exists in Auth but not Firestore. 
-                           // This can happen on first sign-up with social providers, etc.
-                           // For this app, we just log them out.
                            await signOut(auth);
                            hideLoader();
                         }
@@ -286,9 +269,7 @@
                         await signOut(auth);
                         hideLoader();
                     }
-
                 } else {
-                    // User is logged out, ensure login screen is visible and loader is hidden.
                     hideLoader();
                 }
             });
