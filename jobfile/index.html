@@ -143,7 +143,7 @@
 
                 const usersCollectionRef = collection(db, 'users');
                 const userQuerySnapshot = await getDocs(usersCollectionRef);
-                const isFirstUser = userQuerySnapshot.size === 0;
+                const isFirstUser = userQuerySnapshot.empty;
 
                 const newUser = {
                     email: user.email,
@@ -256,12 +256,10 @@
                                     document.getElementById('approval-message').style.display = 'none';
                                     document.getElementById('blocked-message').style.display = 'block';
                                 }
-                                await signOut(auth); // Sign out to prevent redirect loop
+                                await signOut(auth);
                                 hideLoader();
                             }
                         } else {
-                           // This case means user exists in Auth but not in Firestore.
-                           // This can happen if the Firestore user doc was deleted manually.
                            showNotification("User profile not found. Please contact an administrator.", true);
                            await signOut(auth);
                            hideLoader();
@@ -278,7 +276,6 @@
             });
         }
 
-        // Start the application logic
         initializeAppLogic();
     </script>
 </body>
