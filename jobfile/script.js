@@ -24,7 +24,7 @@ const firebaseConfig = {
     measurementId: "G-8EHX5K7YHL"
 };
 
-// --- Firebase Initialization ---
+// --- Firebase Initialization & Auth Check ---
 function initializeFirebase() {
     try {
         const app = initializeApp(firebaseConfig);
@@ -40,9 +40,11 @@ function initializeFirebase() {
                     currentUser = { uid: user.uid, email: user.email, ...userDoc.data() };
                     initializeAppUI();
                 } else {
+                    // If user is not active or doesn't exist in Firestore, redirect to login
                     window.location.href = 'index.html';
                 }
             } else {
+                // If no user is logged in, redirect to login
                 window.location.href = 'index.html';
             }
         });
@@ -58,6 +60,15 @@ function handleLogout() {
 }
 
 function initializeAppUI() {
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }).catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+        });
+    }
+
     document.getElementById('user-display-name').textContent = currentUser.displayName;
     document.getElementById('user-role').textContent = currentUser.role;
 
@@ -1563,7 +1574,7 @@ function getPrintViewHtml(data, isPublicView = false) {
         <div class="border border-gray-700 p-2 bg-white">
             <div class="grid grid-cols-12 gap-px bg-gray-700" style="border: 1px solid #374151;">
                 <div class="col-span-3 bg-white p-1 flex items-center" style="border: 1px solid #374151;">
-                    <div class="text-xl font-bold" style="color: #0E639C;">Q'go<span style="color: #4FB8AF;">Cargo</span></div>
+                    <img src="http://qgocargo.com/logo.png" alt="Q'go Cargo Logo" class="h-10">
                 </div>
                 <div class="col-span-6 bg-white flex items-center justify-center text-xl font-bold" style="border: 1px solid #374151;">JOB FILE</div>
                 <div class="col-span-3 bg-white p-1 text-xs" style="border: 1px solid #374151;"><div><strong>Date:</strong> ${data.d || ''}</div><div><strong>P.O. #:</strong> ${data.po || ''}</div></div>

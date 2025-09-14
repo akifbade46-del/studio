@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qgo-cargo-cache-v1';
+const CACHE_NAME = 'qgo-pod-cache-v1';
 const urlsToCache = [
   './',
   './index.html',
@@ -8,21 +8,32 @@ const urlsToCache = [
   './delivery.js',
   './state.js',
   './ui.js',
-  './manifest.json'
+  './manifest.json',
+  'http://qgocargo.com/logo.png',
+  'https://cdn.tailwindcss.com',
+  'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+  'https://cdn.jsdelivr.net/npm/chart.js',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
 ];
 
-// Install a service worker
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        // Add all URLs to cache, but don't fail if one of the external URLs fails
+        const cachePromises = urlsToCache.map(urlToCache => {
+            return cache.add(urlToCache).catch(err => {
+                console.warn(`Failed to cache ${urlToCache}:`, err);
+            });
+        });
+        return Promise.all(cachePromises);
       })
   );
 });
 
-// Cache and return requests
 self.addEventListener('fetch', event => {
     // We only want to cache GET requests.
     if (event.request.method !== 'GET') {
@@ -44,30 +55,20 @@ self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request)
         .then(response => {
-            // Cache hit - return response
             if (response) {
                 return response;
             }
 
             return fetch(event.request).then(
                 response => {
-                    // Check if we received a valid response
-                    // We don't cache opaque responses (from external CDNs without CORS)
                     if (!response || response.status !== 200 || response.type === 'opaque') {
                         return response;
                     }
-
-                    // IMPORTANT: Clone the response. A response is a stream
-                    // and because we want the browser to consume the response
-                    // as well as the cache consuming the response, we need
-                    // to clone it so we have two streams.
-                    var responseToCache = response.clone();
-
+                    const responseToCache = response.clone();
                     caches.open(CACHE_NAME)
                         .then(cache => {
                             cache.put(event.request, responseToCache);
                         });
-
                     return response;
                 }
             );
@@ -75,7 +76,6 @@ self.addEventListener('fetch', event => {
     );
 });
 
-// Update a service worker
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -90,5 +90,3 @@ self.addEventListener('activate', event => {
     })
   );
 });
-
-    

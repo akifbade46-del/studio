@@ -1,11 +1,11 @@
 {
-  "name": "Q'go Cargo - POD",
-  "short_name": "POD",
+  "name": "Q'go Cargo - Job File System",
+  "short_name": "JobFile",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#4FB8AF",
-  "description": "Proof of Delivery Management for Q'go Cargo.",
+  "theme_color": "#0E639C",
+  "description": "Job File Management System for Q'go Cargo.",
   "icons": [
     {
       "src": "http://qgocargo.com/logo.png",

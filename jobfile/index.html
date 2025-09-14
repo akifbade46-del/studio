@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4FB8AF"/>
 </head>
 <body class="bg-gray-100">
 
@@ -15,7 +16,7 @@
     <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <div>
-                <div class="text-center text-5xl font-extrabold" style="color: #0E639C;">Q'go<span style="color: #4FB8AF;">Cargo</span></div>
+                 <img src="http://qgocargo.com/logo.png" alt="Q'go Cargo Logo" class="mx-auto h-20 w-auto">
                 <h2 id="auth-title" class="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
             </div>
             <div class="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-md">
@@ -81,207 +82,7 @@
     <div id="loader-overlay" class="overlay"><div class="loader"></div></div>
     <div id="notification"></div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <script type="module" src="auth.js"></script>
 
-        // --- Firebase Configuration ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyAAulR2nJQm-4QtNyEqKTnnDPw-iKW92Mc",
-            authDomain: "my-job-file-system.firebaseapp.com",
-            projectId: "my-job-file-system",
-            storageBucket: "my-job-file-system.appspot.com",
-            messagingSenderId: "145307873304",
-            appId: "1:145307873304:web:d661ea6ec118801b4a136d",
-            measurementId: "G-8EHX5K7YHL"
-        };
-
-        // --- Firebase Initialization ---
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // --- State ---
-        let isLoginView = true;
-
-        // --- UI Helper Functions ---
-        function showLoader() { document.getElementById('loader-overlay').classList.add('visible'); }
-        function hideLoader() { document.getElementById('loader-overlay').classList.remove('visible'); }
-        function openModal(id) { document.getElementById(id).classList.add('visible'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('visible'); }
-        function showNotification(message, isError = false) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.style.backgroundColor = isError ? '#c53030' : '#2d3748';
-            notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        function toggleAuthView(showLogin) {
-            isLoginView = showLogin;
-            const nameField = document.getElementById('signup-name-field');
-            const emailField = document.getElementById('email-address');
-            
-            document.getElementById('auth-title').textContent = showLogin ? 'Sign in to your account' : 'Create a new account';
-            document.getElementById('auth-btn').textContent = showLogin ? 'Sign in' : 'Sign up';
-            document.getElementById('auth-link').textContent = showLogin ? 'Create a new account' : 'Already have an account? Sign in';
-            nameField.style.display = showLogin ? 'none' : 'block';
-            emailField.classList.toggle('rounded-t-md', showLogin);
-            
-            document.getElementById('approval-message').style.display = 'none';
-            document.getElementById('blocked-message').style.display = 'none';
-        }
-
-        // --- Authentication Logic ---
-        async function handleSignUp(email, password, displayName) {
-            showLoader();
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                const usersCollectionRef = collection(db, 'users');
-                const userQuerySnapshot = await getDocs(usersCollectionRef);
-                const isFirstUser = userQuerySnapshot.empty;
-
-                const newUser = {
-                    email: user.email,
-                    displayName: displayName,
-                    role: isFirstUser ? 'admin' : 'user',
-                    status: isFirstUser ? 'active' : 'inactive',
-                    createdAt: serverTimestamp()
-                };
-                await setDoc(doc(db, 'users', user.uid), newUser);
-                
-                hideLoader();
-                if (isFirstUser) {
-                     showNotification("Admin account created successfully! You will be logged in.", false);
-                } else {
-                    showNotification("Account created! Please wait for admin approval.", false);
-                    await signOut(auth); 
-                    toggleAuthView(true);
-                }
-            } catch (error) {
-                hideLoader();
-                console.error("Sign up error:", error);
-                showNotification(error.message, true);
-            }
-        }
-
-        async function handleLogin(email, password) {
-            showLoader();
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                // onAuthStateChanged will handle the redirect
-            } catch (error) {
-                hideLoader();
-                console.error("Login error:", error);
-                let message = "Login failed. Please check your email and password.";
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                    message = "Incorrect email or password. Please try again or reset your password.";
-                }
-                showNotification(message, true);
-            }
-        }
-
-        async function handleForgotPassword() {
-            const email = document.getElementById('reset-email').value.trim();
-            if (!email) {
-                showNotification("Please enter your email address.", true);
-                return;
-            }
-            showLoader();
-            try {
-                await sendPasswordResetEmail(auth, email);
-                hideLoader();
-                closeModal('forgot-password-modal');
-                showNotification("Password reset link sent! Check your email inbox.", false);
-            } catch (error) {
-                hideLoader();
-                console.error("Password reset error:", error);
-                let message = "Could not send reset link. Please try again.";
-                if(error.code === 'auth/user-not-found'){
-                    message = "No account found with this email address.";
-                }
-                showNotification(message, true);
-            }
-        }
-
-        // --- App Initialization ---
-        function initializeAppLogic() {
-            // Setup Event Listeners
-            document.getElementById('auth-link').addEventListener('click', (e) => {
-                e.preventDefault();
-                toggleAuthView(!isLoginView);
-            });
-
-            document.getElementById('auth-btn').addEventListener('click', () => {
-                const email = document.getElementById('email-address').value;
-                const password = document.getElementById('password').value;
-
-                if (isLoginView) {
-                    handleLogin(email, password);
-                } else {
-                    const displayName = document.getElementById('full-name').value;
-                     if (!email || !password || !displayName) {
-                         showNotification("Please fill all fields to sign up.", true);
-                         return;
-                    }
-                    handleSignUp(email, password, displayName);
-                }
-            });
-            
-            document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
-            document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
-            document.getElementById('close-forgot-password-btn').addEventListener('click', () => closeModal('forgot-password-modal'));
-        
-            // Check Auth State
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    showLoader();
-                    try {
-                        const userDocRef = doc(db, 'users', user.uid);
-                        const userDoc = await getDoc(userDocRef);
-                        
-                        if (userDoc.exists()) {
-                            const userData = userDoc.data();
-                            if (userData.status === 'active') {
-                                if (userData.role === 'warehouse_supervisor') {
-                                    window.location.href = '../pod/index.html';
-                                } else {
-                                    window.location.href = 'app.html';
-                                }
-                            } else {
-                                if (userData.status === 'inactive') {
-                                    document.getElementById('approval-message').style.display = 'block';
-                                    document.getElementById('blocked-message').style.display = 'none';
-                                } else if (userData.status === 'blocked') {
-                                    document.getElementById('approval-message').style.display = 'none';
-                                    document.getElementById('blocked-message').style.display = 'block';
-                                }
-                                await signOut(auth);
-                                hideLoader();
-                            }
-                        } else {
-                           showNotification("User profile not found. Please contact an administrator.", true);
-                           await signOut(auth);
-                           hideLoader();
-                        }
-                    } catch (error) {
-                        console.error("Error fetching user data:", error);
-                        showNotification("Could not verify user status. Please try again.", true);
-                        await signOut(auth);
-                        hideLoader();
-                    }
-                } else {
-                    hideLoader();
-                }
-            });
-        }
-        
-        initializeAppLogic();
-    </script>
 </body>
 </html>
