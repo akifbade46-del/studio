@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -260,6 +261,7 @@
                                 hideLoader();
                             }
                         } else {
+                           // This case can happen if a user is deleted from firestore but not auth
                            showNotification("User profile not found. Please contact an administrator.", true);
                            await signOut(auth);
                            hideLoader();
@@ -271,12 +273,15 @@
                         hideLoader();
                     }
                 } else {
+                    // User is signed out.
                     hideLoader();
                 }
             });
         }
-
+        
+        // This is the crucial line that was missing.
         initializeAppLogic();
     </script>
 </body>
 </html>
+
