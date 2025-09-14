@@ -131,50 +131,38 @@
     </section>
     
     <!-- 2. Assign New Delivery -->
-    <section class="bg-white p-6 rounded-xl shadow-md">
+    <section id="assign-delivery-section" class="bg-white p-6 rounded-xl shadow-md hidden">
         <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
             <span>Assign New Delivery</span>
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            <div class="space-y-4">
-                <div class="relative">
-                    <label for="job-file-search" class="block text-sm font-medium text-gray-700 mb-1">Search Job File</label>
-                    <input type="text" id="job-file-search" class="input-field" placeholder="Job No, Shipper, or Consignee...">
-                    <div id="job-file-suggestions" class="suggestions-container hidden"></div>
-                </div>
+        <form id="delivery-form" class="space-y-4" novalidate>
+            <div class="relative">
+                <label for="job-file-search" class="block text-sm font-medium text-gray-700 mb-1">Search Job File (Optional)</label>
+                <input type="text" id="job-file-search" class="input-field" placeholder="Job No, Shipper, AWB, or Consignee...">
+                <div id="job-file-suggestions" class="suggestions-container hidden"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Job Details</label>
-                    <div class="p-3 bg-gray-50 rounded-md text-sm border">
-                        <p><strong>Job No:</strong> <span id="form-job-file-no">Select a job</span></p>
-                        <p><strong>Details:</strong> <span id="form-shipper-consignee">N/A</span></p>
-                    </div>
+                    <label for="manual-job-file-no" class="block text-sm font-medium text-gray-700 mb-1">Job File No.</label>
+                    <input type="text" id="manual-job-file-no" class="input-field" placeholder="Manual Entry">
+                </div>
+                 <div>
+                    <label for="manual-mawb" class="block text-sm font-medium text-gray-700 mb-1">AWB / MAWB</label>
+                    <input type="text" id="manual-mawb" class="input-field" placeholder="Manual Entry">
+                </div>
+                 <div>
+                    <label for="manual-shipper" class="block text-sm font-medium text-gray-700 mb-1">Shipper</label>
+                    <input type="text" id="manual-shipper" class="input-field" placeholder="Manual Entry">
+                </div>
+                 <div>
+                    <label for="manual-consignee" class="block text-sm font-medium text-gray-700 mb-1">Consignee</label>
+                    <input type="text" id="manual-consignee" class="input-field" placeholder="Manual Entry">
                 </div>
             </div>
-            <form id="delivery-form" class="space-y-4" novalidate>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="delivery-origin" class="block text-sm font-medium text-gray-700 mb-1">Country of Origin</label>
-                        <input type="text" id="delivery-origin" class="input-field" placeholder="Auto-filled from Job">
-                    </div>
-                    <div>
-                        <label for="delivery-destination" class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
-                        <input type="text" id="delivery-destination" class="input-field" placeholder="Auto-filled from Job">
-                    </div>
-                    <div>
-                        <label for="delivery-airlines" class="block text-sm font-medium text-gray-700 mb-1">Airlines</label>
-                        <input type="text" id="delivery-airlines" class="input-field" placeholder="Auto-filled from Job">
-                    </div>
-                    <div>
-                        <label for="delivery-mawb" class="block text-sm font-medium text-gray-700 mb-1">AWB / MAWB</label>
-                        <input type="text" id="delivery-mawb" class="input-field" placeholder="Auto-filled from Job">
-                    </div>
-                    <div class="col-span-1 sm:col-span-2">
-                        <label for="delivery-inv" class="block text-sm font-medium text-gray-700 mb-1">Invoice No.</label>
-                        <input type="text" id="delivery-inv" class="input-field" placeholder="Auto-filled from Job">
-                    </div>
-                </div>
 
+            <div class="border-t pt-4 space-y-4">
                 <div>
                     <label for="delivery-location" class="block text-sm font-medium text-gray-700 mb-1">Delivery Location</label>
                     <textarea id="delivery-location" rows="2" class="input-field" placeholder="Enter the full delivery address"></textarea>
@@ -189,11 +177,11 @@
                         <option value="">-- Select a Driver --</option>
                     </select>
                 </div>
-                <div class="text-right">
-                    <button type="submit" class="btn btn-primary">Assign Delivery</button>
-                </div>
-            </form>
-        </div>
+            </div>
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Assign Delivery</button>
+            </div>
+        </form>
     </section>
 
     <!-- 3. Delivery Lists -->
@@ -251,17 +239,22 @@
 
 <!-- Admin Panel Modal -->
 <div id="admin-panel-modal" class="overlay">
-<div class="modal-content max-w-3xl">
-    <div class="flex justify-between items-center mb-4">
-        <h3 class="text-2xl font-bold">User Management</h3>
+<div class="modal-content max-w-4xl">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold">Admin Panel</h3>
         <button onclick="closeModal('admin-panel-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
     </div>
-    <div class="space-y-4">
-        <div id="user-list-admin" class="space-y-2 max-h-[60vh] overflow-y-auto">
-            <!-- User list will be populated here -->
+    <div class="space-y-6">
+        <div>
+            <h4 class="text-lg font-semibold border-b pb-2 mb-3">User Management</h4>
+            <div id="user-list-admin" class="space-y-2 max-h-[40vh] overflow-y-auto"></div>
         </div>
-        <div class="text-right">
-            <button onclick="saveUserChanges()" class="btn btn-success">Save Changes</button>
+        <div>
+            <h4 class="text-lg font-semibold border-b pb-2 mb-3">POD Creation Permissions</h4>
+            <div id="pod-permission-list" class="space-y-2 max-h-[40vh] overflow-y-auto"></div>
+        </div>
+        <div class="text-right border-t pt-4">
+            <button onclick="saveUserChanges()" class="btn btn-success">Save All Changes</button>
         </div>
     </div>
 </div>

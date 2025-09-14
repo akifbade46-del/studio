@@ -78,6 +78,7 @@ export function showApp() {
     document.getElementById('driver-view').style.display = 'none';
     document.getElementById('admin-panel-btn').classList.add('hidden');
     document.getElementById('driver-dashboard-btn').classList.add('hidden');
+    document.getElementById('assign-delivery-section').style.display = 'none';
     
     if (currentUser.role === 'driver' || currentUser.role === 'warehouse_supervisor') {
         document.getElementById('driver-view').style.display = 'block';
@@ -91,6 +92,10 @@ export function showApp() {
         }
         if (currentUser.role === 'admin') {
             document.getElementById('admin-panel-btn').classList.remove('hidden');
+        }
+        // Show delivery assignment form for admin or users with permission
+        if(currentUser.role === 'admin' || currentUser.can_create_pod) {
+            document.getElementById('assign-delivery-section').style.display = 'block';
         }
         loadAdminData(); // <-- ONLY call admin-specific data loader
     } 
@@ -573,7 +578,7 @@ export function generateReceipt(isCopy = false) {
     const copyWatermark = isCopy ? `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 8rem; color: rgba(255, 0, 0, 0.15); font-weight: bold; z-index: 1000; pointer-events: none;">COPY</div>` : '';
     const iataLogo = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDMwMCI+PHBhdGggZD0iTTc0LjggMjY2LjR2LTkyLjNINjAuMXY5Mi4zSDIzdjI4LjdoMTA1di0yOC43SDc0Ljh6bTIwOC42LTI4LjdsMTcuMy05Mi4zaDE4LjlsLTE3LjMgOTIuM0gyODMuNHptNDMuMSAwTDMxMS4xIDc0aDQ0bC0xNS40IDk5LjgtMTUuMyA5Mi42aC00My4xbDE1LjQtOTkuNyAxNS4yLTkyLjdoNDQuMmwzMi44IDE5Mi40aC00My41bC0xNS4yLTkyLjZMMzU1IDc0aC00My42bDE1LjQgOTkuOCAxNS4yIDkyLjZoNDMuMXptMTkxLjYgMjguN2g0My44VjI2Nkg1MTguMnYtOTIuM2gtNDMuOHY5Mi4zaC0yMi41djI4LjdoODYuOHYtMjguN3ptOTYuNSAwaDQzLjdWMTAyLjRoLTM4LjlMNjA0IDc0aDk0djIyMC43aDQzLjh2MjguN0g2MDJWMzAwaC0xLjR6bTE5NS4yLTI4LjdsMTcuMy05Mi4zaDE4LjlsLTE3LjMgOTIuM0g4MTUuM3ptNDMuMSAwTzg0MyA3NGg0NC4xbC0xNS40IDk5LjgtMTUuMyA5Mi42aC00My4xbDE1LjQtOTkuNyAxNS4yLTkyLjdoNDQuMmwzMi44IDE5Mi40aC00My41bC0xNS4yLTkyLjZMOTAwLjUgNzRoLTQzLjZsMTUuNCA5OS44IDE1LjIgOTIuNmg0My4xek0xMDY5LjQgNzRoLTM1LjdsLTU0LjUgMzAwaDQ1LjNsMTEuNC02My42aDUzLjVsMTEuMyA2My42aDQ1LjRMMTA2OS40IDc0em0tNi40IDE4NC4xbC0xOC44LTExMC4xLTE4LjggMTEwLjFoMzcuNnoiLz48L3N2Zz4=";
     const wcaLogo = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACACAMAAABrZuVzAAAAYFBMVEX///8AQ4sAQIsAP4oAO4kAN4gANIcAOYgAOIkAOYoAN4sAOIjp7fUAOIlso9EAM4a/x94gS5QAT5sAUJgAQYpUkcYAQ4zp7vMAYqEAL4AAKnsALoEAMYIAJ3UAKn4AKX/q7/cAUIyTAAADcklEQVR4nO3b63aqOBSG4fAQQkBtqU3tde//ikdbS1sLtTSS5+z9fn+x504yE8jDDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYF/2+0vV/Vn2+z88G/291v+2F/V21d01q/09A6t/Qf0h1l/a/n7t9X+wn8pP1W2v/c/9mY5Xf2h/a/1r/Vv+1/oV+/sZ+ysdVf+k/lr/tL61/pH+rf4b/Wv9e/3b/jf6z5003V/sB7DPqg81v1V/qf/aP1r/TP+2/5b+y/qP3v6d/rf6H/Uf6596+3f65/pf3t/Z/13/tfenbX9v/2t/W//S3sB+7M820n/Wz/S39lf2h/ZH9lv21/b39v/29/bP9s862j/b79u/21/ar9jf2d/bH9i/2b/bb9u/6l/Zf1f+y/qP9l/Uf6T/Rf1b+i/rH9B/s/1H+i/pH+i/vP6v/Tf13+k/tv6n/R+bY/v/LMP2/8M0/b/1L+yv7J+w/8k+JP/V/kn7D/e/uv+L/f/tP9l/6f9X/Tf6X/6v+d/n/p/6n/d/zv/T/yP/b/xP+h/r/8h/6v+g/4n+g/23+v/3/7X/f/1/8B/d/w7+o/xP81/lv4r+K/iv6b+a/ov5b+u/tv47+e/mv5b+S/kv7b+K/hv4b+G/tv4b+C/gv6L+C/iv57+a/mv5r+a/lv6L+W/rv7b+u/tv6T+k/pP7b+k/pP6L+i/ov6L+i/rv6r+6/qv7j+o/uP7T+0/pP7T+0/ov6L+i/ov5r+a/mv5r+a/mv5b+W/lv67+W/rv7T+w/sP7b+w/pP6T+k/tP6L+k/ov6r+q/uv6r+6/tP7T+2/rP+A/uP4D+w/vP6D+8/tP7L+y/tv6b+m/tv6b+o/sP7D+o/ov6T+s/rP4z+M/rP6T+w/sP7T+s/rP6z+s/rP7z+8/tP6L+i/tv6r+u/pv6b+m/tv6b+m/tv6T+o/rP7D+o/rP6z+o/vP7L+i/sv67+q/ru6r+u/uv6j+o/rP4j+I/vP6j+q/uP4j+0/pP6T+0/pP7T+i/qv6L+q/kv5r+a/mv5r+a/kv6b+u/tu6b+u/tu47+e/tv47+O/jv5r+K/tv4b+G/hv4b+e/gv4L+K/gv4b+e/lv5r+a/mv5b+a/mv5r+O/jv67+e/rv7T+g/tP6j+o/qP6j+o/pP6j+k/qP7T+g/tP6T+8/qP7j+q/uP6z+s/vP6z+u/vP67+w/sP7T+w/sP7T+y/sv6j+i/qP6L+m/qP6r+m/rP4D+w/oP6L+y/sP7L+o/pP6T+i/tP6L+0/pP6T+2/pP7b+2/rP67+u/uP4j+4/pP7j+s/pP7z+4/uP6j+w/sP7T+g/pP6z+y/uP6j+8/qP7z+i/rP6z+g/qP6z+o/qP6z+k/rP6T+8/qP7T+k/qP6T+k/qP6T+k/qP6L+wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgH/9A7aQ4B/4cQ/qAAAAAElFTkSuQmCC";
-    const iamLogo = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARgAAACACAMAAAB49WnWAAAAQlBMVEX////AADcAAADa2tsAADOysrL6+voAAAb29vYAAAnMzMzp6ekAAAjh4eEAABBMS0toamp+fn4AAATExMSlpaWbm5s2NjZLS0s6ODgI5M0QAAAD0klEQVR4nO2byXaCMAxFIVsJsbrD/V/hAvJpMu6Nplk5/99EDgp6cFAggAAAAAAAAAAAAAAAAAAAAAAAIzY+np29PX5qQ+kPkD6/uG58S+pD3A+hPjH3R8W/tD6Yen3n/5+gr8l/b30x9cfsH/V35n6A+ovU39p/bX1D63/YP/n/S+rv7z+o/tvqn9y/3f+B/kf/L/r/4T/Jf8h98f8P/Nf83/V/zn/Q/4L/z/V/0f/F/1/+b/j/1r/zP+h/wP/R/y//x+3f7b/1/6v/h/6v+P/kP+x/4P/v/o/4f+c/1v+D/0/7X/w/1n/uP5b/g/97/A/1P/d/yn/f/v/2v/j/h/7f+z/iP/X/wP/9/1f8v/A/7v/T//w8//+v5X/P/u/8H/e/+H/d/wv/F/wv+7/X/3//x/7f+D/j/9r/Gf/P/j/+r/6f8//T/t/+D/h/9v/Bf4r/f/2/9v/S/+f+B/8P+v/r/9//T/v/5X/d/yv+l/3f9//Vf8H/N/xf+T/qf+n/rf9//I/8/+X/4P+T/h/6v/N/7v/B/2f9L/2/8p/2/+T/6v/J/wP/F/wv/7/B/5v/5/5v/x/6v+l/5v/1/zP/T/rf/z/p/4v/b/3/+7/t/+f+D/6v9b/w/+D/3v+D/3v8T/t/7f9T/t/7v/r/yP/h/yP/7/8H/h/+H/5f8X/r/5X/v/2/8v/P/w//r/j/8//Gf8//lf+f+r/2/+n/f/zP/H/0P+H/9/+r/6/9P/e/+H/D/0P+B/3P/J/0v+3/l/6v/V/0f+z/m/63/b/yP+n/0f9//X/9v+3/r/8H/H/7f/P/wv+T/9f8X/H/4v+f/n/6X/h/7P/T/xv+X/w/+b/gP+p/w/9X/N/5v+x/yP/p/z/9D/g/57/O/7P+j/sf+D/g/53/E/5/+T/pf9n/W/6v+B/8f+d/yv+7/2f8f/e/6/+P/x//F//P+v/of+n/h/5P+f/kf+X/pf8n/S/5v+v/of9n/Q/9P/a/7P+t/w/8v/U/5P+l/xf9P/I/6X/B/4v/R/y//H/if9v/Q/4P+T/sf/D/9/+t/3f+D/lf93/D/9/+d/3f8v/W/9v+n/v/43/e/yv/L/8f8v/d/0f/b/sf/7/l/+n/x/6v/L/zP/d/3P+H/s/73/n/y//n/z/8n/Q/93/b/w//n/9/7/9D/4f+j/z/8z/f/7v/D/wf+D/qf/z/j/6n/d/y/+b/2/+T/if+H/k/4H/m/5H/i/+v/b/+f+3/l/4X/9/wf+j/of93/N/8P/f/wf87/O/8//E/7/+H/lf8n/F/wf9T/Gf9X/E/6H/F/0P+7/z/+x/z/+l/3/8j/T/yv+x/wv+z/r/8P/H/y//n/l/8v/v/4P+x/8P/p/7f9n/n/6H/e/+H/u/7v+x/8f+L/3f+D/2/+D/uf+L/g/7H/s/8v/V/7f+z/wf9z/N/8H/h/+3/n/9v/f/of+n/if9X/U/9v/s/4v/j/xv/9/zv9D/q/93/q/5n/l/2/9j/x/+T/sf9P/X/iv/h/x//B/4v+x/8/9T/c/8f/+/4n/+/4n/i/8X/Q/9v/e/6H/l/43/K/8X/y/6X/D/1P+H/3/+z/m/+r/p/+3/g/4H/p/73/1/6f+v/qf9X/QAAAAAAAAAAAAAAAAAAAAAAAOCZf9t2f3r9c8sCAAAAAElFTkSuQmCC";
+    const iamLogo = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARgAAACACAMAAAB49WnWAAAAQlBMVEX////AADcAAADa2tsAADOysrL6+voAAAb29vYAAAnMzMzp6ekAAAjh4eEAABBMS0toamp+fn4AAATExMSlpaWbm5s2NjZLS0s6ODgI5M0QAAAD0klEQVR4nO2byXaCMAxFIVsJsbrD/V/hAvJpMu6Nplk5/99EDgp6cFAggAAAAAAAAAAAAAAAAAAAAAAAIzY+np29PX5qQ+kPkD6/uG58S+pD3A+hPjH3R8W/tD6Yen3n/9+gr8l/b30x9cfsH/V35n6A+ovU39p/bX1D63/YP/n/S+rv7z+o/tvqn9y/3f+B/kf/L/r/4T/Jf8h98f8P/Nf83/V/zn/Q/4L/z/V/0f/F/1/+b/j/1r/zP+h/wP/R/y//x+3f7b/1/6v/h/6v+P/kP+x/4P/v/o/4f+c/1v+D/0/7X/w/1n/uP5b/g/97/A/1P/d/yn/f/v/2v/j/h/7f+z/iP/X/wP/9/1f8v/A/7v/T//w8//+v5X/P/u/8H/e/+H/d/wv/F/wv+7/X/3//x/7f+D/j/9r/Gf/P/j/+r/6f8//T/t/+D/h/9v/Bf4r/f/2/9v/S/+f+B/8P+v/r/9//T/v/5X/d/yv+l/3f9//Vf8H/N/xf+T/qf+n/rf9//I/8/+X/4P+T/h/6v/N/7v/B/2f9L/2/8p/2/+T/6v/J/wP/F/wv/7/B/5v/5/5v/x/6v+l/5v/1/zP/T/rf/z/p/4v/b/3/+7/t/+f+D/6v9b/w/+D/3v+D/3v8T/t/7f9T/t/7v/r/yP/h/yP/7/8H/h/+H/5f8X/r/5X/v/2/8v/P/w//r/j/8//Gf8//lf+f+r/2/+n/f/zP/H/0P+H/9/+r/6/9P/e/+H/D/0P+B/3P/J/0v+3/l/6v/V/0f+z/m/63/b/yP+n/0f9//X/9v+3/r/8H/H/7f/P/wv+T/9f8X/H/4v+f/n/6X/h/7P/T/xv+X/w/+b/gP+p/w/9X/N/5v+x/yP/p/z/9D/g/57/O/7P+j/sf+D/g/53/E/5/+T/pf9n/W/6v+B/8f+d/yv+7/2f8f/e/6/+P/x//F//P+v/of+n/h/5P+f/kf+X/pf8n/S/5v+v/of9n/Q/9P/a/7P+t/w/8v/U/5P+l/xf9P/I/6X/B/4v/R/y//H/if9v/Q/4P+T/sf/D/9/+t/3f+D/lf93/D/9/+d/3f8v/W/9v+n/v/43/e/yv/L/8f8v/d/0f/b/sf/7/l/+n/x/6v/L/zP/d/3P+H/s/73/n/y//n/z/8n/Q/93/b/w//n/9/7/9D/4f+j/z/8z/f/7v/D/wf+D/qf/z/j/6n/d/y/+b/2/+T/if+H/k/4H/m/5H/i/+v/b/+f+3/l/4X/9/wf+j/of93/N/8P/f/wf87/O/8//E/7/+H/lf8n/F/wf9T/Gf9X/E/6H/F/0P+7/z/+x/z/+l/3/8j/T/yv+x/wv+z/r/8P/H/y//n/l/8v/v/4P+x/8P/p/7f9n/n/6H/e/+H/u/7v+x/8f+L/3f+D/2/+D/uf+L/g/7H/s/8v/V/7f+z/wf9z/N/8H/h/+3/n/9v/f/of+n/if9X/U/9v/s/4v/j/xv/9/zv9D/q/93/q/5n/l/2/9j/x/+T/sf9P/X/iv/h/x//B/4v+x/8/9T/c/8f/+/4n/+/4n/i/8X/Q/9v/e/6H/l/43/K/8X/y/6X/D/1P+H/3/+z/m/+r/p/+3/g/4H/p/73/1/6f+v/qf9X/QAAAAAAAAAAAAAAAAAAAAAAAOCZf9t2f3r9c8sCAAAAAElFTkSuQmCC";
 
     // Add photo to the receipt if it exists
     const photoSection = data.photoDataUrl ? `
@@ -616,15 +621,9 @@ export function generateReceipt(isCopy = false) {
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
                 <div><strong class="text-gray-500 block">Job File No:</strong> <span class="font-mono">${jobData.jfn || 'N/A'}</span></div>
-                <div><strong class="text-gray-500 block">Invoice No:</strong> <span class="font-mono">${jobData.in || 'N/A'}</span></div>
                 <div><strong class="text-gray-500 block">AWB / MAWB:</strong> <span class="font-mono">${jobData.mawb || 'N/A'}</span></div>
-                <div><strong class="text-gray-500 block">Airlines:</strong> ${jobData.ca || 'N/A'}</div>
                 <div><strong class="text-gray-500 block">Shipper:</strong> ${jobData.sh || 'N/A'}</div>
                 <div><strong class="text-gray-500 block">Consignee:</strong> ${jobData.co || 'N/A'}</div>
-                <div><strong class="text-gray-500 block">Origin:</strong> ${jobData.or || 'N/A'}</div>
-                <div><strong class="text-gray-500 block">Destination:</strong> ${jobData.de || 'N/A'}</div>
-                <div class="col-span-1 sm:col-span-2"><strong class="text-gray-500 block">Description:</strong> ${jobData.dsc || 'N/A'}</div>
-                <div class="col-span-1 sm:col-span-2"><strong class="text-gray-500 block">Gross Weight:</strong> ${jobData.gw || 'N/A'}</div>
             </div>
             <div class="bg-gray-50 p-4 rounded-lg border">
                 <h4 class="font-bold text-lg mb-3">Delivery Confirmation</h4>
@@ -731,11 +730,15 @@ export async function openAdminPanel() {
     try {
         const snapshot = await getDocs(collection(db, 'users'));
         const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setAllUsersCache(users);
 
-        const listEl = document.getElementById('user-list-admin');
-        listEl.innerHTML = '';
+        const userListEl = document.getElementById('user-list-admin');
+        const permissionListEl = document.getElementById('pod-permission-list');
+        userListEl.innerHTML = '';
+        permissionListEl.innerHTML = '';
+        
         if(users.length === 0) {
-            listEl.innerHTML = `<p class="text-gray-500 text-center p-4">No users found.</p>`;
+            userListEl.innerHTML = `<p class="text-gray-500 text-center p-4">No users found.</p>`;
         } else {
             users.forEach(user => {
                 const canDelete = currentUser.uid !== user.id;
@@ -744,7 +747,7 @@ export async function openAdminPanel() {
                 const userEl = document.createElement('div');
                 userEl.className = "p-3 border-b space-y-2 md:space-y-0 md:grid md:grid-cols-4 md:gap-4 md:items-center";
                 userEl.innerHTML = `
-                    <div class="flex justify-between items-center md:block col-span-1">
+                    <div class="flex justify-between items-center md:block col-span-2">
                         <div>
                             <p class="font-medium">${user.displayName}</p>
                             <p class="text-xs text-gray-500">${user.email}</p>
@@ -758,15 +761,31 @@ export async function openAdminPanel() {
                             <option value="inactive" ${user.status === 'inactive' ? 'selected' : ''}>Inactive</option>
                         </select>
                     </div>
-                    <div class="hidden md:block text-sm text-gray-600 capitalize col-span-1">${user.role}</div>
                     <div class="text-right col-span-1">
                         ${deleteButton}
                     </div>
                 `;
-                listEl.appendChild(userEl);
+                userListEl.appendChild(userEl);
+
+                // Add to permission list if they are not a driver
+                if(user.role !== 'driver') {
+                    const permissionEl = document.createElement('div');
+                    permissionEl.className = "p-3 border-b flex justify-between items-center";
+                    permissionEl.innerHTML = `
+                        <div>
+                            <p class="font-medium">${user.displayName}</p>
+                            <p class="text-xs text-gray-500 capitalize">${user.role}</p>
+                        </div>
+                        <div class="flex items-center">
+                            <label for="perm-${user.id}" class="mr-2 text-sm">Can Create POD:</label>
+                            <input type="checkbox" id="perm-${user.id}" data-uid="${user.id}" class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 pod-permission-checkbox" ${user.can_create_pod ? 'checked' : ''}>
+                        </div>
+                    `;
+                    permissionListEl.appendChild(permissionEl);
+                }
             });
 
-            listEl.addEventListener('click', e => {
+            userListEl.addEventListener('click', e => {
                 if (e.target.dataset.action === 'delete-user') {
                     const userId = e.target.dataset.uid;
                     const userName = e.target.dataset.name;
@@ -786,8 +805,9 @@ export async function openAdminPanel() {
 export async function saveUserChanges() {
     showLoader();
     const batch = writeBatch(db);
-    const statusSelects = document.querySelectorAll('.status-select');
     
+    // Handle status changes
+    const statusSelects = document.querySelectorAll('.status-select');
     statusSelects.forEach(select => {
         const uid = select.dataset.uid;
         const newStatus = select.value;
@@ -795,14 +815,24 @@ export async function saveUserChanges() {
         batch.update(docRef, { status: newStatus });
     });
 
+    // Handle permission changes
+    const permissionCheckboxes = document.querySelectorAll('.pod-permission-checkbox');
+    permissionCheckboxes.forEach(checkbox => {
+        const uid = checkbox.dataset.uid;
+        const canCreate = checkbox.checked;
+        const docRef = doc(db, 'users', uid);
+        batch.update(docRef, { can_create_pod: canCreate });
+    });
+
+
     try {
         await batch.commit();
-        showNotification("User statuses updated successfully!", false);
+        showNotification("User details updated successfully!", false);
         closeModal('admin-panel-modal');
-        loadAdminData();
+        loadAdminData(); // Refresh data
     } catch (error) {
-        console.error("Error saving user statuses:", error);
-        showNotification("Failed to update statuses.", true);
+        console.error("Error saving user changes:", error);
+        showNotification("Failed to update user details.", true);
     } finally {
         hideLoader();
     }

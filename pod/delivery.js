@@ -79,7 +79,8 @@ export function handleJobFileSearch(e) {
     const filteredJobs = jobFilesCache.filter(job => 
         (job.jfn && job.jfn.toLowerCase().includes(searchTerm)) ||
         (job.sh && job.sh.toLowerCase().includes(searchTerm)) ||
-        (job.co && job.co.toLowerCase().includes(searchTerm))
+        (job.co && job.co.toLowerCase().includes(searchTerm)) ||
+        (job.mawb && job.mawb.toLowerCase().includes(searchTerm)) // Search by AWB/MAWB
     ).slice(0, 10);
 
     if (filteredJobs.length > 0) {
@@ -100,14 +101,11 @@ export function selectJobFile(e) {
         setSelectedJobFile(job);
         
         if (job) {
-            document.getElementById('form-job-file-no').textContent = job.jfn;
-            document.getElementById('form-job-shipper-consignee').textContent = `${job.sh} / ${job.co}`;
+            document.getElementById('manual-job-file-no').value = job.jfn || '';
+            document.getElementById('manual-mawb').value = job.mawb || '';
+            document.getElementById('manual-shipper').value = job.sh || '';
+            document.getElementById('manual-consignee').value = job.co || '';
             document.getElementById('job-file-search').value = job.jfn;
-            document.getElementById('delivery-origin').value = job.or || '';
-            document.getElementById('delivery-destination').value = job.de || '';
-            document.getElementById('delivery-airlines').value = job.ca || '';
-            document.getElementById('delivery-mawb').value = job.mawb || '';
-            document.getElementById('delivery-inv').value = job.in || '';
         }
         document.getElementById('job-file-suggestions').classList.add('hidden');
     }
@@ -115,56 +113,59 @@ export function selectJobFile(e) {
 
 export async function handleAssignDelivery(e) {
     e.preventDefault();
-    if (!selectedJobFile) {
-        showNotification("Please select a job file first.", true);
-        return;
-    }
-
     const driverId = document.getElementById('driver-select').value;
     const location = document.getElementById('delivery-location').value.trim();
 
+    const manualJobFileNo = document.getElementById('manual-job-file-no').value.trim();
+    
     if (!driverId || !location) {
-        showNotification("Please select a driver and enter a location.", true);
+        showNotification("Please select a driver and enter a delivery location.", true);
         return;
     }
 
-    const existingDelivery = deliveriesCache.find(delivery => delivery.jobFileId === selectedJobFile.id);
-    if (existingDelivery) {
-        showNotification(`A delivery for Job File "${selectedJobFile.jfn}" has already been assigned.`, true);
+    if (!manualJobFileNo && !selectedJobFile) {
+        showNotification("Please select a job file or enter the Job File No. manually.", true);
         return;
     }
-    
+
     showLoader();
     try {
         const driver = allUsersCache.find(d => d.id === driverId);
+        
+        let jobFileId = selectedJobFile ? selectedJobFile.id : `manual_${Date.now()}`;
+        let jobFileData = selectedJobFile ? {
+             jfn: selectedJobFile.jfn || 'N/A',
+             sh: selectedJobFile.sh || 'N/A',
+             co: selectedJobFile.co || 'N/A',
+             dsc: selectedJobFile.dsc || 'N/A',
+             gw: selectedJobFile.gw || 'N/A',
+             mawb: selectedJobFile.mawb || 'N/A',
+        } : {
+            jfn: manualJobFileNo,
+            mawb: document.getElementById('manual-mawb').value.trim(),
+            sh: document.getElementById('manual-shipper').value.trim(),
+            co: document.getElementById('manual-consignee').value.trim(),
+            dsc: 'Manual Entry',
+            gw: 'N/A',
+        };
+
         const deliveryData = {
-            jobFileId: selectedJobFile.id,
-            jobFileData: {
-                jfn: selectedJobFile.jfn || 'N/A',
-                sh: selectedJobFile.sh || 'N/A',
-                co: selectedJobFile.co || 'N/A',
-                dsc: selectedJobFile.dsc || 'N/A',
-                gw: selectedJobFile.gw || 'N/A',
-                mawb: document.getElementById('delivery-mawb').value.trim() || 'N/A',
-                or: document.getElementById('delivery-origin').value.trim() || 'N/A', 
-                de: document.getElementById('delivery-destination').value.trim() || 'N/A',
-                ca: document.getElementById('delivery-airlines').value.trim() || 'N/A',
-                in: document.getElementById('delivery-inv').value.trim() || 'N/A',
-            },
+            jobFileId: jobFileId,
+            jobFileData: jobFileData,
             deliveryLocation: location,
             deliveryNotes: document.getElementById('additional-notes')?.value.trim(),
             driverUid: driver.id,
             driverName: driver.displayName,
             status: 'Pending',
             createdAt: serverTimestamp(),
+            createdBy: currentUser.displayName,
+            createdById: currentUser.uid,
         };
 
         await addDoc(collection(db, 'deliveries'), deliveryData);
 
         showNotification("Delivery assigned successfully!");
         document.getElementById('delivery-form').reset();
-        document.getElementById('form-job-file-no').textContent = 'Select a job';
-        document.getElementById('form-shipper-consignee').textContent = 'N/A';
         document.getElementById('job-file-search').value = '';
         setSelectedJobFile(null);
 
@@ -245,6 +246,8 @@ export function renderAllDeliveryViews() {
     
     const pendingList = document.getElementById('pending-deliveries-list');
     const completedList = document.getElementById('completed-deliveries-list');
+    if (!pendingList || !completedList) return;
+
     pendingList.innerHTML = '';
     completedList.innerHTML = '';
 
@@ -293,5 +296,3 @@ function renderDashboardMetrics() {
     document.getElementById('stat-completed').textContent = completedCount;
     document.getElementById('stat-total').textContent = deliveriesCache.length;
 }
-
-    
