@@ -73,30 +73,39 @@ async function handleSignUp(email, password, displayName) {
         
         hideLoader();
         if (isFirstUser) {
-             showNotification("Admin account created successfully! Logging in...", false);
+             showNotification("Admin account created successfully! Please sign in.", false);
         } else {
             showNotification("Account created! Please wait for admin approval.", false);
-            await signOut(auth); 
-            toggleAuthView(true);
         }
+        await signOut(auth); 
+        toggleAuthView(true);
+
     } catch (error) {
         hideLoader();
         console.error("Sign up error:", error);
-        showNotification(error.message, true);
+        if (error.code === 'auth/email-already-in-use') {
+            showNotification("This email address is already in use.", true);
+        } else {
+            showNotification(error.message, true);
+        }
     }
 }
 
 async function handleLogin(email, password) {
+    if (!email || !password) {
+        showNotification("Please enter both email and password.", true);
+        return;
+    }
     showLoader();
     try {
+        // This will trigger onAuthStateChanged if successful
         await signInWithEmailAndPassword(auth, email, password);
-        // onAuthStateChanged will handle the redirect
     } catch (error) {
         hideLoader();
-        console.error("Login error:", error);
-        let message = "Login failed. Please check your email and password.";
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-            message = "Incorrect email or password. Please try again or reset your password.";
+        console.error("Login error:", error.code, error.message);
+        let message = "Login failed. Please check your credentials.";
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            message = "Incorrect email or password. Please try again.";
         }
         showNotification(message, true);
     }
@@ -164,12 +173,14 @@ function initializeAppLogic() {
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
+            // User is signed in according to Firebase Auth. Now verify against Firestore.
             const userDocRef = doc(db, 'users', user.uid);
             const userDoc = await getDoc(userDocRef);
             
             if (userDoc.exists()) {
                 const userData = userDoc.data();
                 if (userData.status === 'active') {
+                    // All checks passed. User is valid and active.
                     if (userData.role === 'warehouse_supervisor') {
                         window.location.href = '../pod/index.html';
                     } else {
@@ -178,18 +189,26 @@ function initializeAppLogic() {
                 } else if (userData.status === 'inactive') {
                     document.getElementById('approval-message').style.display = 'block';
                     document.getElementById('blocked-message').style.display = 'none';
-                    await signOut(auth); // Force logout
+                    await signOut(auth); // Force logout, user is not approved
+                    hideLoader();
                 } else if (userData.status === 'blocked') {
                     document.getElementById('approval-message').style.display = 'none';
                     document.getElementById('blocked-message').style.display = 'block';
-                    await signOut(auth); // Force logout
+                    await signOut(auth); // Force logout, user is blocked
+                    hideLoader();
                 }
             } else {
-                await signOut(auth);
+                // User exists in Auth, but not in Firestore DB. This is an invalid state.
+                showNotification("User account data not found. Please contact admin.", true);
+                await signOut(auth); // Force logout
+                hideLoader();
             }
+        } else {
+            // No user is signed in. Do nothing, just stay on the login page.
+            hideLoader();
         }
     });
 }
 
-// Start the app logic
+// Start the app logic for the login page
 initializeAppLogic();
