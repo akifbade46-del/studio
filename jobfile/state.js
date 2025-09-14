@@ -17,5 +17,3 @@ export const setAnalyticsDataCache = (data) => { analyticsDataCache = data; };
 export const setCurrentFilteredJobs = (jobs) => { currentFilteredJobs = jobs; };
 export const setFileIdToReject = (id) => { fileIdToReject = id; };
 export const setProfitChartInstance = (instance) => { profitChartInstance = instance; };
-
-    

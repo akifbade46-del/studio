@@ -1,9 +1,6 @@
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { showLogin, showApp, showNotification, showLoader, hideLoader, closeModal, openModal } from './ui.js';
-import { setCurrentUser } from './state.js';
-import { loadJobFiles, loadClients } from './firestore.js';
 
 // --- Firebase Configuration ---
 const firebaseConfig = {
@@ -16,98 +13,46 @@ const firebaseConfig = {
     measurementId: "G-8EHX5K7YHL"
 };
 
+// --- UI Helper Functions (for this page only) ---
+const showLoader = () => document.getElementById('loader-overlay').classList.add('visible');
+const hideLoader = () => document.getElementById('loader-overlay').classList.remove('visible');
+const openModal = (id) => document.getElementById(id).classList.add('visible');
+const closeModal = (id) => document.getElementById(id).classList.remove('visible');
+
+function showNotification(message, isError = false) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.style.backgroundColor = isError ? '#c53030' : '#2d3748';
+    notification.classList.add('show');
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+function toggleAuthView(showLoginView) {
+    const nameField = document.getElementById('signup-name-field');
+    const emailField = document.getElementById('email-address');
+    
+    document.getElementById('auth-title').textContent = showLoginView ? 'Sign in to your account' : 'Create a new account';
+    document.getElementById('auth-btn').textContent = showLoginView ? 'Sign in' : 'Sign up';
+    document.getElementById('auth-link').textContent = showLoginView ? 'Create a new account' : 'Already have an account? Sign in';
+    nameField.style.display = showLoginView ? 'none' : 'block';
+    
+    emailField.classList.toggle('rounded-t-md', !showLoginView);
+
+    document.getElementById('approval-message').style.display = 'none';
+    document.getElementById('blocked-message').style.display = 'none';
+}
+
+
 // --- Firebase Initialization ---
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-export { db, auth };
-
-function setupAuthEventListeners() {
-    document.getElementById('auth-link').addEventListener('click', (e) => {
-        e.preventDefault();
-        const isLoginView = e.target.textContent.includes('Sign in');
-        toggleAuthView(!isLoginView);
-    });
-
-    document.getElementById('auth-btn').addEventListener('click', () => {
-        const email = document.getElementById('email-address').value;
-        const password = document.getElementById('password').value;
-        const isLogin = document.getElementById('auth-btn').textContent.includes('Sign in');
-
-        if (isLogin) {
-            handleLogin(email, password);
-        } else {
-            const displayName = document.getElementById('full-name').value;
-             if (!email || !password || !displayName) {
-                 showNotification("Please fill all fields to sign up.", true);
-                 return;
-            }
-            handleSignUp(email, password, displayName);
-        }
-    });
-    
-    document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
-    document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
-    document.getElementById('close-forgot-password-btn').addEventListener('click', () => closeModal('forgot-password-modal'));
-}
-
-
-export function initializeAppLogic() {
-    setupAuthEventListeners();
-
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const userDocRef = doc(db, 'users', user.uid);
-            let userDoc = await getDoc(userDocRef);
-            
-            if (!userDoc.exists()) {
-                const usersCollectionRef = collection(db, 'users');
-                const userQuerySnapshot = await getDocs(usersCollectionRef);
-                const isFirstUser = userQuerySnapshot.empty;
-
-                const newUser = {
-                    email: user.email,
-                    displayName: user.displayName || user.email.split('@')[0],
-                    role: isFirstUser ? 'admin' : 'user',
-                    status: isFirstUser ? 'active' : 'inactive', 
-                    createdAt: serverTimestamp()
-                };
-                await setDoc(userDocRef, newUser);
-                userDoc = await getDoc(userDocRef);
-            }
-            
-            const currentUserData = { uid: user.uid, email: user.email, ...userDoc.data() };
-            
-            if (currentUserData.status === 'inactive') {
-                showLogin();
-                document.getElementById('approval-message').style.display = 'block';
-                document.getElementById('blocked-message').style.display = 'none';
-                await signOut(auth); 
-                return;
-            }
-
-            if (currentUserData.status === 'blocked') {
-                showLogin();
-                document.getElementById('approval-message').style.display = 'none';
-                document.getElementById('blocked-message').style.display = 'block';
-                await signOut(auth);
-                return;
-            }
-            
-            setCurrentUser(currentUserData);
-            showApp();
-            loadJobFiles();
-            loadClients();
-        } else {
-            setCurrentUser(null);
-            showLogin();
-        }
-    });
-}
 
 // --- Authentication Logic ---
-export async function handleSignUp(email, password, displayName) {
+async function handleSignUp(email, password, displayName) {
     showLoader();
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -141,11 +86,13 @@ export async function handleSignUp(email, password, displayName) {
     }
 }
 
-export async function handleLogin(email, password) {
+async function handleLogin(email, password) {
     showLoader();
     try {
         await signInWithEmailAndPassword(auth, email, password);
+        // onAuthStateChanged will handle the redirect
     } catch (error) {
+        hideLoader();
         console.error("Login error:", error);
         let message = "Login failed. Please check your email and password.";
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
@@ -153,10 +100,9 @@ export async function handleLogin(email, password) {
         }
         showNotification(message, true);
     }
-    hideLoader();
 }
 
-export async function handleForgotPassword() {
+async function handleForgotPassword() {
     const email = document.getElementById('reset-email').value.trim();
     if (!email) {
         showNotification("Please enter your email address.", true);
@@ -179,34 +125,73 @@ export async function handleForgotPassword() {
     }
 }
 
-export function handleLogout() {
-    signOut(auth);
+function setupAuthEventListeners() {
+    let isLoginView = true;
+
+    document.getElementById('auth-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        isLoginView = !isLoginView;
+        toggleAuthView(isLoginView);
+    });
+
+    document.getElementById('auth-btn').addEventListener('click', () => {
+        const email = document.getElementById('email-address').value;
+        const password = document.getElementById('password').value;
+
+        if (isLoginView) {
+            handleLogin(email, password);
+        } else {
+            const displayName = document.getElementById('full-name').value;
+             if (!email || !password || !displayName) {
+                 showNotification("Please fill all fields to sign up.", true);
+                 return;
+            }
+            handleSignUp(email, password, displayName);
+        }
+    });
+    
+    document.getElementById('forgot-password-link').addEventListener('click', (e) => { 
+        e.preventDefault(); 
+        openModal('forgot-password-modal'); 
+    });
+    document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
+    document.getElementById('close-forgot-password-btn').addEventListener('click', () => closeModal('forgot-password-modal'));
 }
 
-export function toggleAuthView(showLoginView) {
-    const nameField = document.getElementById('signup-name-field');
-    const emailField = document.getElementById('email-address');
-    const passwordField = document.getElementById('password');
-    
-    document.getElementById('auth-title').textContent = showLoginView ? 'Sign in to your account' : 'Create a new account';
-    document.getElementById('auth-btn').textContent = showLoginView ? 'Sign in' : 'Sign up';
-    document.getElementById('auth-link').textContent = showLoginView ? 'Create a new account' : 'Already have an account? Sign in';
-    nameField.style.display = showLoginView ? 'none' : 'block';
-    
-    if (showLoginView) {
-        emailField.classList.remove('rounded-t-md');
-        emailField.classList.add('rounded-md');
-        passwordField.classList.remove('rounded-b-md');
-        passwordField.classList.add('rounded-md');
-    } else {
-        emailField.classList.add('rounded-t-md');
-        emailField.classList.remove('rounded-md');
-        passwordField.classList.add('rounded-b-md');
-        passwordField.classList.remove('rounded-md');
-    }
 
-    document.getElementById('approval-message').style.display = 'none';
-    document.getElementById('blocked-message').style.display = 'none';
+function initializeAppLogic() {
+    setupAuthEventListeners();
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDoc = await getDoc(userDocRef);
+            
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                if (userData.status === 'active') {
+                    if (userData.role === 'warehouse_supervisor') {
+                        window.location.href = '../pod/index.html';
+                    } else {
+                        window.location.href = 'app.html';
+                    }
+                } else if (userData.status === 'inactive') {
+                    document.getElementById('approval-message').style.display = 'block';
+                    document.getElementById('blocked-message').style.display = 'none';
+                    await signOut(auth); // Force logout
+                } else if (userData.status === 'blocked') {
+                    document.getElementById('approval-message').style.display = 'none';
+                    document.getElementById('blocked-message').style.display = 'block';
+                    await signOut(auth); // Force logout
+                }
+            } else {
+                // This case handles newly signed-up users who don't have a doc yet, or errors.
+                // We just sign them out to prevent redirect loops.
+                await signOut(auth);
+            }
+        }
+    });
 }
 
-    
+// Start the app logic
+initializeAppLogic();

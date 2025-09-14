@@ -1,14 +1,13 @@
-import { showLoader, hideLoader, showNotification } from './ui.js';
+import { showLoader, hideLoader, showNotification, addChargeRow, populateTable } from './ui.js';
 import { getFormData } from './utils.js';
 import { chargeDescriptions } from './state.js';
-import { addChargeRow } from './ui.js';
 
 async function callGeminiApi(payload, retries = 3, delay = 1000) {
-    const apiKey = "PASTE_YOUR_GEMINI_API_KEY_HERE"; // IMPORTANT: Add your key here.
+    const apiKey = "AIzaSyChmm3BqF6aBPEg-4M7zDHRstERk8sCgL8"; 
     if (!apiKey || apiKey === "PASTE_YOUR_GEMINI_API_KEY_HERE") {
         throw new Error("Gemini API key is missing.");
     }
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
     try {
         const response = await fetch(apiUrl, {
@@ -19,18 +18,15 @@ async function callGeminiApi(payload, retries = 3, delay = 1000) {
 
         if (!response.ok) {
             if (response.status === 429 && retries > 0) {
-                console.warn(`API call failed with status 429. Retrying in ${delay}ms...`);
                 await new Promise(resolve => setTimeout(resolve, delay));
                 return callGeminiApi(payload, retries - 1, delay * 2);
             }
             const errorBody = await response.json();
-            console.error("Gemini API Error:", errorBody);
             throw new Error(`API call failed with status ${response.status}: ${errorBody.error.message}`);
         }
         return await response.json();
     } catch (error) {
         if (retries > 0) {
-            console.warn(`API call failed. Retrying in ${delay}ms...`, error);
             await new Promise(resolve => setTimeout(resolve, delay));
             return callGeminiApi(payload, retries - 1, delay * 2);
         }
@@ -121,7 +117,7 @@ export async function suggestCharges() {
                 const tableBody = document.getElementById('charges-table-body');
                 tableBody.innerHTML = '';
                 if(parsedJson.charges.length === 0){
-                     for(let i=0; i<5; i++) addChargeRow();
+                     populateTable();
                 } else {
                     parsedJson.charges.forEach(charge => {
                         addChargeRow({
