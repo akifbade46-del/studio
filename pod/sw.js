@@ -1,4 +1,5 @@
-const CACHE_NAME = 'qgo-pod-cache-v1';
+
+const CACHE_NAME = 'qgo-pod-cache-v2'; // Incremented cache version
 const urlsToCache = [
   './',
   './index.html',
@@ -23,7 +24,6 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Opened cache');
-        // Add all URLs to cache, but don't fail if one of the external URLs fails
         const cachePromises = urlsToCache.map(urlToCache => {
             return cache.add(urlToCache).catch(err => {
                 console.warn(`Failed to cache ${urlToCache}:`, err);
@@ -34,47 +34,33 @@ self.addEventListener('install', event => {
   );
 });
 
+// Use the Network First (Network Falling Back to Cache) strategy
 self.addEventListener('fetch', event => {
     // We only want to cache GET requests.
     if (event.request.method !== 'GET') {
-        event.respondWith(fetch(event.request));
         return;
     }
 
-    // For HTML navigation requests, use a network-first strategy.
-    if (event.request.mode === 'navigate') {
-        event.respondWith(
-            fetch(event.request).catch(() => {
-                return caches.match('./index.html');
-            })
-        );
-        return;
-    }
-    
-    // For other assets, use a cache-first strategy.
     event.respondWith(
-        caches.match(event.request)
-        .then(response => {
-            if (response) {
-                return response;
-            }
-
-            return fetch(event.request).then(
-                response => {
-                    if (!response || response.status !== 200 || response.type === 'opaque') {
-                        return response;
-                    }
+        fetch(event.request)
+            .then(response => {
+                // If the fetch is successful, clone the response and cache it.
+                if (response && response.status === 200) {
                     const responseToCache = response.clone();
                     caches.open(CACHE_NAME)
                         .then(cache => {
                             cache.put(event.request, responseToCache);
                         });
-                    return response;
                 }
-            );
-        })
+                return response;
+            })
+            .catch(() => {
+                // If the network request fails, try to get the response from the cache.
+                return caches.match(event.request);
+            })
     );
 });
+
 
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
@@ -83,6 +69,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
+            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })

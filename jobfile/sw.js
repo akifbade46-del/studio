@@ -1,4 +1,5 @@
-const CACHE_NAME = 'jobfile-cache-v1';
+
+const CACHE_NAME = 'jobfile-cache-v2'; // Incremented cache version
 const urlsToCache = [
   './',
   './index.html',
@@ -6,6 +7,11 @@ const urlsToCache = [
   './style.css',
   './script.js',
   './auth.js',
+  './ui.js',
+  './firestore.js',
+  './gemini.js',
+  './state.js',
+  './utils.js',
   './manifest.json',
   'http://qgocargo.com/logo.png',
   'https://cdn.tailwindcss.com',
@@ -13,6 +19,7 @@ const urlsToCache = [
   'https://cdn.jsdelivr.net/npm/chart.js'
 ];
 
+// Install a service worker
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -29,33 +36,35 @@ self.addEventListener('install', event => {
   );
 });
 
+// Use the Network First (Network Falling Back to Cache) strategy
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response;
-        }
+    // We only want to cache GET requests.
+    if (event.request.method !== 'GET') {
+        return;
+    }
 
-        return fetch(event.request).then(
-          response => {
-            if(!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            const responseToCache = response.clone();
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          }
-        );
-      })
-  );
+    event.respondWith(
+        fetch(event.request)
+            .then(response => {
+                // If the fetch is successful, clone the response and cache it.
+                if (response && response.status === 200) {
+                    const responseToCache = response.clone();
+                    caches.open(CACHE_NAME)
+                        .then(cache => {
+                            cache.put(event.request, responseToCache);
+                        });
+                }
+                return response;
+            })
+            .catch(() => {
+                // If the network request fails, try to get the response from the cache.
+                return caches.match(event.request);
+            })
+    );
 });
 
+
+// Activate the service worker and remove old caches
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -63,6 +72,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
+            console.log('Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
