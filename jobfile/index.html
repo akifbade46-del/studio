@@ -248,7 +248,11 @@
                         if (userDoc.exists()) {
                             const userData = userDoc.data();
                             if (userData.status === 'active') {
-                                window.location.href = 'app.html';
+                                if (userData.role === 'warehouse_supervisor') {
+                                    window.location.href = '../pod/index.html';
+                                } else {
+                                    window.location.href = 'app.html';
+                                }
                             } else {
                                 if (userData.status === 'inactive') {
                                     document.getElementById('approval-message').style.display = 'block';
@@ -261,7 +265,6 @@
                                 hideLoader();
                             }
                         } else {
-                           // This case can happen if a user is deleted from firestore but not auth
                            showNotification("User profile not found. Please contact an administrator.", true);
                            await signOut(auth);
                            hideLoader();
@@ -273,15 +276,12 @@
                         hideLoader();
                     }
                 } else {
-                    // User is signed out.
                     hideLoader();
                 }
             });
         }
         
-        // This is the crucial line that was missing.
         initializeAppLogic();
     </script>
 </body>
 </html>
-
