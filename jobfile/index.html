@@ -262,7 +262,6 @@
                         } else {
                            // This case means user exists in Auth but not in Firestore.
                            // This can happen if the Firestore user doc was deleted manually.
-                           // We should sign them out and show a generic error.
                            showNotification("User profile not found. Please contact an administrator.", true);
                            await signOut(auth);
                            hideLoader();
