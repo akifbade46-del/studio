@@ -185,8 +185,6 @@ function initializeAppLogic() {
                     await signOut(auth); // Force logout
                 }
             } else {
-                // This case handles newly signed-up users who don't have a doc yet, or errors.
-                // We just sign them out to prevent redirect loops.
                 await signOut(auth);
             }
         }
