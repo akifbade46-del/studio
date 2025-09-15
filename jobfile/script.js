@@ -1,4 +1,6 @@
+
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { db, auth } from './firestore.js';
 import { 
     showLoader, hideLoader, showNotification, openModal, closeModal, 
@@ -22,14 +24,22 @@ function initializeApp() {
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             showLoader();
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
-            if (userDoc.exists() && userDoc.data().status === 'active') {
-                state.currentUser = { uid: user.uid, ...userDoc.data() };
-                initializeMainApp();
-            } else {
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists() && userDoc.data().status === 'active') {
+                    state.currentUser = { uid: user.uid, ...userDoc.data() };
+                    initializeMainApp();
+                } else {
+                    // This handles cases where user is inactive, blocked, or deleted from DB
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+                showNotification("Could not verify user. Logging out.", true);
                 window.location.href = 'index.html';
+            } finally {
+                hideLoader();
             }
-            hideLoader();
         } else {
             window.location.href = 'index.html';
         }
