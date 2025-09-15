@@ -1,7 +1,5 @@
-
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { db, auth } from './firestore.js';
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { db, auth, showLoginView } from './auth.js';
 import { 
     showLoader, hideLoader, showNotification, openModal, closeModal, 
     populateFormFromData, clearForm, addChargeRow, populateTable, calculate, 
@@ -17,36 +15,10 @@ import { callGeminiApi } from './gemini.js';
 import { state } from './state.js';
 
 
-function initializeApp() {
-    // Check if we are on the main app page
-    if (!document.getElementById('app-container')) return;
+export function initializeMainApp() {
+    // This function is now called from auth.js after successful login
+    hideLoader();
 
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            showLoader();
-            try {
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (userDoc.exists() && userDoc.data().status === 'active') {
-                    state.currentUser = { uid: user.uid, ...userDoc.data() };
-                    initializeMainApp();
-                } else {
-                    // This handles cases where user is inactive, blocked, or deleted from DB
-                    window.location.href = 'index.html';
-                }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-                showNotification("Could not verify user. Logging out.", true);
-                window.location.href = 'index.html';
-            } finally {
-                hideLoader();
-            }
-        } else {
-            window.location.href = 'index.html';
-        }
-    });
-}
-
-function initializeMainApp() {
     document.getElementById('user-display-name').textContent = state.currentUser.displayName;
     document.getElementById('user-role').textContent = state.currentUser.role;
 
@@ -68,6 +40,17 @@ function initializeMainApp() {
     clearForm();
     attachEventListeners();
 }
+
+async function handleLogout() {
+    try {
+        await signOut(auth);
+        showLoginView(); // This will show the login screen and hide the app
+        showNotification("You have been logged out.");
+    } catch (error) {
+        showNotification("Logout failed.", true);
+    }
+}
+
 
 async function generateRemarks() {
     showLoader();
@@ -156,7 +139,10 @@ function getFormData() {
 
 
 function attachEventListeners() {
-    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+    // Only attach events once. A flag can prevent re-attachment if needed.
+    if (state.listenersAttached) return;
+
+    document.getElementById('logout-btn').addEventListener('click', handleLogout);
     document.getElementById('save-job-btn').addEventListener('click', () => saveJobFile(getFormData()));
     document.getElementById('new-job-btn').addEventListener('click', clearForm);
     document.getElementById('print-page-btn').addEventListener('click', printPage);
@@ -243,7 +229,6 @@ function attachEventListeners() {
         if(button.dataset.action === 'load') loadJobFileById(id);
         if(button.dataset.action === 'preview') previewJobFileById(id);
     });
-}
 
-// --- App Entry Point ---
-initializeApp();
+    state.listenersAttached = true;
+}

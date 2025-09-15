@@ -2,6 +2,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebas
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { showLoader, hideLoader, showNotification, openModal, closeModal } from './ui.js';
+import { initializeMainApp } from './script.js';
+import { state } from './state.js';
 
 // --- Firebase Configuration ---
 const firebaseConfig = {
@@ -21,6 +23,21 @@ const auth = getAuth(app);
 export { db, auth };
 
 let isLoginView = true;
+
+// --- DOM Elements ---
+const loginScreen = document.getElementById('login-screen');
+const appContainer = document.getElementById('app-container');
+
+// --- View Toggling ---
+export function showAppView() {
+    loginScreen.style.display = 'none';
+    appContainer.style.display = 'block';
+}
+
+export function showLoginView() {
+    loginScreen.style.display = 'flex';
+    appContainer.style.display = 'none';
+}
 
 // --- Authentication Logic ---
 async function handleSignUp(email, password, displayName) {
@@ -60,7 +77,7 @@ async function handleLogin(email, password) {
     showLoader();
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        // onAuthStateChanged will handle the redirect
+        // onAuthStateChanged will handle the redirect or view change
     } catch (error) {
         hideLoader();
         console.error("Login error:", error);
@@ -108,10 +125,7 @@ function toggleAuthView(showLogin) {
     document.getElementById('auth-link').textContent = showLogin ? 'Create a new account' : 'Already have an account? Sign in';
 }
 
-function initializeAppLogic() {
-    // Check if we are on the login page
-    if (!document.getElementById('login-screen')) return;
-
+function initializeAuth() {
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             showLoader();
@@ -120,11 +134,13 @@ function initializeAppLogic() {
             
             if (userDoc.exists() && userDoc.data().status === 'active') {
                 const currentUser = { uid: user.uid, ...userDoc.data() };
+                state.currentUser = currentUser; // Set state
                 
                 if (currentUser.role === 'warehouse_supervisor') {
                     window.location.href = '../pod/index.html';
                 } else {
-                    window.location.href = 'app.html';
+                    showAppView();
+                    initializeMainApp(); // Initialize the main app logic
                 }
             } else {
                 if (userDoc.exists()) {
@@ -138,9 +154,11 @@ function initializeAppLogic() {
                     showNotification("Your user profile was not found in the database.", true);
                 }
                 await signOut(auth);
+                showLoginView();
                 hideLoader();
             }
         } else {
+            showLoginView();
             hideLoader();
         }
     });
@@ -177,6 +195,5 @@ function initializeAppLogic() {
     toggleAuthView(true);
 }
 
-
 // --- App Entry Point ---
-initializeAppLogic();
+initializeAuth();

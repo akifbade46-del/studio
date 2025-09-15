@@ -7,5 +7,6 @@ export const state = {
     analyticsDataCache: null,
     currentFilteredJobs: [],
     fileIdToReject: null,
-    profitChartInstance: null
+    profitChartInstance: null,
+    listenersAttached: false // Flag to prevent attaching event listeners multiple times
 };
