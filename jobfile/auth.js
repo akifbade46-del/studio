@@ -77,7 +77,7 @@ async function handleLogin(email, password) {
     showLoader();
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        // onAuthStateChanged will handle the redirect or view change
+        // onAuthStateChanged will handle the view change
     } catch (error) {
         hideLoader();
         console.error("Login error:", error);
@@ -158,6 +158,7 @@ function initializeAuth() {
                 hideLoader();
             }
         } else {
+            state.currentUser = null;
             showLoginView();
             hideLoader();
         }
@@ -197,3 +198,4 @@ function initializeAuth() {
 
 // --- App Entry Point ---
 initializeAuth();
+

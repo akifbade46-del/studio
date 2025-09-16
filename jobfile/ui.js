@@ -2,8 +2,26 @@ import { state } from './state.js';
 
 export function showLoader() { document.getElementById('loader-overlay').classList.add('visible'); }
 export function hideLoader() { document.getElementById('loader-overlay').classList.remove('visible'); }
-export function openModal(id) { document.getElementById(id).classList.add('visible'); }
-export function closeModal(id) { document.getElementById(id).classList.remove('visible'); }
+
+export function openModal(id, keepParent = false) {
+    const modal = document.getElementById(id);
+    if (keepParent) {
+        const highestZ = Array.from(document.querySelectorAll('.overlay.visible'))
+            .reduce((max, el) => Math.max(max, parseInt(window.getComputedStyle(el).zIndex || 1000)), 1000);
+        modal.style.zIndex = highestZ + 10;
+    } else {
+        // Close all other modals if not specified to keep parent open
+        document.querySelectorAll('.overlay').forEach(m => {
+            if(m.id !== id) m.classList.remove('visible');
+        });
+    }
+    modal.classList.add('visible');
+}
+
+export function closeModal(id) {
+    const modal = document.getElementById(id);
+    if(modal) modal.classList.remove('visible');
+}
 
 export function showNotification(message, isError = false) {
     const notification = document.getElementById('notification');
@@ -16,16 +34,19 @@ export function showNotification(message, isError = false) {
 }
 
 export function clearForm() {
-    const form = document.querySelector('#app-container');
+    const form = document.querySelector('#main-container');
     if (!form) return;
     form.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(input => input.value = '');
     form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
     
     document.getElementById('date').valueAsDate = new Date();
     document.getElementById('job-file-no').disabled = false;
-    populateTable();
     
-    document.getElementById('prepared-by').value = state.currentUser.displayName;
+    populateTable();
+    for(let i=0; i<5; i++) addChargeRow();
+    calculate();
+    
+    document.getElementById('prepared-by').value = state.currentUser?.displayName || '';
     
     document.getElementById('created-by-info').textContent = '';
     document.getElementById('last-updated-by-info').textContent = '';
@@ -43,10 +64,10 @@ export function clearForm() {
 export function populateFormFromData(data) {
     const setVal = (id, value) => { if (document.getElementById(id)) document.getElementById(id).value = value || ''; };
     const setChecked = (type, values) => {
-        document.querySelectorAll(`[data-${type}]`).forEach(el => el.checked = (values || []).includes(el.dataset[type]));
+        document.querySelectorAll(`[data-${type}]`).forEach(el => {
+            el.checked = (values || []).includes(el.dataset[type]);
+        });
     };
-
-    clearForm();
 
     setVal('date', data.d); setVal('po-number', data.po); setVal('job-file-no', data.jfn);
     setVal('invoice-no', data.in); setVal('billing-date', data.bd);
@@ -62,29 +83,46 @@ export function populateFormFromData(data) {
     document.getElementById('created-by-info').textContent = data.createdBy ? `Created by: ${data.createdBy} on ${data.createdAt?.toDate().toLocaleDateString()}` : '';
     document.getElementById('last-updated-by-info').textContent = data.lastUpdatedBy ? `Last updated by: ${data.lastUpdatedBy} on ${data.updatedAt?.toDate().toLocaleString()}` : '';
     
-    if (data.checkedBy) {
-        setVal('checked-by', `${data.checkedBy} on ${data.checkedAt?.toDate().toLocaleDateString() || ''}`);
-        document.getElementById('checked-stamp').style.display = 'block';
-    }
-    if (data.status === 'approved') {
-        setVal('approved-by', `${data.approvedBy} on ${data.approvedAt?.toDate().toLocaleDateString() || ''}`);
+    document.getElementById('checked-stamp').style.display = 'none';
+    document.getElementById('approved-stamp').style.display = 'none';
+    document.getElementById('rejected-stamp').style.display = 'none';
+    document.getElementById('rejection-banner').style.display = 'none';
+    document.getElementById('check-btn').style.display = 'none';
+    document.getElementById('approval-buttons').style.display = 'none';
+
+    setVal('checked-by', data.checkedBy ? `${data.checkedBy} on ${data.checkedAt?.toDate().toLocaleDateString() || ''}` : 'Pending Check');
+    if(data.checkedBy) document.getElementById('checked-stamp').style.display = 'block';
+
+    let approvalText = 'Pending Approval';
+    if(data.status === 'approved') {
+        approvalText = `${data.approvedBy} on ${data.approvedAt?.toDate().toLocaleDateString() || ''}`;
         document.getElementById('approved-stamp').style.display = 'block';
     } else if (data.status === 'rejected') {
-        setVal('approved-by', `Rejected by ${data.rejectedBy} on ${data.rejectedAt?.toDate().toLocaleDateString() || ''}`);
+        approvalText = `Rejected by ${data.rejectedBy}`;
         document.getElementById('rejected-stamp').style.display = 'block';
         document.getElementById('rejection-banner').style.display = 'block';
         document.getElementById('rejection-reason').textContent = data.rejectionReason;
+    }
+    setVal('approved-by', approvalText);
+
+    if (state.currentUser.role === 'admin' && data.status !== 'approved' && data.status !== 'rejected') {
+        document.getElementById('approval-buttons').style.display = 'flex';
+    }
+    if (['admin', 'checker'].includes(state.currentUser.role) && !data.checkedBy) {
+         document.getElementById('check-btn').style.display = 'block';
     }
 
     setChecked('clearance', data.cl);
     setChecked('product', data.pt);
 
     populateTable();
-     if (data.ch && data.ch.length > 0) {
-         document.getElementById('charges-table-body').innerHTML = '';
-         data.ch.forEach(charge => addChargeRow(charge));
-     }
-     calculate();
+    document.getElementById('charges-table-body').innerHTML = ''; // Clear default rows
+    if (data.ch && data.ch.length > 0) {
+        data.ch.forEach(charge => addChargeRow(charge));
+    } else {
+        for(let i=0; i<5; i++) addChargeRow(); // Add empty rows if no charges
+    }
+    calculate();
 }
 
 export function populateTable() {
@@ -104,164 +142,252 @@ export function populateTable() {
             <td id="total-profit" class="table-cell text-right">0.000</td>
             <td class="table-cell" colspan="2"></td>
         </tr></tfoot>`;
-
-     for(let i=0; i<5; i++) addChargeRow();
+    
+    document.getElementById('charges-table-body').addEventListener('input', e => {
+        if (e.target.classList.contains('cost-input') || e.target.classList.contains('selling-input')) {
+            calculate();
+        }
+    });
 }
 
 export function addChargeRow(data = {}) {
     const tableBody = document.getElementById('charges-table-body');
     const newRow = tableBody.insertRow();
     newRow.innerHTML = `
-        <td class="table-cell"><input type="text" class="description-input input-field" value="${data.l || ''}" autocomplete="off" list="charge-options"></td>
+        <td class="table-cell"><input type="text" class="description-input input-field" value="${data.l || ''}" autocomplete="off"></td>
         <td class="table-cell"><input type="number" step="0.001" class="cost-input input-field" value="${data.c || ''}"></td>
         <td class="table-cell"><input type="number" step="0.001" class="selling-input input-field" value="${data.s || ''}"></td>
         <td class="table-cell profit-output bg-gray-50 text-right">${((data.s || 0) - (data.c || 0)).toFixed(3)}</td>
         <td class="table-cell"><input type="text" class="notes-input input-field" value="${data.n || ''}"></td>
-        <td class="table-cell text-center"><button class="text-red-500 hover:text-red-700">&times;</button></td>`;
+        <td class="table-cell text-center"><button class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button></td>`;
     newRow.querySelector('button').addEventListener('click', () => { newRow.remove(); calculate(); });
+    setupChargeAutocomplete(newRow.querySelector('.description-input'));
 }
 
 export function calculate() {
-    let totalCost = 0, totalSelling = 0, totalProfit = 0;
+    let totalCost = 0, totalSelling = 0;
     document.querySelectorAll('#charges-table-body tr').forEach(row => {
         const cost = parseFloat(row.querySelector('.cost-input').value) || 0;
         const selling = parseFloat(row.querySelector('.selling-input').value) || 0;
-        const profit = selling - cost;
-        row.cells[3].textContent = profit.toFixed(3);
-        totalCost += cost; totalSelling += selling; totalProfit += profit;
+        row.cells[3].textContent = (selling - cost).toFixed(3);
+        totalCost += cost;
+        totalSelling += selling;
     });
     document.getElementById('total-cost').textContent = totalCost.toFixed(3);
     document.getElementById('total-selling').textContent = totalSelling.toFixed(3);
-    document.getElementById('total-profit').textContent = totalProfit.toFixed(3);
+    document.getElementById('total-profit').textContent = (totalSelling - totalCost).toFixed(3);
 }
 
 export function displayJobFiles(files) {
     const list = document.getElementById('job-files-list');
     if(!list) return;
-    
-    list.innerHTML = files.map(file => `
-        <div class="job-file-item border p-3 rounded-lg flex justify-between items-center bg-gray-50 hover:bg-gray-100">
-            <div>
+    list.innerHTML = files.map(file => {
+        const deleteButton = state.currentUser.role === 'admin' ? `<button onclick="confirmDelete('${file.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm">Delete</button>` : '';
+        return `
+        <div class="job-file-item border p-3 rounded-lg flex flex-col sm:flex-row justify-between items-center bg-gray-50 hover:bg-gray-100 gap-2">
+            <div class="text-center sm:text-left">
                 <p class="font-bold text-indigo-700">${file.jfn || 'No ID'}</p>
-                <p class="text-sm text-gray-600">Shipper: ${file.sh || 'N/A'}</p>
+                <p class="text-sm text-gray-600">Shipper: ${file.sh || 'N/A'} | Consignee: ${file.co || 'N/A'}</p>
+                <p class="text-xs text-gray-400">Last Updated: ${file.updatedAt?.toDate().toLocaleString() || 'N/A'}</p>
             </div>
-            <div class="space-x-2">
-                <button data-action="preview" data-id="${file.id}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-sm">Preview</button>
-                <button data-action="load" data-id="${file.id}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-sm">Load</button>
+            <div class="space-x-2 flex-shrink-0">
+                <button onclick="previewJobFileById('${file.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-sm">Preview</button>
+                <button onclick="loadJobFileById('${file.id}')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-sm">Load</button>
+                ${deleteButton}
             </div>
         </div>
-    `).join('') || `<p class="text-gray-500 text-center p-4">No job files.</p>`;
+    `}).join('') || `<p class="text-gray-500 text-center p-4">No job files match the current filters.</p>`;
 }
 
 export function updateStatusSummary(targetId, dataSource) {
     const container = document.getElementById(targetId);
     if (!container) return;
-
     const summary = dataSource.reduce((acc, file) => {
         const status = file.status || 'pending';
         acc[status] = (acc[status] || 0) + 1;
         return acc;
     }, { pending: 0, checked: 0, approved: 0, rejected: 0 });
-
     container.innerHTML = `
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-            <div class="p-2 bg-yellow-100 text-yellow-800 rounded"><strong>Pending:</strong> ${summary.pending}</div>
-            <div class="p-2 bg-blue-100 text-blue-800 rounded"><strong>Checked:</strong> ${summary.checked}</div>
-            <div class="p-2 bg-green-100 text-green-800 rounded"><strong>Approved:</strong> ${summary.approved}</div>
-            <div class="p-2 bg-red-100 text-red-800 rounded"><strong>Rejected:</strong> ${summary.rejected}</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div onclick="showStatusJobs('approved')" class="bg-green-100 p-4 rounded-lg cursor-pointer shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300"><p class="text-sm text-green-800">Approved</p><p class="text-2xl font-bold text-green-900">${summary.approved}</p></div>
+            <div onclick="showStatusJobs('rejected')" class="bg-red-100 p-4 rounded-lg cursor-pointer shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300"><p class="text-sm text-red-800">Rejected</p><p class="text-2xl font-bold text-red-900">${summary.rejected}</p></div>
+            <div onclick="showStatusJobs('checked')" class="bg-blue-100 p-4 rounded-lg cursor-pointer shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300"><p class="text-sm text-blue-800">Checked</p><p class="text-2xl font-bold text-blue-900">${summary.checked}</p></div>
+            <div onclick="showStatusJobs('pending')" class="bg-yellow-100 p-4 rounded-lg cursor-pointer shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300"><p class="text-sm text-yellow-800">Pending</p><p class="text-2xl font-bold text-yellow-900">${summary.pending}</p></div>
         </div>
     `;
 }
 
-export function getPrintViewHtml(data, forPrinting = false) {
-    const chargesHtml = (data.ch || []).map(charge => `
-        <tr>
-            <td class="print-table-cell">${charge.l || ''}</td>
-            <td class="print-table-cell text-right">${parseFloat(charge.c || 0).toFixed(3)}</td>
-            <td class="print-table-cell text-right">${parseFloat(charge.s || 0).toFixed(3)}</td>
-            <td class="print-table-cell text-right">${(parseFloat(charge.s || 0) - parseFloat(charge.c || 0)).toFixed(3)}</td>
-            <td class="print-table-cell">${charge.n || ''}</td>
-        </tr>
-    `).join('');
+export function createPrintWindow(title, content) {
+    let styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]')).map(el => el.outerHTML).join('');
+    const printWindow = window.open('', '', 'height=800,width=1200');
+    printWindow.document.write(`<html><head><title>${title}</title>${styles}</head><body>${content}</body></html>`);
+    printWindow.document.close();
+    setTimeout(() => { printWindow.focus(); printWindow.print(); printWindow.close(); }, 750);
+}
 
-    const totalCost = (data.ch || []).reduce((sum, item) => sum + (parseFloat(item.c) || 0), 0);
-    const totalSelling = (data.ch || []).reduce((sum, item) => sum + (parseFloat(item.s) || 0), 0);
+export function getPrintViewHtml(data, isPublicView = false) {
+    const totalCost = data.totalCost || 0;
+    const totalSelling = data.totalSelling || 0;
+    const totalProfit = data.totalProfit || 0;
+    
+    const checkedByText = data.checkedBy ? `${data.checkedBy} on ${data.checkedAt?.toDate().toLocaleDateString()}` : 'Pending';
+    let approvedByText = 'Pending Approval';
+    if (data.status === 'approved') approvedByText = `${data.approvedBy} on ${data.approvedAt?.toDate().toLocaleDateString()}`;
+    else if (data.status === 'rejected') approvedByText = `REJECTED: ${data.rejectionReason}`;
+    
+    const createdByText = data.createdBy ? `${data.createdBy} on ${data.createdAt?.toDate().toLocaleDateString()}` : (data.pb || 'N/A');
+    
+    const checkedStampHtml = data.checkedBy ? `<div class="stamp stamp-checked" style="display: block;">Checked</div>` : '';
+    let approvalStampHtml = '';
+    if (data.status === 'approved') approvalStampHtml = `<div class="stamp stamp-approved" style="display: block;">Approved</div>`;
+    else if (data.status === 'rejected') approvalStampHtml = `<div class="stamp stamp-rejected" style="display: block;">Rejected</div>`;
 
-    const qrCodeHtml = forPrinting ? '' : `
-        <div class="qrcode-container float-right">
-            <!-- QR code will be generated here by JS -->
-        </div>
-    `;
+    const qrContainerHtml = isPublicView ? '' : `<div class="col-span-3 bg-white p-1 flex items-center justify-center" style="border: 1px solid #374151;"><div class="qrcode-container"></div></div>`;
 
     return `
-    <div class="p-4 bg-white font-sans text-sm">
-        <style>
-            .print-field { border: 1px solid #6b7280; padding: 0.3rem; min-height: 24px; word-break: break-all; }
-            .print-table-cell { border: 1px solid #d1d5db; padding: 0.5rem; }
-        </style>
-        <header class="flex justify-between items-start mb-4 pb-2 border-b-2">
-            <div>
-                <img src="http://qgocargo.com/logo.png" alt="Q'go Cargo Logo" class="h-16">
-            </div>
-            <div class="text-right">
-                <h1 class="text-2xl font-bold">JOB FILE</h1>
-                <div class="flex items-center justify-end mt-1">
-                    <p class="mr-2 font-semibold">Date:</p>
-                    <div class="print-field w-32">${data.d || ''}</div>
+        <div class="border border-gray-700 p-2 bg-white">
+            <div class="grid grid-cols-12 gap-px bg-gray-700" style="border: 1px solid #374151;">
+                <div class="col-span-3 bg-white p-1 flex items-center"><img src="http://qgocargo.com/logo.png" class="h-12"></div>
+                <div class="col-span-6 bg-white flex items-center justify-center text-xl font-bold">JOB FILE</div>
+                <div class="col-span-3 bg-white p-1 text-xs"><div><strong>Date:</strong> ${data.d || ''}</div><div><strong>P.O. #:</strong> ${data.po || ''}</div></div>
+                <div class="col-span-12 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Job File No.:</strong> ${data.jfn || ''}</div>
+                <div class="col-span-12 bg-white p-0" style="border: 1px solid #374151;">
+                    <table class="print-table w-full text-xs">
+                        <thead><tr><th>Description</th><th>Cost</th><th>Selling</th><th>Profit</th><th>Notes</th></tr></thead>
+                        <tbody>
+                            ${(data.ch || []).map(c => `<tr><td>${c.l}</td><td>${c.c}</td><td>${c.s}</td><td>${(parseFloat(c.s || 0) - parseFloat(c.c || 0)).toFixed(3)}</td><td>${c.n}</td></tr>`).join('')}
+                            <tr class="font-bold bg-gray-100"><td>TOTAL:</td><td>${totalCost.toFixed(3)}</td><td>${totalSelling.toFixed(3)}</td><td>${totalProfit.toFixed(3)}</td><td></td></tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="flex items-center justify-end mt-1">
-                    <p class="mr-2 font-semibold">P.O. #:</p>
-                    <div class="print-field w-32">${data.po || ''}</div>
-                </div>
-            </div>
-        </header>
-
-        ${qrCodeHtml}
-        
-        <div class="grid grid-cols-5 gap-2 mb-4">
-            <div class="col-span-3">
-                <p class="font-semibold">Job File No.:</p>
-                <div class="print-field">${data.jfn || ''}</div>
-            </div>
-            <div class="col-span-1">
-                 <p class="font-semibold">Clearance:</p>
-                 <div class="print-field h-full">${(data.cl || []).join(', ')}</div>
-            </div>
-             <div class="col-span-1">
-                 <p class="font-semibold">Product Type:</p>
-                 <div class="print-field h-full">${(data.pt || []).join(', ')}</div>
+                <div class="col-span-3 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>PREPARED BY:</strong><div class="print-field">${createdByText}</div></div>
+                <div class="col-span-3 bg-white p-1 text-xs relative" style="border: 1px solid #374151;">${checkedStampHtml}<strong>CHECKED BY:</strong><div class="print-field">${checkedByText}</div></div>
+                <div class="col-span-3 bg-white p-1 text-xs relative" style="border: 1px solid #374151;">${approvalStampHtml}<strong>APPROVED BY:</strong><div class="print-field">${approvedByText}</div></div>
+                ${qrContainerHtml}
             </div>
         </div>
-        
-        <!-- ... other fields ... -->
-        
-        <h2 class="text-lg font-semibold mt-6 mb-1">Charges</h2>
-        <table class="w-full border-collapse text-xs">
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="print-table-cell w-2/5 text-left">Description</th>
-                    <th class="print-table-cell text-right">Cost</th>
-                    <th class="print-table-cell text-right">Selling</th>
-                    <th class="print-table-cell text-right">Profit</th>
-                    <th class="print-table-cell text-left">Notes</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${chargesHtml}
-            </tbody>
-            <tfoot>
-                <tr class="font-bold bg-gray-100">
-                    <td class="print-table-cell text-right">TOTAL:</td>
-                    <td class="print-table-cell text-right">${totalCost.toFixed(3)}</td>
-                    <td class="print-table-cell text-right">${totalSelling.toFixed(3)}</td>
-                    <td class="print-table-cell text-right">${(totalSelling - totalCost).toFixed(3)}</td>
-                    <td class="print-table-cell"></td>
-                </tr>
-            </tfoot>
-        </table>
-
-        <!-- ... remarks and footer ... -->
-
-    </div>
     `;
 }
+
+export function displayClients(clients) {
+    const list = document.getElementById('client-list');
+    list.innerHTML = clients.map(client => `
+        <div class="client-item border p-3 rounded-lg bg-gray-50 hover:bg-gray-100">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="font-bold">${client.name}</p>
+                    <p class="text-sm text-gray-600">${client.address || ''}</p>
+                </div>
+                <div class="flex-shrink-0 space-x-2">
+                    <button onclick="editClient('${client.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded text-xs">Edit</button>
+                    <button onclick="confirmDelete('${client.id}', 'client')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-xs">Delete</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+export function clearClientForm() {
+    document.getElementById('client-form').reset();
+    document.getElementById('client-id').value = '';
+    document.getElementById('client-form-title').textContent = 'Add New Client';
+}
+export function editClient(clientId) {
+    const client = state.clientsCache.find(c => c.id === clientId);
+    if (client) {
+        document.getElementById('client-id').value = client.id;
+        document.getElementById('client-name').value = client.name;
+        document.getElementById('client-address').value = client.address || '';
+        document.getElementById('client-contact-person').value = client.contactPerson || '';
+        document.getElementById('client-phone').value = client.phone || '';
+        document.getElementById('client-type').value = client.type || 'Shipper';
+        document.getElementById('client-form-title').textContent = 'Edit Client';
+    }
+}
+
+export function setupAutocomplete(inputId, suggestionsId, type) {
+    const input = document.getElementById(inputId);
+    const suggestionsPanel = document.getElementById(suggestionsId);
+    if(!input) return;
+
+    input.addEventListener('input', () => {
+        const value = input.value.toLowerCase();
+        if (value.length < 2) { suggestionsPanel.classList.add('hidden'); return; }
+        const filteredClients = state.clientsCache.filter(c => c.name.toLowerCase().includes(value) && (c.type === type || c.type === 'Both'));
+        if (filteredClients.length > 0) {
+            suggestionsPanel.innerHTML = filteredClients.map(c => `<div class="autocomplete-suggestion" data-name="${c.name}">${c.name}</div>`).join('');
+            suggestionsPanel.classList.remove('hidden');
+        } else {
+            suggestionsPanel.classList.add('hidden');
+        }
+    });
+    suggestionsPanel.addEventListener('click', (e) => {
+        if (e.target.classList.contains('autocomplete-suggestion')) {
+            input.value = e.target.dataset.name;
+            suggestionsPanel.classList.add('hidden');
+        }
+    });
+    document.addEventListener('click', (e) => {
+        if (e.target.id !== inputId) suggestionsPanel.classList.add('hidden');
+    });
+}
+export function setupChargeAutocomplete(inputElement) {
+    let suggestionsPanel = inputElement.parentElement.querySelector('.autocomplete-suggestions');
+    if (!suggestionsPanel) {
+        suggestionsPanel = document.createElement('div');
+        suggestionsPanel.className = 'autocomplete-suggestions hidden';
+        suggestionsPanel.style.width = inputElement.offsetWidth + 'px';
+        inputElement.parentElement.style.position = 'relative';
+        inputElement.parentElement.appendChild(suggestionsPanel);
+    }
+    
+    inputElement.addEventListener('focus', () => {
+        const value = inputElement.value.toLowerCase();
+        const filtered = state.chargeDescriptions.filter(d => d.toLowerCase().includes(value));
+        if(filtered.length > 0) {
+            suggestionsPanel.innerHTML = filtered.map(d => `<div class="autocomplete-suggestion">${d}</div>`).join('');
+            suggestionsPanel.classList.remove('hidden');
+        }
+    });
+
+    inputElement.addEventListener('input', () => {
+        const value = inputElement.value.toLowerCase();
+        if (!value) {
+            suggestionsPanel.classList.add('hidden');
+            return;
+        }
+        const filtered = state.chargeDescriptions.filter(d => d.toLowerCase().includes(value));
+        if (filtered.length > 0) {
+            suggestionsPanel.innerHTML = filtered.map(d => `<div class="autocomplete-suggestion">${d}</div>`).join('');
+            suggestionsPanel.classList.remove('hidden');
+        } else {
+            suggestionsPanel.classList.add('hidden');
+        }
+    });
+
+    suggestionsPanel.addEventListener('mousedown', (e) => {
+        if (e.target.classList.contains('autocomplete-suggestion')) {
+            inputElement.value = e.target.textContent;
+            suggestionsPanel.classList.add('hidden');
+        }
+    });
+
+    inputElement.addEventListener('blur', () => {
+        setTimeout(() => suggestionsPanel.classList.add('hidden'), 150);
+    });
+}
+
+
+export function refreshOpenModals() {}
+export function displayJobsInModal(jobs, title) {}
+export function openRecycleBin() {}
+export function confirmPermanentDelete(docId) {}
+export function displayChargeDescriptions() {
+    const list = document.getElementById('charge-description-list');
+    list.innerHTML = state.chargeDescriptions.map(desc => `
+        <div class="flex justify-between items-center p-2 bg-gray-100 rounded">
+            <span>${desc}</span>
+            <button data-desc="${desc}" class="text-red-500 hover:text-red-700">&times;</button>
+        </div>
+    `).join('');
+}
+
