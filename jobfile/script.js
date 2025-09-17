@@ -1,5 +1,6 @@
 import { initializeAppAndAuth, handleLogin, handleSignUp, handleForgotPassword, handleLogout } from './auth.js';
-import { initializeFirestore, saveJobFile as saveJobFileToDb, checkJobFile as checkJobFileInDb, uncheckJobFile as uncheckJobFileInDb, approveJobFile as approveJobFileInDb, rejectJobFile as rejectJobFileInDb, listenForJobFiles, loadJobFileById as loadJobFileFromDb, moveToRecycleBin, listenForClients, saveClient, deleteClient, getUsers, saveUserChanges as saveUserChangesToDb, getBackupData, restoreBackupData, getRecycleBinFiles, restoreJobFile as restoreJobFileFromBin, permanentlyDeleteJobFile, loadChargeDescriptions } from './firestore.js';
+import { initializeFirestore, saveJobFile as saveJobFileToDb, checkJobFile as checkJobFileInDb, uncheckJobFile as uncheckJobFileInDb, approveJobFile as approveJobFileInDb, rejectJobFile as rejectJobFileInDb, listenForJobFiles, loadJobFileById as loadJobFileFromDb, moveToRecycleBin, listenForClients, saveClient, deleteClient, getUsers, saveUserChanges as saveUserChangesToDb, getBackupData, restoreBackupData, getRecycleBinFiles, restoreJobFile as restoreJobFileFromBin, permanentlyDeleteJobFile, loadChargeDescriptions as loadChargeDescriptionsFromStorage } from './firestore.js';
+import { suggestCharges } from './gemini.js';
 
 // --- Global variables ---
 let currentUser = null;
@@ -20,7 +21,7 @@ export function onLoginSuccess(user, firestoreDb) {
     showApp();
     listenForJobFiles(onJobFilesUpdate);
     listenForClients(onClientsUpdate);
-    loadChargeDescriptions().then(descriptions => {
+    loadChargeDescriptionsFromStorage().then(descriptions => {
         chargeDescriptions = descriptions;
     });
 }
@@ -45,6 +46,185 @@ function onClientsUpdate(clients) {
         : clientsCache;
     displayClients(filteredClients);
 }
+
+// --- Data Handling ---
+async function saveJobFile() {
+    const jobFileNoInput = document.getElementById('job-file-no');
+    const jobFileNo = jobFileNoInput.value.trim();
+    if (!jobFileNo) {
+        window.showNotification("Please enter a Job File No.", true);
+        return;
+    }
+
+    window.showLoader();
+    const docId = jobFileNo.replace(/\//g, '_');
+    const isUpdating = jobFileNoInput.disabled;
+    const data = getFormData();
+    data.totalCost = parseFloat(document.getElementById('total-cost').textContent) || 0;
+    data.totalSelling = parseFloat(document.getElementById('total-selling').textContent) || 0;
+    data.totalProfit = parseFloat(document.getElementById('total-profit').textContent) || 0;
+
+    try {
+        const requiresReapproval = await saveJobFileToDb(data, isUpdating, docId);
+        if (requiresReapproval) {
+            window.showNotification("File modified. Re-approval is now required.", false);
+        }
+        window.showNotification("Job file saved successfully!");
+        loadJobFileById(docId);
+    } catch (error) {
+        window.showNotification(error.message, true);
+    } finally {
+        window.hideLoader();
+    }
+}
+
+async function checkJobFile(docId = null) {
+    let fileId = docId;
+    if (!fileId) {
+        const jobFileNo = document.getElementById('job-file-no').value.trim();
+        if (!jobFileNo) {
+            window.showNotification("Please save or load a job file first.", true);
+            return;
+        }
+        fileId = jobFileNo.replace(/\//g, '_');
+    }
+    
+    window.showLoader();
+    try {
+        const updatedDoc = await checkJobFileInDb(fileId);
+        if (!docId) { // If called from main form button
+            populateFormFromData(updatedDoc.data());
+        } else { // If called from a modal
+            refreshOpenModals();
+        }
+        window.showNotification("Job File Checked!");
+    } catch (error) {
+        window.showNotification(error.message, true);
+    } finally {
+        window.hideLoader();
+    }
+}
+
+async function uncheckJobFile(docId) {
+    window.showLoader();
+    try {
+        await uncheckJobFileInDb(docId);
+        window.showNotification("Job File Unchecked!");
+        refreshOpenModals();
+    } catch (error) {
+        window.showNotification(error.message, true);
+    } finally {
+        window.hideLoader();
+    }
+}
+
+async function approveJobFile(docId = null) {
+    let fileId = docId;
+    if (!fileId) {
+        const jobFileNo = document.getElementById('job-file-no').value.trim();
+        if (!jobFileNo) {
+            window.showNotification("Please save or load a job file first.", true);
+            return;
+        }
+        fileId = jobFileNo.replace(/\//g, '_');
+    }
+
+    window.showLoader();
+    try {
+        const updatedDoc = await approveJobFileInDb(fileId);
+        if (!docId) {
+            populateFormFromData(updatedDoc.data());
+        } else {
+            refreshOpenModals();
+        }
+        window.showNotification("Job File Approved!");
+    } catch (error) {
+        window.showNotification(error.message, true);
+    } finally {
+        window.hideLoader();
+    }
+}
+
+function promptForRejection(docId) {
+    fileIdToReject = docId;
+    window.openModal('reject-reason-modal', true);
+}
+
+async function rejectJobFileAction() {
+    const reason = document.getElementById('rejection-reason-input').value.trim();
+    if (!reason) {
+        window.showNotification("Rejection reason is required.", true);
+        return;
+    }
+
+    const docId = fileIdToReject || document.getElementById('job-file-no').value.replace(/\//g, '_');
+    if (!docId) {
+         window.showNotification("No file selected for rejection.", true);
+         return;
+    }
+
+    window.showLoader();
+    try {
+        const updatedDoc = await rejectJobFileInDb(docId, reason);
+        if (fileIdToReject) { // Modal call
+            refreshOpenModals();
+        } else { // Main form call
+            populateFormFromData(updatedDoc.data());
+        }
+        window.closeModal('reject-reason-modal');
+        document.getElementById('rejection-reason-input').value = '';
+        fileIdToReject = null;
+        window.showNotification("Job File Rejected!");
+    } catch (error) {
+        window.showNotification(error.message, true);
+    } finally {
+        window.hideLoader();
+    }
+}
+
+async function loadJobFileById(docId) {
+    window.showLoader();
+    try {
+        const fileData = await loadJobFileFromDb(docId);
+        populateFormFromData(fileData);
+        logUserActivity(fileData.jfn);
+        document.getElementById('job-file-no').disabled = true;
+        window.closeAllModals();
+        window.showNotification("Job file loaded successfully.");
+    } catch (error) {
+        window.showNotification(error.message, true);
+    } finally {
+        window.hideLoader();
+    }
+}
+
+async function previewJobFileById(docId) {
+    window.showLoader();
+    try {
+        const data = await loadJobFileFromDb(docId);
+        const previewBody = document.getElementById('preview-body');
+        previewBody.innerHTML = getPrintViewHtml(data, false); 
+        
+        const qrContainer = previewBody.querySelector('.qrcode-container');
+        if (qrContainer && data.jfn) {
+            qrContainer.innerHTML = '';
+            const baseUrl = window.location.href.split('?')[0];
+            const qrText = `${baseUrl}?jobId=${encodeURIComponent(data.jfn)}`;
+            new QRCode(qrContainer, {
+                text: qrText,
+                width: 96,
+                height: 96,
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+        window.openModal('preview-modal', true);
+    } catch (error) {
+        window.showNotification(error.message, true);
+    } finally {
+        window.hideLoader();
+    }
+}
+
 
 // --- UI Functions ---
 function showApp() {
@@ -257,6 +437,158 @@ function updateStatusSummary(targetId, dataSource) {
     `;
 }
 
+function getFormData() {
+    const getVal = id => document.getElementById(id).value || '';
+    const getChecked = query => Array.from(document.querySelectorAll(query)).filter(el => el.checked).map(el => el.dataset.clearance || el.dataset.product);
+
+    const charges = [];
+    document.querySelectorAll('#charges-table-body tr:not(#total-row)').forEach(row => {
+        const description = row.querySelector('.description-input').value.trim();
+        const cost = row.querySelector('.cost-input').value;
+        const selling = row.querySelector('.selling-input').value;
+
+        // Only save rows that have a description and at least one value
+        if (description && (cost || selling)) {
+            charges.push({
+                l: description, // 'l' for label/description
+                c: cost || '0',
+                s: selling || '0',
+                n: row.querySelector('.notes-input').value || ''
+            });
+        }
+    });
+
+    return {
+        d: getVal('date'), po: getVal('po-number'), jfn: getVal('job-file-no'),
+        cl: getChecked('[data-clearance]:checked'), pt: getChecked('[data-product]:checked'),
+        in: getVal('invoice-no'), bd: getVal('billing-date'), sm: getVal('salesman'),
+        sh: getVal('shipper-name'), co: getVal('consignee-name'),
+        mawb: getVal('mawb'), hawb: getVal('hawb'), ts: getVal('teams-of-shipping'), or: getVal('origin'),
+        pc: getVal('no-of-pieces'), gw: getVal('gross-weight'), de: getVal('destination'), vw: getVal('volume-weight'),
+        dsc: getVal('description'), ca: getVal('carrier'), tn: getVal('truck-no'),
+        vn: getVal('vessel-name'), fv: getVal('flight-voyage-no'), cn: getVal('container-no'),
+        ch: charges,
+        re: getVal('remarks'),
+        pb: getVal('prepared-by'),
+    };
+}
+
+function getPrintViewHtml(data, isPublicView = false) {
+    const totalCost = data.totalCost || 0;
+    const totalSelling = data.totalSelling || 0;
+    const totalProfit = data.totalProfit || 0;
+    
+    const checkedByText = data.checkedBy ? `${data.checkedBy} on ${data.checkedAt?.toDate().toLocaleDateString()}` : 'Pending';
+    let approvedByText = 'Pending Approval';
+    if (data.status === 'approved') {
+        approvedByText = `${data.approvedBy} on ${data.approvedAt?.toDate().toLocaleDateString()}`;
+    } else if (data.status === 'rejected') {
+        approvedByText = `REJECTED: ${data.rejectionReason}`;
+    }
+    
+    const createdByText = data.createdBy ? `${data.createdBy} on ${data.createdAt?.toDate().toLocaleDateString()}` : (data.pb || 'N/A');
+    
+    const checkedStampHtml = data.checkedBy ? `<div class="stamp stamp-checked" style="display: block;">Checked</div>` : '';
+    let approvalStampHtml = '';
+    if (data.status === 'approved') {
+        approvalStampHtml = `<div class="stamp stamp-approved" style="display: block;">Approved</div>`;
+    } else if (data.status === 'rejected') {
+        approvalStampHtml = `<div class="stamp stamp-rejected" style="display: block;">Rejected</div>`;
+    }
+
+    const checkedSymbol = '☑';
+    const uncheckedSymbol = '☐';
+    
+    const qrContainerHtml = isPublicView ? '' : `<div class="col-span-3 bg-white p-1 flex items-center justify-center" style="border: 1px solid #374151;"><div class="qrcode-container"></div></div>`;
+
+    const descriptionHtml = `<div class="col-span-12 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Description:</strong><div class="print-field">${data.dsc || ''}</div></div>`;
+
+    return `
+        <div class="border border-gray-700 p-2 bg-white">
+            <div class="grid grid-cols-12 gap-px bg-gray-700" style="border: 1px solid #374151;">
+                <div class="col-span-3 bg-white p-1 flex items-center" style="border: 1px solid #374151;">
+                    <div class="text-xl font-bold" style="color: #0E639C;">Q'go<span style="color: #4FB8AF;">Cargo</span></div>
+                </div>
+                <div class="col-span-6 bg-white flex items-center justify-center text-xl font-bold" style="border: 1px solid #374151;">JOB FILE</div>
+                <div class="col-span-3 bg-white p-1 text-xs" style="border: 1px solid #374151;"><div><strong>Date:</strong> ${data.d || ''}</div><div><strong>P.O. #:</strong> ${data.po || ''}</div></div>
+                
+                <div class="col-span-12 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Job File No.:</strong> ${data.jfn || ''}</div>
+
+                <div class="col-span-12 bg-white p-1 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs" style="border: 1px solid #374151;">
+                    <div><strong>Clearance</strong><br>${(data.cl || []).includes('Export') ? checkedSymbol : uncheckedSymbol} Export<br>${(data.cl || []).includes('Import') ? checkedSymbol : uncheckedSymbol} Import<br>${(data.cl || []).includes('Clearance') ? checkedSymbol : uncheckedSymbol} Clearance<br>${(data.cl || []).includes('Local Move') ? checkedSymbol : uncheckedSymbol} Local Move</div>
+                    <div><strong>Product Type</strong><br>${(data.pt || []).includes('Air Freight') ? checkedSymbol : uncheckedSymbol} Air<br>${(data.pt || []).includes('Sea Freight') ? checkedSymbol : uncheckedSymbol} Sea<br>${(data.pt || []).includes('Land Freight') ? checkedSymbol : uncheckedSymbol} Land<br>${(data.pt || []).includes('Others') ? checkedSymbol : uncheckedSymbol} Others</div>
+                </div>
+
+                <div class="col-span-6 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Invoice No.:</strong><div class="print-field">${data.in || ''}</div></div>
+                <div class="col-span-6 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Billing Date:</strong><div class="print-field">${data.bd || ''}</div></div>
+                <div class="col-span-12 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Salesman:</strong><div class="print-field">${data.sm || ''}</div></div>
+
+                <div class="col-span-6 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Shipper's Name:</strong><div class="print-field">${data.sh || ''}</div></div>
+                <div class="col-span-6 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Consignee's Name:</strong><div class="print-field">${data.co || ''}</div></div>
+                
+                <div class="col-span-6 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>MAWB/OBL/TCN:</strong><div class="print-field">${data.mawb || ''}</div></div>
+                <div class="col-span-6 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Teams of Shipping:</strong><div class="print-field">${data.ts || ''}</div></div>
+                <div class="col-span-6 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>HAWB/HBL:</strong><div class="print-field">${data.hawb || ''}</div></div>
+                <div class="col-span-3 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Origin:</strong><div class="print-field">${data.or || ''}</div></div>
+                <div class="col-span-3 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Destination:</strong><div class="print-field">${data.de || ''}</div></div>
+                <div class="col-span-3 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>No. of Pieces:</strong><div class="print-field">${data.pc || ''}</div></div>
+                <div class="col-span-3 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Gross Wt:</strong><div class="print-field">${data.gw || ''}</div></div>
+                <div class="col-span-6 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Volume Wt:</strong><div class="print-field">${data.vw || ''}</div></div>
+                
+                ${descriptionHtml}
+                <div class="col-span-6 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Carrier/Line/Trucking:</strong><div class="print-field">${data.ca || ''}</div></div>
+                <div class="col-span-6 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Truck/Driver:</strong><div class="print-field">${data.tn || ''}</div></div>
+                <div class="col-span-4 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Vessel:</strong><div class="print-field">${data.vn || ''}</div></div>
+                <div class="col-span-4 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Flight/Voyage:</strong><div class="print-field">${data.fv || ''}</div></div>
+                <div class="col-span-4 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>Container No:</strong><div class="print-field">${data.cn || ''}</div></div>
+
+                <div class="col-span-12 bg-white p-0" style="border: 1px solid #374151;">
+                    <table class="print-table w-full text-xs">
+                        <thead><tr><th>Description</th><th>Cost</th><th>Selling</th><th>Profit</th><th>Notes</th></tr></thead>
+                        <tbody>
+                            ${(data.ch || []).map(c => `<tr><td>${c.l}</td><td>${c.c}</td><td>${c.s}</td><td>${(parseFloat(c.s || 0) - parseFloat(c.c || 0)).toFixed(3)}</td><td>${c.n}</td></tr>`).join('')}
+                            <tr class="font-bold bg-gray-100"><td>TOTAL:</td><td>${totalCost.toFixed(3)}</td><td>${totalSelling.toFixed(3)}</td><td>${totalProfit.toFixed(3)}</td><td></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-span-12 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>REMARKS:</strong><div class="print-field h-20">${(data.re || '').replace(/\n/g, '<br>')}</div></div>
+                <div class="col-span-3 bg-white p-1 text-xs" style="border: 1px solid #374151;"><strong>PREPARED BY:</strong><div class="print-field">${createdByText}</div></div>
+                <div class="col-span-3 bg-white p-1 text-xs relative" style="border: 1px solid #374151;">${checkedStampHtml}<strong>CHECKED BY:</strong><div class="print-field">${checkedByText}</div></div>
+                <div class="col-span-3 bg-white p-1 text-xs relative" style="border: 1px solid #374151;">${approvalStampHtml}<strong>APPROVED BY:</strong><div class="print-field">${approvedByText}</div></div>
+                ${qrContainerHtml}
+            </div>
+        </div>`;
+}
+
+function printPage() {
+    const data = getFormData();
+    data.totalCost = parseFloat(document.getElementById('total-cost').textContent) || 0;
+    data.totalSelling = parseFloat(document.getElementById('total-selling').textContent) || 0;
+    data.totalProfit = parseFloat(document.getElementById('total-profit').textContent) || 0;
+
+    const printHTML = getPrintViewHtml(data, false);
+    const printContainer = document.getElementById('print-output');
+    printContainer.innerHTML = printHTML;
+
+    const qrContainer = printContainer.querySelector('.qrcode-container');
+    if (qrContainer && data.jfn) {
+        qrContainer.innerHTML = '';
+        const baseUrl = window.location.href.split('?')[0];
+        const qrText = `${baseUrl}?jobId=${encodeURIComponent(data.jfn)}`;
+        new QRCode(qrContainer, {
+            text: qrText,
+            width: 96,
+            height: 96,
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    }
+
+    document.getElementById('main-container').style.display = 'none';
+    printContainer.style.display = 'block';
+    
+    setTimeout(() => { window.print(); }, 500);
+}
+
 // --- Event Listeners ---
 document.addEventListener('DOMContentLoaded', () => {
     initializeAppAndAuth();
@@ -283,15 +615,18 @@ document.addEventListener('DOMContentLoaded', () => {
             handleSignUp(email, password, displayName);
         }
     });
+    
+    document.getElementById('logout-btn').addEventListener('click', handleLogout);
+    document.getElementById('approve-btn').addEventListener('click', () => approveJobFile());
+    document.getElementById('reject-btn').addEventListener('click', () => promptForRejection(null));
+    document.getElementById('confirm-reject-btn').addEventListener('click', rejectJobFileAction);
+    document.getElementById('check-btn').addEventListener('click', () => checkJobFile());
 
     document.getElementById('forgot-password-link').addEventListener('click', (e) => {
         e.preventDefault();
         window.openModal('forgot-password-modal');
     });
     document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
-
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
 
     populateTable();
     calculate();
@@ -302,42 +637,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Make functions globally available for inline onclick handlers from HTML
 // This is the bridge that fixes the broken functionality.
-window.openAnalyticsDashboard = () => {}; // Placeholder
-window.closeAnalyticsDashboard = () => {}; // Placeholder
+window.openAnalyticsDashboard = () => {}; 
+window.closeAnalyticsDashboard = () => {}; 
 window.openFileManager = () => window.openModal('file-manager-modal');
-window.openClientManager = () => {}; // Placeholder
-window.saveJobFile = () => {}; // Placeholder
+window.openClientManager = () => {}; 
+window.saveJobFile = saveJobFile; 
 window.clearForm = clearForm;
-window.printPage = () => {}; // Placeholder
-window.saveUserChanges = () => {}; // Placeholder
-window.sortAnalyticsTable = () => {}; // Placeholder
-window.downloadAnalyticsCsv = () => {}; // Placeholder
-window.previewJobFileById = () => {}; // Placeholder
-window.loadJobFileById = () => {}; // Placeholder
-window.confirmDelete = () => {}; // Placeholder
-window.editClient = () => {}; // Placeholder
-window.printAnalytics = () => {}; // Placeholder
-window.printPreview = () => {}; // Placeholder
-window.generateRemarks = () => {}; // Placeholder
-window.suggestCharges = () => {}; // Placeholder
-window.backupAllData = () => {}; // Placeholder
-window.handleRestoreFile = () => {}; // Placeholder
-window.showUserJobs = () => {}; // Placeholder
-window.showMonthlyJobs = () => {}; // Placeholder
-window.showSalesmanJobs = () => {}; // Placeholder
-window.showStatusJobs = () => {}; // Placeholder
-window.checkJobFile = () => {}; // Placeholder
-window.approveJobFile = () => {}; // Placeholder
-window.uncheckJobFile = () => {}; // Placeholder
-window.openRecycleBin = () => {}; // Placeholder
-window.restoreJobFile = () => {}; // Placeholder
-window.confirmPermanentDelete = () => {}; // Placeholder
-window.filterAnalyticsByTimeframe = () => {}; // Placeholder
-window.promptForRejection = () => {}; // Placeholder
-window.displayAnalytics = () => {}; // Placeholder
-window.openChargeManager = () => {}; // Placeholder
-window.saveChargeDescription = () => {}; // Placeholder
-window.deleteChargeDescription = () => {}; // Placeholder
+window.printPage = printPage;
+window.saveUserChanges = () => {}; 
+window.sortAnalyticsTable = () => {}; 
+window.downloadAnalyticsCsv = () => {}; 
+window.previewJobFileById = previewJobFileById;
+window.loadJobFileById = loadJobFileById;
+window.confirmDelete = () => {}; 
+window.editClient = () => {}; 
+window.printAnalytics = () => {}; 
+window.printPreview = () => {}; 
+window.suggestCharges = () => suggestCharges(chargeDescriptions);
+window.backupAllData = () => {}; 
+window.handleRestoreFile = () => {}; 
+window.showUserJobs = () => {}; 
+window.showMonthlyJobs = () => {}; 
+window.showSalesmanJobs = () => {}; 
+window.showStatusJobs = () => {}; 
+window.checkJobFile = checkJobFile; 
+window.approveJobFile = approveJobFile; 
+window.uncheckJobFile = uncheckJobFile; 
+window.openRecycleBin = () => {}; 
+window.restoreJobFile = () => {}; 
+window.confirmPermanentDelete = () => {}; 
+window.filterAnalyticsByTimeframe = () => {}; 
+window.promptForRejection = promptForRejection; 
+window.displayAnalytics = () => {}; 
+window.openChargeManager = () => {}; 
+window.saveChargeDescription = () => {}; 
+window.deleteChargeDescription = () => {}; 
 window.addChargeRow = addChargeRow;
-
-    
+window.calculate = calculate;

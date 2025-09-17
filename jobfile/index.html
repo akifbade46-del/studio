@@ -341,11 +341,8 @@
             </div>
 
             <!-- Remarks Section -->
-            <div class="flex justify-between items-center mb-2">
-                <label for="remarks" class="block font-semibold text-gray-700">REMARKS:</label>
-                <button onclick="generateRemarks()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform hover:scale-105">Generate Remarks ✨</button>
-            </div>
             <div class="mb-8">
+                <label for="remarks" class="block font-semibold text-gray-700 mb-2">REMARKS:</label>
                 <textarea id="remarks" rows="4" class="input-field w-full"></textarea>
             </div>
 
@@ -697,7 +694,11 @@
     </div>
 
 
-    <!-- Firebase SDK and App Logic -->
+    <!-- App Logic -->
+    <script type="module" src="auth.js"></script>
+    <script type="module" src="firestore.js"></script>
+    <script type="module" src="gemini.js"></script>
     <script type="module" src="script.js"></script>
+
 </body>
 </html>
