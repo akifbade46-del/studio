@@ -82,8 +82,6 @@ export async function initializeAppAndAuth() {
                 }
             });
         }
-        
-        setupAuthEventListeners();
 
     } catch (error) {
         console.error("Firebase initialization failed:", error);
@@ -98,9 +96,6 @@ function showLoginView() {
 }
 
 async function showPublicView(jobId, firestoreDb) {
-    // This function needs access to getPrintViewHtml which is in script.js
-    // For now, we will just show a simplified message.
-    // A better approach would be to have a shared UI module.
     db = firestoreDb;
     try {
         const docId = jobId.replace(/\//g, '_');
@@ -109,8 +104,8 @@ async function showPublicView(jobId, firestoreDb) {
 
         if (docSnap.exists()) {
             const data = docSnap.data();
-            // This is a temporary solution as getPrintViewHtml is not in this module
             const publicViewContainer = document.getElementById('public-view-container');
+            // This will be fixed once script.js is modularized and getPrintViewHtml is available
             publicViewContainer.innerHTML = `
                 <div class="border border-gray-700 p-4 bg-white text-center">
                     <h1 class="text-2xl font-bold">Job File: ${data.jfn}</h1>
@@ -132,51 +127,8 @@ async function showPublicView(jobId, firestoreDb) {
 }
 
 
-function setupAuthEventListeners() {
-    let isLogin = true;
-
-    document.getElementById('auth-link').addEventListener('click', (e) => {
-        e.preventDefault();
-        isLogin = !isLogin;
-        toggleAuthView(isLogin);
-    });
-
-    document.getElementById('auth-btn').addEventListener('click', () => {
-        const email = document.getElementById('email-address').value;
-        const password = document.getElementById('password').value;
-        if (isLogin) {
-            handleLogin(email, password);
-        } else {
-            const displayName = document.getElementById('full-name').value;
-             if (!email || !password || !displayName) {
-                 showNotification("Please fill all fields to sign up.", true);
-                 return;
-            }
-            handleSignUp(email, password, displayName);
-        }
-    });
-    
-    document.getElementById('logout-btn').addEventListener('click', handleLogout); 
-    
-    document.getElementById('forgot-password-link').addEventListener('click', (e) => {
-        e.preventDefault();
-        openModal('forgot-password-modal');
-    });
-    document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
-
-    const allModals = document.querySelectorAll('.overlay');
-    allModals.forEach(modal => {
-        const closeButton = modal.querySelector('button[onclick^="closeModal"]');
-        if (closeButton) {
-            const modalId = modal.id;
-            closeButton.addEventListener('click', () => closeModal(modalId));
-        }
-    });
-}
-
-
 // --- Authentication Logic ---
-async function handleSignUp(email, password, displayName) {
+export async function handleSignUp(email, password, displayName) {
     showLoader();
     try {
         await createUserWithEmailAndPassword(auth, email, password);
@@ -190,7 +142,7 @@ async function handleSignUp(email, password, displayName) {
     hideLoader();
 }
 
-async function handleLogin(email, password) {
+export async function handleLogin(email, password) {
     showLoader();
     try {
         await signInWithEmailAndPassword(auth, email, password);
@@ -205,7 +157,7 @@ async function handleLogin(email, password) {
     hideLoader();
 }
 
-async function handleForgotPassword() {
+export async function handleForgotPassword() {
     const email = document.getElementById('reset-email').value.trim();
     if (!email) {
         showNotification("Please enter your email address.", true);
@@ -292,19 +244,24 @@ function toggleAuthView(showLogin) {
     document.getElementById('auth-link').textContent = showLogin ? 'Create a new account' : 'Already have an account? Sign in';
     
     if (nameField) nameField.style.display = showLogin ? 'none' : 'block';
-    if (emailField) emailField.classList.toggle('rounded-t-md', !showLogin);
+    
+    // This logic needs to be carefully checked. In the original HTML, the email field gets a top radius when name field is hidden.
+    if (emailField) {
+        if (showLogin) {
+             emailField.classList.remove('rounded-t-md');
+        } else {
+             emailField.classList.add('rounded-t-md');
+        }
+    }
     
     const approvalMsg = document.getElementById('approval-message');
     if (approvalMsg) approvalMsg.style.display = 'none';
 }
 
 
-// --- App Initialization Trigger ---
-document.addEventListener('DOMContentLoaded', () => {
-    initializeAppAndAuth();
-});
+// --- App Initialization Trigger (now handled by script.js) ---
 
-// Make UI functions globally available for inline event handlers
+// Make UI functions globally available for inline event handlers and other scripts
 window.showLoader = showLoader;
 window.hideLoader = hideLoader;
 window.showNotification = showNotification;
