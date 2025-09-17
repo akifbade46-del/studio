@@ -6,7 +6,8 @@ import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp
 // Import App Logic Modules
 import { setDb, setAuth, setCurrentUser } from './state.js';
 import { initializeMainApp } from './main.js';
-import { showLogin, showApp, showPublicJobView, showNotification, showLoader, hideLoader, closeModal, openModal } from './ui.js';
+import { showLogin, showApp, showPublicJobView, showNotification, showLoader, hideLoader, closeModal, openModal, displayClients } from './ui.js';
+import { loadClients, loadChargeDescriptions } from './firestore.js';
 
 // --- MAIN SCRIPT ---
 // This is the primary entry point for the application.
@@ -83,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-function initializeAuthUI() {
+async function initializeAuthUI() {
     let isLoginView = true;
     const auth = getAuth();
     const db = getFirestore();
@@ -92,6 +93,10 @@ function initializeAuthUI() {
     const authBtn = document.getElementById('auth-btn');
     const forgotPasswordLink = document.getElementById('forgot-password-link');
     const sendResetLinkBtn = document.getElementById('send-reset-link-btn');
+
+    // Pre-load data needed for auth screen or immediately after
+    await loadChargeDescriptions();
+    loadClients(); // This will setup a listener
 
     // --- Login/Signup Form Toggle ---
     authLink.addEventListener('click', (e) => {
@@ -209,5 +214,3 @@ function toggleAuthView(isLogin) {
     document.getElementById('approval-message').style.display = 'none';
     document.getElementById('blocked-message').style.display = 'none';
 }
-
-  

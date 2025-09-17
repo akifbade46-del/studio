@@ -558,7 +558,7 @@ export async function deleteClient(clientId) {
 
 // --- Charge Descriptions ---
 
-export function loadChargeDescriptions() {
+export async function loadChargeDescriptions() {
     const { setChargeDescriptions } = await import('./state.js');
     const storedDescriptions = localStorage.getItem('chargeDescriptions');
     let descriptions = [];
