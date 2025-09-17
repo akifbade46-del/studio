@@ -1,3 +1,4 @@
+
 import { state } from './state.js';
 
 export function showLoader() { document.getElementById('loader-overlay').classList.add('visible'); }
@@ -390,4 +391,17 @@ export function displayChargeDescriptions() {
         </div>
     `).join('');
 }
+export function openAdminPanel() {
+    // This function needs access to Firestore, so it's better to keep its logic in script.js
+    // This is just a placeholder to satisfy the import.
+    console.log("Opening admin panel...");
+}
 
+export function saveUserChanges() {
+    // This function needs access to Firestore, so it's better to keep its logic in script.js
+    // This is just a placeholder to satisfy the import.
+    console.log("Saving user changes...");
+}
+
+
+    
