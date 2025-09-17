@@ -699,14 +699,23 @@
 
     <!-- Firebase SDK and App Logic -->
     <script type="module">
-        // Import Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { initializeAppAndAuth } from './auth.js';
         import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, query, where, serverTimestamp, getDocs, writeBatch, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
+        let db;
+        let currentUser = null; // This will be set by the auth module
+
+        // This function will be called by auth.js on successful login
+        function onLoginSuccess(user, firestoreDb) {
+            currentUser = user;
+            db = firestoreDb;
+            showApp();
+            loadJobFiles();
+            loadClients();
+            // All other app initialization logic that depends on a logged-in user
+        }
+        
         // --- Global variables ---
-        let db, auth;
-        let currentUser = null;
         let jobFilesCache = [];
         let clientsCache = [];
         let chargeDescriptions = [];
@@ -715,96 +724,9 @@
         let fileIdToReject = null; 
         let profitChartInstance = null;
 
-        // --- Firebase Configuration ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyAAulR2nJQm-4QtNyEqKTnnDPw-iKW92Mc",
-            authDomain: "my-job-file-system.firebaseapp.com",
-            projectId: "my-job-file-system",
-            storageBucket: "my-job-file-system.appspot.com",
-            messagingSenderId: "145307873304",
-            appId: "1:145307873304:web:d661ea6ec118801b4a136d",
-            measurementId: "G-8EHX5K7YHL"
-        };
-
-        // --- Firebase Initialization ---
-        async function initializeFirebase() {
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        const userDocRef = doc(db, 'users', user.uid);
-                        let userDoc = await getDoc(userDocRef);
-                        
-                        if (!userDoc.exists()) {
-                            const usersCollectionRef = collection(db, 'users');
-                            const userQuerySnapshot = await getDocs(usersCollectionRef);
-                            const isFirstUser = userQuerySnapshot.size === 0;
-
-                            const newUser = {
-                                email: user.email,
-                                displayName: user.displayName || user.email.split('@')[0],
-                                role: isFirstUser ? 'admin' : 'user',
-                                status: isFirstUser ? 'active' : 'inactive',
-                                createdAt: serverTimestamp()
-                            };
-                            await setDoc(userDocRef, newUser);
-                            userDoc = await getDoc(userDocRef);
-                        }
-                        
-                        currentUser = { uid: user.uid, email: user.email, ...userDoc.data() };
-                        
-                        if (currentUser.status === 'inactive') {
-                            showLogin();
-                            document.getElementById('approval-message').style.display = 'block';
-                            document.getElementById('blocked-message').style.display = 'none';
-                            signOut(auth);
-                            return;
-                        }
-
-                        if (currentUser.status === 'blocked') {
-                            showLogin();
-                            document.getElementById('approval-message').style.display = 'none';
-                            document.getElementById('blocked-message').style.display = 'block';
-                            signOut(auth);
-                            return;
-                        }
-                        
-                        console.log("User logged in:", currentUser);
-                        showApp();
-                        loadJobFiles();
-                        loadClients();
-                    } else {
-                        currentUser = null;
-                        console.log("User logged out");
-                        showLogin();
-                    }
-                });
-
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                showNotification("Could not connect to the database.", true);
-            }
-        }
-
         // --- Function to handle public view from QR code ---
-        async function initializeFirebaseAndShowPublicView(jobId) {
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                await showPublicJobView(jobId);
-            } catch (error)
-            {
-                console.error("Error initializing Firebase for public view:", error);
-                document.body.innerHTML = `<div class="p-4 text-center text-red-700 bg-red-100">Could not load job file. Database connection failed.</div>`;
-            } finally {
-                hideLoader();
-            }
-        }
-
-        async function showPublicJobView(jobId) {
+        async function showPublicJobView(jobId, firestoreDb) {
+            db = firestoreDb;
             try {
                 const docId = jobId.replace(/\//g, '_');
                 const docRef = doc(db, 'jobfiles', docId);
@@ -823,63 +745,9 @@
                 console.error("Error fetching public job file:", error);
                 document.body.innerHTML = `<div class="p-4 text-center text-red-700 bg-red-100">Error loading job file.</div>`;
             }
-        }
-
-        // --- Authentication Logic ---
-        async function handleSignUp(email, password, displayName) {
-            showLoader();
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                showNotification("Account created! Please wait for admin approval.", false);
-                await signOut(auth);
-                toggleAuthView(true);
-            } catch (error) {
-                console.error("Sign up error:", error);
-                showNotification(error.message, true);
-            }
-            hideLoader();
-        }
-
-        async function handleLogin(email, password) {
-            showLoader();
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                console.error("Login error:", error);
-                let message = "Login failed. Please check your email and password.";
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                    message = "Incorrect email or password. Please try again or reset your password.";
-                }
-                showNotification(message, true);
-            }
-            hideLoader();
-        }
-        
-        async function handleForgotPassword() {
-            const email = document.getElementById('reset-email').value.trim();
-            if (!email) {
-                showNotification("Please enter your email address.", true);
-                return;
-            }
-            showLoader();
-            try {
-                await sendPasswordResetEmail(auth, email);
+             finally {
                 hideLoader();
-                closeModal('forgot-password-modal');
-                showNotification("Password reset link sent! Check your email inbox.", false);
-            } catch (error) {
-                hideLoader();
-                console.error("Password reset error:", error);
-                let message = "Could not send reset link. Please try again.";
-                if(error.code === 'auth/user-not-found'){
-                    message = "No account found with this email address.";
-                }
-                showNotification(message, true);
             }
-        }
-
-        function handleLogout() {
-            signOut(auth);
         }
 
         // --- Data Handling (Firestore) ---
@@ -3255,9 +3123,12 @@
 
         // --- App Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const jobIdFromUrl = urlParams.get('jobId');
-
+            
+            // This is the main entry point.
+            // It calls the auth module to handle login, which will then call back
+            // onLoginSuccess if the user logs in successfully.
+            initializeAppAndAuth(onLoginSuccess, showPublicJobView, showLogin);
+            
             const storedDescriptions = localStorage.getItem('chargeDescriptions');
             if (storedDescriptions) {
                 chargeDescriptions = JSON.parse(storedDescriptions);
@@ -3267,52 +3138,9 @@
                 ];
                 localStorage.setItem('chargeDescriptions', JSON.stringify(chargeDescriptions));
             }
-
-            if (jobIdFromUrl) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('app-container').style.display = 'none';
-                showLoader();
-                initializeFirebaseAndShowPublicView(jobIdFromUrl);
-            } else {
-                initializeFirebase();
-            }
             
-            let isLogin = true;
-
-            document.getElementById('auth-link').addEventListener('click', (e) => {
-                e.preventDefault();
-                isLogin = !isLogin;
-                toggleAuthView(isLogin);
-            });
-
-            document.getElementById('auth-btn').addEventListener('click', () => {
-                const email = document.getElementById('email-address').value;
-                const password = document.getElementById('password').value;
-                if (isLogin) {
-                    handleLogin(email, password);
-                } else {
-                    const displayName = document.getElementById('full-name').value;
-                     if (!email || !password || !displayName) {
-                         showNotification("Please fill all fields to sign up.", true);
-                         return;
-                    }
-                    handleSignUp(email, password, displayName);
-                }
-            });
-            
-            document.getElementById('logout-btn').addEventListener('click', handleLogout);
-            document.getElementById('approve-btn').addEventListener('click', () => approveJobFile());
             document.getElementById('reject-btn').addEventListener('click', () => promptForRejection(null));
             document.getElementById('confirm-reject-btn').addEventListener('click', rejectJobFile);
-            document.getElementById('check-btn').addEventListener('click', () => checkJobFile());
-            document.getElementById('admin-panel-btn').addEventListener('click', openAdminPanel);
-            document.getElementById('forgot-password-link').addEventListener('click', (e) => {
-                e.preventDefault();
-                openModal('forgot-password-modal');
-            });
-            document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
-
-            document.getElementById('activity-log-btn').addEventListener('click', openUserActivityLog);
 
             document.getElementById('search-bar').addEventListener('input', applyFiltersAndDisplay);
             document.getElementById('filter-status').addEventListener('change', applyFiltersAndDisplay);
@@ -3381,6 +3209,8 @@
             window.saveChargeDescription = saveChargeDescription;
             window.deleteChargeDescription = deleteChargeDescription;
             window.addChargeRow = addChargeRow;
+            window.openAdminPanel = openAdminPanel;
+            window.activityLogBtn = document.getElementById('activity-log-btn').addEventListener('click', openUserActivityLog);
 
             populateTable();
             calculate();
@@ -3389,3 +3219,5 @@
     </script>
 </body>
 </html>
+
+    
