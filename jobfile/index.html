@@ -540,8 +540,7 @@
             <p class="mb-4">Please provide a reason for rejecting this job file.</p>
             <textarea id="rejection-reason-input" class="input-field w-full" rows="3"></textarea>
             <div class="text-right mt-6 space-x-2">
-                <button id="cancel-reject-modal-btn" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
-                <button id="confirm-reject-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm Rejection</button>
+                <button id="cancel-reject-modal-btn" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>                <button id="confirm-reject-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm Rejection</button>
             </div>
         </div>
     </div>
@@ -701,59 +700,7 @@
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { setDb, setAuth, setCurrentUser } from './state.js';
-
-        // --- UI Helpers for Login ---
-        function showLoader() { document.getElementById('loader-overlay').classList.add('visible'); }
-        function hideLoader() { document.getElementById('loader-overlay').classList.remove('visible'); }
-
-        function showNotification(message, isError = false) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.style.backgroundColor = isError ? '#c53030' : '#2d3748';
-            notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            modal.classList.add('visible');
-        }
-
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            modal.classList.remove('visible');
-        }
-
-        function toggleAuthView(isLogin) {
-            const nameField = document.getElementById('signup-name-field');
-            const emailField = document.getElementById('email-address');
-            
-            document.getElementById('auth-title').textContent = isLogin ? 'Sign in to your account' : 'Create a new account';
-            document.getElementById('auth-btn').textContent = isLogin ? 'Sign in' : 'Sign up';
-            document.getElementById('auth-link').textContent = isLogin ? 'Create a new account' : 'Already have an account? Sign in';
-            nameField.style.display = isLogin ? 'none' : 'block';
-            emailField.classList.toggle('rounded-t-md', !isLogin);
-            document.getElementById('approval-message').style.display = 'none';
-        }
-        
-        function showLogin() {
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('app-container').style.display = 'none';
-        }
-
-        function showApp(currentUser) {
-            setCurrentUser(currentUser);
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app-container').style.display = 'block';
-
-            // Dynamically load the main app script
-            const script = document.createElement('script');
-            script.type = 'module';
-            script.src = './main.js';
-            document.body.appendChild(script);
-        }
+        import { showApp, showLogin, openModal, closeModal, showNotification } from './ui.js';
 
         // This event listener ensures the HTML is ready before the script runs.
         document.addEventListener('DOMContentLoaded', () => {
@@ -781,16 +728,13 @@
                 // --- Auth State Change Logic ---
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
-                        // User is signed in, but we DON'T show the app yet.
-                        // We just verify their status. If they are blocked, we log them out.
                         const userDocRef = doc(db, 'users', user.uid);
                         const userDoc = await getDoc(userDocRef);
                         
                         if (userDoc.exists() && userDoc.data().status === 'blocked') {
-                            await signOut(auth); // Force logout if blocked
+                            await signOut(auth); 
                         }
                     } else {
-                        // No user is signed in. Ensure login screen is visible.
                         setCurrentUser(null);
                         showLogin();
                     }
@@ -835,6 +779,22 @@
             document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
 
 
+            // --- Helper Functions within the login script ---
+            function showLoader() { document.getElementById('loader-overlay').classList.add('visible'); }
+            function hideLoader() { document.getElementById('loader-overlay').classList.remove('visible'); }
+
+            function toggleAuthView(isLogin) {
+                const nameField = document.getElementById('signup-name-field');
+                const emailField = document.getElementById('email-address');
+                
+                document.getElementById('auth-title').textContent = isLogin ? 'Sign in to your account' : 'Create a new account';
+                document.getElementById('auth-btn').textContent = isLogin ? 'Sign in' : 'Sign up';
+                document.getElementById('auth-link').textContent = isLogin ? 'Create a new account' : 'Already have an account? Sign in';
+                nameField.style.display = isLogin ? 'none' : 'block';
+                emailField.classList.toggle('rounded-t-md', !isLogin);
+                document.getElementById('approval-message').style.display = 'none';
+            }
+        
             // --- Authentication Handler Functions ---
             async function handleSignUp(email, password, displayName) {
                 showLoader();
@@ -869,7 +829,6 @@
                     const userCredential = await signInWithEmailAndPassword(auth, email, password);
                     const user = userCredential.user;
                     
-                    // After successful sign-in, check user doc from Firestore
                     const userDocRef = doc(db, 'users', user.uid);
                     const userDoc = await getDoc(userDocRef);
 
@@ -877,7 +836,14 @@
                         const userData = userDoc.data();
                         if (userData.status === 'active') {
                             const currentUser = { uid: user.uid, email: user.email, ...userData };
-                            showApp(currentUser);
+                            setCurrentUser(currentUser);
+                            showApp();
+                            
+                            const script = document.createElement('script');
+                            script.type = 'module';
+                            script.src = './main.js';
+                            document.body.appendChild(script);
+
                         } else if (userData.status === 'inactive') {
                             document.getElementById('approval-message').style.display = 'block';
                             await signOut(auth);
@@ -886,7 +852,6 @@
                             await signOut(auth);
                         }
                     } else {
-                        // This case is unlikely if sign-up process is enforced
                         showNotification("User data not found in database.", true);
                         await signOut(auth);
                     }

@@ -28,19 +28,21 @@ export function showApp() {
     document.getElementById('app-container').style.display = 'block';
 
     const currentUser = getCurrentUser();
-    document.getElementById('user-display-name').textContent = currentUser.displayName;
-    document.getElementById('user-role').textContent = currentUser.role;
+    if (currentUser) {
+        document.getElementById('user-display-name').textContent = currentUser.displayName;
+        document.getElementById('user-role').textContent = currentUser.role;
 
-    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'none');
-    
-    if (currentUser.role === 'admin') {
-        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
-        document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
-        document.getElementById('checker-info-banner').style.display = 'block';
-    } else if (currentUser.role === 'checker') {
-        document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
-        document.getElementById('checker-info-banner').style.display = 'block';
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'none');
+        
+        if (currentUser.role === 'admin') {
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+            document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
+            document.getElementById('checker-info-banner').style.display = 'block';
+        } else if (currentUser.role === 'checker') {
+            document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
+            document.getElementById('checker-info-banner').style.display = 'block';
+        }
     }
 }
 
@@ -986,6 +988,237 @@ export function editClient(clientId) {
     }
 }
 
-// And so on for other UI functions...
-// It is crucial to export every function that is called from another module.
-// ... (rest of the UI functions from data.html)
+// --- Charge Manager ---
+export function openChargeManager() {
+    displayChargeDescriptions();
+    openModal('charge-manager-modal');
+}
+
+export function displayChargeDescriptions() {
+    const descriptions = getChargeDescriptions();
+    const listEl = document.getElementById('charge-description-list');
+    if(descriptions.length === 0){
+        listEl.innerHTML = '<p class="text-gray-500 text-center p-4">No custom descriptions saved.</p>';
+        return;
+    }
+    listEl.innerHTML = descriptions.map(desc => `
+        <div class="flex justify-between items-center p-2 bg-gray-100 rounded">
+            <span>${desc}</span>
+            <button onclick="deleteChargeDescription('${desc}')" class="text-red-500 hover:text-red-700 font-bold">&times;</button>
+        </div>
+    `).join('');
+}
+
+// --- Autocomplete ---
+export function setupAutocomplete(inputId, suggestionsId, clientType) {
+    const input = document.getElementById(inputId);
+    const suggestions = document.getElementById(suggestionsId);
+
+    input.addEventListener('input', () => {
+        const value = input.value.toLowerCase();
+        suggestions.innerHTML = '';
+        if (value.length < 1) {
+            suggestions.classList.add('hidden');
+            return;
+        }
+
+        const clientsCache = getClientsCache();
+        const filteredClients = clientsCache.filter(client => {
+            const typeMatch = client.type === clientType || client.type === 'Both';
+            const nameMatch = client.name.toLowerCase().includes(value);
+            return typeMatch && nameMatch;
+        }).slice(0, 5);
+
+        if (filteredClients.length > 0) {
+            filteredClients.forEach(client => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-suggestion';
+                item.textContent = client.name;
+                item.addEventListener('click', () => {
+                    input.value = client.name;
+                    suggestions.classList.add('hidden');
+                });
+                suggestions.appendChild(item);
+            });
+            suggestions.classList.remove('hidden');
+        } else {
+            suggestions.classList.add('hidden');
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target.id !== inputId) {
+            suggestions.classList.add('hidden');
+        }
+    });
+}
+
+export function setupChargeAutocomplete(inputElement) {
+    const suggestionsContainer = document.createElement('div');
+    suggestionsContainer.className = 'autocomplete-suggestions hidden';
+    inputElement.parentNode.appendChild(suggestionsContainer);
+
+    inputElement.addEventListener('input', () => {
+        const value = inputElement.value.toLowerCase();
+        suggestionsContainer.innerHTML = '';
+        if (value.length < 1) {
+            suggestionsContainer.classList.add('hidden');
+            return;
+        }
+        const chargeDescriptions = getChargeDescriptions();
+        const filtered = chargeDescriptions.filter(d => d.toLowerCase().includes(value)).slice(0, 5);
+
+        if (filtered.length > 0) {
+            filtered.forEach(desc => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-suggestion';
+                item.textContent = desc;
+                item.addEventListener('click', () => {
+                    inputElement.value = desc;
+                    suggestionsContainer.classList.add('hidden');
+                });
+                suggestionsContainer.appendChild(item);
+            });
+            suggestionsContainer.classList.remove('hidden');
+        } else {
+            suggestionsContainer.classList.add('hidden');
+        }
+    });
+    
+    // Hide suggestions on click outside
+    document.addEventListener('click', (e) => {
+        if (e.target !== inputElement) {
+            suggestionsContainer.classList.add('hidden');
+        }
+    });
+}
+
+
+// --- Specific Job List Modals for Analytics ---
+export function showUserJobs(userName) {
+    const analyticsCache = getAnalyticsDataCache();
+    if (!analyticsCache) return;
+    const userStat = analyticsCache.profitByUser.find(([name]) => name === userName);
+    if (!userStat) return;
+    
+    document.getElementById('user-jobs-modal-title').textContent = `Job Files Created by ${userName}`;
+    const listEl = document.getElementById('user-jobs-list');
+    listEl.innerHTML = userStat[1].jobs.map(job => createJobListItem(job)).join('');
+    openModal('user-jobs-modal', true);
+}
+
+export function showMonthlyJobs(month, dateType) {
+    const analyticsCache = getAnalyticsDataCache();
+    if (!analyticsCache) return;
+    const monthlyStats = dateType === 'bd' ? analyticsCache.monthlyStatsByBilling : analyticsCache.monthlyStatsByOpening;
+    const monthStat = monthlyStats.find(([m]) => m === month);
+    if (!monthStat) return;
+
+    document.getElementById('user-jobs-modal-title').textContent = `Job Files for ${month}`;
+    const listEl = document.getElementById('user-jobs-list');
+    listEl.innerHTML = monthStat[1].jobs.map(job => createJobListItem(job)).join('');
+    openModal('user-jobs-modal', true);
+}
+
+export function showSalesmanJobs(salesmanName) {
+    const analyticsCache = getAnalyticsDataCache();
+    if (!analyticsCache) return;
+    const salesmanStat = analyticsCache.profitBySalesman.find(([name]) => name === salesmanName);
+    if (!salesmanStat) return;
+
+    document.getElementById('user-jobs-modal-title').textContent = `Job Files for Salesman: ${salesmanName}`;
+    const listEl = document.getElementById('user-jobs-list');
+    listEl.innerHTML = salesmanStat[1].jobs.map(job => createJobListItem(job)).join('');
+    openModal('user-jobs-modal', true);
+}
+
+export function showStatusJobs(status) {
+    const jobFiles = getJobFilesCache().filter(job => (job.status || 'pending') === status);
+    
+    document.getElementById('user-jobs-modal-title').textContent = `Job Files - ${status.charAt(0).toUpperCase() + status.slice(1)}`;
+    const listEl = document.getElementById('user-jobs-list');
+    if(jobFiles.length > 0) {
+        listEl.innerHTML = jobFiles.map(job => createJobListItem(job)).join('');
+    } else {
+        listEl.innerHTML = `<p class="text-gray-500 text-center p-4">No job files with this status.</p>`;
+    }
+    openModal('user-jobs-modal', true);
+}
+
+function createJobListItem(job) {
+    const currentUser = getCurrentUser();
+    const canCheck = ['admin', 'checker'].includes(currentUser.role);
+    const isAdmin = currentUser.role === 'admin';
+    
+    let buttons = `
+        <button onclick="previewJobFileById('${job.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded text-xs">Preview</button>
+        <button onclick="loadJobFileById('${job.id}')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded text-xs">Load</button>
+    `;
+
+    if (job.status === 'pending' || !job.status) {
+        if(canCheck && !job.checkedBy) buttons += `<button onclick="checkJobFile('${job.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded text-xs">Check</button>`;
+    }
+    if (job.status === 'checked') {
+        if(canCheck) buttons += `<button onclick="uncheckJobFile('${job.id}')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded text-xs">Uncheck</button>`;
+        if(isAdmin) {
+             buttons += `<button onclick="approveJobFile('${job.id}')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded text-xs">Approve</button>`;
+             buttons += `<button onclick="promptForRejection('${job.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-xs">Reject</button>`;
+        }
+    }
+
+    return `
+        <div class="border p-3 rounded-lg flex flex-col sm:flex-row justify-between items-center bg-gray-50 hover:bg-gray-100 gap-2">
+            <div>
+                <p class="font-bold text-indigo-700">${job.jfn}</p>
+                <p class="text-sm text-gray-600">Profit: <span class="font-semibold text-green-700">KD ${(job.totalProfit || 0).toFixed(3)}</span></p>
+                <p class="text-xs text-gray-500">Shipper: ${job.sh || 'N/A'}</p>
+            </div>
+            <div class="space-x-2 flex-shrink-0">
+                ${buttons}
+            </div>
+        </div>
+    `;
+}
+
+// --- Recycle Bin ---
+export async function openRecycleBin() {
+    showLoader();
+    const db = getDb();
+    try {
+        const snapshot = await getDocs(collection(db, 'deleted_jobfiles'));
+        const deletedFiles = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        deletedFiles.sort((a,b) => (b.deletedAt?.toDate() || 0) - (a.deletedAt?.toDate() || 0));
+
+        const listEl = document.getElementById('recycle-bin-list');
+        if (deletedFiles.length === 0) {
+            listEl.innerHTML = '<p class="text-gray-500 text-center p-4">The recycle bin is empty.</p>';
+        } else {
+            listEl.innerHTML = deletedFiles.map(file => {
+                const deletedAt = file.deletedAt?.toDate().toLocaleString() || 'Unknown';
+                return `
+                    <div class="border p-3 rounded-lg flex flex-col sm:flex-row justify-between items-center bg-red-50 hover:bg-red-100 gap-2">
+                        <div>
+                            <p class="font-bold text-red-700">${file.jfn}</p>
+                            <p class="text-xs text-gray-500">Deleted by: ${file.deletedBy || 'N/A'} on ${deletedAt}</p>
+                        </div>
+                        <div class="space-x-2 flex-shrink-0">
+                            <button onclick="restoreJobFile('${file.id}')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded text-xs">Restore</button>
+                            <button onclick="confirmPermanentDelete('${file.id}')" class="bg-red-700 hover:bg-red-800 text-white font-bold py-1 px-2 rounded text-xs">Delete Permanently</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        openModal('recycle-bin-modal');
+    } catch (error) {
+        console.error("Error opening recycle bin:", error);
+        showNotification("Could not load recycle bin.", true);
+    } finally {
+        hideLoader();
+    }
+}
+
+
+export function printAnalytics() {
+    createPrintWindow('Analytics Report', document.getElementById('analytics-body').innerHTML);
+}
