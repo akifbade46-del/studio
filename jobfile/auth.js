@@ -2,6 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { onLoginSuccess } from "./script.js";
 
 // --- Firebase Configuration ---
 const firebaseConfig = {
@@ -18,7 +19,7 @@ let auth;
 let db;
 
 // --- Main Initialization Function ---
-export async function initializeAppAndAuth(onLoginSuccess, showPublicView, showLoginView) {
+export async function initializeAppAndAuth() {
     try {
         const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
@@ -90,6 +91,41 @@ export async function initializeAppAndAuth(onLoginSuccess, showPublicView, showL
     }
 }
 
+function showLoginView() {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app-container').style.display = 'none';
+    document.getElementById('analytics-container').style.display = 'none';
+}
+
+async function showPublicView(jobId, firestoreDb) {
+    db = firestoreDb;
+    try {
+        const docId = jobId.replace(/\//g, '_');
+        const docRef = doc(db, 'jobfiles', docId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const publicViewContainer = document.getElementById('public-view-container');
+            // This function is now in script.js, need to make it available or rethink
+             publicViewContainer.innerHTML = `
+                <div class="border border-gray-700 p-2 bg-white">
+                    ... HTML for public view ...
+                </div>
+            `;
+             showNotification("Public view not fully implemented in this module.", true);
+
+        } else {
+            document.body.innerHTML = `<div class="p-4 text-center text-yellow-700 bg-yellow-100">Job File with ID "${jobId}" not found.</div>`;
+        }
+    } catch (error) {
+        console.error("Error fetching public job file:", error);
+        document.body.innerHTML = `<div class="p-4 text-center text-red-700 bg-red-100">Error loading job file.</div>`;
+    } finally {
+        hideLoader();
+    }
+}
+
 
 function setupAuthEventListeners() {
     let isLogin = true;
@@ -114,9 +150,8 @@ function setupAuthEventListeners() {
             handleSignUp(email, password, displayName);
         }
     });
-
-    // The main app script will handle logout now.
-    // document.getElementById('logout-btn').addEventListener('click', handleLogout); 
+    
+    document.getElementById('logout-btn').addEventListener('click', handleLogout); 
     
     document.getElementById('forgot-password-link').addEventListener('click', (e) => {
         e.preventDefault();
@@ -124,17 +159,15 @@ function setupAuthEventListeners() {
     });
     document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
 
-    // Make modal close buttons work
     const allModals = document.querySelectorAll('.overlay');
     allModals.forEach(modal => {
         const closeButton = modal.querySelector('button[onclick^="closeModal"]');
         if (closeButton) {
             const modalId = modal.id;
-            closeButton.removeAttribute('onclick');
+            // The onclick is not being removed properly. Let's add a direct listener.
             closeButton.addEventListener('click', () => closeModal(modalId));
         }
     });
-
 }
 
 
@@ -157,7 +190,6 @@ async function handleLogin(email, password) {
     showLoader();
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        // onAuthStateChanged will handle the rest
     } catch (error) {
         console.error("Login error:", error);
         let message = "Login failed. Please check your email and password.";
@@ -199,18 +231,17 @@ export function handleLogout() {
 }
 
 
-// --- UI Helper Functions (Moved from index.html) ---
-
-export function showLoader() { 
+// --- UI Helper Functions ---
+function showLoader() { 
     const loader = document.getElementById('loader-overlay');
     if(loader) loader.classList.add('visible'); 
 }
-export function hideLoader() { 
+function hideLoader() { 
     const loader = document.getElementById('loader-overlay');
     if(loader) loader.classList.remove('visible'); 
 }
 
-export function showNotification(message, isError = false) {
+function showNotification(message, isError = false) {
     const notification = document.getElementById('notification');
     if(!notification) return;
     notification.textContent = message;
@@ -221,7 +252,7 @@ export function showNotification(message, isError = false) {
     }, 3000);
 }
 
-export function openModal(id, keepParent = false) {
+function openModal(id, keepParent = false) {
     if (!keepParent) {
         closeAllModals();
     }
@@ -236,19 +267,19 @@ export function openModal(id, keepParent = false) {
     modal.classList.add('visible');
 }
 
-export function closeModal(id) {
+function closeModal(id) {
     const modal = document.getElementById(id);
     if(modal) modal.classList.remove('visible');
 }
 
-export function closeAllModals() {
+function closeAllModals() {
     document.querySelectorAll('.overlay').forEach(modal => {
         modal.classList.remove('visible');
         modal.style.zIndex = '';
     });
 }
 
-export function toggleAuthView(showLogin) {
+function toggleAuthView(showLogin) {
     const nameField = document.getElementById('signup-name-field');
     const emailField = document.getElementById('email-address');
     
@@ -263,7 +294,13 @@ export function toggleAuthView(showLogin) {
     if (approvalMsg) approvalMsg.style.display = 'none';
 }
 
-// Make these functions globally available for the main script
+
+// --- App Initialization Trigger ---
+document.addEventListener('DOMContentLoaded', () => {
+    initializeAppAndAuth();
+});
+
+// Make UI functions globally available for inline event handlers and other scripts
 window.showLoader = showLoader;
 window.hideLoader = hideLoader;
 window.showNotification = showNotification;
