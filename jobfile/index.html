@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job File Management System</title>
+    <title>Job File Management System with Database</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4FB8AF"/>
     <style>
         :root { --theme-color: #4f46e5; }
         body {
@@ -67,7 +65,7 @@
         .table-cell input:focus {
             outline: none;
         }
-
+        
         .overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.5); display: flex;
@@ -122,7 +120,7 @@
         #analytics-container .analytics-table th { background-color: #f3f4f6; font-weight: 600; }
         #print-output .print-field, #preview-modal .print-field { border: 1px solid #6b7280; padding: 0.3rem; min-height: 24px; word-break: break-all; }
         .admin-only, .checker-only, #signup-name-field { display: none; }
-
+        
         .stamp {
             position: absolute;
             top: -10px; right: -10px;
@@ -169,7 +167,7 @@
     <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <div>
-                 <img src="http://qgocargo.com/logo.png" alt="Q'go Cargo Logo" class="mx-auto h-20 w-auto">
+                <div class="text-center text-5xl font-extrabold" style="color: #0E639C;">Q'go<span style="color: #4FB8AF;">Cargo</span></div>
                 <h2 id="auth-title" class="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
             </div>
             <div class="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-md">
@@ -180,13 +178,13 @@
                     Your account has been blocked by an administrator.
                 </div>
                 <div class="rounded-md shadow-sm -space-y-px">
-                    <div id="signup-name-field" style="display: none;">
+                    <div id="signup-name-field">
                         <label for="full-name" class="sr-only">Full Name</label>
                         <input id="full-name" name="name" type="text" autocomplete="name" required class="input-field rounded-t-md" placeholder="Full Name">
                     </div>
                     <div>
                         <label for="email-address" class="sr-only">Email address</label>
-                        <input id="email-address" name="email" type="email" autocomplete="email" required class="input-field rounded-t-md" placeholder="Email address">
+                        <input id="email-address" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
                     </div>
                     <div>
                         <label for="password" class="sr-only">Password</label>
@@ -211,14 +209,14 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Main Application Container (Hidden by default) -->
-    <div id="app-container" style="display: none;">
+    <div id="app-container" class="hidden">
         <div id="main-container" class="container">
             <!-- Header Section -->
             <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                 <div class="flex items-center">
-                    <img src="http://qgocargo.com/logo.png" alt="Q'go Cargo Logo" class="h-12 mr-4">
+                    <div id="logo-container" class="text-3xl font-bold mr-4" style="color: #0E639C;">Q'go<span style="color: #4FB8AF;">Cargo</span></div>
                     <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 border-l-4 border-gray-300 pl-4">JOB FILE</h1>
                 </div>
                 <div class="text-right w-full sm:w-auto">
@@ -380,10 +378,6 @@
 
             <!-- Action Buttons -->
             <div class="text-center mt-10 no-print flex flex-wrap justify-center gap-2 sm:gap-4">
-                 <a href="../pod/index.html" target="_blank" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" /><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v5.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1V8a1 1 0 00-1-1h-5z" /></svg>
-                    <span>POD System</span>
-                 </a>
                  <button id="client-manager-btn" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" /></svg>
                      <span>Clients</span>
@@ -406,1106 +400,303 @@
                  </button>
             </div>
         </div>
+    </div>
 
-        <!-- This container is hidden by default and will be populated for printing/preview -->
-        <div id="print-output" class="hidden"></div>
-        
-        <!-- This container is for the public QR code view -->
-        <div id="public-view-container" class="hidden"></div>
+    <!-- This container is hidden by default and will be populated for printing/preview -->
+    <div id="print-output" class="hidden"></div>
+    
+    <!-- This container is for the public QR code view -->
+    <div id="public-view-container"></div>
 
-        <!-- Analytics Full-Screen Page -->
-        <div id="analytics-container" class="hidden fixed inset-0 bg-gray-100 z-50 overflow-y-auto">
-            <div class="container mx-auto px-4 py-8">
-                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 no-print">
-                    <h3 class="text-2xl font-bold">Analytics Dashboard</h3>
-                    <div>
-                        <button id="print-analytics-btn" title="Print Analytics" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
-                        <button id="close-analytics-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded">Back to Job File</button>
-                    </div>
-                </div>
-                <div id="analytics-body" class="space-y-6"></div>
-            </div>
-        </div>
-
-
-        <!-- Modals -->
-        <div id="loader-overlay" class="overlay"><div class="loader"></div></div>
-        <div id="notification"></div>
-        
-        <!-- File Manager Modal -->
-        <div id="file-manager-modal" class="overlay">
-            <div class="modal-content max-w-5xl"> <!-- Increased width for filters -->
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-2xl font-bold">File Manager</h3>
-                    <div>
-                        <button id="recycle-bin-btn" class="admin-only bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded text-sm mr-4">Recycle Bin</button>
-                        <button id="close-file-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                    </div>
-                </div>
-                
-                <!-- Search and Filter Controls -->
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
-                    <div class="md:col-span-2">
-                        <label for="search-bar" class="text-sm font-medium text-gray-700">Search</label>
-                        <input type="text" id="search-bar" class="input-field mt-1" placeholder="Job No, Shipper, etc.">
-                    </div>
-                    <div>
-                        <label for="filter-status" class="text-sm font-medium text-gray-700">Status</label>
-                        <select id="filter-status" class="input-field mt-1">
-                            <option value="">All Statuses</option>
-                            <option value="pending">Pending</option>
-                            <option value="checked">Checked</option>
-                            <option value="approved">Approved</option>
-                            <option value="rejected">Rejected</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="filter-date-from" class="text-sm font-medium text-gray-700">From Date</label>
-                        <input type="date" id="filter-date-from" class="input-field mt-1">
-                    </div>
-                    <div>
-                        <label for="filter-date-to" class="text-sm font-medium text-gray-700">To Date</label>
-                        <input type="date" id="filter-date-to" class="input-field mt-1">
-                    </div>
-                    <div class="flex items-end">
-                        <button id="clear-filters-btn" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded text-sm">Clear Filters</button>
-                    </div>
-                </div>
-
-                <div id="job-files-list" class="space-y-2 max-h-[60vh] overflow-y-auto"></div>
-            </div>
-        </div>
-        
-        <!-- Confirmation Modal -->
-        <div id="confirm-modal" class="overlay">
-            <div class="modal-content max-w-sm">
-                <h3 class="text-lg font-bold mb-4" id="confirm-title">Confirm Action</h3>
-                <div id="confirm-message" class="mb-4 text-sm">Are you sure?</div>
-                <div class="text-right mt-6 space-x-2">
-                    <button id="confirm-cancel" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
-                    <button id="confirm-ok" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Preview Modal -->
-        <div id="preview-modal" class="overlay">
-            <div class="modal-content max-w-4xl">
-                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 no-print gap-2">
-                    <h3 class="text-2xl font-bold">Job File Preview</h3>
-                    <div>
-                        <button id="print-preview-btn" title="Print Preview" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
-                        <button id="close-preview-modal" class="text-gray-500 hover:text-gray-800 text-3xl align-middle">&times;</button>
-                    </div>
-                </div>
-                <div id="preview-body"></div>
-            </div>
-        </div>
-
-        <!-- Admin Panel Modal -->
-        <div id="admin-panel-modal" class="overlay">
-            <div class="modal-content max-w-2xl">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-2xl font-bold">Admin Panel</h3>
-                    <button id="close-admin-panel-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                </div>
-            
-                <!-- User Management -->
-                <div class="border rounded-lg p-4">
-                    <h4 class="text-lg font-semibold mb-2">User Management</h4>
-                    <div id="user-list" class="space-y-2 max-h-[40vh] overflow-y-auto"></div>
-                    <div class="text-right mt-4">
-                        <button id="save-user-changes-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save User Changes</button>
-                    </div>
-                </div>
-            
-                <!-- Data Backup & Restore -->
-                <div class="border rounded-lg p-4 mt-6">
-                    <h4 class="text-lg font-semibold mb-3">Data Backup & Restore</h4>
-                    <p class="text-sm text-gray-600 mb-4">Backup all job files and user data to a single JSON file. This can be used for offline storage or to restore the database to a previous state.</p>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <button id="backup-data-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
-                            Backup All Data
-                        </button>
-                        <label for="restore-file-input" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2 cursor-pointer">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                             Restore From File
-                             <input type="file" id="restore-file-input" class="hidden" accept=".json">
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Rejection Reason Modal -->
-        <div id="reject-reason-modal" class="overlay">
-            <div class="modal-content max-w-md">
-                <h3 class="text-lg font-bold mb-4">Rejection Reason</h3>
-                <p class="mb-4">Please provide a reason for rejecting this job file.</p>
-                <textarea id="rejection-reason-input" class="input-field w-full" rows="3"></textarea>
-                <div class="text-right mt-6 space-x-2">
-                    <button id="cancel-reject-modal-btn" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
-                    <button id="confirm-reject-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm Rejection</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Forgot Password Modal -->
-        <div id="forgot-password-modal" class="overlay">
-            <div class="modal-content max-w-md">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold">Reset Password</h3>
-                    <button id="close-forgot-password-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                </div>
-                <p class="mb-4 text-gray-600">Enter your email address and we will send you a link to reset your password.</p>
+    <!-- Analytics Full-Screen Page -->
+    <div id="analytics-container" class="hidden">
+        <div class="container">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 no-print">
+                <h3 class="text-2xl font-bold">Analytics Dashboard</h3>
                 <div>
-                    <label for="reset-email" class="sr-only">Email address</label>
-                    <input id="reset-email" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
-                </div>
-                <div class="text-right mt-6">
-                    <button id="send-reset-link-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                        Send Password Reset Link
-                    </button>
+                    <button id="print-analytics-btn" title="Print Analytics" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
+                    <button id="close-analytics-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded">Back to Job File</button>
                 </div>
             </div>
+            <div id="analytics-body" class="space-y-6"></div>
         </div>
+    </div>
 
-        <!-- Client Manager Modal -->
-        <div id="client-manager-modal" class="overlay">
-            <div class="modal-content max-w-4xl">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-2xl font-bold">Client Management</h3>
-                    <button id="close-client-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Add/Edit Client Form -->
-                    <div>
-                        <h4 id="client-form-title" class="text-xl font-semibold mb-4">Add New Client</h4>
-                        <form id="client-form" class="space-y-4">
-                            <input type="hidden" id="client-id">
-                            <div>
-                                <label for="client-name" class="block text-sm font-medium text-gray-700">Client Name</label>
-                                <input type="text" id="client-name" class="input-field mt-1" required>
-                            </div>
-                            <div>
-                                <label for="client-address" class="block text-sm font-medium text-gray-700">Address</label>
-                                <textarea id="client-address" rows="2" class="input-field mt-1"></textarea>
-                            </div>
-                            <div>
-                                <label for="client-contact-person" class="block text-sm font-medium text-gray-700">Contact Person</label>
-                                <input type="text" id="client-contact-person" class="input-field mt-1">
-                            </div>
-                            <div>
-                                <label for="client-phone" class="block text-sm font-medium text-gray-700">Phone</label>
-                                <input type="text" id="client-phone" class="input-field mt-1">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Client Type</label>
-                                <select id="client-type" class="input-field mt-1">
-                                    <option value="Shipper">Shipper</option>
-                                    <option value="Consignee">Consignee</option>
-                                    <option value="Both">Both</option>
-                                </select>
-                            </div>
-                            <div class="flex gap-4">
-                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save Client</button>
-                                <button type="button" id="clear-client-form-btn" class="w-full bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Clear</button>
-                            </div>
-                        </form>
-                    </div>
-                    <!-- Client List -->
-                    <div>
-                        <h4 class="text-xl font-semibold mb-4">Existing Clients</h4>
-                        <input type="text" id="client-search-bar" class="input-field mb-4" placeholder="Search clients...">
-                        <div id="client-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
-                            <!-- Client list will be populated by JS -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-         <!-- Charge Manager Modal -->
-        <div id="charge-manager-modal" class="overlay">
-            <div class="modal-content max-w-lg">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-2xl font-bold">Manage Charge Descriptions</h3>
-                    <button id="close-charge-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                </div>
-                <div class="space-y-4">
-                    <div>
-                        <h4 class="text-lg font-semibold mb-2">Add New Description</h4>
-                        <div class="flex gap-2">
-                            <input type="text" id="new-charge-description" class="input-field" placeholder="E.g., Customs Duty">
-                            <button id="save-charge-description-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add</button>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-2">Existing Descriptions</h4>
-                        <div id="charge-description-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
-                            <!-- JS will populate this list -->
-                        </div>
-                    </div>
+    <!-- Modals -->
+    <div id="loader-overlay" class="overlay"><div class="loader"></div></div>
+    <div id="notification"></div>
+    
+    <!-- File Manager Modal -->
+    <div id="file-manager-modal" class="overlay">
+        <div class="modal-content max-w-5xl"> <!-- Increased width for filters -->
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">File Manager</h3>
+                <div>
+                    <button id="recycle-bin-btn" class="admin-only bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded text-sm mr-4">Recycle Bin</button>
+                    <button id="close-file-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
                 </div>
             </div>
+            
+            <!-- Search and Filter Controls -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
+                <div class="md:col-span-2">
+                    <label for="search-bar" class="text-sm font-medium text-gray-700">Search</label>
+                    <input type="text" id="search-bar" class="input-field mt-1" placeholder="Job No, Shipper, etc.">
+                </div>
+                <div>
+                    <label for="filter-status" class="text-sm font-medium text-gray-700">Status</label>
+                    <select id="filter-status" class="input-field mt-1">
+                        <option value="">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="checked">Checked</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="filter-date-from" class="text-sm font-medium text-gray-700">From Date</label>
+                    <input type="date" id="filter-date-from" class="input-field mt-1">
+                </div>
+                <div>
+                    <label for="filter-date-to" class="text-sm font-medium text-gray-700">To Date</label>
+                    <input type="date" id="filter-date-to" class="input-field mt-1">
+                </div>
+                <div class="flex items-end">
+                    <button id="clear-filters-btn" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded text-sm">Clear Filters</button>
+                </div>
+            </div>
+
+            <div id="job-files-list" class="space-y-2 max-h-[60vh] overflow-y-auto"></div>
         </div>
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="overlay">
+        <div class="modal-content max-w-sm">
+            <h3 class="text-lg font-bold mb-4" id="confirm-title">Confirm Action</h3>
+            <div id="confirm-message" class="mb-4 text-sm">Are you sure?</div>
+            <div class="text-right mt-6 space-x-2">
+                <button id="confirm-cancel" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
+                <button id="confirm-ok" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="preview-modal" class="overlay">
+        <div class="modal-content max-w-4xl">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 no-print gap-2">
+                <h3 class="text-2xl font-bold">Job File Preview</h3>
+                <div>
+                    <button id="print-preview-btn" title="Print Preview" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
+                    <button id="close-preview-modal" class="text-gray-500 hover:text-gray-800 text-3xl align-middle">&times;</button>
+                </div>
+            </div>
+            <div id="preview-body"></div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="admin-panel-modal" class="overlay">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">Admin Panel</h3>
+                <button id="close-admin-panel-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
         
-        <!-- Activity Log Modal -->
-        <div id="activity-log-modal" class="overlay">
-            <div class="modal-content max-w-4xl">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-2xl font-bold">User Activity Log</h3>
-                    <button id="close-activity-log-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            <!-- User Management -->
+            <div class="border rounded-lg p-4">
+                <h4 class="text-lg font-semibold mb-2">User Management</h4>
+                <div id="user-list" class="space-y-2 max-h-[40vh] overflow-y-auto"></div>
+                <div class="text-right mt-4">
+                    <button id="save-user-changes-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save User Changes</button>
                 </div>
-                <div class="max-h-[70vh] overflow-y-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="table-cell font-semibold text-left">User Name</th>
-                                <th class="table-cell font-semibold text-left">Job File No.</th>
-                                <th class="table-cell font-semibold text-left">Time Opened</th>
-                            </tr>
-                        </thead>
-                        <tbody id="activity-log-body">
-                            <!-- JS will populate this -->
-                        </tbody>
-                    </table>
+            </div>
+        
+            <!-- Data Backup & Restore -->
+            <div class="border rounded-lg p-4 mt-6">
+                <h4 class="text-lg font-semibold mb-3">Data Backup & Restore</h4>
+                <p class="text-sm text-gray-600 mb-4">Backup all job files and user data to a single JSON file. This can be used for offline storage or to restore the database to a previous state.</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button id="backup-data-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                        Backup All Data
+                    </button>
+                    <label for="restore-file-input" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2 cursor-pointer">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                         Restore From File
+                         <input type="file" id="restore-file-input" class="hidden" accept=".json">
+                    </label>
                 </div>
             </div>
         </div>
-
-        <!-- User-Specific Jobs Modal -->
-        <div id="user-jobs-modal" class="overlay">
-            <div class="modal-content max-w-5xl">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 id="user-jobs-modal-title" class="text-2xl font-bold">User's Job Files</h3>
-                    <button id="close-user-jobs-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                </div>
-                <div id="user-jobs-list" class="space-y-2 max-h-[70vh] overflow-y-auto">
-                    <!-- JS will populate this list -->
-                </div>
+    </div>
+    
+    <!-- Rejection Reason Modal -->
+    <div id="reject-reason-modal" class="overlay">
+        <div class="modal-content max-w-md">
+            <h3 class="text-lg font-bold mb-4">Rejection Reason</h3>
+            <p class="mb-4">Please provide a reason for rejecting this job file.</p>
+            <textarea id="rejection-reason-input" class="input-field w-full" rows="3"></textarea>
+            <div class="text-right mt-6 space-x-2">
+                <button id="cancel-reject-modal-btn" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
+                <button id="confirm-reject-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm Rejection</button>
             </div>
         </div>
+    </div>
 
-        <!-- Recycle Bin Modal -->
-        <div id="recycle-bin-modal" class="overlay">
-            <div class="modal-content max-w-5xl">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-2xl font-bold">Recycle Bin</h3>
-                    <button id="close-recycle-bin-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="overlay">
+        <div class="modal-content max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Reset Password</h3>
+                <button id="close-forgot-password-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <p class="mb-4 text-gray-600">Enter your email address and we will send you a link to reset your password.</p>
+            <div>
+                <label for="reset-email" class="sr-only">Email address</label>
+                <input id="reset-email" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
+            </div>
+            <div class="text-right mt-6">
+                <button id="send-reset-link-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                    Send Password Reset Link
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client Manager Modal -->
+    <div id="client-manager-modal" class="overlay">
+        <div class="modal-content max-w-4xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">Client Management</h3>
+                <button id="close-client-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Add/Edit Client Form -->
+                <div>
+                    <h4 id="client-form-title" class="text-xl font-semibold mb-4">Add New Client</h4>
+                    <form id="client-form" class="space-y-4">
+                        <input type="hidden" id="client-id">
+                        <div>
+                            <label for="client-name" class="block text-sm font-medium text-gray-700">Client Name</label>
+                            <input type="text" id="client-name" class="input-field mt-1" required>
+                        </div>
+                        <div>
+                            <label for="client-address" class="block text-sm font-medium text-gray-700">Address</label>
+                            <textarea id="client-address" rows="2" class="input-field mt-1"></textarea>
+                        </div>
+                        <div>
+                            <label for="client-contact-person" class="block text-sm font-medium text-gray-700">Contact Person</label>
+                            <input type="text" id="client-contact-person" class="input-field mt-1">
+                        </div>
+                        <div>
+                            <label for="client-phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                            <input type="text" id="client-phone" class="input-field mt-1">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Client Type</label>
+                            <select id="client-type" class="input-field mt-1">
+                                <option value="Shipper">Shipper</option>
+                                <option value="Consignee">Consignee</option>
+                                <option value="Both">Both</option>
+                            </select>
+                        </div>
+                        <div class="flex gap-4">
+                            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save Client</button>
+                            <button type="button" id="clear-client-form-btn" class="w-full bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Clear</button>
+                        </div>
+                    </form>
                 </div>
-                <div id="recycle-bin-list" class="space-y-2 max-h-[70vh] overflow-y-auto">
-                    <!-- JS will populate this list -->
+                <!-- Client List -->
+                <div>
+                    <h4 class="text-xl font-semibold mb-4">Existing Clients</h4>
+                    <input type="text" id="client-search-bar" class="input-field mb-4" placeholder="Search clients...">
+                    <div id="client-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
+                        <!-- Client list will be populated by JS -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- App Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, query, where, serverTimestamp, getDocs, writeBatch, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // --- State Management ---
-        const state = {
-            currentUser: null,
-            jobFilesCache: [],
-            clientsCache: [],
-            chargeDescriptions: [],
-            analyticsDataCache: null,
-            currentFilteredJobs: [],
-            fileIdToReject: null,
-            profitChartInstance: null,
-        };
-
-        // --- Firebase Configuration ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyAAulR2nJQm-4QtNyEqKTnnDPw-iKW92Mc",
-            authDomain: "my-job-file-system.firebaseapp.com",
-            projectId: "my-job-file-system",
-            storageBucket: "my-job-file-system.appspot.com",
-            messagingSenderId: "145307873304",
-            appId: "1:145307873304:web:d661ea6ec118801b4a136d",
-            measurementId: "G-8EHX5K7YHL"
-        };
-        
-        // --- App Initialization ---
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        // --- UI Functions ---
-        function showLoader() { document.getElementById('loader-overlay').classList.add('visible'); }
-        function hideLoader() { document.getElementById('loader-overlay').classList.remove('visible'); }
-
-        function openModal(id, keepParent = false) {
-            const modal = document.getElementById(id);
-            if (keepParent) {
-                const highestZ = Array.from(document.querySelectorAll('.overlay.visible'))
-                    .reduce((max, el) => Math.max(max, parseInt(window.getComputedStyle(el).zIndex || 1000)), 1000);
-                modal.style.zIndex = highestZ + 10;
-            } else {
-                document.querySelectorAll('.overlay').forEach(m => {
-                    if(m.id !== id) m.classList.remove('visible');
-                });
-            }
-            modal.classList.add('visible');
-        }
-
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            if(modal) modal.classList.remove('visible');
-        }
-
-        function showNotification(message, isError = false) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.style.backgroundColor = isError ? '#c53030' : '#2d3748';
-            notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // --- Auth Functions ---
-        function showAppView() {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app-container').style.display = 'block';
-        }
-
-        function showLoginView() {
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('app-container').style.display = 'none';
-        }
-
-        async function handleSignUp(email, password, displayName) {
-            showLoader();
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                
-                const usersCollectionRef = collection(db, 'users');
-                const userQuerySnapshot = await getDocs(usersCollectionRef);
-                const isFirstUser = userQuerySnapshot.empty;
-
-                await setDoc(doc(db, 'users', user.uid), {
-                    email: user.email,
-                    displayName: displayName,
-                    role: isFirstUser ? 'admin' : 'user',
-                    status: isFirstUser ? 'active' : 'inactive',
-                    createdAt: serverTimestamp()
-                });
-                
-                showNotification("Account created! Please wait for admin approval.", false);
-                await signOut(auth);
-                toggleAuthView(true);
-
-            } catch (error) {
-                console.error("Sign up error:", error);
-                showNotification(error.message, true);
-            } finally {
-                hideLoader();
-            }
-        }
-
-        async function handleLogin(email, password) {
-            if (!email || !password) {
-                showNotification("Please enter both email and password.", true);
-                return;
-            }
-            showLoader();
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                // onAuthStateChanged will handle the rest
-            } catch (error) {
-                hideLoader();
-                console.error("Login error:", error);
-                let message = "Login failed. Please check your credentials.";
-                if (error.code === 'auth/invalid-credential') {
-                    message = "Incorrect email or password.";
-                }
-                showNotification(message, true);
-            }
-        }
-
-        async function handleForgotPassword() {
-            const email = document.getElementById('reset-email').value.trim();
-            if (!email) {
-                showNotification("Please enter your email address.", true);
-                return;
-            }
-            showLoader();
-            try {
-                await sendPasswordResetEmail(auth, email);
-                hideLoader();
-                closeModal('forgot-password-modal');
-                showNotification("Password reset link sent! Check your email inbox.", false);
-            } catch (error) {
-                hideLoader();
-                console.error("Password reset error:", error);
-                let message = "Could not send reset link.";
-                if(error.code === 'auth/user-not-found'){
-                    message = "No account found with this email.";
-                }
-                showNotification(message, true);
-            }
-        }
-
-        function handleLogout() {
-            signOut(auth);
-        }
-
-        function toggleAuthView(showLogin) {
-            const nameField = document.getElementById('signup-name-field');
-            const emailField = document.getElementById('email-address');
-
-            nameField.style.display = showLogin ? 'none' : 'block';
-            if(emailField) emailField.classList.toggle('rounded-t-md', !showLogin);
-            
-            document.getElementById('auth-title').textContent = showLogin ? 'Sign in to your account' : 'Create a new account';
-            document.getElementById('auth-btn').textContent = showLogin ? 'Sign in' : 'Sign up';
-            document.getElementById('auth-link').textContent = showLogin ? 'Create a new account' : 'Already have an account? Sign in';
-        }
-
-        // --- Main App Logic ---
-
-        function initializeMainApp() {
-            hideLoader();
-            if (!document.getElementById('app-container')) return;
-
-            document.getElementById('user-display-name').textContent = state.currentUser.displayName;
-            document.getElementById('user-role').textContent = state.currentUser.role;
-
-            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'none');
-            
-            if (state.currentUser.role === 'admin') {
-                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
-                document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
-                document.getElementById('checker-info-banner').style.display = 'block';
-            } else if (state.currentUser.role === 'checker') {
-                document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
-                document.getElementById('checker-info-banner').style.display = 'block';
-            }
-            
-            loadJobFiles();
-            loadClients();
-            loadChargeDescriptions();
-            clearForm();
-            attachEventListeners();
-        }
-
-        async function saveJobFile() {
-            const jobFileNoInput = document.getElementById('job-file-no');
-            const jobFileNo = jobFileNoInput.value.trim();
-            if (!jobFileNo) { 
-                showNotification("Please enter a Job File No.", true); 
-                return; 
-            }
-
-            const isUpdating = jobFileNoInput.disabled;
-            showLoader();
-            const docId = jobFileNo.replace(/\//g, '_');
-            
-            if (!isUpdating) {
-                const docRef = doc(db, 'jobfiles', docId);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    hideLoader();
-                    showNotification(`Job File No. "${jobFileNo}" already exists.`, true);
-                    return;
-                }
-            }
-
-            const data = getFormData();
-            data.totalCost = parseFloat(document.getElementById('total-cost').textContent) || 0;
-            data.totalSelling = parseFloat(document.getElementById('total-selling').textContent) || 0;
-            data.totalProfit = parseFloat(document.getElementById('total-profit').textContent) || 0;
-            
-            try {
-                const docRef = doc(db, 'jobfiles', docId);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    data.lastUpdatedBy = state.currentUser.displayName;
-                    data.updatedAt = serverTimestamp();
-
-                    if (docSnap.data().status === 'approved' || docSnap.data().status === 'checked') {
-                        data.status = 'pending';
-                        data.checkedBy = null; data.checkedAt = null;
-                        data.approvedBy = null; data.approvedAt = null;
-                        data.rejectionReason = null; data.rejectedBy = null; data.rejectedAt = null;
-                        showNotification("File modified. Re-approval is now required.", false);
-                    }
-                    await setDoc(docRef, data, { merge: true });
-                } else {
-                    data.createdBy = state.currentUser.displayName;
-                    data.createdAt = serverTimestamp();
-                    data.lastUpdatedBy = state.currentUser.displayName;
-                    data.updatedAt = serverTimestamp();
-                    data.status = 'pending';
-                    await setDoc(docRef, data);
-                }
-                
-                hideLoader();
-                showNotification("Job file saved successfully!");
-                loadJobFileById(docId);
-
-            } catch (error) {
-                hideLoader();
-                console.error("Error saving document: ", error);
-                showNotification("Error saving job file.", true);
-            }
-        }
-        
-        function loadJobFiles() {
-            const q = query(collection(db, 'jobfiles'));
-            onSnapshot(q, (querySnapshot) => {
-                state.jobFilesCache = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                applyFiltersAndDisplay();
-                updateStatusSummary('status-summary-main', state.jobFilesCache);
-            }, (error) => {
-                console.error("Error fetching job files: ", error);
-                showNotification("Error loading job files.", true);
-            });
-        }
-        
-        async function loadJobFileById(docId) {
-            showLoader();
-            try {
-                const docRef = doc(db, 'jobfiles', docId);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const fileData = docSnap.data();
-                    populateFormFromData(fileData);
-                    logUserActivity(fileData.jfn);
-                    document.getElementById('job-file-no').disabled = true;
-                    closeModal('file-manager-modal');
-                    closeModal('user-jobs-modal');
-                    showNotification("Job file loaded successfully.");
-                } else {
-                    showNotification("Document not found.", true);
-                }
-                hideLoader();
-            } catch (error) {
-                hideLoader();
-                console.error("Error loading document:", error);
-                showNotification("Error loading job file.", true);
-            }
-        }
-
-        function getFormData() {
-            const getVal = id => document.getElementById(id).value || '';
-            const getChecked = query => Array.from(document.querySelectorAll(query)).filter(el => el.checked).map(el => el.dataset.clearance || el.dataset.product);
-
-            const charges = [];
-            document.querySelectorAll('#charges-table-body tr').forEach(row => {
-                const description = row.querySelector('.description-input').value.trim();
-                if (description) {
-                    charges.push({
-                        l: description,
-                        c: row.querySelector('.cost-input').value || '0',
-                        s: row.querySelector('.selling-input').value || '0',
-                        n: row.querySelector('.notes-input').value || ''
-                    });
-                }
-            });
-
-            return {
-                d: getVal('date'), po: getVal('po-number'), jfn: getVal('job-file-no'),
-                cl: getChecked('[data-clearance]:checked'), pt: getChecked('[data-product]:checked'),
-                in: getVal('invoice-no'), bd: getVal('billing-date'), sm: getVal('salesman'),
-                sh: getVal('shipper-name'), co: getVal('consignee-name'),
-                mawb: getVal('mawb'), hawb: getVal('hawb'), ts: getVal('teams-of-shipping'), or: getVal('origin'),
-                pc: getVal('no-of-pieces'), gw: getVal('gross-weight'), de: getVal('destination'), vw: getVal('volume-weight'),
-                dsc: getVal('description'), ca: getVal('carrier'), tn: getVal('truck-no'),
-                vn: getVal('vessel-name'), fv: getVal('flight-voyage-no'), cn: getVal('container-no'),
-                ch: charges,
-                re: getVal('remarks'),
-                pb: getVal('prepared-by'),
-            };
-        }
-
-        function populateFormFromData(data) {
-            const setVal = (id, value) => { if (document.getElementById(id)) document.getElementById(id).value = value || ''; };
-            const setChecked = (type, values) => {
-                document.querySelectorAll(`[data-${type}]`).forEach(el => {
-                    el.checked = (values || []).includes(el.dataset[type]);
-                });
-            };
-
-            setVal('date', data.d); setVal('po-number', data.po); setVal('job-file-no', data.jfn);
-            setVal('invoice-no', data.in); setVal('billing-date', data.bd);
-            setVal('salesman', data.sm); setVal('shipper-name', data.sh); setVal('consignee-name', data.co);
-            setVal('mawb', data.mawb); setVal('hawb', data.hawb); setVal('teams-of-shipping', data.ts);
-            setVal('origin', data.or); setVal('no-of-pieces', data.pc); setVal('gross-weight', data.gw);
-            setVal('destination', data.de); setVal('volume-weight', data.vw); setVal('description', data.dsc);
-            setVal('carrier', data.ca); setVal('truck-no', data.tn); setVal('vessel-name', data.vn);
-            setVal('flight-voyage-no', data.fv); setVal('container-no', data.cn);
-            setVal('remarks', data.re); 
-            setVal('prepared-by', data.pb || data.createdBy || '');
-
-            document.getElementById('created-by-info').textContent = data.createdBy ? `Created by: ${data.createdBy} on ${data.createdAt?.toDate().toLocaleDateString()}` : '';
-            document.getElementById('last-updated-by-info').textContent = data.lastUpdatedBy ? `Last updated by: ${data.lastUpdatedBy} on ${data.updatedAt?.toDate().toLocaleString()}` : '';
-            
-            document.getElementById('checked-stamp').style.display = 'none';
-            document.getElementById('approved-stamp').style.display = 'none';
-            document.getElementById('rejected-stamp').style.display = 'none';
-            document.getElementById('rejection-banner').style.display = 'none';
-            document.getElementById('check-btn').style.display = 'none';
-            document.getElementById('approval-buttons').style.display = 'none';
-
-            setVal('checked-by', data.checkedBy ? `${data.checkedBy} on ${data.checkedAt?.toDate().toLocaleDateString() || ''}` : 'Pending Check');
-            if(data.checkedBy) document.getElementById('checked-stamp').style.display = 'block';
-
-            let approvalText = 'Pending Approval';
-            if(data.status === 'approved') {
-                approvalText = `${data.approvedBy} on ${data.approvedAt?.toDate().toLocaleDateString() || ''}`;
-                document.getElementById('approved-stamp').style.display = 'block';
-            } else if (data.status === 'rejected') {
-                approvalText = `Rejected by ${data.rejectedBy}`;
-                document.getElementById('rejected-stamp').style.display = 'block';
-                document.getElementById('rejection-banner').style.display = 'block';
-                document.getElementById('rejection-reason').textContent = data.rejectionReason;
-            }
-            setVal('approved-by', approvalText);
-
-            if (state.currentUser.role === 'admin' && data.status !== 'approved' && data.status !== 'rejected') {
-                document.getElementById('approval-buttons').style.display = 'flex';
-            }
-            if (['admin', 'checker'].includes(state.currentUser.role) && !data.checkedBy) {
-                 document.getElementById('check-btn').style.display = 'block';
-            }
-
-            setChecked('clearance', data.cl);
-            setChecked('product', data.pt);
-
-            populateTable();
-            document.getElementById('charges-table-body').innerHTML = ''; // Clear default rows
-            if (data.ch && data.ch.length > 0) {
-                data.ch.forEach(charge => addChargeRow(charge));
-            } else {
-                for(let i=0; i<5; i++) addChargeRow(); // Add empty rows if no charges
-            }
-            calculate();
-        }
-
-        function clearForm() {
-            const form = document.querySelector('#main-container');
-            if (!form) return;
-            form.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(input => input.value = '');
-            form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
-            
-            document.getElementById('date').valueAsDate = new Date();
-            document.getElementById('job-file-no').disabled = false;
-            
-            populateTable();
-            for(let i=0; i<5; i++) addChargeRow();
-            calculate();
-            
-            document.getElementById('prepared-by').value = state.currentUser?.displayName || '';
-            
-            document.getElementById('created-by-info').textContent = '';
-            document.getElementById('last-updated-by-info').textContent = '';
-            document.getElementById('approved-by').value = '';
-            document.getElementById('checked-by').value = '';
-
-            ['checked-stamp', 'approved-stamp', 'rejected-stamp', 'rejection-banner'].forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.style.display = 'none';
-            });
-            
-            showNotification("Form cleared. Ready for a new job file.");
-        }
-
-        function populateTable() {
-            const table = document.getElementById('charges-table');
-            table.innerHTML = `
-                <thead><tr class="bg-gray-100">
-                    <th class="table-cell font-semibold w-2/5">Description</th>
-                    <th class="table-cell font-semibold">Cost</th><th class="table-cell font-semibold">Selling</th>
-                    <th class="table-cell font-semibold">Profit</th><th class="table-cell font-semibold">Notes</th>
-                    <th class="table-cell font-semibold"></th>
-                </tr></thead>
-                <tbody id="charges-table-body"></tbody>
-                <tfoot><tr id="total-row" class="bg-gray-100 font-bold">
-                    <td class="table-cell text-right">TOTAL:</td>
-                    <td id="total-cost" class="table-cell text-right">0.000</td>
-                    <td id="total-selling" class="table-cell text-right">0.000</td>
-                    <td id="total-profit" class="table-cell text-right">0.000</td>
-                    <td class="table-cell" colspan="2"></td>
-                </tr></tfoot>`;
-            
-            document.getElementById('charges-table-body').addEventListener('input', e => {
-                if (e.target.classList.contains('cost-input') || e.target.classList.contains('selling-input')) {
-                    calculate();
-                }
-            });
-        }
-        
-        function addChargeRow(data = {}) {
-            const tableBody = document.getElementById('charges-table-body');
-            const newRow = tableBody.insertRow();
-            newRow.innerHTML = `
-                <td class="table-cell"><input type="text" class="description-input input-field" value="${data.l || ''}" autocomplete="off"></td>
-                <td class="table-cell"><input type="number" step="0.001" class="cost-input input-field" value="${data.c || ''}"></td>
-                <td class="table-cell"><input type="number" step="0.001" class="selling-input input-field" value="${data.s || ''}"></td>
-                <td class="table-cell profit-output bg-gray-50 text-right">${((data.s || 0) - (data.c || 0)).toFixed(3)}</td>
-                <td class="table-cell"><input type="text" class="notes-input input-field" value="${data.n || ''}"></td>
-                <td class="table-cell text-center"><button class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button></td>`;
-            newRow.querySelector('button').addEventListener('click', () => { newRow.remove(); calculate(); });
-            setupChargeAutocomplete(newRow.querySelector('.description-input'));
-        }
-
-        function calculate() {
-            let totalCost = 0, totalSelling = 0;
-            document.querySelectorAll('#charges-table-body tr').forEach(row => {
-                const cost = parseFloat(row.querySelector('.cost-input').value) || 0;
-                const selling = parseFloat(row.querySelector('.selling-input').value) || 0;
-                row.cells[3].textContent = (selling - cost).toFixed(3);
-                totalCost += cost;
-                totalSelling += selling;
-            });
-            document.getElementById('total-cost').textContent = totalCost.toFixed(3);
-            document.getElementById('total-selling').textContent = totalSelling.toFixed(3);
-            document.getElementById('total-profit').textContent = (totalSelling - totalCost).toFixed(3);
-        }
-
-        function displayJobFiles(files) {
-            const list = document.getElementById('job-files-list');
-            if(!list) return;
-            list.innerHTML = files.map(file => {
-                const deleteButton = state.currentUser.role === 'admin' ? `<button onclick="confirmDelete('${file.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm">Delete</button>` : '';
-                return `
-                <div class="job-file-item border p-3 rounded-lg flex flex-col sm:flex-row justify-between items-center bg-gray-50 hover:bg-gray-100 gap-2">
-                    <div class="text-center sm:text-left">
-                        <p class="font-bold text-indigo-700">${file.jfn || 'No ID'}</p>
-                        <p class="text-sm text-gray-600">Shipper: ${file.sh || 'N/A'} | Consignee: ${file.co || 'N/A'}</p>
-                        <p class="text-xs text-gray-400">Last Updated: ${file.updatedAt?.toDate().toLocaleString() || 'N/A'}</p>
-                    </div>
-                    <div class="space-x-2 flex-shrink-0">
-                        <button onclick="previewJobFileById('${file.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-sm">Preview</button>
-                        <button onclick="loadJobFileById('${file.id}')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-sm">Load</button>
-                        ${deleteButton}
+     <!-- Charge Manager Modal -->
+    <div id="charge-manager-modal" class="overlay">
+        <div class="modal-content max-w-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">Manage Charge Descriptions</h3>
+                <button id="close-charge-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <h4 class="text-lg font-semibold mb-2">Add New Description</h4>
+                    <div class="flex gap-2">
+                        <input type="text" id="new-charge-description" class="input-field" placeholder="E.g., Customs Duty">
+                        <button id="save-charge-description-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add</button>
                     </div>
                 </div>
-            `}).join('') || `<p class="text-gray-500 text-center p-4">No job files match the current filters.</p>`;
-        }
-        
-        function applyFiltersAndDisplay() {
-            const searchTerm = document.getElementById('search-bar').value.toLowerCase();
-            const statusFilter = document.getElementById('filter-status').value;
-            const fromDate = document.getElementById('filter-date-from').value;
-            const toDate = document.getElementById('filter-date-to').value;
+                <div>
+                    <h4 class="text-lg font-semibold mb-2">Existing Descriptions</h4>
+                    <div id="charge-description-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
+                        <!-- JS will populate this list -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Activity Log Modal -->
+    <div id="activity-log-modal" class="overlay">
+        <div class="modal-content max-w-4xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">User Activity Log</h3>
+                <button id="close-activity-log-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div class="max-h-[70vh] overflow-y-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="table-cell font-semibold text-left">User Name</th>
+                            <th class="table-cell font-semibold text-left">Job File No.</th>
+                            <th class="table-cell font-semibold text-left">Time Opened</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activity-log-body">
+                        <!-- JS will populate this -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-            let filteredFiles = state.jobFilesCache.filter(file => {
-                const searchData = [file.jfn, file.sh, file.co, file.mawb, file.hawb].join(' ').toLowerCase();
-                if (searchTerm && !searchData.includes(searchTerm)) return false;
-                if (statusFilter && file.status !== statusFilter) return false;
-                if (fromDate && file.d < fromDate) return false;
-                if (toDate && file.d > toDate) return false;
-                return true;
-            });
+    <!-- User-Specific Jobs Modal -->
+    <div id="user-jobs-modal" class="overlay">
+        <div class="modal-content max-w-5xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="user-jobs-modal-title" class="text-2xl font-bold">User's Job Files</h3>
+                <button id="close-user-jobs-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="user-jobs-list" class="space-y-2 max-h-[70vh] overflow-y-auto">
+                <!-- JS will populate this list -->
+            </div>
+        </div>
+    </div>
 
-            displayJobFiles(filteredFiles);
-        }
-        
-        // --- Attach all event listeners for the main app ---
-        function attachEventListeners() {
-            document.getElementById('logout-btn').addEventListener('click', handleLogout);
-            document.getElementById('save-job-btn').addEventListener('click', saveJobFile);
-            document.getElementById('new-job-btn').addEventListener('click', clearForm);
-            document.getElementById('open-analytics-btn').addEventListener('click', openAnalyticsDashboard);
-            document.getElementById('close-analytics-btn').addEventListener('click', closeAnalyticsDashboard);
+    <!-- Recycle Bin Modal -->
+    <div id="recycle-bin-modal" class="overlay">
+        <div class="modal-content max-w-5xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">Recycle Bin</h3>
+                <button id="close-recycle-bin-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="recycle-bin-list" class="space-y-2 max-h-[70vh] overflow-y-auto">
+                <!-- JS will populate this list -->
+            </div>
+        </div>
+    </div>
 
-            document.getElementById('check-btn').addEventListener('click', () => checkJobFile());
-            document.getElementById('approve-btn').addEventListener('click', () => approveJobFile());
-            document.getElementById('reject-btn').addEventListener('click', () => promptForRejection(null));
-            document.getElementById('confirm-reject-btn').addEventListener('click', rejectJobFile);
-            document.getElementById('cancel-reject-modal-btn').addEventListener('click', () => closeModal('reject-reason-modal'));
+    <script type="module" src="auth.js"></script>
 
-            document.getElementById('file-manager-btn').addEventListener('click', () => openModal('file-manager-modal'));
-            document.getElementById('client-manager-btn').addEventListener('click', openClientManager);
-            document.getElementById('admin-panel-btn').addEventListener('click', openAdminPanel);
-            document.getElementById('activity-log-btn').addEventListener('click', openUserActivityLog);
-            document.getElementById('manage-charges-btn').addEventListener('click', openChargeManager);
-            
-            document.getElementById('close-file-manager-modal').addEventListener('click', () => closeModal('file-manager-modal'));
-            document.getElementById('close-preview-modal').addEventListener('click', () => closeModal('preview-modal'));
-            document.getElementById('close-admin-panel-modal').addEventListener('click', () => closeModal('admin-panel-modal'));
-            document.getElementById('close-client-manager-modal').addEventListener('click', () => closeModal('client-manager-modal'));
-            document.getElementById('close-charge-manager-modal').addEventListener('click', () => closeModal('charge-manager-modal'));
-            document.getElementById('close-activity-log-modal').addEventListener('click', () => closeModal('activity-log-modal'));
-            document.getElementById('close-user-jobs-modal').addEventListener('click', () => closeModal('user-jobs-modal'));
-            document.getElementById('close-recycle-bin-modal').addEventListener('click', () => closeModal('recycle-bin-modal'));
-            document.getElementById('confirm-cancel').addEventListener('click', () => closeModal('confirm-modal'));
-            
-            document.getElementById('print-page-btn').addEventListener('click', printPage);
-            document.getElementById('print-preview-btn').addEventListener('click', printPreview);
-            
-            document.getElementById('search-bar').addEventListener('input', applyFiltersAndDisplay);
-            document.getElementById('filter-status').addEventListener('change', applyFiltersAndDisplay);
-            document.getElementById('filter-date-from').addEventListener('change', applyFiltersAndDisplay);
-            document.getElementById('filter-date-to').addEventListener('change', applyFiltersAndDisplay);
-            document.getElementById('clear-filters-btn').addEventListener('click', () => {
-                document.getElementById('search-bar').value = '';
-                document.getElementById('filter-status').value = '';
-                document.getElementById('filter-date-from').value = '';
-                document.getElementById('filter-date-to').value = '';
-                applyFiltersAndDisplay();
-            });
-            document.getElementById('recycle-bin-btn').addEventListener('click', openRecycleBin);
-
-            document.getElementById('client-form').addEventListener('submit', saveClient);
-            document.getElementById('clear-client-form-btn').addEventListener('click', clearClientForm);
-            document.getElementById('client-search-bar').addEventListener('input', e => {
-                const searchTerm = e.target.value.toLowerCase();
-                displayClients(state.clientsCache.filter(c => c.name.toLowerCase().includes(searchTerm)));
-            });
-
-            document.getElementById('save-charge-description-btn').addEventListener('click', saveChargeDescription);
-            document.getElementById('charge-description-list').addEventListener('click', e => {
-                if(e.target.tagName === 'BUTTON') deleteChargeDescription(e.target.dataset.desc);
-            });
-
-            document.getElementById('generate-remarks-btn').addEventListener('click', generateRemarks);
-            document.getElementById('suggest-charges-btn').addEventListener('click', suggestCharges);
-
-            setupAutocomplete('shipper-name', 'shipper-suggestions', 'Shipper');
-            setupAutocomplete('consignee-name', 'consignee-suggestions', 'Consignee');
-            
-            document.getElementById('add-charge-btn').addEventListener('click', () => addChargeRow());
-            document.getElementById('save-user-changes-btn').addEventListener('click', saveUserChanges);
-
-            // Make functions globally accessible for inline onclick handlers if any
-            window.previewJobFileById = previewJobFileById;
-            window.loadJobFileById = loadJobFileById;
-            window.confirmDelete = confirmDelete;
-            window.editClient = editClient;
-            window.checkJobFile = checkJobFile;
-            window.uncheckJobFile = uncheckJobFile;
-            window.approveJobFile = approveJobFile;
-            window.promptForRejection = promptForRejection;
-            window.confirmPermanentDelete = confirmPermanentDelete;
-            window.restoreJobFile = (id) => console.log('restore', id); // Placeholder
-        }
-
-        // --- Other Functions (Analytics, Clients, etc.) ---
-        
-        function openAnalyticsDashboard() {
-            document.getElementById('analytics-container').style.display = 'block';
-            window.scrollTo(0, 0);
-            // You would typically call a function here to generate the analytics data and charts
-            // For now, it just shows the container.
-        }
-        
-        function closeAnalyticsDashboard() {
-             document.getElementById('analytics-container').style.display = 'none';
-        }
-
-        function openClientManager() { openModal('client-manager-modal'); }
-        
-        function openAdminPanel() { 
-            openModal('admin-panel-modal');
-            loadUsersForAdminPanel();
-        }
-
-        function openUserActivityLog() { 
-            openModal('activity-log-modal');
-            const logBody = document.getElementById('activity-log-body');
-            let logs = JSON.parse(localStorage.getItem('userActivityLog') || '[]');
-            if (logs.length === 0) {
-                logBody.innerHTML = '<tr><td colspan="3" class="table-cell text-center p-4">No user activity recorded yet.</td></tr>';
-            } else {
-                logBody.innerHTML = logs.map(entry => `
-                    <tr class="border-b">
-                        <td class="table-cell">${entry.user || 'Unknown'}</td>
-                        <td class="table-cell font-medium">${entry.file || 'N/A'}</td>
-                        <td class="table-cell text-gray-600">${new Date(entry.timestamp).toLocaleString()}</td>
-                    </tr>
-                `).join('');
-            }
-        }
-        
-        async function loadUsersForAdminPanel() {
-            showLoader();
-            try {
-                const snapshot = await getDocs(collection(db, 'users'));
-                const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                const userList = document.getElementById('user-list');
-                userList.innerHTML = users.map(user => {
-                     return `
-                        <div class="p-3 border-b grid grid-cols-3 gap-4 items-center">
-                            <div>
-                                <p class="font-medium">${user.displayName}</p>
-                                <p class="text-xs text-gray-500">${user.email}</p>
-                            </div>
-                            <div>
-                                <select data-uid="${user.id}" class="user-status-select input-field">
-                                    <option value="active" ${user.status === 'active' ? 'selected':''}>Active</option>
-                                    <option value="inactive" ${user.status === 'inactive' ? 'selected':''}>Inactive</option>
-                                    <option value="blocked" ${user.status === 'blocked' ? 'selected':''}>Blocked</option>
-                                </select>
-                            </div>
-                             <div>
-                                <select data-uid="${user.id}" class="user-role-select input-field">
-                                    <option value="user" ${user.role === 'user' ? 'selected':''}>User</option>
-                                    <option value="checker" ${user.role === 'checker' ? 'selected':''}>Checker</option>
-                                    <option value="admin" ${user.role === 'admin' ? 'selected':''}>Admin</option>
-                                    <option value="warehouse_supervisor" ${user.role === 'warehouse_supervisor' ? 'selected':''}>Warehouse Supervisor</option>
-                                </select>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            } catch (e) {
-                 showNotification('Could not load users.', true);
-            } finally {
-                hideLoader();
-            }
-        }
-        
-        async function saveUserChanges() {
-            showLoader();
-            const batch = writeBatch(db);
-            document.querySelectorAll('.user-status-select').forEach(select => {
-                const uid = select.dataset.uid;
-                const ref = doc(db, 'users', uid);
-                batch.update(ref, { status: select.value });
-            });
-             document.querySelectorAll('.user-role-select').forEach(select => {
-                const uid = select.dataset.uid;
-                const ref = doc(db, 'users', uid);
-                batch.update(ref, { role: select.value });
-            });
-            try {
-                await batch.commit();
-                showNotification("User changes saved!");
-                closeModal('admin-panel-modal');
-            } catch (e) {
-                 showNotification("Error saving changes.", true);
-            } finally {
-                 hideLoader();
-            }
-        }
-
-        // --- These are placeholders for functions that would be implemented ---
-        async function previewJobFileById(docId) { /* ... logic ... */ }
-        async function checkJobFile(docId) { /* ... logic ... */ }
-        async function uncheckJobFile(docId) { /* ... logic ... */ }
-        async function approveJobFile(docId) { /* ... logic ... */ }
-        function promptForRejection(docId) { /* ... logic ... */ }
-        async function rejectJobFile() { /* ... logic ... */ }
-        async function logUserActivity(jobFileNo) { /* ... logic ... */ }
-        function confirmDelete(docId, type) { /* ... logic ... */ }
-        function openRecycleBin() { /* ... logic ... */ }
-        function printPage() { window.print(); }
-        function printPreview() { /* ... logic ... */ }
-        function updateStatusSummary(targetId, dataSource) { /* ... logic ... */ }
-        function openChargeManager() { openModal('charge-manager-modal'); }
-        function loadClients() { /* ... logic ... */ }
-        function loadChargeDescriptions() { /* ... logic ... */ }
-        async function saveClient(event) { event.preventDefault(); /* ... logic ... */ }
-        function clearClientForm() { /* ... logic ... */ }
-        function editClient(clientId) { /* ... logic ... */ }
-        function saveChargeDescription() { /* ... logic ... */ }
-        function deleteChargeDescription(description) { /* ... logic ... */ }
-        function setupAutocomplete(inputId, suggestionsId, type) { /* ... logic ... */ }
-        function setupChargeAutocomplete(inputElement) { /* ... logic ... */ }
-        async function generateRemarks() { /* ... logic ... */ }
-        async function suggestCharges() { /* ... logic ... */ }
-        function confirmPermanentDelete(docId) { /* ... logic ... */ }
-        function displayClients(clients) { /* ... logic ... */ }
-
-
-        // --- App Entry Point ---
-        document.addEventListener('DOMContentLoaded', () => {
-            let isLoginView = true;
-            
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    showLoader();
-                    const userDocRef = doc(db, 'users', user.uid);
-                    const userDoc = await getDoc(userDocRef);
-                    
-                    if (userDoc.exists() && userDoc.data().status === 'active') {
-                        state.currentUser = { uid: user.uid, ...userDoc.data() };
-                        
-                        if (state.currentUser.role === 'warehouse_supervisor') {
-                            window.location.href = '../pod/index.html';
-                        } else {
-                            showAppView();
-                            initializeMainApp();
-                        }
-                    } else {
-                        if (userDoc.exists()) {
-                            const status = userDoc.data().status;
-                            if (status === 'inactive') {
-                                document.getElementById('approval-message').style.display = 'block';
-                            } else if (status === 'blocked') {
-                                document.getElementById('blocked-message').style.display = 'block';
-                            }
-                        } else {
-                            showNotification("Your user profile was not found.", true);
-                        }
-                        await signOut(auth);
-                        hideLoader();
-                        showLoginView();
-                    }
-                } else {
-                    state.currentUser = null;
-                    showLoginView();
-                    hideLoader();
-                }
-            });
-
-            document.getElementById('auth-link').addEventListener('click', (e) => {
-                e.preventDefault();
-                isLoginView = !isLoginView;
-                toggleAuthView(isLoginView);
-            });
-
-            document.getElementById('auth-btn').addEventListener('click', () => {
-                const email = document.getElementById('email-address').value;
-                const password = document.getElementById('password').value;
-
-                if (isLoginView) {
-                    handleLogin(email, password);
-                } else {
-                    const displayName = document.getElementById('full-name').value;
-                     if (!email || !password || !displayName) {
-                         showNotification("Please fill all fields to sign up.", true);
-                         return;
-                    }
-                    handleSignUp(email, password, displayName);
-                }
-            });
-
-            document.getElementById('forgot-password-link').addEventListener('click', (e) => {
-                e.preventDefault();
-                openModal('forgot-password-modal');
-            });
-            
-            document.getElementById('close-forgot-password-modal').addEventListener('click', () => closeModal('forgot-password-modal'));
-            document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
-
-            toggleAuthView(true);
-
-            // Service worker registration
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('sw.js').then(registration => {
-                        console.log('ServiceWorker registration successful');
-                    }).catch(err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-                });
-            }
-        });
-
-    </script>
 </body>
 </html>
