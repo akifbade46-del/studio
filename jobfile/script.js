@@ -1,15 +1,14 @@
-import { handleLogout, handleForgotPassword } from './auth.js';
 import { 
-    openModal, closeModal, clearForm, showNotification, openClientManager, 
+    openModal, closeModal, clearForm, openClientManager, 
     clearClientForm, openAdminPanel, saveUserChanges, openUserActivityLog, 
     openRecycleBin, openChargeManager, openAnalyticsDashboard, closeAnalyticsDashboard,
     printPage, printPreview, previewJobFileById, applyFiltersAndDisplay,
-    setupAutocomplete, setupChargeAutocomplete
+    setupAutocomplete, addChargeRow
 } from './ui.js';
 import { 
     saveJobFile, loadJobFileById, checkJobFile, uncheckJobFile, approveJobFile, 
-    promptForRejection, rejectJobFile, moveToRecycleBin, permanentlyDeleteJobFile, 
-    restoreJobFile, saveClient, deleteClient, backupAllData, handleRestoreFile,
+    promptForRejection, rejectJobFile, confirmDelete, confirmPermanentDelete, 
+    restoreJobFile, saveClient, backupAllData, handleRestoreFile,
     saveChargeDescription, deleteChargeDescription, loadJobFiles, loadClients, loadChargeDescriptions
 } from './firestore.js';
 import { generateRemarks, suggestCharges } from './gemini.js';
@@ -26,7 +25,7 @@ export function initializeMainApp() {
     clearForm();
 
     // Attach all event listeners
-    document.getElementById('logout-btn').addEventListener('click', handleLogout);
+    document.getElementById('logout-btn').addEventListener('click', window.handleLogout);
     
     // Main action buttons
     document.getElementById('save-job-btn').addEventListener('click', saveJobFile);
@@ -84,8 +83,8 @@ export function initializeMainApp() {
     document.getElementById('client-search-bar').addEventListener('input', (e) => {
         const { displayClients } = import('./ui.js').then(({ displayClients }) => {
             const searchTerm = e.target.value.toLowerCase();
-            const { clientsCache } = import('./state.js');
-            const filteredClients = clientsCache.filter(client => client.name.toLowerCase().includes(searchTerm));
+            const { getClientsCache } = import('./state.js');
+            const filteredClients = getClientsCache().filter(client => client.name.toLowerCase().includes(searchTerm));
             displayClients(filteredClients);
         });
     });
@@ -94,7 +93,6 @@ export function initializeMainApp() {
     document.getElementById('manage-charges-btn').addEventListener('click', openChargeManager);
     document.getElementById('save-charge-description-btn').addEventListener('click', saveChargeDescription);
     document.getElementById('add-charge-btn').addEventListener('click', () => {
-        const { addChargeRow } = import('./ui.js');
         addChargeRow();
     });
     
@@ -104,7 +102,7 @@ export function initializeMainApp() {
     document.getElementById('restore-file-input').addEventListener('change', handleRestoreFile);
 
     // Password Reset
-    document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
+    document.getElementById('send-reset-link-btn').addEventListener('click', window.handleForgotPassword);
 
     // Print buttons
     document.getElementById('print-preview-btn').addEventListener('click', printPreview);
@@ -121,12 +119,12 @@ export function initializeMainApp() {
     window.previewJobFileById = previewJobFileById;
     window.loadJobFileById = loadJobFileById;
     window.editClient = (id) => import('./ui.js').then(ui => ui.editClient(id));
-    window.confirmDelete = (id, type) => import('./firestore.js').then(fs => fs.confirmDelete(id, type));
+    window.confirmDelete = confirmDelete;
     window.checkJobFile = checkJobFile;
     window.uncheckJobFile = uncheckJobFile;
     window.approveJobFile = approveJobFile;
     window.promptForRejection = promptForRejection;
-    window.confirmPermanentDelete = (id) => import('./firestore.js').then(fs => fs.confirmPermanentDelete(id));
+    window.confirmPermanentDelete = confirmPermanentDelete;
     window.restoreJobFile = restoreJobFile;
     window.showUserJobs = (name) => import('./ui.js').then(ui => ui.showUserJobs(name));
     window.showMonthlyJobs = (month, type) => import('./ui.js').then(ui => ui.showMonthlyJobs(month, type));
