@@ -33,9 +33,33 @@ function onJobFilesUpdate(files) {
     displayJobFiles(sortedDocs);
     updateStatusSummary('status-summary-main', jobFilesCache);
     // If analytics is open, refresh it
-    if (document.getElementById('analytics-container').style.display === 'block' && analyticsDataCache) {
+    if (document.getElementById('analytics-container').style.display === 'block') {
        filterAnalyticsByTimeframe('all', document.getElementById('analytics-date-type')?.value || 'bd');
     }
+}
+
+function displayClients(clients) {
+    const list = document.getElementById('client-list');
+    if (!list) return;
+    if (clients.length === 0) {
+        list.innerHTML = `<p class="text-gray-500 text-center p-4">No clients found.</p>`;
+        return;
+    }
+    list.innerHTML = clients.map(client => `
+        <div class="client-item border p-3 rounded-lg bg-gray-50 hover:bg-gray-100" data-search-term="${client.name.toLowerCase()}">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="font-bold">${client.name}</p>
+                    <p class="text-sm text-gray-600">${client.address || ''}</p>
+                    <p class="text-xs text-gray-500">${client.contactPerson || ''} - ${client.phone || ''}</p>
+                </div>
+                <div class="flex-shrink-0 space-x-2">
+                    <button onclick="editClient('${client.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded text-xs">Edit</button>
+                    <button onclick="confirmDelete('${client.id}', 'client')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-xs">Delete</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
 }
 
 function onClientsUpdate(clients) {
@@ -455,31 +479,6 @@ function displayJobFiles(files) {
     list.innerHTML = filesHtml;
 }
 
-function displayClients(clients) {
-    const list = document.getElementById('client-list');
-    if (!list) return;
-    if (clients.length === 0) {
-        list.innerHTML = `<p class="text-gray-500 text-center p-4">No clients found.</p>`;
-        return;
-    }
-    list.innerHTML = clients.map(client => `
-        <div class="client-item border p-3 rounded-lg bg-gray-50 hover:bg-gray-100" data-search-term="${client.name.toLowerCase()}">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="font-bold">${client.name}</p>
-                    <p class="text-sm text-gray-600">${client.address || ''}</p>
-                    <p class="text-xs text-gray-500">${client.contactPerson || ''} - ${client.phone || ''}</p>
-                </div>
-                <div class="flex-shrink-0 space-x-2">
-                    <button onclick="editClient('${client.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded text-xs">Edit</button>
-                    <button onclick="confirmDelete('${client.id}', 'client')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-xs">Delete</button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-
 function updateStatusSummary(targetId, dataSource) {
     const summaryEl = document.getElementById(targetId);
     if (!summaryEl) return;
@@ -734,8 +733,7 @@ window.addChargeRow = addChargeRow;
 window.calculate = calculate;
 window.openAnalyticsDashboard = () => {
     // This needs to be fully implemented
-    const dateType = document.getElementById('analytics-date-type')?.value || 'bd';
-    filterAnalyticsByTimeframe('all', dateType);
+    filterAnalyticsByTimeframe('all', 'bd');
     document.getElementById('app-container').style.display = 'none';
     document.getElementById('analytics-container').style.display = 'block';
     window.scrollTo(0, 0);
@@ -750,4 +748,18 @@ window.downloadAnalyticsCsv = () => {};
 window.filterAnalyticsByTimeframe = () => {};
 window.displayAnalytics = () => {};
 
+function filterAnalyticsByTimeframe(timeframe, dateType) {
+    // Dummy function, needs full implementation
+}
     
+function logUserActivity(jobFileNo) {
+    // Dummy function, needs full implementation
+}
+
+function populateFormFromData(data) {
+    // Dummy function, needs full implementation
+}
+
+function refreshOpenModals() {
+    // Dummy function, needs full implementation
+}
