@@ -1,3 +1,4 @@
+
 import { initializeAppAndAuth, handleLogin, handleSignUp, handleForgotPassword, handleLogout } from './auth.js';
 import { initializeFirestore, saveJobFile as saveJobFileToDb, checkJobFile as checkJobFileInDb, uncheckJobFile as uncheckJobFileInDb, approveJobFile as approveJobFileInDb, rejectJobFile as rejectJobFileInDb, listenForJobFiles, loadJobFileById as loadJobFileFromDb, moveToRecycleBin, listenForClients, saveClient, deleteClient, getUsers, saveUserChanges as saveUserChangesToDb, getBackupData, restoreBackupData, getRecycleBinFiles, restoreJobFile as restoreJobFileFromBin, permanentlyDeleteJobFile, loadChargeDescriptions as loadChargeDescriptionsFromStorage } from './firestore.js';
 import { suggestCharges as suggestChargesFromGemini } from './gemini.js';
@@ -472,7 +473,7 @@ function updateStatusSummary(targetId, dataSource) {
     `;
 }
 
-function getFormData() {
+export function getFormData() {
     const getVal = id => document.getElementById(id).value || '';
     const getChecked = query => Array.from(document.querySelectorAll(query)).filter(el => el.checked).map(el => el.dataset.clearance || el.dataset.product);
 
