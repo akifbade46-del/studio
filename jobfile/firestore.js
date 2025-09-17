@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, query, where, serverTimestamp, getDocs, writeBatch, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getDb, getCurrentUser, getJobFilesCache, getClientsCache, setJobFilesCache, setClientsCache, setFileIdToReject } from './state.js';
-import { showLoader, hideLoader, showNotification, populateFormFromData, refreshOpenModals, closeModal, openModal, displayJobFiles, updateStatusSummary, openRecycleBin } from './ui.js';
+import { showLoader, hideLoader, showNotification, populateFormFromData, refreshOpenModals, closeModal, openModal, displayJobFiles, updateStatusSummary, openRecycleBin, logUserActivity } from './ui.js';
 
 // --- Data Extraction ---
 export function getFormData() {
@@ -149,7 +149,6 @@ export async function loadJobFileById(docId) {
             const fileData = docSnap.data();
             populateFormFromData(fileData);
             
-            const { logUserActivity } = await import('./ui.js');
             logUserActivity(fileData.jfn);
             
             document.getElementById('job-file-no').disabled = true;
@@ -491,8 +490,7 @@ export function loadClients() {
         const clients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         clients.sort((a, b) => a.name.localeCompare(b.name));
         setClientsCache(clients);
-        const { displayClients } = import('./ui.js');
-        displayClients(clients);
+        // This will be displayed by the main script after loading
     }, (error) => {
         console.error("Error loading clients:", error);
         showNotification("Could not load clients.", true);
@@ -561,7 +559,7 @@ export async function deleteClient(clientId) {
 // --- Charge Descriptions ---
 
 export function loadChargeDescriptions() {
-    const { setChargeDescriptions } = import('./state.js');
+    const { setChargeDescriptions } = await import('./state.js');
     const storedDescriptions = localStorage.getItem('chargeDescriptions');
     let descriptions = [];
     if (storedDescriptions) {
@@ -576,9 +574,9 @@ export function loadChargeDescriptions() {
 }
 
 
-export function saveChargeDescription() {
-    const { getChargeDescriptions, setChargeDescriptions } = import('./state.js');
-    const { displayChargeDescriptions } = import('./ui.js');
+export async function saveChargeDescription() {
+    const { getChargeDescriptions, setChargeDescriptions } = await import('./state.js');
+    const { displayChargeDescriptions } = await import('./ui.js');
 
     const input = document.getElementById('new-charge-description');
     const newDesc = input.value.trim();
@@ -593,9 +591,9 @@ export function saveChargeDescription() {
     }
 }
 
-export function deleteChargeDescription(description) {
-    const { getChargeDescriptions, setChargeDescriptions } = import('./state.js');
-    const { displayChargeDescriptions } = import('./ui.js');
+export async function deleteChargeDescription(description) {
+    const { getChargeDescriptions, setChargeDescriptions } = await import('./state.js');
+    const { displayChargeDescriptions } = await import('./ui.js');
     
     const chargeDescriptions = getChargeDescriptions();
     const newDescriptions = chargeDescriptions.filter(d => d !== description);

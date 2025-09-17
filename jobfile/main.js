@@ -3,7 +3,8 @@ import {
     clearClientForm, openAdminPanel, saveUserChanges, openUserActivityLog, 
     openRecycleBin, openChargeManager, openAnalyticsDashboard, closeAnalyticsDashboard,
     printPage, printPreview, previewJobFileById, applyFiltersAndDisplay,
-    setupAutocomplete, addChargeRow, editClient, showUserJobs, showMonthlyJobs, showSalesmanJobs, showStatusJobs, printAnalytics
+    setupAutocomplete, addChargeRow, editClient, showUserJobs, showMonthlyJobs, showSalesmanJobs, showStatusJobs, printAnalytics,
+    displayClients, displayChargeDescriptions
 } from './ui.js';
 import { 
     saveJobFile, loadJobFileById, checkJobFile, uncheckJobFile, approveJobFile, 
@@ -13,6 +14,7 @@ import {
 } from './firestore.js';
 import { generateRemarks, suggestCharges } from './gemini.js';
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getClientsCache, setChargeDescriptions } from './state.js';
 
 
 // This function is called only after a successful login
@@ -21,8 +23,24 @@ function initializeMainApp() {
     
     // Load initial data
     loadJobFiles();
+    
+    // Load clients and then display them
     loadClients();
-    loadChargeDescriptions();
+    
+    // Load charge descriptions
+    const storedDescriptions = localStorage.getItem('chargeDescriptions');
+    let descriptions = [];
+    if (storedDescriptions) {
+        descriptions = JSON.parse(storedDescriptions);
+    } else {
+        descriptions = [
+            'Ex-works Charges:', 'Land/Air / Sea Freight:', 'Fuell Security / War Surcharge:', 'Formalities:', 'Delivery Order Fee:', 'Transportation Charges:', 'Inspection / Computer Print Charges:', 'Handling Charges:', 'Labor / Forklift Charges:', 'Documentation Charges:', 'Clearance Charges:', 'Customs Duty:', 'Terminal Handling Charges:', 'Legalization Charges:', 'Demurrage Charges:', 'Loading / Offloading Charges:', 'Destination Clearance Charges:', 'Packing Charges:', 'Port Charges:', 'Other Charges:', 'PAI Approval :', 'Insurance Fee :', 'EPA Charges :'
+        ];
+        localStorage.setItem('chargeDescriptions', JSON.stringify(descriptions));
+    }
+    setChargeDescriptions(descriptions);
+    displayChargeDescriptions();
+
 
     // Set initial form state
     clearForm();
@@ -83,12 +101,9 @@ function initializeMainApp() {
     document.getElementById('client-form').addEventListener('submit', saveClient);
     document.getElementById('clear-client-form-btn').addEventListener('click', clearClientForm);
     document.getElementById('client-search-bar').addEventListener('input', (e) => {
-        const { displayClients } = import('./ui.js').then(({ displayClients }) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const { getClientsCache } = import('./state.js');
-            const filteredClients = getClientsCache().filter(client => client.name.toLowerCase().includes(searchTerm));
-            displayClients(filteredClients);
-        });
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredClients = getClientsCache().filter(client => client.name.toLowerCase().includes(searchTerm));
+        displayClients(filteredClients);
     });
 
     // Charge Manager
