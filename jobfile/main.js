@@ -62,8 +62,8 @@ function initializeMainApp() {
     document.getElementById('close-charge-manager-modal').addEventListener('click', () => closeModal('charge-manager-modal'));
     document.getElementById('close-activity-log-modal').addEventListener('click', () => closeModal('activity-log-modal'));
     document.getElementById('close-user-jobs-modal').addEventListener('click', () => closeModal('user-jobs-modal'));
-    document.getElementById('close-recycle-bin-modal').addEventListener('click', () => closeModal('recycle-bin-modal'));
     document.getElementById('confirm-cancel').addEventListener('click', () => closeModal('confirm-modal'));
+    document.getElementById('close-recycle-bin-modal').addEventListener('click', () => closeModal('recycle-bin-modal'));
     
     // File Manager
     document.getElementById('search-bar').addEventListener('input', applyFiltersAndDisplay);
