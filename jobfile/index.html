@@ -781,24 +781,16 @@
                 // --- Auth State Change Logic ---
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
+                        // User is signed in, but we DON'T show the app yet.
+                        // We just verify their status. If they are blocked, we log them out.
                         const userDocRef = doc(db, 'users', user.uid);
                         const userDoc = await getDoc(userDocRef);
                         
-                        if (userDoc.exists() && userDoc.data().status === 'active') {
-                            const currentUser = { uid: user.uid, email: user.email, ...userDoc.data() };
-                            showApp(currentUser);
-                        } else {
-                            const status = userDoc.exists() ? userDoc.data().status : 'not_found';
-                            if (status === 'inactive') {
-                                document.getElementById('approval-message').style.display = 'block';
-                            } else if (status === 'blocked') {
-                                document.getElementById('blocked-message').style.display = 'block';
-                            }
-                            await signOut(auth);
-                            setCurrentUser(null);
-                            showLogin();
+                        if (userDoc.exists() && userDoc.data().status === 'blocked') {
+                            await signOut(auth); // Force logout if blocked
                         }
                     } else {
+                        // No user is signed in. Ensure login screen is visible.
                         setCurrentUser(null);
                         showLogin();
                     }
@@ -874,12 +866,35 @@
             async function handleLogin(email, password) {
                 showLoader();
                 try {
-                    await signInWithEmailAndPassword(auth, email, password);
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    
+                    // After successful sign-in, check user doc from Firestore
+                    const userDocRef = doc(db, 'users', user.uid);
+                    const userDoc = await getDoc(userDocRef);
+
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        if (userData.status === 'active') {
+                            const currentUser = { uid: user.uid, email: user.email, ...userData };
+                            showApp(currentUser);
+                        } else if (userData.status === 'inactive') {
+                            document.getElementById('approval-message').style.display = 'block';
+                            await signOut(auth);
+                        } else if (userData.status === 'blocked') {
+                            document.getElementById('blocked-message').style.display = 'block';
+                            await signOut(auth);
+                        }
+                    } else {
+                        // This case is unlikely if sign-up process is enforced
+                        showNotification("User data not found in database.", true);
+                        await signOut(auth);
+                    }
                 } catch (error) {
                     console.error("Login error:", error);
                     let message = "Login failed. Please check your email and password.";
                     if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                        message = "Incorrect email or password. Please try again or reset your password.";
+                        message = "Incorrect email or password. Please try again.";
                     }
                     showNotification(message, true);
                 }
