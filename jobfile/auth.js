@@ -98,6 +98,9 @@ function showLoginView() {
 }
 
 async function showPublicView(jobId, firestoreDb) {
+    // This function needs access to getPrintViewHtml which is in script.js
+    // For now, we will just show a simplified message.
+    // A better approach would be to have a shared UI module.
     db = firestoreDb;
     try {
         const docId = jobId.replace(/\//g, '_');
@@ -106,14 +109,16 @@ async function showPublicView(jobId, firestoreDb) {
 
         if (docSnap.exists()) {
             const data = docSnap.data();
+            // This is a temporary solution as getPrintViewHtml is not in this module
             const publicViewContainer = document.getElementById('public-view-container');
-            // This function is now in script.js, need to make it available or rethink
-             publicViewContainer.innerHTML = `
-                <div class="border border-gray-700 p-2 bg-white">
-                    ... HTML for public view ...
+            publicViewContainer.innerHTML = `
+                <div class="border border-gray-700 p-4 bg-white text-center">
+                    <h1 class="text-2xl font-bold">Job File: ${data.jfn}</h1>
+                    <p>Shipper: ${data.sh}</p>
+                    <p>Consignee: ${data.co}</p>
+                    <p class="mt-4 text-sm text-gray-500">Public view is partially implemented.</p>
                 </div>
             `;
-             showNotification("Public view not fully implemented in this module.", true);
 
         } else {
             document.body.innerHTML = `<div class="p-4 text-center text-yellow-700 bg-yellow-100">Job File with ID "${jobId}" not found.</div>`;
@@ -164,7 +169,6 @@ function setupAuthEventListeners() {
         const closeButton = modal.querySelector('button[onclick^="closeModal"]');
         if (closeButton) {
             const modalId = modal.id;
-            // The onclick is not being removed properly. Let's add a direct listener.
             closeButton.addEventListener('click', () => closeModal(modalId));
         }
     });
@@ -231,7 +235,7 @@ export function handleLogout() {
 }
 
 
-// --- UI Helper Functions ---
+// --- UI Helper Functions (moved here from index.html) ---
 function showLoader() { 
     const loader = document.getElementById('loader-overlay');
     if(loader) loader.classList.add('visible'); 
@@ -300,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeAppAndAuth();
 });
 
-// Make UI functions globally available for inline event handlers and other scripts
+// Make UI functions globally available for inline event handlers
 window.showLoader = showLoader;
 window.hideLoader = hideLoader;
 window.showNotification = showNotification;
