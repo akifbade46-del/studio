@@ -1,47 +1,33 @@
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { 
     openModal, closeModal, clearForm, openClientManager, 
-    clearClientForm, openAdminPanel, saveUserChanges, openUserActivityLog, 
+    clearClientForm, openAdminPanel, openUserActivityLog, 
     openRecycleBin, openChargeManager, openAnalyticsDashboard, closeAnalyticsDashboard,
     printPage, printPreview, previewJobFileById, applyFiltersAndDisplay,
     setupAutocomplete, addChargeRow, editClient, showUserJobs, showMonthlyJobs, showSalesmanJobs, showStatusJobs, printAnalytics,
-    displayClients, displayChargeDescriptions
+    displayClients, displayChargeDescriptions,
+    logUserActivity
 } from './ui.js';
 import { 
     saveJobFile, loadJobFileById, checkJobFile, uncheckJobFile, approveJobFile, 
     promptForRejection, rejectJobFile, confirmDelete, confirmPermanentDelete, 
     restoreJobFile, saveClient, backupAllData, handleRestoreFile,
-    saveChargeDescription, deleteChargeDescription, loadJobFiles, loadClients, loadChargeDescriptions
+    saveChargeDescription, deleteChargeDescription, loadJobFiles, loadClients, loadChargeDescriptions,
+    saveUserChanges
 } from './firestore.js';
 import { generateRemarks, suggestCharges } from './gemini.js';
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getClientsCache, setChargeDescriptions } from './state.js';
+import { getClientsCache, getJobFilesCache } from './state.js';
 
 
 // This function is called only after a successful login
-function initializeMainApp() {
+export function initializeMainApp() {
     const auth = getAuth();
     
     // Load initial data
     loadJobFiles();
+    loadClients().then(() => displayClients(getClientsCache())); // Load and then display
+    loadChargeDescriptions();
     
-    // Load clients and then display them
-    loadClients();
-    
-    // Load charge descriptions
-    const storedDescriptions = localStorage.getItem('chargeDescriptions');
-    let descriptions = [];
-    if (storedDescriptions) {
-        descriptions = JSON.parse(storedDescriptions);
-    } else {
-        descriptions = [
-            'Ex-works Charges:', 'Land/Air / Sea Freight:', 'Fuell Security / War Surcharge:', 'Formalities:', 'Delivery Order Fee:', 'Transportation Charges:', 'Inspection / Computer Print Charges:', 'Handling Charges:', 'Labor / Forklift Charges:', 'Documentation Charges:', 'Clearance Charges:', 'Customs Duty:', 'Terminal Handling Charges:', 'Legalization Charges:', 'Demurrage Charges:', 'Loading / Offloading Charges:', 'Destination Clearance Charges:', 'Packing Charges:', 'Port Charges:', 'Other Charges:', 'PAI Approval :', 'Insurance Fee :', 'EPA Charges :'
-        ];
-        localStorage.setItem('chargeDescriptions', JSON.stringify(descriptions));
-    }
-    setChargeDescriptions(descriptions);
-    displayChargeDescriptions();
-
-
     // Set initial form state
     clearForm();
 
@@ -109,9 +95,7 @@ function initializeMainApp() {
     // Charge Manager
     document.getElementById('manage-charges-btn').addEventListener('click', openChargeManager);
     document.getElementById('save-charge-description-btn').addEventListener('click', saveChargeDescription);
-    document.getElementById('add-charge-btn').addEventListener('click', () => {
-        addChargeRow();
-    });
+    document.getElementById('add-charge-btn').addEventListener('click', () => addChargeRow());
     
     // Admin Panel
     document.getElementById('save-user-changes-btn').addEventListener('click', saveUserChanges);
@@ -128,7 +112,11 @@ function initializeMainApp() {
     
     // Make functions globally accessible for inline onclick handlers from dynamic HTML
     window.previewJobFileById = previewJobFileById;
-    window.loadJobFileById = loadJobFileById;
+    window.loadJobFileById = (docId) => {
+        const job = getJobFilesCache().find(j => j.id === docId);
+        if (job) logUserActivity(job.jfn);
+        loadJobFileById(docId);
+    };
     window.editClient = editClient;
     window.confirmDelete = confirmDelete;
     window.checkJobFile = checkJobFile;
@@ -144,5 +132,4 @@ function initializeMainApp() {
     window.deleteChargeDescription = deleteChargeDescription;
 }
 
-// Start the main app logic
-initializeMainApp();
+  
