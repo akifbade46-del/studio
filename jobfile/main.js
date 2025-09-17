@@ -3,7 +3,7 @@ import {
     clearClientForm, openAdminPanel, saveUserChanges, openUserActivityLog, 
     openRecycleBin, openChargeManager, openAnalyticsDashboard, closeAnalyticsDashboard,
     printPage, printPreview, previewJobFileById, applyFiltersAndDisplay,
-    setupAutocomplete, addChargeRow
+    setupAutocomplete, addChargeRow, editClient, showUserJobs, showMonthlyJobs, showSalesmanJobs, showStatusJobs, printAnalytics
 } from './ui.js';
 import { 
     saveJobFile, loadJobFileById, checkJobFile, uncheckJobFile, approveJobFile, 
@@ -12,10 +12,13 @@ import {
     saveChargeDescription, deleteChargeDescription, loadJobFiles, loadClients, loadChargeDescriptions
 } from './firestore.js';
 import { generateRemarks, suggestCharges } from './gemini.js';
-import { currentUser } from './state.js';
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 
-export function initializeMainApp() {
+// This function is called only after a successful login
+function initializeMainApp() {
+    const auth = getAuth();
+    
     // Load initial data
     loadJobFiles();
     loadClients();
@@ -25,7 +28,7 @@ export function initializeMainApp() {
     clearForm();
 
     // Attach all event listeners
-    document.getElementById('logout-btn').addEventListener('click', window.handleLogout);
+    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
     
     // Main action buttons
     document.getElementById('save-job-btn').addEventListener('click', saveJobFile);
@@ -61,7 +64,6 @@ export function initializeMainApp() {
     document.getElementById('close-user-jobs-modal').addEventListener('click', () => closeModal('user-jobs-modal'));
     document.getElementById('close-recycle-bin-modal').addEventListener('click', () => closeModal('recycle-bin-modal'));
     document.getElementById('confirm-cancel').addEventListener('click', () => closeModal('confirm-modal'));
-    document.getElementById('close-forgot-password-modal').addEventListener('click', () => closeModal('forgot-password-modal'));
     
     // File Manager
     document.getElementById('search-bar').addEventListener('input', applyFiltersAndDisplay);
@@ -101,15 +103,9 @@ export function initializeMainApp() {
     document.getElementById('backup-data-btn').addEventListener('click', backupAllData);
     document.getElementById('restore-file-input').addEventListener('change', handleRestoreFile);
 
-    // Password Reset
-    document.getElementById('send-reset-link-btn').addEventListener('click', window.handleForgotPassword);
-
     // Print buttons
     document.getElementById('print-preview-btn').addEventListener('click', printPreview);
-    document.getElementById('print-analytics-btn').addEventListener('click', () => {
-        const { printAnalytics } = import('./ui.js');
-        printAnalytics();
-    });
+    document.getElementById('print-analytics-btn').addEventListener('click', printAnalytics);
 
     // Autocomplete setup
     setupAutocomplete('shipper-name', 'shipper-suggestions', 'Shipper');
@@ -118,7 +114,7 @@ export function initializeMainApp() {
     // Make functions globally accessible for inline onclick handlers from dynamic HTML
     window.previewJobFileById = previewJobFileById;
     window.loadJobFileById = loadJobFileById;
-    window.editClient = (id) => import('./ui.js').then(ui => ui.editClient(id));
+    window.editClient = editClient;
     window.confirmDelete = confirmDelete;
     window.checkJobFile = checkJobFile;
     window.uncheckJobFile = uncheckJobFile;
@@ -126,9 +122,12 @@ export function initializeMainApp() {
     window.promptForRejection = promptForRejection;
     window.confirmPermanentDelete = confirmPermanentDelete;
     window.restoreJobFile = restoreJobFile;
-    window.showUserJobs = (name) => import('./ui.js').then(ui => ui.showUserJobs(name));
-    window.showMonthlyJobs = (month, type) => import('./ui.js').then(ui => ui.showMonthlyJobs(month, type));
-    window.showSalesmanJobs = (name) => import('./ui.js').then(ui => ui.showSalesmanJobs(name));
-    window.showStatusJobs = (status) => import('./ui.js').then(ui => ui.showStatusJobs(status));
+    window.showUserJobs = showUserJobs;
+    window.showMonthlyJobs = showMonthlyJobs;
+    window.showSalesmanJobs = showSalesmanJobs;
+    window.showStatusJobs = showStatusJobs;
     window.deleteChargeDescription = deleteChargeDescription;
 }
+
+// Start the main app logic
+initializeMainApp();
