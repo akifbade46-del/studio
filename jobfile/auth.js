@@ -30,7 +30,7 @@ export async function initializeAppAndAuth(onLoginSuccess, showPublicView, showL
         if (jobIdFromUrl) {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'none';
-            window.showLoader();
+            showLoader();
             showPublicView(jobIdFromUrl, db);
         } else {
              onAuthStateChanged(auth, async (user) => {
@@ -86,7 +86,7 @@ export async function initializeAppAndAuth(onLoginSuccess, showPublicView, showL
 
     } catch (error) {
         console.error("Firebase initialization failed:", error);
-        window.showNotification("Could not connect to the database.", true);
+        showNotification("Could not connect to the database.", true);
     }
 }
 
@@ -97,7 +97,7 @@ function setupAuthEventListeners() {
     document.getElementById('auth-link').addEventListener('click', (e) => {
         e.preventDefault();
         isLogin = !isLogin;
-        window.toggleAuthView(isLogin);
+        toggleAuthView(isLogin);
     });
 
     document.getElementById('auth-btn').addEventListener('click', () => {
@@ -108,39 +108,53 @@ function setupAuthEventListeners() {
         } else {
             const displayName = document.getElementById('full-name').value;
              if (!email || !password || !displayName) {
-                 window.showNotification("Please fill all fields to sign up.", true);
+                 showNotification("Please fill all fields to sign up.", true);
                  return;
             }
             handleSignUp(email, password, displayName);
         }
     });
 
-    document.getElementById('logout-btn').addEventListener('click', handleLogout);
+    // The main app script will handle logout now.
+    // document.getElementById('logout-btn').addEventListener('click', handleLogout); 
+    
     document.getElementById('forgot-password-link').addEventListener('click', (e) => {
         e.preventDefault();
-        window.openModal('forgot-password-modal');
+        openModal('forgot-password-modal');
     });
     document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
+
+    // Make modal close buttons work
+    const allModals = document.querySelectorAll('.overlay');
+    allModals.forEach(modal => {
+        const closeButton = modal.querySelector('button[onclick^="closeModal"]');
+        if (closeButton) {
+            const modalId = modal.id;
+            closeButton.removeAttribute('onclick');
+            closeButton.addEventListener('click', () => closeModal(modalId));
+        }
+    });
+
 }
 
 
 // --- Authentication Logic ---
 async function handleSignUp(email, password, displayName) {
-    window.showLoader();
+    showLoader();
     try {
         await createUserWithEmailAndPassword(auth, email, password);
-        window.showNotification("Account created! Please wait for admin approval.", false);
+        showNotification("Account created! Please wait for admin approval.", false);
         await signOut(auth);
-        window.toggleAuthView(true);
+        toggleAuthView(true);
     } catch (error) {
         console.error("Sign up error:", error);
-        window.showNotification(error.message, true);
+        showNotification(error.message, true);
     }
-    window.hideLoader();
+    hideLoader();
 }
 
 async function handleLogin(email, password) {
-    window.showLoader();
+    showLoader();
     try {
         await signInWithEmailAndPassword(auth, email, password);
         // onAuthStateChanged will handle the rest
@@ -150,35 +164,111 @@ async function handleLogin(email, password) {
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
             message = "Incorrect email or password. Please try again or reset your password.";
         }
-        window.showNotification(message, true);
+        showNotification(message, true);
     }
-    window.hideLoader();
+    hideLoader();
 }
 
 async function handleForgotPassword() {
     const email = document.getElementById('reset-email').value.trim();
     if (!email) {
-        window.showNotification("Please enter your email address.", true);
+        showNotification("Please enter your email address.", true);
         return;
     }
-    window.showLoader();
+    showLoader();
     try {
         await sendPasswordResetEmail(auth, email);
-        window.hideLoader();
-        window.closeModal('forgot-password-modal');
-        window.showNotification("Password reset link sent! Check your email inbox.", false);
+        hideLoader();
+        closeModal('forgot-password-modal');
+        showNotification("Password reset link sent! Check your email inbox.", false);
     } catch (error) {
-        window.hideLoader();
+        hideLoader();
         console.error("Password reset error:", error);
         let message = "Could not send reset link. Please try again.";
         if(error.code === 'auth/user-not-found'){
             message = "No account found with this email address.";
         }
-        window.showNotification(message, true);
+        showNotification(message, true);
     }
 }
 
-function handleLogout() {
-    signOut(auth);
+export function handleLogout() {
+    if (auth) {
+      signOut(auth);
+    }
 }
+
+
+// --- UI Helper Functions (Moved from index.html) ---
+
+export function showLoader() { 
+    const loader = document.getElementById('loader-overlay');
+    if(loader) loader.classList.add('visible'); 
+}
+export function hideLoader() { 
+    const loader = document.getElementById('loader-overlay');
+    if(loader) loader.classList.remove('visible'); 
+}
+
+export function showNotification(message, isError = false) {
+    const notification = document.getElementById('notification');
+    if(!notification) return;
+    notification.textContent = message;
+    notification.style.backgroundColor = isError ? '#c53030' : '#2d3748';
+    notification.classList.add('show');
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+
+export function openModal(id, keepParent = false) {
+    if (!keepParent) {
+        closeAllModals();
+    }
+    const modal = document.getElementById(id);
+    if (!modal) return;
+
+    if (keepParent) {
+        const highestZ = Array.from(document.querySelectorAll('.overlay.visible'))
+            .reduce((max, el) => Math.max(max, parseInt(window.getComputedStyle(el).zIndex || 1000)), 1000);
+        modal.style.zIndex = highestZ + 10;
+    }
+    modal.classList.add('visible');
+}
+
+export function closeModal(id) {
+    const modal = document.getElementById(id);
+    if(modal) modal.classList.remove('visible');
+}
+
+export function closeAllModals() {
+    document.querySelectorAll('.overlay').forEach(modal => {
+        modal.classList.remove('visible');
+        modal.style.zIndex = '';
+    });
+}
+
+export function toggleAuthView(showLogin) {
+    const nameField = document.getElementById('signup-name-field');
+    const emailField = document.getElementById('email-address');
     
+    document.getElementById('auth-title').textContent = showLogin ? 'Sign in to your account' : 'Create a new account';
+    document.getElementById('auth-btn').textContent = showLogin ? 'Sign in' : 'Sign up';
+    document.getElementById('auth-link').textContent = showLogin ? 'Create a new account' : 'Already have an account? Sign in';
+    
+    if (nameField) nameField.style.display = showLogin ? 'none' : 'block';
+    if (emailField) emailField.classList.toggle('rounded-t-md', !showLogin);
+    
+    const approvalMsg = document.getElementById('approval-message');
+    if (approvalMsg) approvalMsg.style.display = 'none';
+}
+
+// Make these functions globally available for the main script
+window.showLoader = showLoader;
+window.hideLoader = hideLoader;
+window.showNotification = showNotification;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.closeAllModals = closeAllModals;
+window.toggleAuthView = toggleAuthView;
+window.handleLogout = handleLogout;
