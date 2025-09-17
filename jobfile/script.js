@@ -1,4 +1,4 @@
-import { db, auth } from './auth.js';
+import { db, auth, handleLogout } from './auth.js';
 import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, query, where, serverTimestamp, getDocs, writeBatch, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { 
     showLoader, hideLoader, showNotification, openModal, closeModal, 
@@ -10,7 +10,6 @@ import {
 } from './ui.js';
 import { state } from './state.js';
 import { callGeminiApi } from './gemini.js';
-import { signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 
 export function initializeMainApp() {
@@ -38,10 +37,6 @@ export function initializeMainApp() {
     loadChargeDescriptions();
     clearForm();
     attachEventListeners();
-}
-
-function handleLogout() {
-    signOut(auth);
 }
 
 // --- Data Handling (Firestore) ---
