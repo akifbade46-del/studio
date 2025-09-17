@@ -62,7 +62,7 @@
     </div>
     
     <!-- Main Application Container (Hidden by default) -->
-    <div id="app-container" class="hidden">
+    <div id="app-container" style="display: none;">
         <div id="main-container" class="container">
             <!-- Header Section -->
             <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -553,6 +553,7 @@
 
     <!-- App Logic -->
     <script type="module" src="auth.js"></script>
+    
     <script>
         // Service worker registration
         if ('serviceWorker' in navigator) {

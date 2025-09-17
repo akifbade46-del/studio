@@ -45,18 +45,21 @@ async function handleSignUp(email, password, displayName) {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
+        
+        // This logic now runs after user creation to set role and status
         const usersCollectionRef = collection(db, 'users');
         const userQuerySnapshot = await getDocs(usersCollectionRef);
+        // This is tricky. A brand new user is not in the snapshot.
+        // The first user ever to sign up for the app is admin.
         const isFirstUser = userQuerySnapshot.size === 0;
 
-        const newUser = {
+        await setDoc(doc(db, 'users', user.uid), {
             email: user.email,
             displayName: displayName,
             role: isFirstUser ? 'admin' : 'user',
             status: isFirstUser ? 'active' : 'inactive',
             createdAt: serverTimestamp()
-        };
-        await setDoc(doc(db, 'users', user.uid), newUser);
+        });
         
         showNotification("Account created! Please wait for admin approval.", false);
         await signOut(auth);
@@ -65,8 +68,9 @@ async function handleSignUp(email, password, displayName) {
     } catch (error) {
         console.error("Sign up error:", error);
         showNotification(error.message, true);
+    } finally {
+        hideLoader();
     }
-    hideLoader();
 }
 
 async function handleLogin(email, password) {
@@ -77,12 +81,12 @@ async function handleLogin(email, password) {
     showLoader();
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        // onAuthStateChanged will handle the view change
+        // onAuthStateChanged will handle the rest
     } catch (error) {
         hideLoader();
         console.error("Login error:", error);
         let message = "Login failed. Please check your credentials.";
-        if (error.code === 'auth/invalid-credential') {
+        if (error.code === 'auth/invalid-credential') { // Correct v9+ code
             message = "Incorrect email or password.";
         }
         showNotification(message, true);
@@ -118,7 +122,8 @@ function toggleAuthView(showLogin) {
     const emailField = document.getElementById('email-address');
 
     nameField.style.display = showLogin ? 'none' : 'block';
-    emailField.classList.toggle('rounded-t-md', !showLogin);
+    // This logic needs to be safe. If emailField doesn't exist, it shouldn't crash.
+    if(emailField) emailField.classList.toggle('rounded-t-md', !showLogin);
     
     document.getElementById('auth-title').textContent = showLogin ? 'Sign in to your account' : 'Create a new account';
     document.getElementById('auth-btn').textContent = showLogin ? 'Sign in' : 'Sign up';
@@ -126,6 +131,7 @@ function toggleAuthView(showLogin) {
 }
 
 function initializeAuth() {
+    // This is the primary listener for auth state changes.
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             showLoader();
@@ -134,9 +140,10 @@ function initializeAuth() {
             
             if (userDoc.exists() && userDoc.data().status === 'active') {
                 const currentUser = { uid: user.uid, ...userDoc.data() };
-                state.currentUser = currentUser; // Set state
+                state.currentUser = currentUser; // Set global state
                 
                 if (currentUser.role === 'warehouse_supervisor') {
+                    // Redirect to pod/index.html for warehouse supervisor
                     window.location.href = '../pod/index.html';
                 } else {
                     showAppView();
@@ -151,19 +158,24 @@ function initializeAuth() {
                         document.getElementById('blocked-message').style.display = 'block';
                     }
                 } else {
+                    // This can happen if a user is created in Auth but not in Firestore.
+                    // For safety, log them out.
                     showNotification("Your user profile was not found in the database.", true);
                 }
-                await signOut(auth);
-                showLoginView();
+                await signOut(auth); // This will re-trigger onAuthStateChanged with user=null
+                // No need to call showLoginView here, the signout will trigger it.
+                // We must hide loader here.
                 hideLoader();
             }
         } else {
+            // User is signed out.
             state.currentUser = null;
             showLoginView();
             hideLoader();
         }
     });
 
+    // Attach listeners for login UI elements
     document.getElementById('auth-link').addEventListener('click', (e) => {
         e.preventDefault();
         toggleAuthView(!isLoginView);
@@ -190,11 +202,40 @@ function initializeAuth() {
         openModal('forgot-password-modal');
     });
     
-    document.getElementById('close-forgot-password-modal').addEventListener('click', () => closeModal('forgot-password-modal'));
-    document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
+    // The modals might not exist on all pages, so check first.
+    const closeForgotPasswordModal = document.getElementById('close-forgot-password-modal');
+    if(closeForgotPasswordModal) closeForgotPasswordModal.addEventListener('click', () => closeModal('forgot-password-modal'));
+    
+    const sendResetLinkBtn = document.getElementById('send-reset-link-btn');
+    if(sendResetLinkBtn) sendResetLinkBtn.addEventListener('click', handleForgotPassword);
 
     toggleAuthView(true);
 }
 
 // --- App Entry Point ---
-initializeAuth();
+// We wrap the initialization in DOMContentLoaded to ensure all HTML elements are ready.
+document.addEventListener('DOMContentLoaded', () => {
+    // Handle the public view case first.
+    const urlParams = new URLSearchParams(window.location.search);
+    const jobIdFromUrl = urlParams.get('jobId');
+
+    if (jobIdFromUrl) {
+        // Handle public view (code for this is in script.js or another file)
+        // For now, this just means we don't initialize the full auth flow
+        console.log("Public job view detected, skipping auth flow.");
+    } else {
+        // This is the standard app flow, initialize authentication.
+        initializeAuth();
+    }
+
+    // Service worker registration can happen regardless.
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').then(registration => {
+                console.log('ServiceWorker registration successful');
+            }).catch(err => {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+    }
+});

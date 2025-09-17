@@ -5,11 +5,13 @@ import {
     populateFormFromData, clearForm, addChargeRow, populateTable, calculate, 
     displayJobFiles, updateStatusSummary, getPrintViewHtml, createPrintWindow,
     displayClients, clearClientForm, editClient, setupAutocomplete, refreshOpenModals,
-    displayJobsInModal, openRecycleBin, confirmPermanentDelete, displayChargeDescriptions
+    displayJobsInModal, openRecycleBin, confirmPermanentDelete, displayChargeDescriptions,
+    openAdminPanel, saveUserChanges
 } from './ui.js';
 import { state } from './state.js';
 import { callGeminiApi } from './gemini.js';
-import { handleLogout } from './auth.js';
+import { signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
 
 export function initializeMainApp() {
     hideLoader();
@@ -36,6 +38,10 @@ export function initializeMainApp() {
     loadChargeDescriptions();
     clearForm();
     attachEventListeners();
+}
+
+function handleLogout() {
+    signOut(auth);
 }
 
 // --- Data Handling (Firestore) ---
@@ -431,13 +437,13 @@ function confirmDelete(docId, type = 'jobfile') {
 // --- Analytics ---
 function openAnalyticsDashboard() {
     filterAnalyticsByTimeframe('all');
-    document.getElementById('main-container').classList.add('hidden');
-    document.getElementById('analytics-container').classList.remove('hidden');
+    document.getElementById('app-container').style.display = 'none';
+    document.getElementById('analytics-container').style.display = 'block';
     window.scrollTo(0, 0);
 }
 function closeAnalyticsDashboard() {
-    document.getElementById('analytics-container').classList.add('hidden');
-    document.getElementById('main-container').classList.remove('hidden');
+    document.getElementById('analytics-container').style.display = 'none';
+    document.getElementById('app-container').style.display = 'block';
 }
 
 function filterAnalyticsByTimeframe(timeframe, dateType = 'bd') {
@@ -459,31 +465,7 @@ function filterAnalyticsByTimeframe(timeframe, dateType = 'bd') {
         });
     }
     state.currentFilteredJobs = jobs;
-    calculateAndDisplayAnalytics(jobs);
-}
-
-function calculateAndDisplayAnalytics(jobs) {
-    const totalJobs = jobs.length;
-    let totalRevenue = 0, totalCost = 0, totalProfit = 0;
-    const profitByUser = {}, profitBySalesman = {};
-
-    jobs.forEach(job => {
-        totalRevenue += job.totalSelling || 0;
-        totalCost += job.totalCost || 0;
-        totalProfit += job.totalProfit || 0;
-        const creator = job.createdBy || 'Unknown';
-        if (!profitByUser[creator]) profitByUser[creator] = { count: 0, profit: 0, jobs: [] };
-        profitByUser[creator].count++;
-        profitByUser[creator].profit += job.totalProfit || 0;
-        profitByUser[creator].jobs.push(job);
-    });
-
-    state.analyticsDataCache = {
-        totalJobs, totalRevenue, totalCost, totalProfit, profitByUser,
-        profitByFile: jobs.map(j => ({...j}))
-    };
-
-    displayAnalytics(state.analyticsDataCache);
+    //calculateAndDisplayAnalytics(jobs);
 }
 
 // --- Client Management ---
@@ -667,9 +649,7 @@ function applyFiltersAndDisplay() {
 
 
 function attachEventListeners() {
-    document.getElementById('logout-btn').addEventListener('click', () => {
-        auth.signOut();
-    });
+    document.getElementById('logout-btn').addEventListener('click', handleLogout);
     document.getElementById('save-job-btn').addEventListener('click', saveJobFile);
     document.getElementById('new-job-btn').addEventListener('click', clearForm);
     document.getElementById('open-analytics-btn').addEventListener('click', openAnalyticsDashboard);
@@ -732,6 +712,7 @@ function attachEventListeners() {
     
     document.getElementById('add-charge-btn').addEventListener('click', () => addChargeRow());
 
+    // Make functions globally accessible for inline onclick handlers if any
     window.previewJobFileById = previewJobFileById;
     window.loadJobFileById = loadJobFileById;
     window.confirmDelete = confirmDelete;
@@ -742,17 +723,14 @@ function attachEventListeners() {
     window.promptForRejection = promptForRejection;
     window.confirmPermanentDelete = confirmPermanentDelete;
     window.restoreJobFile = (id) => console.log('restore', id); // Placeholder
-    window.openAdminPanel = openAdminPanel;
-    window.saveUserChanges = () => console.log('save'); // Placeholder
-    window.printAnalytics = () => console.log('print analytics'); // Placeholder
-    window.closeAnalyticsDashboard = closeAnalyticsDashboard;
-    window.showUserJobs = (id) => console.log('show jobs for', id);
+    window.saveUserChanges = saveUserChanges;
     
     state.listenersAttached = true;
 }
 
 function printPage() {
     const data = getFormData();
+    // This is a simplified print. We need getPrintViewHtml function for a full one.
     const printHTML = getPrintViewHtml(data, false);
     createPrintWindow('Job File', printHTML);
 }
@@ -761,67 +739,3 @@ function printPreview() {
     const previewBody = document.getElementById('preview-body').innerHTML;
     createPrintWindow('Job File Preview', previewBody);
 }
-
-async function openAdminPanel(){
-    showLoader();
-    try {
-        const usersSnapshot = await getDocs(collection(db, 'users'));
-        const userListDiv = document.getElementById('user-list');
-        userListDiv.innerHTML = '';
-        usersSnapshot.forEach(doc => {
-            const userData = doc.data();
-            const userEl = document.createElement('div');
-            userEl.className = 'grid grid-cols-1 sm:grid-cols-3 gap-4 items-center p-2 border-b';
-            userEl.innerHTML = `
-                <input type="text" data-uid="${doc.id}" class="display-name-input input-field col-span-1" value="${userData.displayName}">
-                <select data-uid="${doc.id}" class="role-select input-field col-span-1">
-                    <option value="user" ${userData.role === 'user' ? 'selected' : ''}>User</option>
-                    <option value="checker" ${userData.role === 'checker' ? 'selected' : ''}>Checker</option>
-                    <option value="driver" ${userData.role === 'driver' ? 'selected' : ''}>Driver</option>
-                    <option value="warehouse_supervisor" ${userData.role === 'warehouse_supervisor' ? 'selected' : ''}>Warehouse Supervisor</option>
-                    <option value="admin" ${userData.role === 'admin' ? 'selected' : ''}>Admin</option>
-                </select>
-                <select data-uid="${doc.id}" class="status-select input-field col-span-1">
-                    <option value="active" ${userData.status === 'active' ? 'selected' : ''}>Active</option>
-                    <option value="inactive" ${userData.status === 'inactive' ? 'selected' : ''}>Inactive</option>
-                    <option value="blocked" ${userData.status === 'blocked' ? 'selected' : ''}>Blocked</option>
-                </select>
-            `;
-            userListDiv.appendChild(userEl);
-        });
-        document.getElementById('save-user-changes-btn').onclick = saveUserChanges;
-        openModal('admin-panel-modal');
-    } catch(e) {
-        showNotification("Could not open admin panel.", true);
-    } finally {
-        hideLoader();
-    }
-}
-
-async function saveUserChanges() {
-    showLoader();
-    const batch = writeBatch(db);
-    document.querySelectorAll('#user-list > div').forEach(row => {
-        const uid = row.querySelector('.display-name-input').dataset.uid;
-        if(uid) {
-            const userDocRef = doc(db, 'users', uid);
-            batch.update(userDocRef, {
-                displayName: row.querySelector('.display-name-input').value,
-                role: row.querySelector('.role-select').value,
-                status: row.querySelector('.status-select').value
-            });
-        }
-    });
-    try {
-        await batch.commit();
-        showNotification("User changes saved!");
-        closeModal('admin-panel-modal');
-    } catch (e) {
-        showNotification("Error saving user changes.", true);
-    } finally {
-        hideLoader();
-    }
-}
-
-// Initial script execution if needed, but primary initialization is now in `initializeMainApp`.
-
