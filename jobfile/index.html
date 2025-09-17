@@ -414,8 +414,8 @@
         <div id="public-view-container" class="hidden"></div>
 
         <!-- Analytics Full-Screen Page -->
-        <div id="analytics-container" class="hidden">
-            <div class="container">
+        <div id="analytics-container" class="hidden fixed inset-0 bg-gray-100 z-50 overflow-y-auto">
+            <div class="container mx-auto px-4 py-8">
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 no-print">
                     <h3 class="text-2xl font-bold">Analytics Dashboard</h3>
                     <div>
@@ -873,6 +873,7 @@
 
         function initializeMainApp() {
             hideLoader();
+            if (!document.getElementById('app-container')) return;
 
             document.getElementById('user-display-name').textContent = state.currentUser.displayName;
             document.getElementById('user-role').textContent = state.currentUser.role;
@@ -1295,25 +1296,24 @@
         // --- Other Functions (Analytics, Clients, etc.) ---
         
         function openAnalyticsDashboard() {
-            // Placeholder for analytics logic
-            document.getElementById('app-container').style.display = 'none';
             document.getElementById('analytics-container').style.display = 'block';
             window.scrollTo(0, 0);
+            // You would typically call a function here to generate the analytics data and charts
+            // For now, it just shows the container.
         }
         
         function closeAnalyticsDashboard() {
              document.getElementById('analytics-container').style.display = 'none';
-             document.getElementById('app-container').style.display = 'block';
         }
 
         function openClientManager() { openModal('client-manager-modal'); }
+        
         function openAdminPanel() { 
-            // Simplified admin panel logic
             openModal('admin-panel-modal');
             loadUsersForAdminPanel();
         }
+
         function openUserActivityLog() { 
-            // Simplified activity log
             openModal('activity-log-modal');
             const logBody = document.getElementById('activity-log-body');
             let logs = JSON.parse(localStorage.getItem('userActivityLog') || '[]');
@@ -1392,9 +1392,7 @@
             }
         }
 
-        // --- All other functions that were in separate files ---
-        // These are just stubs or simplified versions for this monolithic file
-        
+        // --- These are placeholders for functions that would be implemented ---
         async function previewJobFileById(docId) { /* ... logic ... */ }
         async function checkJobFile(docId) { /* ... logic ... */ }
         async function uncheckJobFile(docId) { /* ... logic ... */ }
@@ -1404,13 +1402,13 @@
         async function logUserActivity(jobFileNo) { /* ... logic ... */ }
         function confirmDelete(docId, type) { /* ... logic ... */ }
         function openRecycleBin() { /* ... logic ... */ }
-        function printPage() { /* ... logic ... */ }
+        function printPage() { window.print(); }
         function printPreview() { /* ... logic ... */ }
         function updateStatusSummary(targetId, dataSource) { /* ... logic ... */ }
-        function openChargeManager() { /* ... logic ... */ }
+        function openChargeManager() { openModal('charge-manager-modal'); }
         function loadClients() { /* ... logic ... */ }
         function loadChargeDescriptions() { /* ... logic ... */ }
-        async function saveClient(event) { /* ... logic ... */ }
+        async function saveClient(event) { event.preventDefault(); /* ... logic ... */ }
         function clearClientForm() { /* ... logic ... */ }
         function editClient(clientId) { /* ... logic ... */ }
         function saveChargeDescription() { /* ... logic ... */ }
@@ -1455,6 +1453,7 @@
                         }
                         await signOut(auth);
                         hideLoader();
+                        showLoginView();
                     }
                 } else {
                     state.currentUser = null;
