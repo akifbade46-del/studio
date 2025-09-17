@@ -52,11 +52,11 @@ async function saveJobFile() {
     const jobFileNoInput = document.getElementById('job-file-no');
     const jobFileNo = jobFileNoInput.value.trim();
     if (!jobFileNo) {
-        showNotification("Please enter a Job File No.", true);
+        window.showNotification("Please enter a Job File No.", true);
         return;
     }
 
-    showLoader();
+    window.showLoader();
     const docId = jobFileNo.replace(/\//g, '_');
     const isUpdating = jobFileNoInput.disabled;
     const data = getFormData();
@@ -67,14 +67,14 @@ async function saveJobFile() {
     try {
         const requiresReapproval = await saveJobFileToDb(data, isUpdating, docId);
         if (requiresReapproval) {
-            showNotification("File modified. Re-approval is now required.", false);
+            window.showNotification("File modified. Re-approval is now required.", false);
         }
-        showNotification("Job file saved successfully!");
+        window.showNotification("Job file saved successfully!");
         loadJobFileById(docId);
     } catch (error) {
-        showNotification(error.message, true);
+        window.showNotification(error.message, true);
     } finally {
-        hideLoader();
+        window.hideLoader();
     }
 }
 
@@ -83,13 +83,13 @@ async function checkJobFile(docId = null) {
     if (!fileId) {
         const jobFileNo = document.getElementById('job-file-no').value.trim();
         if (!jobFileNo) {
-            showNotification("Please save or load a job file first.", true);
+            window.showNotification("Please save or load a job file first.", true);
             return;
         }
         fileId = jobFileNo.replace(/\//g, '_');
     }
     
-    showLoader();
+    window.showLoader();
     try {
         const updatedDoc = await checkJobFileInDb(fileId);
         if (!docId) { // If called from main form button
@@ -97,24 +97,24 @@ async function checkJobFile(docId = null) {
         } else { // If called from a modal
             refreshOpenModals();
         }
-        showNotification("Job File Checked!");
+        window.showNotification("Job File Checked!");
     } catch (error) {
-        showNotification(error.message, true);
+        window.showNotification(error.message, true);
     } finally {
-        hideLoader();
+        window.hideLoader();
     }
 }
 
 async function uncheckJobFile(docId) {
-    showLoader();
+    window.showLoader();
     try {
         await uncheckJobFileInDb(docId);
-        showNotification("Job File Unchecked!");
+        window.showNotification("Job File Unchecked!");
         refreshOpenModals();
     } catch (error) {
-        showNotification(error.message, true);
+        window.showNotification(error.message, true);
     } finally {
-        hideLoader();
+        window.hideLoader();
     }
 }
 
@@ -123,13 +123,13 @@ async function approveJobFile(docId = null) {
     if (!fileId) {
         const jobFileNo = document.getElementById('job-file-no').value.trim();
         if (!jobFileNo) {
-            showNotification("Please save or load a job file first.", true);
+            window.showNotification("Please save or load a job file first.", true);
             return;
         }
         fileId = jobFileNo.replace(/\//g, '_');
     }
 
-    showLoader();
+    window.showLoader();
     try {
         const updatedDoc = await approveJobFileInDb(fileId);
         if (!docId) {
@@ -137,33 +137,33 @@ async function approveJobFile(docId = null) {
         } else {
             refreshOpenModals();
         }
-        showNotification("Job File Approved!");
+        window.showNotification("Job File Approved!");
     } catch (error) {
-        showNotification(error.message, true);
+        window.showNotification(error.message, true);
     } finally {
-        hideLoader();
+        window.hideLoader();
     }
 }
 
 function promptForRejection(docId) {
     fileIdToReject = docId;
-    openModal('reject-reason-modal', true);
+    window.openModal('reject-reason-modal', true);
 }
 
 async function rejectJobFileAction() {
     const reason = document.getElementById('rejection-reason-input').value.trim();
     if (!reason) {
-        showNotification("Rejection reason is required.", true);
+        window.showNotification("Rejection reason is required.", true);
         return;
     }
 
     const docId = fileIdToReject || document.getElementById('job-file-no').value.replace(/\//g, '_');
     if (!docId) {
-         showNotification("No file selected for rejection.", true);
+         window.showNotification("No file selected for rejection.", true);
          return;
     }
 
-    showLoader();
+    window.showLoader();
     try {
         const updatedDoc = await rejectJobFileInDb(docId, reason);
         if (fileIdToReject) { // Modal call
@@ -171,35 +171,35 @@ async function rejectJobFileAction() {
         } else { // Main form call
             populateFormFromData(updatedDoc.data());
         }
-        closeModal('reject-reason-modal');
+        window.closeModal('reject-reason-modal');
         document.getElementById('rejection-reason-input').value = '';
         fileIdToReject = null;
-        showNotification("Job File Rejected!");
+        window.showNotification("Job File Rejected!");
     } catch (error) {
-        showNotification(error.message, true);
+        window.showNotification(error.message, true);
     } finally {
-        hideLoader();
+        window.hideLoader();
     }
 }
 
 async function loadJobFileById(docId) {
-    showLoader();
+    window.showLoader();
     try {
         const fileData = await loadJobFileFromDb(docId);
         populateFormFromData(fileData);
         logUserActivity(fileData.jfn);
         document.getElementById('job-file-no').disabled = true;
-        closeAllModals();
-        showNotification("Job file loaded successfully.");
+        window.closeAllModals();
+        window.showNotification("Job file loaded successfully.");
     } catch (error) {
-        showNotification(error.message, true);
+        window.showNotification(error.message, true);
     } finally {
-        hideLoader();
+        window.hideLoader();
     }
 }
 
 async function previewJobFileById(docId) {
-    showLoader();
+    window.showLoader();
     try {
         const data = await loadJobFileFromDb(docId);
         const previewBody = document.getElementById('preview-body');
@@ -217,17 +217,17 @@ async function previewJobFileById(docId) {
                 correctLevel: QRCode.CorrectLevel.H
             });
         }
-        openModal('preview-modal', true);
+        window.openModal('preview-modal', true);
     } catch (error) {
-        showNotification(error.message, true);
+        window.showNotification(error.message, true);
     } finally {
-        hideLoader();
+        window.hideLoader();
     }
 }
 
 function confirmDelete(docId, type = 'jobfile') {
      if (currentUser.role !== 'admin') {
-         showNotification("Only admins can delete files.", true);
+         window.showNotification("Only admins can delete files.", true);
          return;
     }
     const modal = document.getElementById('confirm-modal');
@@ -237,17 +237,17 @@ function confirmDelete(docId, type = 'jobfile') {
     if (type === 'jobfile') {
         modal.querySelector('#confirm-title').textContent = 'Confirm Job File Deletion';
         message = `Are you sure you want to move job file "${docId.replace(/_/g, '/')}" to the recycle bin?`;
-        onOk = () => moveToRecycleBin(docId).then(() => showNotification("Job file moved to recycle bin.")).catch(err => showNotification(err.message, true));
+        onOk = () => moveToRecycleBin(docId).then(() => window.showNotification("Job file moved to recycle bin.")).catch(err => window.showNotification(err.message, true));
     } else if (type === 'client') {
         modal.querySelector('#confirm-title').textContent = 'Confirm Client Deletion';
         const client = clientsCache.find(c => c.id === docId);
         message = `Are you sure you want to delete the client "${client?.name || 'this client'}"? This action cannot be undone.`;
-        onOk = () => deleteClient(docId).then(() => showNotification("Client deleted.")).catch(err => showNotification(err.message, true));
+        onOk = () => deleteClient(docId).then(() => window.showNotification("Client deleted.")).catch(err => window.showNotification(err.message, true));
     }
 
     modal.querySelector('#confirm-message').innerHTML = message;
     modal.querySelector('#confirm-ok').className = 'bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded';
-    openModal('confirm-modal', true);
+    window.openModal('confirm-modal', true);
 
     const okButton = modal.querySelector('#confirm-ok');
     
@@ -257,7 +257,7 @@ function confirmDelete(docId, type = 'jobfile') {
     
     newOkButton.addEventListener('click', () => {
         onOk();
-        closeModal('confirm-modal');
+        window.closeModal('confirm-modal');
     }, { once: true });
 }
 
@@ -345,7 +345,7 @@ function clearForm() {
         if(approvalButtonsEl) approvalButtonsEl.style.display = isAdmin ? 'flex' : 'none';
     }
 
-    showNotification("Form cleared. Ready for a new job file.");
+    window.showNotification("Form cleared. Ready for a new job file.");
 }
 
 function populateTable() {
@@ -633,7 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('auth-link').addEventListener('click', (e) => {
         e.preventDefault();
         isLogin = !isLogin;
-        toggleAuthView(isLogin);
+        window.toggleAuthView(isLogin);
     });
 
     document.getElementById('auth-btn').addEventListener('click', () => {
@@ -644,7 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             const displayName = document.getElementById('full-name').value;
              if (!email || !password || !displayName) {
-                 showNotification("Please fill all fields to sign up.", true);
+                 window.showNotification("Please fill all fields to sign up.", true);
                  return;
             }
             handleSignUp(email, password, displayName);
@@ -659,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('forgot-password-link').addEventListener('click', (e) => {
         e.preventDefault();
-        openModal('forgot-password-modal');
+        window.openModal('forgot-password-modal');
     });
     document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
 
@@ -676,8 +676,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // Make functions globally available for inline onclick handlers
-window.openFileManager = () => openModal('file-manager-modal');
-window.openClientManager = () => openModal('client-manager-modal');
+window.openFileManager = () => window.openModal('file-manager-modal');
+window.openClientManager = () => window.openModal('client-manager-modal');
 window.saveJobFile = saveJobFile; 
 window.clearForm = clearForm;
 window.printPage = printPage;

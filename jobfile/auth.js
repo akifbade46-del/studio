@@ -270,5 +270,3 @@ window.closeModal = closeModal;
 window.closeAllModals = closeAllModals;
 window.toggleAuthView = toggleAuthView;
 window.handleLogout = handleLogout;
-
-    
