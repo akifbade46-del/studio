@@ -437,7 +437,7 @@ function updateStatusSummary(targetId, dataSource) {
     `;
 }
 
-function getFormData() {
+export function getFormData() {
     const getVal = id => document.getElementById(id).value || '';
     const getChecked = query => Array.from(document.querySelectorAll(query)).filter(el => el.checked).map(el => el.dataset.clearance || el.dataset.product);
 
