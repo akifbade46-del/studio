@@ -238,7 +238,7 @@
                      <span>Clients</span>
                  </button>
                  <button id="file-manager-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.586l.293.293a1 1 0 001.414 0L10.414 12l-1.293 1.293a1 1 0 000 1.414l.293.293V16a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm8 2a1 1 0 000-2H4a1 1 0 00-1 1v10a1 1 0 001 1h4a1 1 0 001-1v-1.586l-.293-.293a1 1 0 01-1.414 0L6.586 12l1.293-1.293a1 1 0 011.414 0l.293-.293V8z" clip-rule="evenodd" /><path d="M18 8a2 2 0 00-2-2h-4l-2-2h-4a2 2 0 00-2 2v.5a1 1 0 002 0V6a1 1 0 011-1h2.586l2 2H16a1 1 0 011 1v8a1 1 0 01-1-1h-2.5a1 1 0 100 2H16a2 2 0 002-2V8z" /></svg>
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.586l.293.293a1 1 0 001.414 0L10.414 12l-1.293 1.293a1 1 0 000 1.414l.293.293V16a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm8 2a1 1 0 000-2H4a1 1 0 00-1 1v10a1 1 0 001 1h4a1 1 0 001-1v-1.586l-.293-.293a1 1 0 01-1.414 0L6.586 12l1.293-1.293a1 1 0 011.414 0l.293-.293V8z" clip-rule="evenodd" /><path d="M18 8a2 2 0 00-2-2h-4l-2-2h-4a2 2 0 00-2 2v.5a1 1 0 002 0V6a1 1 0 011-1h2.586l2 2H16a1 1 0 011 1v8a1 1 0 01-1 1h-2.5a1 1 0 100 2H16a2 2 0 002-2V8z" /></svg>
                      <span>File Manager</span>
                  </button>
                  <button id="save-job-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
@@ -255,305 +255,304 @@
                  </button>
             </div>
         </div>
-    </div>
 
-    <!-- This container is hidden by default and will be populated for printing/preview -->
-    <div id="print-output" class="hidden"></div>
-    
-    <!-- This container is for the public QR code view -->
-    <div id="public-view-container" class="hidden"></div>
+        <!-- This container is hidden by default and will be populated for printing/preview -->
+        <div id="print-output" class="hidden"></div>
+        
+        <!-- This container is for the public QR code view -->
+        <div id="public-view-container" class="hidden"></div>
 
-    <!-- Analytics Full-Screen Page -->
-    <div id="analytics-container" class="hidden">
-        <div class="container">
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 no-print">
-                <h3 class="text-2xl font-bold">Analytics Dashboard</h3>
-                <div>
-                    <button id="print-analytics-btn" title="Print Analytics" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
-                    <button id="close-analytics-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded">Back to Job File</button>
+        <!-- Analytics Full-Screen Page -->
+        <div id="analytics-container" class="hidden">
+            <div class="container">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 no-print">
+                    <h3 class="text-2xl font-bold">Analytics Dashboard</h3>
+                    <div>
+                        <button id="print-analytics-btn" title="Print Analytics" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
+                        <button id="close-analytics-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded">Back to Job File</button>
+                    </div>
                 </div>
+                <div id="analytics-body" class="space-y-6"></div>
             </div>
-            <div id="analytics-body" class="space-y-6"></div>
         </div>
-    </div>
 
 
-    <!-- Modals -->
-    <div id="loader-overlay" class="overlay"><div class="loader"></div></div>
-    <div id="notification"></div>
-    
-    <!-- File Manager Modal -->
-    <div id="file-manager-modal" class="overlay">
-        <div class="modal-content max-w-5xl"> <!-- Increased width for filters -->
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">File Manager</h3>
-                <div>
-                    <button id="recycle-bin-btn" class="admin-only bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded text-sm mr-4">Recycle Bin</button>
-                    <button id="close-file-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+        <!-- Modals -->
+        <div id="loader-overlay" class="overlay"><div class="loader"></div></div>
+        <div id="notification"></div>
+        
+        <!-- File Manager Modal -->
+        <div id="file-manager-modal" class="overlay">
+            <div class="modal-content max-w-5xl"> <!-- Increased width for filters -->
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold">File Manager</h3>
+                    <div>
+                        <button id="recycle-bin-btn" class="admin-only bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded text-sm mr-4">Recycle Bin</button>
+                        <button id="close-file-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+                    </div>
+                </div>
+                
+                <!-- Search and Filter Controls -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
+                    <div class="md:col-span-2">
+                        <label for="search-bar" class="text-sm font-medium text-gray-700">Search</label>
+                        <input type="text" id="search-bar" class="input-field mt-1" placeholder="Job No, Shipper, etc.">
+                    </div>
+                    <div>
+                        <label for="filter-status" class="text-sm font-medium text-gray-700">Status</label>
+                        <select id="filter-status" class="input-field mt-1">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="checked">Checked</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-date-from" class="text-sm font-medium text-gray-700">From Date</label>
+                        <input type="date" id="filter-date-from" class="input-field mt-1">
+                    </div>
+                    <div>
+                        <label for="filter-date-to" class="text-sm font-medium text-gray-700">To Date</label>
+                        <input type="date" id="filter-date-to" class="input-field mt-1">
+                    </div>
+                    <div class="flex items-end">
+                        <button id="clear-filters-btn" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded text-sm">Clear Filters</button>
+                    </div>
+                </div>
+
+                <div id="job-files-list" class="space-y-2 max-h-[60vh] overflow-y-auto"></div>
+            </div>
+        </div>
+        
+        <!-- Confirmation Modal -->
+        <div id="confirm-modal" class="overlay">
+            <div class="modal-content max-w-sm">
+                <h3 class="text-lg font-bold mb-4" id="confirm-title">Confirm Action</h3>
+                <div id="confirm-message" class="mb-4 text-sm">Are you sure?</div>
+                <div class="text-right mt-6 space-x-2">
+                    <button id="confirm-cancel" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
+                    <button id="confirm-ok" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm</button>
                 </div>
             </div>
+        </div>
+
+        <!-- Preview Modal -->
+        <div id="preview-modal" class="overlay">
+            <div class="modal-content max-w-4xl">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 no-print gap-2">
+                    <h3 class="text-2xl font-bold">Job File Preview</h3>
+                    <div>
+                        <button id="print-preview-btn" title="Print Preview" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
+                        <button id="close-preview-modal" class="text-gray-500 hover:text-gray-800 text-3xl align-middle">&times;</button>
+                    </div>
+                </div>
+                <div id="preview-body"></div>
+            </div>
+        </div>
+
+        <!-- Admin Panel Modal -->
+        <div id="admin-panel-modal" class="overlay">
+            <div class="modal-content max-w-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold">Admin Panel</h3>
+                    <button id="close-admin-panel-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+                </div>
             
-            <!-- Search and Filter Controls -->
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
-                <div class="md:col-span-2">
-                    <label for="search-bar" class="text-sm font-medium text-gray-700">Search</label>
-                    <input type="text" id="search-bar" class="input-field mt-1" placeholder="Job No, Shipper, etc.">
+                <!-- User Management -->
+                <div class="border rounded-lg p-4">
+                    <h4 class="text-lg font-semibold mb-2">User Management</h4>
+                    <div id="user-list" class="space-y-2 max-h-[40vh] overflow-y-auto"></div>
+                    <div class="text-right mt-4">
+                        <button id="save-user-changes-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save User Changes</button>
+                    </div>
                 </div>
-                <div>
-                    <label for="filter-status" class="text-sm font-medium text-gray-700">Status</label>
-                    <select id="filter-status" class="input-field mt-1">
-                        <option value="">All Statuses</option>
-                        <option value="pending">Pending</option>
-                        <option value="checked">Checked</option>
-                        <option value="approved">Approved</option>
-                        <option value="rejected">Rejected</option>
-                    </select>
+            
+                <!-- Data Backup & Restore -->
+                <div class="border rounded-lg p-4 mt-6">
+                    <h4 class="text-lg font-semibold mb-3">Data Backup & Restore</h4>
+                    <p class="text-sm text-gray-600 mb-4">Backup all job files and user data to a single JSON file. This can be used for offline storage or to restore the database to a previous state.</p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button id="backup-data-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+                            Backup All Data
+                        </button>
+                        <label for="restore-file-input" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2 cursor-pointer">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                             Restore From File
+                             <input type="file" id="restore-file-input" class="hidden" accept=".json">
+                        </label>
+                    </div>
                 </div>
-                <div>
-                    <label for="filter-date-from" class="text-sm font-medium text-gray-700">From Date</label>
-                    <input type="date" id="filter-date-from" class="input-field mt-1">
-                </div>
-                <div>
-                    <label for="filter-date-to" class="text-sm font-medium text-gray-700">To Date</label>
-                    <input type="date" id="filter-date-to" class="input-field mt-1">
-                </div>
-                <div class="flex items-end">
-                    <button id="clear-filters-btn" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded text-sm">Clear Filters</button>
-                </div>
-            </div>
-
-            <div id="job-files-list" class="space-y-2 max-h-[60vh] overflow-y-auto"></div>
-        </div>
-    </div>
-    
-    <!-- Confirmation Modal -->
-    <div id="confirm-modal" class="overlay">
-        <div class="modal-content max-w-sm">
-            <h3 class="text-lg font-bold mb-4" id="confirm-title">Confirm Action</h3>
-            <div id="confirm-message" class="mb-4 text-sm">Are you sure?</div>
-            <div class="text-right mt-6 space-x-2">
-                <button id="confirm-cancel" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
-                <button id="confirm-ok" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm</button>
             </div>
         </div>
-    </div>
-
-    <!-- Preview Modal -->
-    <div id="preview-modal" class="overlay">
-        <div class="modal-content max-w-4xl">
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 no-print gap-2">
-                <h3 class="text-2xl font-bold">Job File Preview</h3>
-                <div>
-                    <button id="print-preview-btn" title="Print Preview" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
-                    <button id="close-preview-modal" class="text-gray-500 hover:text-gray-800 text-3xl align-middle">&times;</button>
-                </div>
-            </div>
-            <div id="preview-body"></div>
-        </div>
-    </div>
-
-    <!-- Admin Panel Modal -->
-    <div id="admin-panel-modal" class="overlay">
-        <div class="modal-content max-w-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">Admin Panel</h3>
-                <button id="close-admin-panel-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
         
-            <!-- User Management -->
-            <div class="border rounded-lg p-4">
-                <h4 class="text-lg font-semibold mb-2">User Management</h4>
-                <div id="user-list" class="space-y-2 max-h-[40vh] overflow-y-auto"></div>
-                <div class="text-right mt-4">
-                    <button id="save-user-changes-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save User Changes</button>
+        <!-- Rejection Reason Modal -->
+        <div id="reject-reason-modal" class="overlay">
+            <div class="modal-content max-w-md">
+                <h3 class="text-lg font-bold mb-4">Rejection Reason</h3>
+                <p class="mb-4">Please provide a reason for rejecting this job file.</p>
+                <textarea id="rejection-reason-input" class="input-field w-full" rows="3"></textarea>
+                <div class="text-right mt-6 space-x-2">
+                    <button id="cancel-reject-modal-btn" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
+                    <button id="confirm-reject-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm Rejection</button>
                 </div>
             </div>
-        
-            <!-- Data Backup & Restore -->
-            <div class="border rounded-lg p-4 mt-6">
-                <h4 class="text-lg font-semibold mb-3">Data Backup & Restore</h4>
-                <p class="text-sm text-gray-600 mb-4">Backup all job files and user data to a single JSON file. This can be used for offline storage or to restore the database to a previous state.</p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <button id="backup-data-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
-                        Backup All Data
+        </div>
+
+        <!-- Forgot Password Modal -->
+        <div id="forgot-password-modal" class="overlay">
+            <div class="modal-content max-w-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">Reset Password</h3>
+                    <button id="close-forgot-password-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+                </div>
+                <p class="mb-4 text-gray-600">Enter your email address and we will send you a link to reset your password.</p>
+                <div>
+                    <label for="reset-email" class="sr-only">Email address</label>
+                    <input id="reset-email" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
+                </div>
+                <div class="text-right mt-6">
+                    <button id="send-reset-link-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                        Send Password Reset Link
                     </button>
-                    <label for="restore-file-input" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2 cursor-pointer">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                         Restore From File
-                         <input type="file" id="restore-file-input" class="hidden" accept=".json">
-                    </label>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Rejection Reason Modal -->
-    <div id="reject-reason-modal" class="overlay">
-        <div class="modal-content max-w-md">
-            <h3 class="text-lg font-bold mb-4">Rejection Reason</h3>
-            <p class="mb-4">Please provide a reason for rejecting this job file.</p>
-            <textarea id="rejection-reason-input" class="input-field w-full" rows="3"></textarea>
-            <div class="text-right mt-6 space-x-2">
-                <button id="cancel-reject-modal-btn" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
-                <button id="confirm-reject-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm Rejection</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Forgot Password Modal -->
-    <div id="forgot-password-modal" class="overlay">
-        <div class="modal-content max-w-md">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">Reset Password</h3>
-                <button id="close-forgot-password-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <p class="mb-4 text-gray-600">Enter your email address and we will send you a link to reset your password.</p>
-            <div>
-                <label for="reset-email" class="sr-only">Email address</label>
-                <input id="reset-email" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
-            </div>
-            <div class="text-right mt-6">
-                <button id="send-reset-link-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                    Send Password Reset Link
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Client Manager Modal -->
-    <div id="client-manager-modal" class="overlay">
-        <div class="modal-content max-w-4xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">Client Management</h3>
-                <button id="close-client-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Add/Edit Client Form -->
-                <div>
-                    <h4 id="client-form-title" class="text-xl font-semibold mb-4">Add New Client</h4>
-                    <form id="client-form" class="space-y-4">
-                        <input type="hidden" id="client-id">
-                        <div>
-                            <label for="client-name" class="block text-sm font-medium text-gray-700">Client Name</label>
-                            <input type="text" id="client-name" class="input-field mt-1" required>
-                        </div>
-                        <div>
-                            <label for="client-address" class="block text-sm font-medium text-gray-700">Address</label>
-                            <textarea id="client-address" rows="2" class="input-field mt-1"></textarea>
-                        </div>
-                        <div>
-                            <label for="client-contact-person" class="block text-sm font-medium text-gray-700">Contact Person</label>
-                            <input type="text" id="client-contact-person" class="input-field mt-1">
-                        </div>
-                        <div>
-                            <label for="client-phone" class="block text-sm font-medium text-gray-700">Phone</label>
-                            <input type="text" id="client-phone" class="input-field mt-1">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Client Type</label>
-                            <select id="client-type" class="input-field mt-1">
-                                <option value="Shipper">Shipper</option>
-                                <option value="Consignee">Consignee</option>
-                                <option value="Both">Both</option>
-                            </select>
-                        </div>
-                        <div class="flex gap-4">
-                            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save Client</button>
-                            <button type="button" id="clear-client-form-btn" class="w-full bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Clear</button>
-                        </div>
-                    </form>
+        <!-- Client Manager Modal -->
+        <div id="client-manager-modal" class="overlay">
+            <div class="modal-content max-w-4xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold">Client Management</h3>
+                    <button id="close-client-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
                 </div>
-                <!-- Client List -->
-                <div>
-                    <h4 class="text-xl font-semibold mb-4">Existing Clients</h4>
-                    <input type="text" id="client-search-bar" class="input-field mb-4" placeholder="Search clients...">
-                    <div id="client-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
-                        <!-- Client list will be populated by JS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Add/Edit Client Form -->
+                    <div>
+                        <h4 id="client-form-title" class="text-xl font-semibold mb-4">Add New Client</h4>
+                        <form id="client-form" class="space-y-4">
+                            <input type="hidden" id="client-id">
+                            <div>
+                                <label for="client-name" class="block text-sm font-medium text-gray-700">Client Name</label>
+                                <input type="text" id="client-name" class="input-field mt-1" required>
+                            </div>
+                            <div>
+                                <label for="client-address" class="block text-sm font-medium text-gray-700">Address</label>
+                                <textarea id="client-address" rows="2" class="input-field mt-1"></textarea>
+                            </div>
+                            <div>
+                                <label for="client-contact-person" class="block text-sm font-medium text-gray-700">Contact Person</label>
+                                <input type="text" id="client-contact-person" class="input-field mt-1">
+                            </div>
+                            <div>
+                                <label for="client-phone" class="block text-sm font-medium text-gray-700">Phone</label>
+                                <input type="text" id="client-phone" class="input-field mt-1">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Client Type</label>
+                                <select id="client-type" class="input-field mt-1">
+                                    <option value="Shipper">Shipper</option>
+                                    <option value="Consignee">Consignee</option>
+                                    <option value="Both">Both</option>
+                                </select>
+                            </div>
+                            <div class="flex gap-4">
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save Client</button>
+                                <button type="button" id="clear-client-form-btn" class="w-full bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Client List -->
+                    <div>
+                        <h4 class="text-xl font-semibold mb-4">Existing Clients</h4>
+                        <input type="text" id="client-search-bar" class="input-field mb-4" placeholder="Search clients...">
+                        <div id="client-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
+                            <!-- Client list will be populated by JS -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-     <!-- Charge Manager Modal -->
-    <div id="charge-manager-modal" class="overlay">
-        <div class="modal-content max-w-lg">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">Manage Charge Descriptions</h3>
-                <button id="close-charge-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <h4 class="text-lg font-semibold mb-2">Add New Description</h4>
-                    <div class="flex gap-2">
-                        <input type="text" id="new-charge-description" class="input-field" placeholder="E.g., Customs Duty">
-                        <button id="save-charge-description-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add</button>
+         <!-- Charge Manager Modal -->
+        <div id="charge-manager-modal" class="overlay">
+            <div class="modal-content max-w-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold">Manage Charge Descriptions</h3>
+                    <button id="close-charge-manager-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-lg font-semibold mb-2">Add New Description</h4>
+                        <div class="flex gap-2">
+                            <input type="text" id="new-charge-description" class="input-field" placeholder="E.g., Customs Duty">
+                            <button id="save-charge-description-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold mb-2">Existing Descriptions</h4>
+                        <div id="charge-description-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
+                            <!-- JS will populate this list -->
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-2">Existing Descriptions</h4>
-                    <div id="charge-description-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
-                        <!-- JS will populate this list -->
-                    </div>
+            </div>
+        </div>
+        
+        <!-- Activity Log Modal -->
+        <div id="activity-log-modal" class="overlay">
+            <div class="modal-content max-w-4xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold">User Activity Log</h3>
+                    <button id="close-activity-log-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+                </div>
+                <div class="max-h-[70vh] overflow-y-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="table-cell font-semibold text-left">User Name</th>
+                                <th class="table-cell font-semibold text-left">Job File No.</th>
+                                <th class="table-cell font-semibold text-left">Time Opened</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activity-log-body">
+                            <!-- JS will populate this -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Activity Log Modal -->
-    <div id="activity-log-modal" class="overlay">
-        <div class="modal-content max-w-4xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">User Activity Log</h3>
-                <button id="close-activity-log-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <div class="max-h-[70vh] overflow-y-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="table-cell font-semibold text-left">User Name</th>
-                            <th class="table-cell font-semibold text-left">Job File No.</th>
-                            <th class="table-cell font-semibold text-left">Time Opened</th>
-                        </tr>
-                    </thead>
-                    <tbody id="activity-log-body">
-                        <!-- JS will populate this -->
-                    </tbody>
-                </table>
+
+        <!-- User-Specific Jobs Modal -->
+        <div id="user-jobs-modal" class="overlay">
+            <div class="modal-content max-w-5xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="user-jobs-modal-title" class="text-2xl font-bold">User's Job Files</h3>
+                    <button id="close-user-jobs-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+                </div>
+                <div id="user-jobs-list" class="space-y-2 max-h-[70vh] overflow-y-auto">
+                    <!-- JS will populate this list -->
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- User-Specific Jobs Modal -->
-    <div id="user-jobs-modal" class="overlay">
-        <div class="modal-content max-w-5xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="user-jobs-modal-title" class="text-2xl font-bold">User's Job Files</h3>
-                <button id="close-user-jobs-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <div id="user-jobs-list" class="space-y-2 max-h-[70vh] overflow-y-auto">
-                <!-- JS will populate this list -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Recycle Bin Modal -->
-    <div id="recycle-bin-modal" class="overlay">
-        <div class="modal-content max-w-5xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">Recycle Bin</h3>
-                <button id="close-recycle-bin-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <div id="recycle-bin-list" class="space-y-2 max-h-[70vh] overflow-y-auto">
-                <!-- JS will populate this list -->
+        <!-- Recycle Bin Modal -->
+        <div id="recycle-bin-modal" class="overlay">
+            <div class="modal-content max-w-5xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold">Recycle Bin</h3>
+                    <button id="close-recycle-bin-modal" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+                </div>
+                <div id="recycle-bin-list" class="space-y-2 max-h-[70vh] overflow-y-auto">
+                    <!-- JS will populate this list -->
+                </div>
             </div>
         </div>
     </div>
 
     <!-- App Logic -->
     <script type="module" src="auth.js"></script>
-    <script type="module" src="script.js"></script>
     <script>
         // Service worker registration
         if ('serviceWorker' in navigator) {
@@ -568,4 +567,3 @@
     </script>
 </body>
 </html>
-
