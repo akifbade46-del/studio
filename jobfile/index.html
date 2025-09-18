@@ -2501,7 +2501,11 @@
         // --- GEMINI API INTEGRATION ---
 
         async function callGeminiApi(payload, retries = 3, delay = 1000) {
-            const apiKey = "";
+            const apiKey = "YOUR_GEMINI_API_KEY"; // IMPORTANT: Replace with your actual API key
+            if (apiKey === "YOUR_GEMINI_API_KEY") {
+                showNotification("Gemini API key is not configured. Charge suggestion is disabled.", true);
+                throw new Error("API key not configured.");
+            }
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
 
             try {
@@ -3181,7 +3185,8 @@
 
 
             window.addEventListener('afterprint', () => {
-                printContainer.style.display = 'none';
+                const printContainer = document.getElementById('print-output');
+                if(printContainer) printContainer.style.display = 'none';
             });
             
             // Set up analytics filter buttons
@@ -3202,6 +3207,41 @@
                 });
             }
         });
+
+        // --- Make functions globally accessible for onclick attributes ---
+        window.openAnalyticsDashboard = openAnalyticsDashboard;
+        window.closeAnalyticsDashboard = closeAnalyticsDashboard;
+        window.printAnalytics = printAnalytics;
+        window.openClientManager = openClientManager;
+        window.openFileManager = openFileManager;
+        window.saveJobFile = saveJobFile;
+        window.clearForm = clearForm;
+        window.printPage = printPage;
+        window.openRecycleBin = openRecycleBin;
+        window.closeModal = closeModal;
+        window.openChargeManager = openChargeManager;
+        window.suggestCharges = suggestCharges;
+        window.addChargeRow = addChargeRow;
+        window.printPreview = printPreview;
+        window.saveUserChanges = saveUserChanges;
+        window.backupAllData = backupAllData;
+        window.handleRestoreFile = handleRestoreFile;
+        window.confirmDelete = confirmDelete;
+        window.previewJobFileById = previewJobFileById;
+        window.loadJobFileById = loadJobFileById;
+        window.downloadAnalyticsCsv = downloadAnalyticsCsv;
+        window.showStatusJobs = showStatusJobs;
+        window.uncheckJobFile = uncheckJobFile;
+        window.checkJobFile = checkJobFile;
+        window.approveJobFile = approveJobFile;
+        window.promptForRejection = promptForRejection;
+        window.restoreJobFile = restoreJobFile;
+        window.confirmPermanentDelete = confirmPermanentDelete;
+        window.saveChargeDescription = saveChargeDescription;
+        window.deleteChargeDescription = deleteChargeDescription;
+        window.showUserJobs = showUserJobs;
+        window.showMonthlyJobs = showMonthlyJobs;
+        window.showSalesmanJobs = showSalesmanJobs;
     </script>
 </body>
 </html>
