@@ -172,6 +172,7 @@ export default function Home() {
     const currentFilteredJobs = useRef<JobFile[]>([]);
     const fileIdToReject = useRef<string | null>(null);
     const profitChartInstance = useRef<Chart | null>(null);
+    const functionsRef = useRef<any>(null);
 
     const firebaseConfig = {
         apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -183,533 +184,535 @@ export default function Home() {
         measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
     };
 
-    // --- UTILITY FUNCTIONS (moved outside useEffect for visibility) ---
-    const getEl = useCallback((id: string) => document.getElementById(id), []);
-    const querySel = useCallback((selector: string) => document.querySelector(selector), []);
-    const querySelAll = useCallback((selector: string) => document.querySelectorAll(selector), []);
+    if (!functionsRef.current) {
+        const getEl = (id: string) => document.getElementById(id);
+        const querySel = (selector: string) => document.querySelector(selector);
+        const querySelAll = (selector: string) => document.querySelectorAll(selector);
 
-    const showLoader = useCallback(() => getEl('loader-overlay')?.classList.add('visible'), [getEl]);
-    const hideLoader = useCallback(() => getEl('loader-overlay')?.classList.remove('visible'), [getEl]);
+        const showLoader = () => getEl('loader-overlay')?.classList.add('visible');
+        const hideLoader = () => getEl('loader-overlay')?.classList.remove('visible');
 
-    const showNotification = useCallback((message: string, isError = false) => {
-        const notification = getEl('notification');
-        if (!notification) return;
-        notification.textContent = message;
-        notification.style.backgroundColor = isError ? '#c53030' : '#2d3748';
-        notification.classList.add('show');
-        setTimeout(() => {
-            notification.classList.remove('show');
-        }, 3000);
-    }, [getEl]);
-    
-    const closeModal = useCallback((id: string) => {
-        const modal = getEl(id);
-        if (modal) modal.classList.remove('visible');
-    }, [getEl]);
-    
-    const closeAllModals = useCallback(() => {
-        querySelAll('.overlay').forEach(modal => {
-            modal.classList.remove('visible');
-            (modal as HTMLElement).style.zIndex = '';
-        });
-    }, [querySelAll]);
-    
-    const openModal = useCallback((id: string, keepParent = false) => {
-        const modal = getEl(id);
-        if (!modal) return;
-        if (!keepParent) {
-            closeAllModals();
-        }
-        if (keepParent) {
-            const highestZ = Array.from(querySelAll('.overlay.visible'))
-                .reduce((max, el) => Math.max(max, parseInt(window.getComputedStyle(el).zIndex || '1000', 10)), 1000);
-            modal.style.zIndex = `${highestZ + 1}`;
-        }
-        modal.classList.add('visible');
-    }, [getEl, closeAllModals, querySelAll]);
-
-    const calculate = useCallback(() => {
-        let totalCost = 0, totalSelling = 0, totalProfit = 0;
-        querySelAll('#charges-table-body tr:not(#total-row)').forEach(row => {
-            const cost = parseFloat((row.querySelector('.cost-input') as HTMLInputElement).value) || 0;
-            const selling = parseFloat((row.querySelector('.selling-input') as HTMLInputElement).value) || 0;
-            const profit = selling - cost;
-            (row.querySelector('.profit-output') as HTMLElement).textContent = profit.toFixed(3);
-            totalCost += cost; totalSelling += selling; totalProfit += profit;
-        });
-        const totalCostEl = getEl('total-cost');
-        const totalSellingEl = getEl('total-selling');
-        const totalProfitEl = getEl('total-profit');
-        if (totalCostEl) totalCostEl.textContent = totalCost.toFixed(3);
-        if (totalSellingEl) totalSellingEl.textContent = totalSelling.toFixed(3);
-        if (totalProfitEl) totalProfitEl.textContent = totalProfit.toFixed(3);
-    }, [getEl, querySelAll]);
-
-    const setupChargeAutocomplete = useCallback((inputElement: HTMLInputElement) => {
-        const suggestionsPanel = inputElement.nextElementSibling as HTMLElement;
-        if(!suggestionsPanel) return;
-
-        let activeSuggestionIndex = -1;
-
-        const updateSelection = () => {
-            const suggestions = suggestionsPanel.querySelectorAll('.autocomplete-suggestion');
-            suggestions.forEach((suggestion, index) => {
-                suggestion.classList.toggle('selected', index === activeSuggestionIndex);
-                if (index === activeSuggestionIndex) suggestion.scrollIntoView({ block: 'nearest' });
+        const showNotification = (message: string, isError = false) => {
+            const notification = getEl('notification');
+            if (!notification) return;
+            notification.textContent = message;
+            notification.style.backgroundColor = isError ? '#c53030' : '#2d3748';
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        };
+        
+        const closeModal = (id: string) => {
+            const modal = getEl(id);
+            if (modal) modal.classList.remove('visible');
+        };
+        
+        const closeAllModals = () => {
+            querySelAll('.overlay').forEach(modal => {
+                modal.classList.remove('visible');
+                (modal as HTMLElement).style.zIndex = '';
             });
         };
-
-        const showSuggestions = () => {
-             const value = inputElement.value.toLowerCase();
-            if (!value) {
-                suggestionsPanel.classList.add('hidden');
-                return;
-            }
-            const filtered = chargeDescriptions.current.filter(d => d.toLowerCase().includes(value));
-            if (filtered.length > 0) {
-                suggestionsPanel.innerHTML = filtered.map(d => `<div class="autocomplete-suggestion">${d}</div>`).join('');
-                suggestionsPanel.classList.remove('hidden');
-            } else {
-                suggestionsPanel.classList.add('hidden');
-            }
-            activeSuggestionIndex = -1;
-        };
-
-        inputElement.addEventListener('input', showSuggestions);
-
-        inputElement.addEventListener('keydown', (e) => {
-            const suggestions = suggestionsPanel.querySelectorAll('.autocomplete-suggestion');
-            if (suggestionsPanel.classList.contains('hidden') || suggestions.length === 0) return;
-
-            if (e.key === 'ArrowDown') { e.preventDefault(); activeSuggestionIndex = (activeSuggestionIndex + 1) % suggestions.length; updateSelection(); } 
-            else if (e.key === 'ArrowUp') { e.preventDefault(); activeSuggestionIndex = (activeSuggestionIndex - 1 + suggestions.length) % suggestions.length; updateSelection(); } 
-            else if (e.key === 'Enter') { e.preventDefault(); if (activeSuggestionIndex > -1) (suggestions[activeSuggestionIndex] as HTMLElement).click(); } 
-            else if (e.key === 'Escape') { suggestionsPanel.classList.add('hidden'); }
-        });
-
-        suggestionsPanel.addEventListener('click', (e) => {
-            const target = e.target as HTMLElement;
-            if (target.classList.contains('autocomplete-suggestion')) {
-                inputElement.value = target.textContent || '';
-                suggestionsPanel.classList.add('hidden');
-            }
-        });
         
-        inputElement.addEventListener('blur', () => {
-            setTimeout(() => suggestionsPanel.classList.add('hidden'), 150);
-        });
-    }, []);
-
-    const addChargeRow = useCallback((data: Partial<Charge> = {}) => {
-        const tableBody = getEl('charges-table-body');
-        if (!tableBody) return;
-        const newRow = document.createElement('tr');
-
-        newRow.innerHTML = `
-            <td class="table-cell relative">
-                <input type="text" class="description-input input-field" value="${data.l || ''}" autocomplete="off">
-                <div class="autocomplete-suggestions hidden"></div>
-            </td>
-            <td class="table-cell"><input type="number" step="0.001" class="cost-input input-field" value="${data.c || ''}"></td>
-            <td class="table-cell"><input type="number" step="0.001" class="selling-input input-field" value="${data.s || ''}"></td>
-            <td class="table-cell profit-output bg-gray-50 text-right">${((parseFloat(data.s || '0')) - (parseFloat(data.c || '0'))).toFixed(3)}</td>
-            <td class="table-cell"><input type="text" class="notes-input input-field" value="${data.n || ''}"></td>
-            <td class="table-cell text-center"><button class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button></td>
-        `;
-
-        const descriptionInput = newRow.querySelector('.description-input') as HTMLInputElement;
-        setupChargeAutocomplete(descriptionInput);
-        
-        const deleteButton = newRow.querySelector('button');
-        deleteButton?.addEventListener('click', () => {
-            newRow.remove();
-            calculate();
-        });
-
-        tableBody.appendChild(newRow);
-    }, [getEl, calculate, setupChargeAutocomplete]);
-
-    const populateTable = useCallback(() => {
-        const table = getEl('charges-table');
-        if (!table) return;
-        table.innerHTML = `
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="table-cell font-semibold w-2/5">Description</th>
-                    <th class="table-cell font-semibold">Cost</th>
-                    <th class="table-cell font-semibold">Selling</th>
-                    <th class="table-cell font-semibold">Profit</th>
-                    <th class="table-cell font-semibold">Notes</th>
-                     <th class="table-cell font-semibold"></th>
-                </tr>
-            </thead>
-            <tbody id="charges-table-body">
-            </tbody>
-            <tfoot>
-                 <tr id="total-row" class="bg-gray-100 font-bold">
-                    <td class="table-cell text-right">TOTAL:</td>
-                    <td id="total-cost" class="table-cell text-right">0.000</td>
-                    <td id="total-selling" class="table-cell text-right">0.000</td>
-                    <td id="total-profit" class="table-cell text-right">0.000</td>
-                    <td class="table-cell" colspan="2"></td>
-                </tr>
-            </tfoot>
-        `;
-
-        const tableBody = getEl('charges-table-body');
-        tableBody?.addEventListener('input', e => {
-            const target = e.target as HTMLElement;
-            if (target.classList.contains('cost-input') || target.classList.contains('selling-input')) {
-                calculate();
-            }
-        });
-         for(let i=0; i<5; i++) addChargeRow();
-    }, [getEl, calculate, addChargeRow]);
-
-    const getVal = useCallback((id: string) => (getEl(id) as HTMLInputElement)?.value || '', [getEl]);
-
-    const getFormData = useCallback((): JobFile => {
-        const getChecked = (query: string) => Array.from(document.querySelectorAll(query)).filter(el => (el as HTMLInputElement).checked).map(el => (el as HTMLElement).dataset.clearance || (el as HTMLElement).dataset.product || '');
-
-        const charges: Charge[] = [];
-        document.querySelectorAll('#charges-table-body tr:not(#total-row)').forEach(row => {
-            const description = (row.querySelector('.description-input') as HTMLInputElement).value.trim();
-            const cost = (row.querySelector('.cost-input') as HTMLInputElement).value;
-            const selling = (row.querySelector('.selling-input') as HTMLInputElement).value;
-
-            if (description && (cost || selling)) {
-                charges.push({
-                    l: description,
-                    c: cost || '0',
-                    s: selling || '0',
-                    n: (row.querySelector('.notes-input') as HTMLInputElement).value || ''
-                });
-            }
-        });
-
-        return {
-            d: getVal('date'), po: getVal('po-number'), jfn: getVal('job-file-no'),
-            cl: getChecked('[data-clearance]:checked'), pt: getChecked('[data-product]:checked'),
-            in: getVal('invoice-no'), bd: getVal('billing-date'), sm: getVal('salesman'),
-            sh: getVal('shipper-name'), co: getVal('consignee-name'),
-            mawb: getVal('mawb'), hawb: getVal('hawb'), ts: getVal('teams-of-shipping'), or: getVal('origin'),
-            pc: getVal('no-of-pieces'), gw: getVal('gross-weight'), de: getVal('destination'), vw: getVal('volume-weight'),
-            dsc: getVal('description'), ca: getVal('carrier'), tn: getVal('truck-no'),
-            vn: getVal('vessel-name'), fv: getVal('flight-voyage-no'), cn: getVal('container-no'),
-            ch: charges,
-            re: getVal('remarks'),
-            pb: getVal('prepared-by'),
-        };
-    }, [getVal]);
-
-    const clearForm = useCallback(() => {
-        const form = querySel('#main-container');
-        if(!form) return;
-        form.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => (el as HTMLInputElement).value = '');
-        form.querySelectorAll('input[type="checkbox"]').forEach(el => (el as HTMLInputElement).checked = false);
-        
-        (getEl('date') as HTMLInputElement).valueAsDate = new Date();
-        (getEl('job-file-no') as HTMLInputElement).disabled = false;
-        populateTable();
-        calculate();
-        
-        if (currentUser.current) {
-            (getEl('prepared-by') as HTMLInputElement).value = currentUser.current.displayName;
-        }
-        
-        (getEl('created-by-info') as HTMLElement).textContent = '';
-        (getEl('last-updated-by-info') as HTMLElement).textContent = '';
-
-        (getEl('approved-by') as HTMLInputElement).value = '';
-        (getEl('checked-by') as HTMLInputElement).value = '';
-        (getEl('check-btn') as HTMLButtonElement).disabled = false;
-        (getEl('check-btn') as HTMLElement).textContent = 'Check Job File';
-        (getEl('approve-btn') as HTMLButtonElement).disabled = false;
-        (getEl('reject-btn') as HTMLButtonElement).disabled = false;
-
-        (getEl('checked-stamp') as HTMLElement).style.display = 'none';
-        (getEl('approved-stamp') as HTMLElement).style.display = 'none';
-        (getEl('rejected-stamp') as HTMLElement).style.display = 'none';
-        (getEl('rejection-banner') as HTMLElement).style.display = 'none';
-
-        const isChecker = ['admin', 'checker'].includes(currentUser.current?.role || '');
-        const isAdmin = currentUser.current?.role === 'admin';
-        (getEl('check-btn') as HTMLElement).style.display = isChecker ? 'block' : 'none';
-        (getEl('approval-buttons') as HTMLElement).style.display = isAdmin ? 'flex' : 'none';
-
-        showNotification("Form cleared. Ready for a new job file.");
-    }, [querySel, getEl, populateTable, calculate, showNotification]);
-
-    const populateFormFromData = useCallback((data: JobFile) => {
-        const setVal = (id: string, value: string | undefined) => { const el = getEl(id) as HTMLInputElement; if (el) el.value = value || ''; };
-        const setChecked = (type: string, values: string[] | undefined) => {
-            document.querySelectorAll(`[data-${type}]`).forEach(el => {
-                (el as HTMLInputElement).checked = (values || []).includes((el as HTMLElement).dataset[type] || '');
-            });
-        };
-
-        setVal('date', data.d); setVal('po-number', data.po); setVal('job-file-no', data.jfn);
-        setVal('invoice-no', data.in); setVal('billing-date', data.bd);
-        setVal('salesman', data.sm); setVal('shipper-name', data.sh); setVal('consignee-name', data.co);
-        setVal('mawb', data.mawb); setVal('hawb', data.hawb); setVal('teams-of-shipping', data.ts);
-        setVal('origin', data.or); setVal('no-of-pieces', data.pc); setVal('gross-weight', data.gw);
-        setVal('destination', data.de); setVal('volume-weight', data.vw); setVal('description', data.dsc);
-        setVal('carrier', data.ca); setVal('truck-no', data.tn); setVal('vessel-name', data.vn);
-        setVal('flight-voyage-no', data.fv); setVal('container-no', data.cn);
-        setVal('remarks', data.re); 
-        
-        setVal('prepared-by', data.pb || data.createdBy || '');
-
-        const createdInfo = getEl('created-by-info') as HTMLElement;
-        const updatedInfo = getEl('last-updated-by-info') as HTMLElement;
-        
-        createdInfo.textContent = data.createdBy ? `Created by: ${data.createdBy} on ${data.createdAt?.toDate().toLocaleDateString()}` : '';
-        updatedInfo.textContent = data.lastUpdatedBy ? `Last updated by: ${data.lastUpdatedBy} on ${data.updatedAt?.toDate().toLocaleString()}` : '';
-        
-        (getEl('checked-stamp') as HTMLElement).style.display = 'none';
-        (getEl('approved-stamp') as HTMLElement).style.display = 'none';
-        (getEl('rejected-stamp') as HTMLElement).style.display = 'none';
-        (getEl('rejection-banner') as HTMLElement).style.display = 'none';
-        (getEl('check-btn') as HTMLElement).style.display = 'none';
-        (getEl('approval-buttons') as HTMLElement).style.display = 'none';
-
-        const checkBtn = getEl('check-btn') as HTMLButtonElement;
-        if (data.checkedBy) {
-            const checkedDate = data.checkedAt?.toDate() ? ` on ${data.checkedAt.toDate().toLocaleDateString()}` : '';
-            setVal('checked-by', `${data.checkedBy}${checkedDate}`);
-            checkBtn.disabled = true;
-            checkBtn.textContent = 'Checked';
-            (getEl('checked-stamp') as HTMLElement).style.display = 'block';
-        } else {
-            setVal('checked-by', 'Pending Check');
-            checkBtn.disabled = false;
-            checkBtn.textContent = 'Check Job File';
-        }
-
-        if (data.status === 'approved') {
-            const approvedDate = data.approvedAt?.toDate() ? ` on ${data.approvedAt.toDate().toLocaleDateString()}` : '';
-            setVal('approved-by', `${data.approvedBy}${approvedDate}`);
-            (getEl('approved-stamp') as HTMLElement).style.display = 'block';
-        } else if (data.status === 'rejected') {
-            const rejectedDate = data.rejectedAt?.toDate() ? ` on ${data.rejectedAt.toDate().toLocaleDateString()}` : '';
-            setVal('approved-by', `Rejected by ${data.rejectedBy}${rejectedDate}`);
-            (getEl('rejected-stamp') as HTMLElement).style.display = 'block';
-            (getEl('rejection-banner') as HTMLElement).style.display = 'block';
-            (getEl('rejection-reason') as HTMLElement).textContent = data.rejectionReason || '';
-        } else {
-            setVal('approved-by', 'Pending Approval');
-        }
-
-        if (currentUser.current?.role === 'admin') {
-            if (data.status !== 'approved' && data.status !== 'rejected') {
-                (getEl('approval-buttons') as HTMLElement).style.display = 'flex';
-            }
-        }
-        if (['admin', 'checker'].includes(currentUser.current?.role || '')) {
-            if (!data.checkedBy) {
-                 (getEl('check-btn') as HTMLElement).style.display = 'block';
-            }
-        }
-
-        setChecked('clearance', data.cl);
-        setChecked('product', data.pt);
-
-        populateTable();
-         if (data.ch && data.ch.length > 0) {
-             const tableBody = getEl('charges-table-body');
-             if(tableBody) tableBody.innerHTML = '';
-             data.ch.forEach(charge => addChargeRow(charge));
-         } else {
-            for(let i=0; i<5; i++) addChargeRow();
-        }
-        calculate();
-    }, [getEl, populateTable, addChargeRow, calculate]);
-    
-    const logUserActivity = useCallback((jobFileNo: string | undefined) => {
-        if (!currentUser.current || !jobFileNo) return;
-        const logEntry = {
-            user: currentUser.current.displayName,
-            file: jobFileNo,
-            timestamp: new Date().toISOString()
-        };
-        let logs = [];
-        try {
-            const storedLogs = localStorage.getItem('userActivityLog');
-            if (storedLogs) logs = JSON.parse(storedLogs);
-        } catch (e) { console.error("Error parsing user activity log", e); logs = []; }
-
-        logs.unshift(logEntry);
-        if (logs.length > 200) logs.splice(200);
-        localStorage.setItem('userActivityLog', JSON.stringify(logs));
-    }, []);
-
-    const loadJobFileById = useCallback(async (docId: string) => {
-        const db = dbInstance.current;
-        if (!db) return;
-        showLoader();
-        try {
-            const docRef = doc(db, 'jobfiles', docId);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                const fileData = docSnap.data() as JobFile;
-                populateFormFromData(fileData);
-                
-                logUserActivity(fileData.jfn);
-                
-                (getEl('job-file-no') as HTMLInputElement).disabled = true;
+        const openModal = (id: string, keepParent = false) => {
+            const modal = getEl(id);
+            if (!modal) return;
+            if (!keepParent) {
                 closeAllModals();
-                showNotification("Job file loaded successfully.");
-            } else {
-                showNotification("Document not found.", true);
             }
-            hideLoader();
-        } catch (error) {
-            hideLoader();
-            console.error("Error loading document:", error);
-            showNotification("Error loading job file.", true);
-        }
-    }, [showLoader, hideLoader, populateFormFromData, logUserActivity, getEl, closeAllModals, showNotification]);
-
-    const saveJobFile = useCallback(async () => {
-        const db = dbInstance.current;
-        if (!db) { showNotification("Database not connected.", true); return; }
-        
-        const jobFileNoInput = getEl('job-file-no') as HTMLInputElement;
-        const jobFileNo = jobFileNoInput.value.trim();
-        const isUpdating = jobFileNoInput.disabled;
-
-        const invoiceNo = (getEl('invoice-no') as HTMLInputElement).value.trim();
-        const mawbNo = (getEl('mawb') as HTMLInputElement).value.trim();
-
-        if (!jobFileNo) { 
-            showNotification("Please enter a Job File No.", true); 
-            return; 
-        }
-        
-        showLoader();
-        const docId = jobFileNo.replace(/\//g, '_');
-
-        const checks = [];
-        if (!isUpdating) {
-             checks.push({ field: 'jfn', value: jobFileNo, label: 'Job File No.' });
-        }
-        if (invoiceNo) checks.push({ field: 'in', value: invoiceNo, label: 'Invoice No.' });
-        if (mawbNo) checks.push({ field: 'mawb', value: mawbNo, label: 'MAWB No.' });
-
-        for (const check of checks) {
-            try {
-                const q = query(collection(db, 'jobfiles'), where(check.field, '==', check.value));
-                const querySnapshot = await getDocs(q);
-                
-                if (!querySnapshot.empty) {
-                    if (isUpdating) {
-                        for (const foundDoc of querySnapshot.docs) {
-                            if (foundDoc.id !== docId) {
-                                hideLoader();
-                                showNotification(`Duplicate ${check.label} "${check.value}" found in job file: ${foundDoc.data().jfn}`, true);
-                                return;
-                            }
-                        }
-                    } else {
-                        hideLoader();
-                        showNotification(`Duplicate ${check.label} "${check.value}" already exists in job file: ${querySnapshot.docs[0].data().jfn}`, true);
-                        return;
-                    }
-                }
-            } catch (error) { 
-                hideLoader();
-                console.error("Error checking for duplicates:", error);
-                showNotification("Could not verify uniqueness. Please try again.", true);
-                return;
+            if (keepParent) {
+                const highestZ = Array.from(querySelAll('.overlay.visible'))
+                    .reduce((max, el) => Math.max(max, parseInt(window.getComputedStyle(el).zIndex || '1000', 10)), 1000);
+                modal.style.zIndex = `${highestZ + 1}`;
             }
-        }
+            modal.classList.add('visible');
+        };
 
-        const data = getFormData();
-        data.totalCost = parseFloat(getEl('total-cost')?.textContent || '0');
-        data.totalSelling = parseFloat(getEl('total-selling')?.textContent || '0');
-        data.totalProfit = parseFloat(getEl('total-profit')?.textContent || '0');
-        
-        try {
-            const docRef = doc(db, 'jobfiles', docId);
-            const docSnap = await getDoc(docRef);
+        const calculate = () => {
+            let totalCost = 0, totalSelling = 0, totalProfit = 0;
+            querySelAll('#charges-table-body tr:not(#total-row)').forEach(row => {
+                const cost = parseFloat((row.querySelector('.cost-input') as HTMLInputElement).value) || 0;
+                const selling = parseFloat((row.querySelector('.selling-input') as HTMLInputElement).value) || 0;
+                const profit = selling - cost;
+                (row.querySelector('.profit-output') as HTMLElement).textContent = profit.toFixed(3);
+                totalCost += cost; totalSelling += selling; totalProfit += profit;
+            });
+            const totalCostEl = getEl('total-cost');
+            const totalSellingEl = getEl('total-selling');
+            const totalProfitEl = getEl('total-profit');
+            if (totalCostEl) totalCostEl.textContent = totalCost.toFixed(3);
+            if (totalSellingEl) totalSellingEl.textContent = totalSelling.toFixed(3);
+            if (totalProfitEl) totalProfitEl.textContent = totalProfit.toFixed(3);
+        };
 
-            if (docSnap.exists()) {
-                const existingData = docSnap.data();
-                data.lastUpdatedBy = currentUser.current?.displayName;
-                data.updatedAt = serverTimestamp();
+        const setupChargeAutocomplete = (inputElement: HTMLInputElement) => {
+            const suggestionsPanel = inputElement.nextElementSibling as HTMLElement;
+            if(!suggestionsPanel) return;
 
-                if (existingData.status === 'approved' || existingData.status === 'checked') {
-                    data.status = 'pending';
-                    data.checkedBy = null;
-                    data.checkedAt = null;
-                    data.approvedBy = null;
-                    data.approvedAt = null;
-                    data.rejectionReason = null;
-                    data.rejectedBy = null;
-                    data.rejectedAt = null;
-                    showNotification("File modified. Re-approval is now required.", false);
+            let activeSuggestionIndex = -1;
+
+            const updateSelection = () => {
+                const suggestions = suggestionsPanel.querySelectorAll('.autocomplete-suggestion');
+                suggestions.forEach((suggestion, index) => {
+                    suggestion.classList.toggle('selected', index === activeSuggestionIndex);
+                    if (index === activeSuggestionIndex) suggestion.scrollIntoView({ block: 'nearest' });
+                });
+            };
+
+            const showSuggestions = () => {
+                 const value = inputElement.value.toLowerCase();
+                if (!value) {
+                    suggestionsPanel.classList.add('hidden');
+                    return;
                 }
-                await setDoc(docRef, data, { merge: true });
-            } else {
-                data.createdBy = currentUser.current?.displayName;
-                data.createdAt = serverTimestamp();
-                data.lastUpdatedBy = currentUser.current?.displayName;
-                data.updatedAt = serverTimestamp();
-                data.status = 'pending';
-                await setDoc(docRef, data);
+                const filtered = chargeDescriptions.current.filter(d => d.toLowerCase().includes(value));
+                if (filtered.length > 0) {
+                    suggestionsPanel.innerHTML = filtered.map(d => `<div class="autocomplete-suggestion">${d}</div>`).join('');
+                    suggestionsPanel.classList.remove('hidden');
+                } else {
+                    suggestionsPanel.classList.add('hidden');
+                }
+                activeSuggestionIndex = -1;
+            };
+
+            inputElement.addEventListener('input', showSuggestions);
+
+            inputElement.addEventListener('keydown', (e) => {
+                const suggestions = suggestionsPanel.querySelectorAll('.autocomplete-suggestion');
+                if (suggestionsPanel.classList.contains('hidden') || suggestions.length === 0) return;
+
+                if (e.key === 'ArrowDown') { e.preventDefault(); activeSuggestionIndex = (activeSuggestionIndex + 1) % suggestions.length; updateSelection(); } 
+                else if (e.key === 'ArrowUp') { e.preventDefault(); activeSuggestionIndex = (activeSuggestionIndex - 1 + suggestions.length) % suggestions.length; updateSelection(); } 
+                else if (e.key === 'Enter') { e.preventDefault(); if (activeSuggestionIndex > -1) (suggestions[activeSuggestionIndex] as HTMLElement).click(); } 
+                else if (e.key === 'Escape') { suggestionsPanel.classList.add('hidden'); }
+            });
+
+            suggestionsPanel.addEventListener('click', (e) => {
+                const target = e.target as HTMLElement;
+                if (target.classList.contains('autocomplete-suggestion')) {
+                    inputElement.value = target.textContent || '';
+                    suggestionsPanel.classList.add('hidden');
+                }
+            });
+            
+            inputElement.addEventListener('blur', () => {
+                setTimeout(() => suggestionsPanel.classList.add('hidden'), 150);
+            });
+        };
+
+        const addChargeRow = (data: Partial<Charge> = {}) => {
+            const tableBody = getEl('charges-table-body');
+            if (!tableBody) return;
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+                <td class="table-cell relative">
+                    <input type="text" class="description-input input-field" value="${data.l || ''}" autocomplete="off">
+                    <div class="autocomplete-suggestions hidden"></div>
+                </td>
+                <td class="table-cell"><input type="number" step="0.001" class="cost-input input-field" value="${data.c || ''}"></td>
+                <td class="table-cell"><input type="number" step="0.001" class="selling-input input-field" value="${data.s || ''}"></td>
+                <td class="table-cell profit-output bg-gray-50 text-right">${((parseFloat(data.s || '0')) - (parseFloat(data.c || '0'))).toFixed(3)}</td>
+                <td class="table-cell"><input type="text" class="notes-input input-field" value="${data.n || ''}"></td>
+                <td class="table-cell text-center"><button class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button></td>
+            `;
+
+            const descriptionInput = newRow.querySelector('.description-input') as HTMLInputElement;
+            setupChargeAutocomplete(descriptionInput);
+            
+            const deleteButton = newRow.querySelector('button');
+            deleteButton?.addEventListener('click', () => {
+                newRow.remove();
+                calculate();
+            });
+
+            tableBody.appendChild(newRow);
+        };
+
+        const populateTable = () => {
+            const table = getEl('charges-table');
+            if (!table) return;
+            table.innerHTML = `
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="table-cell font-semibold w-2/5">Description</th>
+                        <th class="table-cell font-semibold">Cost</th>
+                        <th class="table-cell font-semibold">Selling</th>
+                        <th class="table-cell font-semibold">Profit</th>
+                        <th class="table-cell font-semibold">Notes</th>
+                         <th class="table-cell font-semibold"></th>
+                    </tr>
+                </thead>
+                <tbody id="charges-table-body">
+                </tbody>
+                <tfoot>
+                     <tr id="total-row" class="bg-gray-100 font-bold">
+                        <td class="table-cell text-right">TOTAL:</td>
+                        <td id="total-cost" class="table-cell text-right">0.000</td>
+                        <td id="total-selling" class="table-cell text-right">0.000</td>
+                        <td id="total-profit" class="table-cell text-right">0.000</td>
+                        <td class="table-cell" colspan="2"></td>
+                    </tr>
+                </tfoot>
+            `;
+
+            const tableBody = getEl('charges-table-body');
+            tableBody?.addEventListener('input', e => {
+                const target = e.target as HTMLElement;
+                if (target.classList.contains('cost-input') || target.classList.contains('selling-input')) {
+                    calculate();
+                }
+            });
+             for(let i=0; i<5; i++) addChargeRow();
+        };
+
+        const getVal = (id: string) => (getEl(id) as HTMLInputElement)?.value || '';
+
+        const getFormData = (): JobFile => {
+            const getChecked = (query: string) => Array.from(document.querySelectorAll(query)).filter(el => (el as HTMLInputElement).checked).map(el => (el as HTMLElement).dataset.clearance || (el as HTMLElement).dataset.product || '');
+
+            const charges: Charge[] = [];
+            document.querySelectorAll('#charges-table-body tr:not(#total-row)').forEach(row => {
+                const description = (row.querySelector('.description-input') as HTMLInputElement).value.trim();
+                const cost = (row.querySelector('.cost-input') as HTMLInputElement).value;
+                const selling = (row.querySelector('.selling-input') as HTMLInputElement).value;
+
+                if (description && (cost || selling)) {
+                    charges.push({
+                        l: description,
+                        c: cost || '0',
+                        s: selling || '0',
+                        n: (row.querySelector('.notes-input') as HTMLInputElement).value || ''
+                    });
+                }
+            });
+
+            return {
+                d: getVal('date'), po: getVal('po-number'), jfn: getVal('job-file-no'),
+                cl: getChecked('[data-clearance]:checked'), pt: getChecked('[data-product]:checked'),
+                in: getVal('invoice-no'), bd: getVal('billing-date'), sm: getVal('salesman'),
+                sh: getVal('shipper-name'), co: getVal('consignee-name'),
+                mawb: getVal('mawb'), hawb: getVal('hawb'), ts: getVal('teams-of-shipping'), or: getVal('origin'),
+                pc: getVal('no-of-pieces'), gw: getVal('gross-weight'), de: getVal('destination'), vw: getVal('volume-weight'),
+                dsc: getVal('description'), ca: getVal('carrier'), tn: getVal('truck-no'),
+                vn: getVal('vessel-name'), fv: getVal('flight-voyage-no'), cn: getVal('container-no'),
+                ch: charges,
+                re: getVal('remarks'),
+                pb: getVal('prepared-by'),
+            };
+        };
+
+        const clearForm = () => {
+            const form = querySel('#main-container');
+            if(!form) return;
+            form.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => (el as HTMLInputElement).value = '');
+            form.querySelectorAll('input[type="checkbox"]').forEach(el => (el as HTMLInputElement).checked = false);
+            
+            (getEl('date') as HTMLInputElement).valueAsDate = new Date();
+            (getEl('job-file-no') as HTMLInputElement).disabled = false;
+            populateTable();
+            calculate();
+            
+            if (currentUser.current) {
+                (getEl('prepared-by') as HTMLInputElement).value = currentUser.current.displayName;
             }
             
-            hideLoader();
-            showNotification("Job file saved successfully!");
-            loadJobFileById(docId);
+            (getEl('created-by-info') as HTMLElement).textContent = '';
+            (getEl('last-updated-by-info') as HTMLElement).textContent = '';
 
-        } catch (error) {
-            hideLoader();
-            console.error("Error saving document: ", error);
-            showNotification("Error saving job file.", true);
-        }
-    }, [showNotification, getEl, showLoader, hideLoader, getFormData, loadJobFileById]);
+            (getEl('approved-by') as HTMLInputElement).value = '';
+            (getEl('checked-by') as HTMLInputElement).value = '';
+            (getEl('check-btn') as HTMLButtonElement).disabled = false;
+            (getEl('check-btn') as HTMLElement).textContent = 'Check Job File';
+            (getEl('approve-btn') as HTMLButtonElement).disabled = false;
+            (getEl('reject-btn') as HTMLButtonElement).disabled = false;
+
+            (getEl('checked-stamp') as HTMLElement).style.display = 'none';
+            (getEl('approved-stamp') as HTMLElement).style.display = 'none';
+            (getEl('rejected-stamp') as HTMLElement).style.display = 'none';
+            (getEl('rejection-banner') as HTMLElement).style.display = 'none';
+
+            const isChecker = ['admin', 'checker'].includes(currentUser.current?.role || '');
+            const isAdmin = currentUser.current?.role === 'admin';
+            (getEl('check-btn') as HTMLElement).style.display = isChecker ? 'block' : 'none';
+            (getEl('approval-buttons') as HTMLElement).style.display = isAdmin ? 'flex' : 'none';
+
+            showNotification("Form cleared. Ready for a new job file.");
+        };
+
+        const populateFormFromData = (data: JobFile) => {
+            const setVal = (id: string, value: string | undefined) => { const el = getEl(id) as HTMLInputElement; if (el) el.value = value || ''; };
+            const setChecked = (type: string, values: string[] | undefined) => {
+                document.querySelectorAll(`[data-${type}]`).forEach(el => {
+                    (el as HTMLInputElement).checked = (values || []).includes((el as HTMLElement).dataset[type] || '');
+                });
+            };
+
+            setVal('date', data.d); setVal('po-number', data.po); setVal('job-file-no', data.jfn);
+            setVal('invoice-no', data.in); setVal('billing-date', data.bd);
+            setVal('salesman', data.sm); setVal('shipper-name', data.sh); setVal('consignee-name', data.co);
+            setVal('mawb', data.mawb); setVal('hawb', data.hawb); setVal('teams-of-shipping', data.ts);
+            setVal('origin', data.or); setVal('no-of-pieces', data.pc); setVal('gross-weight', data.gw);
+            setVal('destination', data.de); setVal('volume-weight', data.vw); setVal('description', data.dsc);
+            setVal('carrier', data.ca); setVal('truck-no', data.tn); setVal('vessel-name', data.vn);
+            setVal('flight-voyage-no', data.fv); setVal('container-no', data.cn);
+            setVal('remarks', data.re); 
+            
+            setVal('prepared-by', data.pb || data.createdBy || '');
+
+            const createdInfo = getEl('created-by-info') as HTMLElement;
+            const updatedInfo = getEl('last-updated-by-info') as HTMLElement;
+            
+            createdInfo.textContent = data.createdBy ? `Created by: ${data.createdBy} on ${data.createdAt?.toDate().toLocaleDateString()}` : '';
+            updatedInfo.textContent = data.lastUpdatedBy ? `Last updated by: ${data.lastUpdatedBy} on ${data.updatedAt?.toDate().toLocaleString()}` : '';
+            
+            (getEl('checked-stamp') as HTMLElement).style.display = 'none';
+            (getEl('approved-stamp') as HTMLElement).style.display = 'none';
+            (getEl('rejected-stamp') as HTMLElement).style.display = 'none';
+            (getEl('rejection-banner') as HTMLElement).style.display = 'none';
+            (getEl('check-btn') as HTMLElement).style.display = 'none';
+            (getEl('approval-buttons') as HTMLElement).style.display = 'none';
+
+            const checkBtn = getEl('check-btn') as HTMLButtonElement;
+            if (data.checkedBy) {
+                const checkedDate = data.checkedAt?.toDate() ? ` on ${data.checkedAt.toDate().toLocaleDateString()}` : '';
+                setVal('checked-by', `${data.checkedBy}${checkedDate}`);
+                checkBtn.disabled = true;
+                checkBtn.textContent = 'Checked';
+                (getEl('checked-stamp') as HTMLElement).style.display = 'block';
+            } else {
+                setVal('checked-by', 'Pending Check');
+                checkBtn.disabled = false;
+                checkBtn.textContent = 'Check Job File';
+            }
+
+            if (data.status === 'approved') {
+                const approvedDate = data.approvedAt?.toDate() ? ` on ${data.approvedAt.toDate().toLocaleDateString()}` : '';
+                setVal('approved-by', `${data.approvedBy}${approvedDate}`);
+                (getEl('approved-stamp') as HTMLElement).style.display = 'block';
+            } else if (data.status === 'rejected') {
+                const rejectedDate = data.rejectedAt?.toDate() ? ` on ${data.rejectedAt.toDate().toLocaleDateString()}` : '';
+                setVal('approved-by', `Rejected by ${data.rejectedBy}${rejectedDate}`);
+                (getEl('rejected-stamp') as HTMLElement).style.display = 'block';
+                (getEl('rejection-banner') as HTMLElement).style.display = 'block';
+                (getEl('rejection-reason') as HTMLElement).textContent = data.rejectionReason || '';
+            } else {
+                setVal('approved-by', 'Pending Approval');
+            }
+
+            if (currentUser.current?.role === 'admin') {
+                if (data.status !== 'approved' && data.status !== 'rejected') {
+                    (getEl('approval-buttons') as HTMLElement).style.display = 'flex';
+                }
+            }
+            if (['admin', 'checker'].includes(currentUser.current?.role || '')) {
+                if (!data.checkedBy) {
+                     (getEl('check-btn') as HTMLElement).style.display = 'block';
+                }
+            }
+
+            setChecked('clearance', data.cl);
+            setChecked('product', data.pt);
+
+            populateTable();
+             if (data.ch && data.ch.length > 0) {
+                 const tableBody = getEl('charges-table-body');
+                 if(tableBody) tableBody.innerHTML = '';
+                 data.ch.forEach(charge => addChargeRow(charge));
+             } else {
+                for(let i=0; i<5; i++) addChargeRow();
+            }
+            calculate();
+        };
+        
+        const logUserActivity = (jobFileNo: string | undefined) => {
+            if (!currentUser.current || !jobFileNo) return;
+            const logEntry = {
+                user: currentUser.current.displayName,
+                file: jobFileNo,
+                timestamp: new Date().toISOString()
+            };
+            let logs = [];
+            try {
+                const storedLogs = localStorage.getItem('userActivityLog');
+                if (storedLogs) logs = JSON.parse(storedLogs);
+            } catch (e) { console.error("Error parsing user activity log", e); logs = []; }
+
+            logs.unshift(logEntry);
+            if (logs.length > 200) logs.splice(200);
+            localStorage.setItem('userActivityLog', JSON.stringify(logs));
+        };
+
+        const loadJobFileById = async (docId: string) => {
+            const db = dbInstance.current;
+            if (!db) return;
+            showLoader();
+            try {
+                const docRef = doc(db, 'jobfiles', docId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const fileData = docSnap.data() as JobFile;
+                    populateFormFromData(fileData);
+                    
+                    logUserActivity(fileData.jfn);
+                    
+                    (getEl('job-file-no') as HTMLInputElement).disabled = true;
+                    closeAllModals();
+                    showNotification("Job file loaded successfully.");
+                } else {
+                    showNotification("Document not found.", true);
+                }
+                hideLoader();
+            } catch (error) {
+                hideLoader();
+                console.error("Error loading document:", error);
+                showNotification("Error loading job file.", true);
+            }
+        };
+
+        const saveJobFile = async () => {
+            const db = dbInstance.current;
+            if (!db) { showNotification("Database not connected.", true); return; }
+            
+            const jobFileNoInput = getEl('job-file-no') as HTMLInputElement;
+            const jobFileNo = jobFileNoInput.value.trim();
+            const isUpdating = jobFileNoInput.disabled;
+
+            const invoiceNo = (getEl('invoice-no') as HTMLInputElement).value.trim();
+            const mawbNo = (getEl('mawb') as HTMLInputElement).value.trim();
+
+            if (!jobFileNo) { 
+                showNotification("Please enter a Job File No.", true); 
+                return; 
+            }
+            
+            showLoader();
+            const docId = jobFileNo.replace(/\//g, '_');
+
+            const checks = [];
+            if (!isUpdating) {
+                 checks.push({ field: 'jfn', value: jobFileNo, label: 'Job File No.' });
+            }
+            if (invoiceNo) checks.push({ field: 'in', value: invoiceNo, label: 'Invoice No.' });
+            if (mawbNo) checks.push({ field: 'mawb', value: mawbNo, label: 'MAWB No.' });
+
+            for (const check of checks) {
+                try {
+                    const q = query(collection(db, 'jobfiles'), where(check.field, '==', check.value));
+                    const querySnapshot = await getDocs(q);
+                    
+                    if (!querySnapshot.empty) {
+                        if (isUpdating) {
+                            for (const foundDoc of querySnapshot.docs) {
+                                if (foundDoc.id !== docId) {
+                                    hideLoader();
+                                    showNotification(`Duplicate ${check.label} "${check.value}" found in job file: ${foundDoc.data().jfn}`, true);
+                                    return;
+                                }
+                            }
+                        } else {
+                            hideLoader();
+                            showNotification(`Duplicate ${check.label} "${check.value}" already exists in job file: ${querySnapshot.docs[0].data().jfn}`, true);
+                            return;
+                        }
+                    }
+                } catch (error) { 
+                    hideLoader();
+                    console.error("Error checking for duplicates:", error);
+                    showNotification("Could not verify uniqueness. Please try again.", true);
+                    return;
+                }
+            }
+
+            const data = getFormData();
+            data.totalCost = parseFloat(getEl('total-cost')?.textContent || '0');
+            data.totalSelling = parseFloat(getEl('total-selling')?.textContent || '0');
+            data.totalProfit = parseFloat(getEl('total-profit')?.textContent || '0');
+            
+            try {
+                const docRef = doc(db, 'jobfiles', docId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const existingData = docSnap.data();
+                    data.lastUpdatedBy = currentUser.current?.displayName;
+                    data.updatedAt = serverTimestamp();
+
+                    if (existingData.status === 'approved' || existingData.status === 'checked') {
+                        data.status = 'pending';
+                        data.checkedBy = null;
+                        data.checkedAt = null;
+                        data.approvedBy = null;
+                        data.approvedAt = null;
+                        data.rejectionReason = null;
+                        data.rejectedBy = null;
+                        data.rejectedAt = null;
+                        showNotification("File modified. Re-approval is now required.", false);
+                    }
+                    await setDoc(docRef, data, { merge: true });
+                } else {
+                    data.createdBy = currentUser.current?.displayName;
+                    data.createdAt = serverTimestamp();
+                    data.lastUpdatedBy = currentUser.current?.displayName;
+                    data.updatedAt = serverTimestamp();
+                    data.status = 'pending';
+                    await setDoc(docRef, data);
+                }
+                
+                hideLoader();
+                showNotification("Job file saved successfully!");
+                loadJobFileById(docId);
+
+            } catch (error) {
+                hideLoader();
+                console.error("Error saving document: ", error);
+                showNotification("Error saving job file.", true);
+            }
+        };
+        
+        functionsRef.current = {
+            openAnalyticsDashboard: () => console.log('openAnalyticsDashboard'),
+            closeAnalyticsDashboard: () => console.log('closeAnalyticsDashboard'),
+            printAnalytics: () => console.log('printAnalytics'),
+            openClientManager: () => console.log('openClientManager'),
+            openFileManager: () => console.log('openFileManager'),
+            saveJobFile,
+            clearForm,
+            printPage: () => console.log('printPage'),
+            openRecycleBin: () => console.log('openRecycleBin'),
+            closeModal,
+            openChargeManager: () => console.log('openChargeManager'),
+            suggestCharges: () => console.log('suggestCharges'),
+            addChargeRow,
+            printPreview: () => console.log('printPreview'),
+            saveUserChanges: () => console.log('saveUserChanges'),
+            backupAllData: () => console.log('backupAllData'),
+            handleRestoreFile: () => console.log('handleRestoreFile'),
+            confirmDelete: () => console.log('confirmDelete'),
+            previewJobFileById: () => console.log('previewJobFileById'),
+            loadJobFileById,
+            downloadAnalyticsCsv: () => console.log('downloadAnalyticsCsv'),
+            showStatusJobs: () => console.log('showStatusJobs'),
+            uncheckJobFile: () => console.log('uncheckJobFile'),
+            checkJobFile: () => console.log('checkJobFile'),
+            approveJobFile: () => console.log('approveJobFile'),
+            promptForRejection: () => console.log('promptForRejection'),
+            restoreJobFile: () => console.log('restoreJobFile'),
+            confirmPermanentDelete: () => console.log('confirmPermanentDelete'),
+            saveChargeDescription: () => console.log('saveChargeDescription'),
+            deleteChargeDescription: () => console.log('deleteChargeDescription'),
+            showUserJobs: () => console.log('showUserJobs'),
+            showMonthlyJobs: () => console.log('showMonthlyJobs'),
+            showSalesmanJobs: () => console.log('showSalesmanJobs'),
+            editClient: () => console.log('editClient'),
+            openAdminPanel: () => console.log('openAdminPanel'),
+            openUserActivityLog: () => console.log('openUserActivityLog'),
+            rejectJobFile: () => console.log('rejectJobFile'),
+        };
+    }
     
-    // --- Dummy functions to satisfy window assignment ---
-    const openAnalyticsDashboard = useCallback(() => console.log('openAnalyticsDashboard'), []);
-    const closeAnalyticsDashboard = useCallback(() => console.log('closeAnalyticsDashboard'), []);
-    const printAnalytics = useCallback(() => console.log('printAnalytics'), []);
-    const openClientManager = useCallback(() => console.log('openClientManager'), []);
-    const openFileManager = useCallback(() => console.log('openFileManager'), []);
-    const printPage = useCallback(() => console.log('printPage'), []);
-    const openRecycleBin = useCallback(() => console.log('openRecycleBin'), []);
-    const openChargeManager = useCallback(() => console.log('openChargeManager'), []);
-    const suggestCharges = useCallback(() => console.log('suggestCharges'), []);
-    const printPreview = useCallback(() => console.log('printPreview'), []);
-    const saveUserChanges = useCallback(() => console.log('saveUserChanges'), []);
-    const backupAllData = useCallback(() => console.log('backupAllData'), []);
-    const handleRestoreFile = useCallback(() => console.log('handleRestoreFile'), []);
-    const confirmDelete = useCallback(() => console.log('confirmDelete'), []);
-    const previewJobFileById = useCallback(() => console.log('previewJobFileById'), []);
-    const downloadAnalyticsCsv = useCallback(() => console.log('downloadAnalyticsCsv'), []);
-    const showStatusJobs = useCallback(() => console.log('showStatusJobs'), []);
-    const uncheckJobFile = useCallback(() => console.log('uncheckJobFile'), []);
-    const checkJobFile = useCallback(() => console.log('checkJobFile'), []);
-    const approveJobFile = useCallback(() => console.log('approveJobFile'), []);
-    const promptForRejection = useCallback(() => console.log('promptForRejection'), []);
-    const restoreJobFile = useCallback(() => console.log('restoreJobFile'), []);
-    const confirmPermanentDelete = useCallback(() => console.log('confirmPermanentDelete'), []);
-    const saveChargeDescription = useCallback(() => console.log('saveChargeDescription'), []);
-    const deleteChargeDescription = useCallback(() => console.log('deleteChargeDescription'), []);
-    const showUserJobs = useCallback(() => console.log('showUserJobs'), []);
-    const showMonthlyJobs = useCallback(() => console.log('showMonthlyJobs'), []);
-    const showSalesmanJobs = useCallback(() => console.log('showSalesmanJobs'), []);
-    const editClient = useCallback(() => console.log('editClient'), []);
-    const openAdminPanel = useCallback(() => console.log('openAdminPanel'), []);
-    const openUserActivityLog = useCallback(() => console.log('openUserActivityLog'), []);
-    const rejectJobFile = useCallback(() => console.log('rejectJobFile'), []);
-    const clearClientForm = useCallback(() => console.log('clearClientForm'), []);
-    const saveClient = useCallback(() => console.log('saveClient'), []);
-    const updateStatusSummary = useCallback(() => console.log('updateStatusSummary'), []);
-    const setupAutocomplete = useCallback(() => console.log('setupAutocomplete'), []);
-
-
     // --- MAIN APP LOGIC ---
     useEffect(() => {
         if (appInitialized) return;
@@ -722,7 +725,7 @@ export default function Home() {
                 dbInstance.current = getFirestore(firebaseApp.current);
             } catch (error) {
                 console.error("Firebase initialization failed:", error);
-                showNotification("Could not connect to the database.", true);
+                functionsRef.current.showNotification("Could not connect to the database.", true);
                 return;
             }
         }
@@ -731,46 +734,19 @@ export default function Home() {
         const db = dbInstance.current;
 
         const setupGlobalFunctions = () => {
-          window.openAnalyticsDashboard = openAnalyticsDashboard;
-          window.closeAnalyticsDashboard = closeAnalyticsDashboard;
-          window.printAnalytics = printAnalytics;
-          window.openClientManager = openClientManager;
-          window.openFileManager = openFileManager;
-          window.saveJobFile = saveJobFile;
-          window.clearForm = clearForm;
-          window.printPage = printPage;
-          window.openRecycleBin = openRecycleBin;
-          window.closeModal = closeModal;
-          window.openChargeManager = openChargeManager;
-          window.suggestCharges = suggestCharges;
-          window.addChargeRow = addChargeRow;
-          window.printPreview = printPreview;
-          window.saveUserChanges = saveUserChanges;
-          window.backupAllData = backupAllData;
-          window.handleRestoreFile = handleRestoreFile as any;
-          window.confirmDelete = confirmDelete;
-          window.previewJobFileById = previewJobFileById;
-          window.loadJobFileById = loadJobFileById;
-          window.downloadAnalyticsCsv = downloadAnalyticsCsv;
-          window.showStatusJobs = showStatusJobs;
-          window.uncheckJobFile = uncheckJobFile;
-          window.checkJobFile = checkJobFile;
-          window.approveJobFile = approveJobFile;
-          window.promptForRejection = promptForRejection;
-          window.restoreJobFile = restoreJobFile;
-          window.confirmPermanentDelete = confirmPermanentDelete;
-          window.saveChargeDescription = saveChargeDescription;
-          window.deleteChargeDescription = deleteChargeDescription;
-          window.showUserJobs = showUserJobs;
-          window.showMonthlyJobs = showMonthlyJobs;
-          window.showSalesmanJobs = showSalesmanJobs;
-          window.editClient = editClient;
-          window.openAdminPanel = openAdminPanel;
-          window.openUserActivityLog = openUserActivityLog;
-          window.rejectJobFile = rejectJobFile;
-      };
+          if (functionsRef.current) {
+            for (const funcName in functionsRef.current) {
+                if (typeof functionsRef.current[funcName] === 'function') {
+                    (window as any)[funcName] = functionsRef.current[funcName];
+                }
+            }
+          }
+        };
 
-      setupGlobalFunctions();
+        setupGlobalFunctions();
+
+        const getEl = (id: string) => document.getElementById(id);
+        const querySelAll = (selector: string) => document.querySelectorAll(selector);
 
         const showApp = () => {
             (getEl('login-screen') as HTMLElement).style.display = 'none';
@@ -794,7 +770,7 @@ export default function Home() {
                 }
             }
             
-            clearForm();
+            functionsRef.current.clearForm();
         };
 
         const showLoginScreen = () => {
@@ -805,21 +781,21 @@ export default function Home() {
 
         // --- AUTH LOGIC ---
         const handleSignUp = async (email: string, password: string, displayName: string) => {
-            showLoader();
+            functionsRef.current.showLoader();
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
-                showNotification("Account created! Please wait for admin approval.", false);
+                functionsRef.current.showNotification("Account created! Please wait for admin approval.", false);
                 await signOut(auth);
                 toggleAuthView(true);
             } catch (error: any) {
                 console.error("Sign up error:", error);
-                showNotification(error.message, true);
+                functionsRef.current.showNotification(error.message, true);
             }
-            hideLoader();
+            functionsRef.current.hideLoader();
         };
 
         const handleLogin = async (email: string, password: string) => {
-            showLoader();
+            functionsRef.current.showLoader();
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error: any) {
@@ -828,31 +804,31 @@ export default function Home() {
                 if (['auth/user-not-found', 'auth/wrong-password', 'auth/invalid-credential'].includes(error.code)) {
                     message = "Incorrect email or password. Please try again or reset your password.";
                 }
-                showNotification(message, true);
+                functionsRef.current.showNotification(message, true);
             }
-            hideLoader();
+            functionsRef.current.hideLoader();
         };
 
         const handleForgotPassword = async () => {
             const email = (getEl('reset-email') as HTMLInputElement).value.trim();
             if (!email) {
-                showNotification("Please enter your email address.", true);
+                functionsRef.current.showNotification("Please enter your email address.", true);
                 return;
             }
-            showLoader();
+            functionsRef.current.showLoader();
             try {
                 await sendPasswordResetEmail(auth, email);
-                hideLoader();
-                closeModal('forgot-password-modal');
-                showNotification("Password reset link sent! Check your email inbox.", false);
+                functionsRef.current.hideLoader();
+                functionsRef.current.closeModal('forgot-password-modal');
+                functionsRef.current.showNotification("Password reset link sent! Check your email inbox.", false);
             } catch (error: any) {
-                hideLoader();
+                functionsRef.current.hideLoader();
                 console.error("Password reset error:", error);
                 let message = "Could not send reset link. Please try again.";
                 if(error.code === 'auth/user-not-found'){
                     message = "No account found with this email address.";
                 }
-                showNotification(message, true);
+                functionsRef.current.showNotification(message, true);
             }
         };
 
@@ -920,7 +896,7 @@ export default function Home() {
 
             }, (error) => {
                 console.error("Error fetching job files: ", error);
-                showNotification("Error loading job files.", true);
+                functionsRef.current.showNotification("Error loading job files.", true);
             });
         };
 
@@ -975,7 +951,7 @@ export default function Home() {
                 displayClients(clientsCache.current);
             }, (error) => {
                 console.error("Error loading clients:", error);
-                showNotification("Could not load clients.", true);
+                functionsRef.current.showNotification("Could not load clients.", true);
             });
         };
 
@@ -1063,7 +1039,7 @@ export default function Home() {
             } else {
                 const displayName = (getEl('full-name') as HTMLInputElement).value;
                  if (!email || !password || !displayName) {
-                     showNotification("Please fill all fields to sign up.", true);
+                     functionsRef.current.showNotification("Please fill all fields to sign up.", true);
                      return;
                 }
                 handleSignUp(email, password, displayName);
@@ -1071,11 +1047,11 @@ export default function Home() {
         });
         
         getEl('logout-btn')?.addEventListener('click', handleLogout);
-        getEl('admin-panel-btn')?.addEventListener('click', openAdminPanel);
-        getEl('activity-log-btn')?.addEventListener('click', openUserActivityLog);
-        getEl('forgot-password-link')?.addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
+        getEl('admin-panel-btn')?.addEventListener('click', functionsRef.current.openAdminPanel);
+        getEl('activity-log-btn')?.addEventListener('click', functionsRef.current.openUserActivityLog);
+        getEl('forgot-password-link')?.addEventListener('click', (e) => { e.preventDefault(); functionsRef.current.openModal('forgot-password-modal'); });
         getEl('send-reset-link-btn')?.addEventListener('click', handleForgotPassword);
-        getEl('confirm-reject-btn')?.addEventListener('click', rejectJobFile);
+        getEl('confirm-reject-btn')?.addEventListener('click', functionsRef.current.rejectJobFile);
 
         getEl('search-bar')?.addEventListener('input', applyFiltersAndDisplay);
         getEl('filter-status')?.addEventListener('change', applyFiltersAndDisplay);
@@ -1090,6 +1066,11 @@ export default function Home() {
         });
 
         const clientForm = getEl('client-form');
+        const saveClient = () => console.log('saveClient'); // Placeholder
+        const clearClientForm = () => console.log('clearClientForm'); // Placeholder
+        const updateStatusSummary = () => console.log('updateStatusSummary'); // Placeholder
+        const setupAutocomplete = (input: any, suggest: any, type: any) => console.log('setupAutocomplete'); // Placeholder
+
         if (clientForm) {
           clientForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -1114,7 +1095,7 @@ export default function Home() {
             unsubscribe(); // Cleanup on unmount
         };
 
-    }, [appInitialized, isLoginView, getEl, showNotification, openAdminPanel, openUserActivityLog, openModal, rejectJobFile, saveClient, clearClientForm, setupAutocomplete, openAnalyticsDashboard, closeAnalyticsDashboard, printAnalytics, openClientManager, openFileManager, saveJobFile, clearForm, printPage, openRecycleBin, closeModal, openChargeManager, suggestCharges, addChargeRow, printPreview, saveUserChanges, backupAllData, handleRestoreFile, confirmDelete, previewJobFileById, loadJobFileById, downloadAnalyticsCsv, showStatusJobs, uncheckJobFile, checkJobFile, approveJobFile, promptForRejection, restoreJobFile, confirmPermanentDelete, saveChargeDescription, deleteChargeDescription, showUserJobs, showMonthlyJobs, showSalesmanJobs, editClient]);
+    }, [appInitialized, isLoginView, firebaseConfig]);
 
     // --- RENDER ---
     return (
@@ -1336,280 +1317,133 @@ export default function Home() {
                             <span>Clients</span>
                         </button>
                         <button onClick={() => window.openFileManager()} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.586l.293.293a1 1 0 001.414 0L10.414 12l-1.293 1.293a1 1 0 000 1.414l.293.293V16a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm8 2a1 1 0 000-2H4a1 1 0 00-1 1v10a1 1 0 001 1h4a1 1 0 001-1v-1.586l-.293-.293a1 1 0 01-1.414 0L6.586 12l1.293-1.293a1 1 0 011.414 0l.293-.293V8z" clipRule="evenodd" /><path d="M18 8a2 2 0 00-2-2h-4l-2-2h-4a2 2 0 00-2 2v.5a1 1 0 002 0V6a1 1 0 011-1h2.586l2 2H16a1 1 0 011 1v8a1 1 0 01-1 1h-2.5a1 1 0 100 2H16a2 2 0 002-2V8z" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h14a1 1 0 001-1V7a1 1 0 00-1-1h-5.586a1 1 0 01-.707-.293l-1.414-1.414A1 1 0 005.586 3H3zm2 5a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H6z" clipRule="evenodd" /></svg>
                             <span>File Manager</span>
                         </button>
                         <button onClick={() => window.saveJobFile()} className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586L7.707 10.293zM3 4a1 1 0 011-1h12a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 00-1 1v4a1 1 0 001 1h2a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 001-1V9a1 1 0 00-1-1H4a1 1 0 01-1-1V4z" /></svg>
-                            <span>Save to DB</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293zM5 4a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" /></svg>
+                            <span>Save</span>
                         </button>
-                        <button onClick={() => window.clearForm()} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.898 0V3a1 1 0 112 0v2.101a7.002 7.002 0 01-11.898 0V3a1 1 0 01-1-1zM12 10a2 2 0 11-4 0 2 2 0 014 0zM4 10a2 2 0 00-2 2v2a2 2 0 002 2h12a2 2 0 002-2v-2a2 2 0 00-2-2h-1.101A7.002 7.002 0 0010 12c-2.256 0-4.233-.996-5.5-2.543A7.002 7.002 0 004 10z" clipRule="evenodd" /></svg>
-                            <span>New Job</span>
+                        <button onClick={() => window.clearForm()} className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                            <span>Clear</span>
                         </button>
-                        <button onClick={() => window.printPage()} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" /></svg>
-                            <span>Print</span>
+                        <button onClick={() => window.printPreview()} className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v-2a1 1 0 011-1h8a1 1 0 011 1v2h1a2 2 0 002-2v-3a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clipRule="evenodd" /></svg>
+                            <span>Preview / Print</span>
+                        </button>
+                        <button onClick={() => window.openRecycleBin()} className="admin-only bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                            <span>Recycle Bin</span>
                         </button>
                     </div>
 
                 </div>
-            </div>
 
-            {/* Hidden containers and Modals */}
-            <div id="print-output" className="hidden"></div>
-            <div id="public-view-container"></div>
-            <div id="analytics-container" className="hidden">
-                 {/* ... Analytics JSX ... */}
-                 <div className="container">
-                    <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 no-print">
-                        <h3 className="text-2xl font-bold">Analytics Dashboard</h3>
-                        <div>
-                            <button onClick={() => window.printAnalytics()} title="Print Analytics" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
-                            <button onClick={() => window.closeAnalyticsDashboard()} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded">Back to Job File</button>
-                        </div>
-                    </div>
-                    <div id="analytics-body" className="space-y-6"></div>
-                </div>
-            </div>
-            
-            {/* Modals */}
-            <div id="loader-overlay" className="overlay"><div className="loader"></div></div>
-            <div id="notification"></div>
-            
-             {/* ... All other modals JSX ... */}
-            <div id="file-manager-modal" className="overlay">
-                <div className="modal-content max-w-5xl">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-2xl font-bold">File Manager</h3>
-                        <div>
-                            <button onClick={() => window.openRecycleBin()} className="admin-only bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded text-sm mr-4">Recycle Bin</button>
+                 {/* Modals & Overlays */}
+                <div id="loader-overlay" className="overlay"><div className="loader"></div></div>
+                <div id="notification"></div>
+                <div id="analytics-container" style={{display: 'none'}}></div>
+                <div id="file-manager-modal" className="overlay">
+                    <div className="modal-content max-w-4xl">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-2xl font-bold">Job File Manager</h2>
                             <button onClick={() => window.closeModal('file-manager-modal')} className="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
                         </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
-                        <div className="md:col-span-2">
-                            <label htmlFor="search-bar" className="text-sm font-medium text-gray-700">Search</label>
-                            <input type="text" id="search-bar" className="input-field mt-1" placeholder="Job No, Shipper, etc." />
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
+                            <div className="md:col-span-2"><label htmlFor="search-bar" className="block text-sm font-medium text-gray-700">Search (Job No, Shipper, Consignee)</label><input type="text" id="search-bar" className="input-field mt-1" /></div>
+                            <div><label htmlFor="filter-status" className="block text-sm font-medium text-gray-700">Status</label>
+                                <select id="filter-status" className="input-field mt-1">
+                                    <option value="">All</option><option value="pending">Pending</option><option value="checked">Checked</option><option value="approved">Approved</option><option value="rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <div><label htmlFor="filter-date-from" className="block text-sm font-medium text-gray-700">Date Range</label>
+                                <div className="flex items-center mt-1">
+                                    <input type="date" id="filter-date-from" className="input-field" /><span className="mx-2">to</span><input type="date" id="filter-date-to" className="input-field" />
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label htmlFor="filter-status" className="text-sm font-medium text-gray-700">Status</label>
-                            <select id="filter-status" className="input-field mt-1">
-                                <option value="">All Statuses</option>
-                                <option value="pending">Pending</option>
-                                <option value="checked">Checked</option>
-                                <option value="approved">Approved</option>
-                                <option value="rejected">Rejected</option>
-                            </select>
+                        <div className="text-right mb-4">
+                           <button id="clear-filters-btn" className="text-blue-600 hover:text-blue-800 text-sm font-medium">Clear Filters</button>
                         </div>
-                        <div>
-                            <label htmlFor="filter-date-from" className="text-sm font-medium text-gray-700">From Date</label>
-                            <input type="date" id="filter-date-from" className="input-field mt-1" />
-                        </div>
-                        <div>
-                            <label htmlFor="filter-date-to" className="text-sm font-medium text-gray-700">To Date</label>
-                            <input type="date" id="filter-date-to" className="input-field mt-1" />
-                        </div>
-                        <div className="flex items-end">
-                            <button id="clear-filters-btn" className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded text-sm">Clear Filters</button>
-                        </div>
-                    </div>
-                    <div id="job-files-list" className="space-y-2 max-h-[60vh] overflow-y-auto"></div>
-                </div>
-            </div>
-            <div id="confirm-modal" className="overlay">
-                <div className="modal-content max-w-sm">
-                    <h3 className="text-lg font-bold mb-4" id="confirm-title">Confirm Action</h3>
-                    <div id="confirm-message" className="mb-4 text-sm">Are you sure?</div>
-                    <div className="text-right mt-6 space-x-2">
-                        <button id="confirm-cancel" className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
-                        <button id="confirm-ok" className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm</button>
+                        <div id="status-summary-file-manager" className="mb-4"></div>
+                        <div id="job-files-list" className="space-y-3 max-h-[50vh] overflow-y-auto border p-2 rounded-md bg-gray-50"></div>
                     </div>
                 </div>
-            </div>
-            <div id="preview-modal" className="overlay">
-                <div className="modal-content max-w-4xl">
-                    <div className="flex flex-col sm:flex-row justify-between items-center mb-4 no-print gap-2">
-                        <h3 className="text-2xl font-bold">Job File Preview</h3>
-                        <div>
-                            <button onClick={() => window.printPreview()} title="Print Preview" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
-                            <button onClick={() => window.closeModal('preview-modal')} className="text-gray-500 hover:text-gray-800 text-3xl align-middle">&times;</button>
+
+                <div id="client-manager-modal" className="overlay">
+                    <div className="modal-content max-w-4xl">
+                         <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-2xl font-bold">Client Manager</h2>
+                            <button onClick={() => window.closeModal('client-manager-modal')} className="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
                         </div>
-                    </div>
-                    <div id="preview-body"></div>
-                </div>
-            </div>
-            <div id="admin-panel-modal" className="overlay">
-                <div className="modal-content max-w-2xl">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-2xl font-bold">Admin Panel</h3>
-                        <button onClick={() => window.closeModal('admin-panel-modal')} className="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                    </div>
-                    <div className="border rounded-lg p-4">
-                        <h4 className="text-lg font-semibold mb-2">User Management</h4>
-                        <div id="user-list" className="space-y-2 max-h-[40vh] overflow-y-auto"></div>
-                        <div className="text-right mt-4">
-                            <button onClick={() => window.saveUserChanges()} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save User Changes</button>
-                        </div>
-                    </div>
-                    <div className="border rounded-lg p-4 mt-6">
-                        <h4 className="text-lg font-semibold mb-3">Data Backup & Restore</h4>
-                        <p className="text-sm text-gray-600 mb-4">Backup all job files and user data to a single JSON file. This can be used for offline storage or to restore the database to a previous state.</p>
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <button onClick={() => window.backupAllData()} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
-                                Backup All Data
-                            </button>
-                            <label htmlFor="restore-file-input" className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2 cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-                                Restore From File
-                                <input type="file" id="restore-file-input" className="hidden" accept=".json" onChange={(e) => window.handleRestoreFile(e)} />
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="reject-reason-modal" className="overlay">
-                <div className="modal-content max-w-md">
-                    <h3 className="text-lg font-bold mb-4">Rejection Reason</h3>
-                    <p className="mb-4">Please provide a reason for rejecting this job file.</p>
-                    <textarea id="rejection-reason-input" className="input-field w-full" rows={3}></textarea>
-                    <div className="text-right mt-6 space-x-2">
-                        <button onClick={() => window.closeModal('reject-reason-modal')} className="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
-                        <button id="confirm-reject-btn" className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm Rejection</button>
-                    </div>
-                </div>
-            </div>
-            <div id="forgot-password-modal" className="overlay">
-                <div className="modal-content max-w-md">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-bold">Reset Password</h3>
-                        <button onClick={() => window.closeModal('forgot-password-modal')} className="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                    </div>
-                    <p className="mb-4 text-gray-600">Enter your email address and we will send you a link to reset your password.</p>
-                    <div>
-                        <label htmlFor="reset-email" className="sr-only">Email address</label>
-                        <input id="reset-email" name="email" type="email" autoComplete="email" required className="input-field" placeholder="Email address" />
-                    </div>
-                    <div className="text-right mt-6">
-                        <button id="send-reset-link-btn" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                            Send Password Reset Link
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div id="client-manager-modal" className="overlay">
-                <div className="modal-content max-w-4xl">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-2xl font-bold">Client Management</h3>
-                        <button onClick={() => window.closeModal('client-manager-modal')} className="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 id="client-form-title" className="text-xl font-semibold mb-4">Add New Client</h4>
-                            <form id="client-form" className="space-y-4">
-                                <input type="hidden" id="client-id" />
-                                <div>
-                                    <label htmlFor="client-name" className="block text-sm font-medium text-gray-700">Client Name</label>
-                                    <input type="text" id="client-name" className="input-field mt-1" required />
-                                </div>
-                                <div>
-                                    <label htmlFor="client-address" className="block text-sm font-medium text-gray-700">Address</label>
-                                    <textarea id="client-address" rows={2} className="input-field mt-1"></textarea>
-                                </div>
-                                <div>
-                                    <label htmlFor="client-contact-person" className="block text-sm font-medium text-gray-700">Contact Person</label>
-                                    <input type="text" id="client-contact-person" className="input-field mt-1" />
-                                </div>
-                                <div>
-                                    <label htmlFor="client-phone" className="block text-sm font-medium text-gray-700">Phone</label>
-                                    <input type="text" id="client-phone" className="input-field mt-1" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Client Type</label>
-                                    <select id="client-type" className="input-field mt-1">
-                                        <option value="Shipper">Shipper</option>
-                                        <option value="Consignee">Consignee</option>
-                                        <option value="Both">Both</option>
-                                    </select>
-                                </div>
-                                <div className="flex gap-4">
-                                    <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save Client</button>
-                                    <button type="button" id="clear-client-form-btn" className="w-full bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Clear</button>
-                                </div>
-                            </form>
-                        </div>
-                        <div>
-                            <h4 className="text-xl font-semibold mb-4">Existing Clients</h4>
-                            <input type="text" id="client-search-bar" className="input-field mb-4" placeholder="Search clients..." />
-                            <div id="client-list" className="space-y-2 max-h-[50vh] overflow-y-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="md:col-span-1">
+                                <h3 className="text-lg font-semibold mb-2">Add / Edit Client</h3>
+                                <form id="client-form" className="space-y-3 bg-gray-50 p-4 rounded-lg">
+                                    <input type="hidden" id="client-id" />
+                                    <div><label htmlFor="client-name" className="block text-sm font-medium">Name</label><input type="text" id="client-name" className="input-field" required /></div>
+                                    <div><label htmlFor="client-address" className="block text-sm font-medium">Address</label><textarea id="client-address" rows={3} className="input-field"></textarea></div>
+                                    <div><label htmlFor="client-contact" className="block text-sm font-medium">Contact Person</label><input type="text" id="client-contact" className="input-field" /></div>
+                                    <div><label htmlFor="client-phone" className="block text-sm font-medium">Phone</label><input type="text" id="client-phone" className="input-field" /></div>
+                                    <div>
+                                        <label className="block text-sm font-medium">Type</label>
+                                        <select id="client-type" className="input-field">
+                                            <option value="Shipper">Shipper</option>
+                                            <option value="Consignee">Consignee</option>
+                                            <option value="Both">Both</option>
+                                        </select>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button type="submit" className="flex-1 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600">Save Client</button>
+                                        <button type="button" id="clear-client-form-btn" className="flex-1 bg-gray-300 py-2 px-4 rounded-md hover:bg-gray-400">Clear</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div className="md:col-span-2">
+                                <input type="text" id="client-search-bar" className="input-field mb-3" placeholder="Search clients..." />
+                                <div id="client-list" className="space-y-2 max-h-[60vh] overflow-y-auto border p-2 rounded-md"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-             <div id="charge-manager-modal" className="overlay">
-                <div className="modal-content max-w-lg">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-2xl font-bold">Manage Charge Descriptions</h3>
-                        <button onClick={() => window.closeModal('charge-manager-modal')} className="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                    </div>
-                    <div className="space-y-4">
-                        <div>
-                            <h4 className="text-lg font-semibold mb-2">Add New Description</h4>
-                            <div className="flex gap-2">
-                                <input type="text" id="new-charge-description" className="input-field" placeholder="E.g., Customs Duty" />
-                                <button onClick={() => window.saveChargeDescription()} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add</button>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 className="text-lg font-semibold mb-2">Existing Descriptions</h4>
-                            <div id="charge-description-list" className="space-y-2 max-h-[50vh] overflow-y-auto">
-                            </div>
+
+                <div id="preview-modal" className="overlay"><div className="modal-content max-w-4xl" id="preview-content"></div></div>
+                <div id="recycle-bin-modal" className="overlay"><div className="modal-content max-w-3xl" id="recycle-bin-content"></div></div>
+                <div id="confirm-delete-modal" className="overlay">
+                    <div className="modal-content max-w-sm text-center">
+                        <h3 className="text-lg font-bold mb-4">Are you sure?</h3>
+                        <p id="confirm-delete-message" className="mb-6">Do you really want to delete this file? This action cannot be undone.</p>
+                        <div className="flex justify-center gap-4">
+                            <button onClick={() => window.closeModal('confirm-delete-modal')} className="bg-gray-300 py-2 px-6 rounded-md hover:bg-gray-400">Cancel</button>
+                            <button id="confirm-delete-btn" className="bg-red-600 text-white py-2 px-6 rounded-md hover:bg-red-700">Delete</button>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="activity-log-modal" className="overlay">
-                <div className="modal-content max-w-4xl">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-2xl font-bold">User Activity Log</h3>
-                        <button onClick={() => window.closeModal('activity-log-modal')} className="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                    </div>
-                    <div className="max-h-[70vh] overflow-y-auto">
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="bg-gray-100">
-                                    <th className="table-cell font-semibold text-left">User Name</th>
-                                    <th className="table-cell font-semibold text-left">Job File No.</th>
-                                    <th className="table-cell font-semibold text-left">Time Opened</th>
-                                </tr>
-                            </thead>
-                            <tbody id="activity-log-body">
-                            </tbody>
-                        </table>
+                <div id="forgot-password-modal" className="overlay">
+                    <div className="modal-content max-w-md">
+                         <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-xl font-bold">Reset Password</h3>
+                            <button onClick={() => window.closeModal('forgot-password-modal')} className="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-4">Enter your email and a password reset link will be sent to you.</p>
+                        <input type="email" id="reset-email" className="input-field mb-4" placeholder="Your email address" />
+                        <button id="send-reset-link-btn" className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700">Send Reset Link</button>
                     </div>
                 </div>
-            </div>
-            <div id="user-jobs-modal" className="overlay">
-                <div className="modal-content max-w-5xl">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 id="user-jobs-modal-title" className="text-2xl font-bold">User&apos;s Job Files</h3>
-                        <button onClick={() => window.closeModal('user-jobs-modal')} className="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                    </div>
-                    <div id="user-jobs-list" className="space-y-2 max-h-[70vh] overflow-y-auto">
-                    </div>
-                </div>
-            </div>
-            <div id="recycle-bin-modal" className="overlay">
-                <div className="modal-content max-w-5xl">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-2xl font-bold">Recycle Bin</h3>
-                        <button onClick={() => window.closeModal('recycle-bin-modal')} className="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                    </div>
-                    <div id="recycle-bin-list" className="space-y-2 max-h-[70vh] overflow-y-auto">
-                    </div>
-                </div>
+                 <div id="charge-manager-modal" className="overlay"></div>
+                 <div id="reject-reason-modal" className="overlay">
+                     <div className="modal-content max-w-md">
+                         <h3 className="text-lg font-bold mb-4">Reason for Rejection</h3>
+                         <textarea id="rejection-reason-input" rows={4} className="input-field w-full mb-4" placeholder="Please provide a clear reason..."></textarea>
+                         <div className="text-right">
+                            <button onClick={() => window.closeModal('reject-reason-modal')} className="bg-gray-300 py-2 px-4 rounded mr-2">Cancel</button>
+                            <button id="confirm-reject-btn" className="bg-red-500 text-white py-2 px-4 rounded">Confirm Rejection</button>
+                         </div>
+                     </div>
+                 </div>
+                 <div id="admin-panel-modal" className="overlay"></div>
+                 <div id="activity-log-modal" className="overlay"></div>
             </div>
         </>
     );
