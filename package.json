@@ -26,6 +26,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "@types/chart.js": "^2.9.41",
-    "@types/qrcodejs": "^1.0.0"
+    "@types/qrcodejs": "^1.0.0",
+    "autoprefixer": "^10.4.19"
   }
 }
