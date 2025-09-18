@@ -1,9 +1,23 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Local environment variables
+# Keep files with secrets out of git
+.env*.local
+
 # dependencies
 /node_modules
 /.pnp
 .pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
 
 # misc
 .DS_Store
@@ -14,21 +28,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
-
 # vercel
 .vercel
-
-# next.js
-/.next/
-/out/
-
-# turbo
-.turbo
-
-# worker specific
-/worker/node_modules
-/worker/dist
-/worker/.wrangler
-/worker/.dev.vars
