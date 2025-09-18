@@ -546,7 +546,10 @@ export default function Home() {
 
         const loadJobFileById = async (docId: string) => {
             const db = dbInstance.current;
-            if (!db) return;
+            if (!db) {
+                showNotification("Database not initialized.", true);
+                return;
+            }
             showLoader();
             try {
                 const docRef = doc(db, 'jobfiles', docId);
@@ -574,7 +577,10 @@ export default function Home() {
 
         const saveJobFile = async () => {
             const db = dbInstance.current;
-            if (!db) { showNotification("Database not connected.", true); return; }
+            if (!db) { 
+                showNotification("Database not connected.", true); 
+                return; 
+            }
             
             const jobFileNoInput = getEl('job-file-no') as HTMLInputElement;
             const jobFileNo = jobFileNoInput.value.trim();
@@ -732,6 +738,11 @@ export default function Home() {
         
         const auth = authInstance.current;
         const db = dbInstance.current;
+        if (!auth || !db) {
+            console.error("Firebase Auth or Firestore not initialized");
+            return;
+        }
+
 
         const setupGlobalFunctions = () => {
           if (functionsRef.current) {
@@ -781,6 +792,11 @@ export default function Home() {
 
         // --- AUTH LOGIC ---
         const handleSignUp = async (email: string, password: string, displayName: string) => {
+            const auth = authInstance.current;
+            if (!auth) {
+                functionsRef.current.showNotification("Authentication service not ready.", true);
+                return;
+            }
             functionsRef.current.showLoader();
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
@@ -795,6 +811,11 @@ export default function Home() {
         };
 
         const handleLogin = async (email: string, password: string) => {
+            const auth = authInstance.current;
+            if (!auth) {
+                functionsRef.current.showNotification("Authentication service not ready.", true);
+                return;
+            }
             functionsRef.current.showLoader();
             try {
                 await signInWithEmailAndPassword(auth, email, password);
@@ -810,6 +831,11 @@ export default function Home() {
         };
 
         const handleForgotPassword = async () => {
+            const auth = authInstance.current;
+            if (!auth) {
+                functionsRef.current.showNotification("Authentication service not ready.", true);
+                return;
+            }
             const email = (getEl('reset-email') as HTMLInputElement).value.trim();
             if (!email) {
                 functionsRef.current.showNotification("Please enter your email address.", true);
@@ -833,6 +859,11 @@ export default function Home() {
         };
 
         const handleLogout = () => {
+            const auth = authInstance.current;
+            if (!auth) {
+                functionsRef.current.showNotification("Authentication service not ready.", true);
+                return;
+            }
             signOut(auth);
         };
         
@@ -882,7 +913,11 @@ export default function Home() {
 
         // --- FIRESTORE LOGIC ---
         const loadJobFiles = () => {
-            if (!db) return;
+            const db = dbInstance.current;
+            if (!db) {
+                functionsRef.current.showNotification("Database not ready.", true);
+                return;
+            }
             const jobFilesCollection = collection(db, 'jobfiles');
             const q = query(jobFilesCollection);
 
@@ -943,7 +978,11 @@ export default function Home() {
         };
         // --- CLIENT MANAGEMENT ---
         const loadClients = () => {
-            if (!db) return;
+            const db = dbInstance.current;
+            if (!db) {
+                functionsRef.current.showNotification("Database not ready.", true);
+                return;
+            }
             const clientsCollection = collection(db, 'clients');
             onSnapshot(query(clientsCollection), (snapshot) => {
                 clientsCache.current = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Client));
