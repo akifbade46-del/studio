@@ -172,7 +172,7 @@ export default function Home() {
     const currentFilteredJobs = useRef<JobFile[]>([]);
     const fileIdToReject = useRef<string | null>(null);
     const profitChartInstance = useRef<Chart | null>(null);
-    const functionsRef = useRef<any>(null);
+    const functionsRef = useRef<any>({});
 
     const firebaseConfig = {
         apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -184,7 +184,91 @@ export default function Home() {
         measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
     };
 
-    if (!functionsRef.current) {
+    // --- AUTH LOGIC ---
+    const handleSignUp = useCallback(async (email: string, password: string, displayName: string) => {
+        const auth = authInstance.current;
+        if (!auth) {
+            functionsRef.current.showNotification("Authentication service not ready.", true);
+            return;
+        }
+        functionsRef.current.showLoader();
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            functionsRef.current.showNotification("Account created! Please wait for admin approval.", false);
+            await signOut(auth);
+            setIsLoginView(true);
+        } catch (error: any) {
+            console.error("Sign up error:", error);
+            functionsRef.current.showNotification(error.message, true);
+        }
+        functionsRef.current.hideLoader();
+    }, []);
+
+    const handleLogin = useCallback(async (email: string, password: string) => {
+        const auth = authInstance.current;
+        if (!auth || !functionsRef.current?.showLoader) {
+            console.error("Auth or functions not ready for login.");
+            alert("Application is not ready. Please wait a moment and try again.");
+            return;
+        }
+        functionsRef.current.showLoader();
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (error: any) {
+            console.error("Login error:", error);
+            let message = "Login failed. Please check your email and password.";
+            if (['auth/user-not-found', 'auth/wrong-password', 'auth/invalid-credential'].includes(error.code)) {
+                message = "Incorrect email or password. Please try again or reset your password.";
+            }
+            functionsRef.current.showNotification(message, true);
+        }
+        functionsRef.current.hideLoader();
+    }, []);
+
+    const handleForgotPassword = useCallback(async () => {
+        const auth = authInstance.current;
+        const getEl = (id: string) => document.getElementById(id);
+        if (!auth) {
+            functionsRef.current.showNotification("Authentication service not ready.", true);
+            return;
+        }
+        const email = (getEl('reset-email') as HTMLInputElement).value.trim();
+        if (!email) {
+            functionsRef.current.showNotification("Please enter your email address.", true);
+            return;
+        }
+        functionsRef.current.showLoader();
+        try {
+            await sendPasswordResetEmail(auth, email);
+            functionsRef.current.hideLoader();
+            functionsRef.current.closeModal('forgot-password-modal');
+            functionsRef.current.showNotification("Password reset link sent! Check your email inbox.", false);
+        } catch (error: any) {
+            functionsRef.current.hideLoader();
+            console.error("Password reset error:", error);
+            let message = "Could not send reset link. Please try again.";
+            if(error.code === 'auth/user-not-found'){
+                message = "No account found with this email address.";
+            }
+            functionsRef.current.showNotification(message, true);
+        }
+    }, []);
+
+    const handleLogout = useCallback(() => {
+        const auth = authInstance.current;
+        if (!auth) {
+            functionsRef.current.showNotification("Authentication service not ready.", true);
+            return;
+        }
+        signOut(auth);
+    }, []);
+
+    
+    // --- MAIN APP LOGIC ---
+    useEffect(() => {
+        if (appInitialized) return;
+
+        // --- Helper functions ---
         const getEl = (id: string) => document.getElementById(id);
         const querySel = (selector: string) => document.querySelector(selector);
         const querySelAll = (selector: string) => document.querySelectorAll(selector);
@@ -261,7 +345,7 @@ export default function Home() {
             };
 
             const showSuggestions = () => {
-                 const value = inputElement.value.toLowerCase();
+                const value = inputElement.value.toLowerCase();
                 if (!value) {
                     suggestionsPanel.classList.add('hidden');
                     return;
@@ -341,13 +425,13 @@ export default function Home() {
                         <th class="table-cell font-semibold">Selling</th>
                         <th class="table-cell font-semibold">Profit</th>
                         <th class="table-cell font-semibold">Notes</th>
-                         <th class="table-cell font-semibold"></th>
+                        <th class="table-cell font-semibold"></th>
                     </tr>
                 </thead>
                 <tbody id="charges-table-body">
                 </tbody>
                 <tfoot>
-                     <tr id="total-row" class="bg-gray-100 font-bold">
+                    <tr id="total-row" class="bg-gray-100 font-bold">
                         <td class="table-cell text-right">TOTAL:</td>
                         <td id="total-cost" class="table-cell text-right">0.000</td>
                         <td id="total-selling" class="table-cell text-right">0.000</td>
@@ -364,7 +448,7 @@ export default function Home() {
                     calculate();
                 }
             });
-             for(let i=0; i<5; i++) addChargeRow();
+            for(let i=0; i<5; i++) addChargeRow();
         };
 
         const getVal = (id: string) => (getEl(id) as HTMLInputElement)?.value || '';
@@ -508,7 +592,7 @@ export default function Home() {
             }
             if (['admin', 'checker'].includes(currentUser.current?.role || '')) {
                 if (!data.checkedBy) {
-                     (getEl('check-btn') as HTMLElement).style.display = 'block';
+                    (getEl('check-btn') as HTMLElement).style.display = 'block';
                 }
             }
 
@@ -516,11 +600,11 @@ export default function Home() {
             setChecked('product', data.pt);
 
             populateTable();
-             if (data.ch && data.ch.length > 0) {
-                 const tableBody = getEl('charges-table-body');
-                 if(tableBody) tableBody.innerHTML = '';
-                 data.ch.forEach(charge => addChargeRow(charge));
-             } else {
+            if (data.ch && data.ch.length > 0) {
+                const tableBody = getEl('charges-table-body');
+                if(tableBody) tableBody.innerHTML = '';
+                data.ch.forEach(charge => addChargeRow(charge));
+            } else {
                 for(let i=0; i<5; i++) addChargeRow();
             }
             calculate();
@@ -599,7 +683,7 @@ export default function Home() {
 
             const checks = [];
             if (!isUpdating) {
-                 checks.push({ field: 'jfn', value: jobFileNo, label: 'Job File No.' });
+                checks.push({ field: 'jfn', value: jobFileNo, label: 'Job File No.' });
             }
             if (invoiceNo) checks.push({ field: 'in', value: invoiceNo, label: 'Invoice No.' });
             if (mawbNo) checks.push({ field: 'mawb', value: mawbNo, label: 'MAWB No.' });
@@ -677,28 +761,33 @@ export default function Home() {
                 showNotification("Error saving job file.", true);
             }
         };
-        
+
+        // --- Store all functions in the ref ---
         functionsRef.current = {
+            showLoader,
+            hideLoader,
+            showNotification,
+            closeModal,
+            openModal,
+            clearForm,
+            loadJobFileById,
+            saveJobFile,
+            addChargeRow,
             openAnalyticsDashboard: () => console.log('openAnalyticsDashboard'),
             closeAnalyticsDashboard: () => console.log('closeAnalyticsDashboard'),
             printAnalytics: () => console.log('printAnalytics'),
             openClientManager: () => console.log('openClientManager'),
             openFileManager: () => console.log('openFileManager'),
-            saveJobFile,
-            clearForm,
             printPage: () => console.log('printPage'),
             openRecycleBin: () => console.log('openRecycleBin'),
-            closeModal,
             openChargeManager: () => console.log('openChargeManager'),
             suggestCharges: () => console.log('suggestCharges'),
-            addChargeRow,
             printPreview: () => console.log('printPreview'),
             saveUserChanges: () => console.log('saveUserChanges'),
             backupAllData: () => console.log('backupAllData'),
             handleRestoreFile: () => console.log('handleRestoreFile'),
             confirmDelete: () => console.log('confirmDelete'),
             previewJobFileById: () => console.log('previewJobFileById'),
-            loadJobFileById,
             downloadAnalyticsCsv: () => console.log('downloadAnalyticsCsv'),
             showStatusJobs: () => console.log('showStatusJobs'),
             uncheckJobFile: () => console.log('uncheckJobFile'),
@@ -717,11 +806,6 @@ export default function Home() {
             openUserActivityLog: () => console.log('openUserActivityLog'),
             rejectJobFile: () => console.log('rejectJobFile'),
         };
-    }
-    
-    // --- MAIN APP LOGIC ---
-    useEffect(() => {
-        if (appInitialized) return;
 
         // Initialize Firebase
         if (!firebaseApp.current) {
@@ -731,7 +815,7 @@ export default function Home() {
                 dbInstance.current = getFirestore(firebaseApp.current);
             } catch (error) {
                 console.error("Firebase initialization failed:", error);
-                functionsRef.current.showNotification("Could not connect to the database.", true);
+                showNotification("Could not connect to the database.", true);
                 return;
             }
         }
@@ -743,21 +827,17 @@ export default function Home() {
             return;
         }
 
-
         const setupGlobalFunctions = () => {
           if (functionsRef.current) {
             for (const funcName in functionsRef.current) {
-                if (typeof functionsRef.current[funcName] === 'function') {
-                    (window as any)[funcName] = functionsRef.current[funcName];
+                if (typeof (functionsRef.current as any)[funcName] === 'function') {
+                    (window as any)[funcName] = (functionsRef.current as any)[funcName];
                 }
             }
           }
         };
 
         setupGlobalFunctions();
-
-        const getEl = (id: string) => document.getElementById(id);
-        const querySelAll = (selector: string) => document.querySelectorAll(selector);
 
         const showApp = () => {
             (getEl('login-screen') as HTMLElement).style.display = 'none';
@@ -789,83 +869,6 @@ export default function Home() {
             (getEl('app-container') as HTMLElement).style.display = 'none';
             (getEl('analytics-container') as HTMLElement).style.display = 'none';
         };
-
-        // --- AUTH LOGIC ---
-        const handleSignUp = async (email: string, password: string, displayName: string) => {
-            const auth = authInstance.current;
-            if (!auth) {
-                functionsRef.current.showNotification("Authentication service not ready.", true);
-                return;
-            }
-            functionsRef.current.showLoader();
-            try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                functionsRef.current.showNotification("Account created! Please wait for admin approval.", false);
-                await signOut(auth);
-                toggleAuthView(true);
-            } catch (error: any) {
-                console.error("Sign up error:", error);
-                functionsRef.current.showNotification(error.message, true);
-            }
-            functionsRef.current.hideLoader();
-        };
-
-        const handleLogin = async (email: string, password: string) => {
-            const auth = authInstance.current;
-            if (!auth) {
-                functionsRef.current.showNotification("Authentication service not ready.", true);
-                return;
-            }
-            functionsRef.current.showLoader();
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error: any) {
-                console.error("Login error:", error);
-                let message = "Login failed. Please check your email and password.";
-                if (['auth/user-not-found', 'auth/wrong-password', 'auth/invalid-credential'].includes(error.code)) {
-                    message = "Incorrect email or password. Please try again or reset your password.";
-                }
-                functionsRef.current.showNotification(message, true);
-            }
-            functionsRef.current.hideLoader();
-        };
-
-        const handleForgotPassword = async () => {
-            const auth = authInstance.current;
-            if (!auth) {
-                functionsRef.current.showNotification("Authentication service not ready.", true);
-                return;
-            }
-            const email = (getEl('reset-email') as HTMLInputElement).value.trim();
-            if (!email) {
-                functionsRef.current.showNotification("Please enter your email address.", true);
-                return;
-            }
-            functionsRef.current.showLoader();
-            try {
-                await sendPasswordResetEmail(auth, email);
-                functionsRef.current.hideLoader();
-                functionsRef.current.closeModal('forgot-password-modal');
-                functionsRef.current.showNotification("Password reset link sent! Check your email inbox.", false);
-            } catch (error: any) {
-                functionsRef.current.hideLoader();
-                console.error("Password reset error:", error);
-                let message = "Could not send reset link. Please try again.";
-                if(error.code === 'auth/user-not-found'){
-                    message = "No account found with this email address.";
-                }
-                functionsRef.current.showNotification(message, true);
-            }
-        };
-
-        const handleLogout = () => {
-            const auth = authInstance.current;
-            if (!auth) {
-                functionsRef.current.showNotification("Authentication service not ready.", true);
-                return;
-            }
-            signOut(auth);
-        };
         
         const toggleAuthView = (showLogin: boolean) => {
             const nameField = getEl('signup-name-field');
@@ -879,6 +882,7 @@ export default function Home() {
             emailField?.classList.toggle('rounded-md', showLogin);
             const approvalMessage = getEl('approval-message');
             if(approvalMessage) approvalMessage.style.display = 'none';
+            setIsLoginView(showLogin);
         };
 
         const displayJobFiles = (files: JobFile[]) => {
@@ -890,6 +894,7 @@ export default function Home() {
             }
             let filesHtml = '';
             files.forEach((docData) => {
+                if (!docData.id) return;
                 const deleteButton = currentUser.current?.role === 'admin' ? `<button onclick="confirmDelete('${docData.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm">Delete</button>` : '';
                 const lastUpdated = docData.updatedAt?.toDate ? docData.updatedAt.toDate().toLocaleString() : 'N/A';
                 
@@ -909,6 +914,25 @@ export default function Home() {
                 `;
             });
             list.innerHTML = filesHtml;
+        };
+
+        const updateStatusSummary = (elementId: string, files: JobFile[]) => {
+            const summaryEl = getEl(elementId);
+            if (!summaryEl) return;
+            const counts = files.reduce((acc, file) => {
+                acc[file.status || 'pending'] = (acc[file.status || 'pending'] || 0) + 1;
+                return acc;
+            }, {} as Record<string, number>);
+
+            summaryEl.innerHTML = `
+                <div class="flex flex-wrap justify-center gap-2 text-xs">
+                    <span class="font-bold">Total: ${files.length}</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Pending: ${counts['pending'] || 0}</span>
+                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full">Checked: ${counts['checked'] || 0}</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full">Approved: ${counts['approved'] || 0}</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full">Rejected: ${counts['rejected'] || 0}</span>
+                </div>
+            `;
         };
 
         // --- FIRESTORE LOGIC ---
@@ -1066,7 +1090,6 @@ export default function Home() {
         // --- EVENT LISTENERS ---
         getEl('auth-link')?.addEventListener('click', (e) => {
             e.preventDefault();
-            setIsLoginView(prev => !prev);
             toggleAuthView(!isLoginView);
         });
 
@@ -1107,7 +1130,7 @@ export default function Home() {
         const clientForm = getEl('client-form');
         const saveClient = () => console.log('saveClient'); // Placeholder
         const clearClientForm = () => console.log('clearClientForm'); // Placeholder
-        const updateStatusSummary = () => console.log('updateStatusSummary'); // Placeholder
+        
         const setupAutocomplete = (input: any, suggest: any, type: any) => console.log('setupAutocomplete'); // Placeholder
 
         if (clientForm) {
@@ -1134,7 +1157,7 @@ export default function Home() {
             unsubscribe(); // Cleanup on unmount
         };
 
-    }, [appInitialized, isLoginView, firebaseConfig]);
+    }, [appInitialized, handleLogin, handleSignUp, handleLogout, handleForgotPassword]); // Add dependencies here
 
     // --- RENDER ---
     return (
