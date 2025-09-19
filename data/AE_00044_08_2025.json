@@ -1,0 +1,210 @@
+{
+  "co": "MRS. ASMA K. SALIM SHAH",
+  "mawb": "882207377115",
+  "checkedAt": "2025-08-28T12:42:12.000Z",
+  "fv": "",
+  "rejectionReason": null,
+  "ca": "FEDEX",
+  "updatedAt": "2025-08-26T13:15:57.000Z",
+  "ts": "DOOR TO DOOR",
+  "cl": [
+    "Export"
+  ],
+  "sh": "MR. SALIM M. SHAH",
+  "status": "checked",
+  "gw": "26 KG",
+  "sm": "",
+  "rejectedAt": null,
+  "totalProfit": 17.07,
+  "in": "INV/00372/2025",
+  "de": "DUBAI ",
+  "dsc": "PERSONAL EFFECTS",
+  "rejectedBy": null,
+  "re": "",
+  "po": "",
+  "tn": "",
+  "createdAt": "2025-08-06T11:07:49.000Z",
+  "cn": "",
+  "approvedAt": null,
+  "jfn": "AE/00044/08/2025",
+  "pt": [
+    "Air Freight"
+  ],
+  "d": "2025-08-06",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "hawb": "",
+  "totalCost": 17.93,
+  "or": "KUWAIT",
+  "approvedBy": null,
+  "vw": "34 KG",
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "ex_works"
+    },
+    {
+      "c": "17.930",
+      "k": "freight",
+      "l": "Land Freight Door To Door Charges to Dubai UAE :",
+      "s": "35.000",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Fuel Security / War Surcharge:",
+      "k": "surcharge"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "formalities",
+      "l": "Formalities:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "c": "0",
+      "k": "do_fee"
+    },
+    {
+      "c": "0",
+      "k": "transportation",
+      "n": "",
+      "l": "Transportation Charges:",
+      "s": "0"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Handling Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "handling"
+    },
+    {
+      "s": "0",
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Documentation Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "documentation",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "clearance",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Customs Duty:",
+      "c": "0",
+      "k": "customs_duty",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "thc",
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Legalization Charges:",
+      "k": "legalization"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "demurrage",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "n": "",
+      "k": "loading"
+    },
+    {
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "k": "dest_clearance",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "packing",
+      "l": "Packing Charges:",
+      "n": ""
+    },
+    {
+      "k": "port_charges",
+      "n": "",
+      "s": "0",
+      "l": "Port Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Other Charges:",
+      "n": "",
+      "k": "other",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "l": "PAI Approval :",
+      "s": "0",
+      "n": "",
+      "k": "pai"
+    },
+    {
+      "c": "0",
+      "k": "insurance",
+      "l": "Insurance Fee :",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "EPA Charges :",
+      "c": "0",
+      "n": "",
+      "k": "epa"
+    }
+  ],
+  "totalSelling": 35,
+  "pc": "1",
+  "createdBy": "ABDUL HADI ",
+  "vn": "",
+  "pb": "ABDUL HADI ",
+  "checkedBy": "AJMAL KIANI",
+  "bd": "2025-08-26"
+}
