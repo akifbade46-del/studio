@@ -1,0 +1,205 @@
+{
+  "ca": "KUWAIT AIRWAYS",
+  "pc": "1",
+  "ts": "CLEARANCE AND DELIVERY ",
+  "dsc": "TEFLON PUMP",
+  "d": "2025-07-29",
+  "createdAt": "2025-08-10T09:25:20.000Z",
+  "checkedAt": null,
+  "updatedAt": "2025-08-24T12:48:31.000Z",
+  "cl": [
+    "Import"
+  ],
+  "hawb": "",
+  "pb": "ABDUL HADI ",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "in": "INV/00314/2025",
+  "checkedBy": null,
+  "re": "",
+  "or": "DUBAI",
+  "fv": "",
+  "po": "",
+  "tn": "",
+  "totalCost": 247.34,
+  "totalSelling": 300.34,
+  "totalProfit": 53,
+  "status": "pending",
+  "cn": "",
+  "co": "BOODAI TRADING CO",
+  "de": "KUWAIT",
+  "bd": "2025-07-15",
+  "vw": "",
+  "sh": "IDEX MIDDLE EASY FZE",
+  "mawb": "229-17382514",
+  "sm": "",
+  "jfn": "AC/00096/06/2025",
+  "vn": "",
+  "createdBy": "ABDUL HADI ",
+  "pt": [
+    "Air Freight"
+  ],
+  "gw": "122 KG",
+  "ch": [
+    {
+      "k": "ex_works",
+      "n": "",
+      "c": "0",
+      "l": "Ex-works Charges:",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "l": "Land/Air / Sea Freight:",
+      "s": "0",
+      "n": "",
+      "k": "freight"
+    },
+    {
+      "n": "",
+      "k": "surcharge",
+      "s": "0",
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Formalities:",
+      "k": "formalities",
+      "c": "0"
+    },
+    {
+      "c": "19.250",
+      "k": "do_fee",
+      "n": "",
+      "s": "19.250",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "n": "",
+      "k": "transportation",
+      "l": "Transportation Charges:",
+      "c": "0",
+      "s": "25.000"
+    },
+    {
+      "s": "17.610",
+      "c": "17.610",
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "k": "inspection"
+    },
+    {
+      "l": "Handling Charges:",
+      "s": "15.000",
+      "n": "",
+      "k": "handling",
+      "c": "0"
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "c": "3.000",
+      "k": "labor",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "15.000",
+      "n": "",
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "s": "20.000"
+    },
+    {
+      "s": "121.480",
+      "l": "Customs Duty:",
+      "c": "121.480",
+      "n": "",
+      "k": "customs_duty"
+    },
+    {
+      "c": "0",
+      "l": "Terminal Handling Charges:",
+      "k": "thc",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "30.000",
+      "c": "27.000",
+      "k": "legalization"
+    },
+    {
+      "k": "demurrage",
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "l": "Loading / Offloading Charges:",
+      "s": "0",
+      "k": "loading",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "Packing Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "packing"
+    },
+    {
+      "s": "5.000",
+      "n": "",
+      "k": "port_charges",
+      "c": "2.000",
+      "l": "Bank Charges:"
+    },
+    {
+      "c": "2.000",
+      "s": "2.000",
+      "k": "other",
+      "n": "",
+      "l": "Storage Charges:"
+    },
+    {
+      "c": "30.000",
+      "n": "",
+      "l": "PAI Approval :",
+      "s": "30.000",
+      "k": "pai"
+    },
+    {
+      "l": "PAI Service Fee :",
+      "k": "insurance",
+      "c": "10.000",
+      "s": "15.000",
+      "n": ""
+    },
+    {
+      "l": "EPA Charges :",
+      "k": "epa",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    }
+  ]
+}
