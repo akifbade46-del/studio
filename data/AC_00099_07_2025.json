@@ -1,0 +1,203 @@
+{
+  "updatedAt": "2025-08-10T12:20:13.000Z",
+  "cl": [
+    "Import"
+  ],
+  "vw": "",
+  "co": "BOODAI TRADING CO",
+  "pc": "2",
+  "re": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "pb": "ABDUL HADI ",
+  "tn": "",
+  "totalCost": 571.9,
+  "jfn": "AC/00099/07/2025",
+  "fv": "",
+  "mawb": "172-00563835",
+  "po": "",
+  "sm": "",
+  "vn": "",
+  "ch": [
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "ex_works",
+      "l": "Ex-works Charges:"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight",
+      "n": ""
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "c": "0",
+      "k": "surcharge",
+      "n": ""
+    },
+    {
+      "k": "formalities",
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Formalities:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "do_fee",
+      "c": "0",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "c": "0",
+      "k": "transportation",
+      "n": "",
+      "s": "30.000",
+      "l": "Transportation Charges:"
+    },
+    {
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "17.610",
+      "c": "17.610",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Handling Charges:",
+      "k": "handling",
+      "s": "15.000",
+      "c": "0"
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "c": "3.000",
+      "k": "labor",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "l": "Documentation Charges:",
+      "k": "documentation",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "k": "clearance",
+      "s": "20.000",
+      "c": "15.000",
+      "n": "",
+      "l": "Clearance Charges:"
+    },
+    {
+      "l": "Customs Duty:",
+      "s": "428.540",
+      "k": "customs_duty",
+      "n": "",
+      "c": "428.540"
+    },
+    {
+      "s": "38.750",
+      "l": "Terminal Handling Charges:",
+      "k": "thc",
+      "c": "38.750",
+      "n": ""
+    },
+    {
+      "s": "30.000",
+      "c": "27.000",
+      "k": "legalization",
+      "l": "Legalization Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "c": "0"
+    },
+    {
+      "l": "Loading / Offloading Charges:",
+      "n": "",
+      "c": "0",
+      "k": "loading",
+      "s": "0"
+    },
+    {
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "packing",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Packing Charges:"
+    },
+    {
+      "l": "Bank Charges:",
+      "c": "2.000",
+      "n": "",
+      "k": "port_charges",
+      "s": "5.000"
+    },
+    {
+      "l": "PAI Service Charges:",
+      "k": "other",
+      "c": "10.000",
+      "s": "15.000",
+      "n": ""
+    },
+    {
+      "s": "30.000",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "n": "",
+      "c": "30.000"
+    },
+    {
+      "l": "Insurance Fee :",
+      "k": "insurance",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "epa",
+      "c": "0",
+      "l": "EPA Charges :",
+      "s": "0",
+      "n": ""
+    }
+  ],
+  "dsc": "SPARE PARTS ",
+  "hawb": "",
+  "in": "INV/00324/2025",
+  "createdBy": "ABDUL HADI ",
+  "cn": "",
+  "d": "2025-07-13",
+  "bd": "2025-07-22",
+  "status": "pending",
+  "or": "PARIS",
+  "gw": "381 KG",
+  "ca": "CARGO LUX",
+  "ts": "CLEARANCE AND DELIVERY ",
+  "totalProfit": 58,
+  "de": "KUWAIT",
+  "pt": [
+    "Air Freight"
+  ],
+  "totalSelling": 629.9,
+  "createdAt": "2025-08-10T12:20:13.000Z",
+  "sh": "TRACTEL ACCESS SOLUTION SERVICE "
+}
