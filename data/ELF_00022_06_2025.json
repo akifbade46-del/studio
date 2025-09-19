@@ -1,0 +1,203 @@
+{
+  "pc": "53 BOXES",
+  "co": "MR. HAZEN TANWEER MOHAMED ELRAFIE",
+  "createdAt": "2025-08-20T06:41:22.000Z",
+  "sh": "MR. HAZEN TANWEER MOHAMED ELRAFIE",
+  "sm": "DINESH",
+  "cn": "",
+  "pb": "ANAND MANI",
+  "po": "",
+  "in": "INV/00359/2025",
+  "createdBy": "ANAND MANI",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "de": "EGYPT",
+  "ch": [
+    {
+      "l": "DOOR-DOOR Charges:",
+      "k": "ex_works",
+      "n": "",
+      "c": "0",
+      "s": "1658.000"
+    },
+    {
+      "c": "1250.000",
+      "n": "",
+      "l": "Land Freight:",
+      "s": "0",
+      "k": "freight"
+    },
+    {
+      "s": "0",
+      "k": "surcharge",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "k": "formalities",
+      "l": "Formalities:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "do_fee",
+      "n": "",
+      "s": "0",
+      "l": "Delivery Order Fee:",
+      "c": "0"
+    },
+    {
+      "k": "transportation",
+      "s": "0",
+      "n": "",
+      "l": "Transportation Charges:",
+      "c": "0"
+    },
+    {
+      "k": "inspection",
+      "n": "",
+      "c": "0",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "l": "Handling Charges:",
+      "s": "0",
+      "n": "",
+      "k": "handling"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "labor",
+      "n": "",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Documentation Charges:",
+      "s": "0",
+      "k": "documentation"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "clearance",
+      "l": "Clearance Charges:"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Customs Duty:",
+      "k": "customs_duty"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "k": "thc"
+    },
+    {
+      "k": "legalization",
+      "c": "0",
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "c": "0",
+      "n": "",
+      "k": "demurrage"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "k": "dest_clearance"
+    },
+    {
+      "l": "Packing Charges:",
+      "n": "",
+      "k": "packing",
+      "c": "101.646",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "port_charges",
+      "l": "Port Charges:",
+      "c": "0"
+    },
+    {
+      "k": "other",
+      "n": "",
+      "s": "0",
+      "l": "Other Charges:",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "s": "0"
+    },
+    {
+      "k": "insurance",
+      "c": "28.936",
+      "l": "Insurance Fee :",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "EPA Charges :",
+      "k": "epa"
+    }
+  ],
+  "jfn": "ELF/00022/06/2025",
+  "ca": "TRUCK",
+  "fv": "",
+  "cl": [
+    "Export"
+  ],
+  "hawb": "",
+  "vn": "",
+  "totalProfit": 277.42,
+  "status": "pending",
+  "mawb": "",
+  "bd": "2025-08-25",
+  "re": "",
+  "pt": [
+    "Land Freight"
+  ],
+  "gw": "1700 Kgs",
+  "d": "2025-08-20",
+  "updatedAt": "2025-08-31T11:07:17.000Z",
+  "tn": "",
+  "or": "KUWAIT",
+  "totalCost": 1380.58,
+  "ts": "LAND",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "vw": "17 CBM",
+  "totalSelling": 1658
+}
