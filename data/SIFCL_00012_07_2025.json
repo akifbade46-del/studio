@@ -1,0 +1,210 @@
+{
+  "hawb": "",
+  "checkedAt": "2025-08-26T09:55:36.000Z",
+  "ts": "DDP",
+  "checkedBy": "AJMAL KIANI",
+  "po": "",
+  "totalProfit": 413.51,
+  "fv": "",
+  "approvedAt": null,
+  "pb": "ABDUL HADI ",
+  "cn": "",
+  "createdBy": "ABDUL HADI ",
+  "ca": "ONE LINE ",
+  "approvedBy": null,
+  "or": "KOREA",
+  "bd": "2025-08-26",
+  "d": "2025-07-30",
+  "rejectionReason": null,
+  "dsc": "AUTOMOTIVE PROTACTION FILM",
+  "de": "KUWAIT ",
+  "lastUpdatedBy": "AJMAL KIANI",
+  "re": "",
+  "totalCost": 3424.2,
+  "co": "FOX PROTACTION COMPANY ",
+  "rejectedAt": null,
+  "createdAt": "2025-08-17T11:06:50.000Z",
+  "mawb": "ONEYSELF94679900",
+  "sm": "",
+  "cl": [
+    "Import"
+  ],
+  "updatedAt": "2025-08-26T09:55:33.000Z",
+  "pc": "19 PALLETS",
+  "tn": "",
+  "pt": [
+    "Sea Freight"
+  ],
+  "in": "INV/00367/2025",
+  "vw": "63.282 CBM",
+  "gw": "12709.800 KG",
+  "jfn": "SIFCL/00012/07/2025",
+  "status": "checked",
+  "sh": "INGOROW COMPANY LTD",
+  "rejectedBy": null,
+  "totalSelling": 3837.71,
+  "vn": "",
+  "ch": [
+    {
+      "k": "ex_works",
+      "c": "0",
+      "s": "0",
+      "l": "Ex-works Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Sea Freight:",
+      "k": "freight",
+      "s": "1450.000",
+      "c": "1307.510"
+    },
+    {
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "formalities",
+      "c": "0",
+      "l": "Formalities:"
+    },
+    {
+      "n": "",
+      "c": "273.500",
+      "s": "273.500",
+      "k": "do_fee",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "l": "Transportation Charges:",
+      "n": "",
+      "s": "250.000",
+      "k": "transportation",
+      "c": "90.000"
+    },
+    {
+      "n": "",
+      "s": "87.710",
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection",
+      "c": "87.710"
+    },
+    {
+      "k": "handling",
+      "s": "15.500",
+      "l": "Handling Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "labor",
+      "n": "",
+      "l": "Labor / Forklift Charges:",
+      "s": "0"
+    },
+    {
+      "k": "documentation",
+      "l": "Customs Documentation Charges:",
+      "s": "2.000",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Clearance Charges:",
+      "n": "",
+      "s": "25.000",
+      "k": "clearance",
+      "c": "12.000"
+    },
+    {
+      "k": "customs_duty",
+      "c": "1298.500",
+      "s": "1298.500",
+      "n": "",
+      "l": "Customs Duty:"
+    },
+    {
+      "n": "",
+      "k": "thc",
+      "l": "Terminal Handling Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "25.000",
+      "l": "Legalization Charges:",
+      "c": "27.000",
+      "k": "legalization",
+      "n": ""
+    },
+    {
+      "s": "5.000",
+      "c": "0",
+      "l": "Legalization Service Fee : ",
+      "k": "demurrage",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "400.000",
+      "c": "60.000",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance",
+      "n": ""
+    },
+    {
+      "k": "packing",
+      "c": "1.000",
+      "s": "5.500",
+      "l": "Bank Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "2.000",
+      "s": "0",
+      "k": "port_charges",
+      "l": "Photo Copies Charges:"
+    },
+    {
+      "l": "Other Charges (Profit Share US$ 837.00 @ .313)",
+      "s": "0",
+      "c": "261.981",
+      "n": "",
+      "k": "other"
+    },
+    {
+      "n": "",
+      "l": "Other Charges : (Special Discount KWD 50.000)",
+      "s": "0",
+      "c": "0",
+      "k": "pai"
+    },
+    {
+      "l": "Other Charges : (Taxi Charges) ",
+      "n": "",
+      "c": "3",
+      "s": "0",
+      "k": "insurance"
+    },
+    {
+      "c": "0",
+      "k": "epa",
+      "s": "0",
+      "l": "EPA Charges :",
+      "n": ""
+    }
+  ]
+}
