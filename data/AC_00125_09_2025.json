@@ -1,0 +1,92 @@
+{
+  "mawb": "312-94663273",
+  "or": "MUMBAI INDIA ",
+  "tn": "",
+  "ca": "INDIGO AIRLINE ",
+  "sh": "DYNAPAC ROAD CONSTRUCTION ",
+  "pc": "01",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "totalProfit": 52,
+  "checkedBy": "AJMAL KIANI",
+  "cl": [
+    "Import"
+  ],
+  "updatedAt": "2025-09-18T09:03:10.000Z",
+  "totalSelling": 174.42,
+  "dsc": "PARTS FOR ROAD ROLLERAS",
+  "gw": "63.50 KG ",
+  "de": "kUWAIT",
+  "hawb": "",
+  "totalCost": 122.42,
+  "bd": "2025-09-18",
+  "createdAt": "2025-09-08T06:16:30.000Z",
+  "ch": [
+    {
+      "n": "",
+      "c": "16.410",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "16.410"
+    },
+    {
+      "l": "Clearance Charges:",
+      "s": "20.000",
+      "c": "18.000",
+      "n": ""
+    },
+    {
+      "s": "5.000",
+      "l": "Bank Fee",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Customs Duty:",
+      "s": "24.510",
+      "n": "",
+      "c": "24.510"
+    },
+    {
+      "s": "38.500",
+      "l": "Terminal Handling Charges:",
+      "c": "38.500",
+      "n": ""
+    },
+    {
+      "s": "30.000",
+      "n": "",
+      "c": "25.000",
+      "l": "Legalization Charges:"
+    },
+    {
+      "c": "0",
+      "l": "Handling Charges:",
+      "n": "",
+      "s": "15.000"
+    },
+    {
+      "c": "0",
+      "l": "Transportation Charges:",
+      "s": "25.000",
+      "n": ""
+    }
+  ],
+  "po": "",
+  "jfn": "AC/00125/09/2025",
+  "in": "INV/00400/2025",
+  "d": "2025-09-08",
+  "co": "BOODAI TRADING CO",
+  "sm": "",
+  "createdBy": "ABDUL HADI ",
+  "pt": [
+    "Air Freight"
+  ],
+  "checkedAt": "2025-09-18T12:12:43.000Z",
+  "fv": "",
+  "vw": " 60 KG",
+  "re": "",
+  "pb": "ABDUL HADI ",
+  "vn": "",
+  "cn": "",
+  "ts": "",
+  "status": "checked"
+}
