@@ -1,0 +1,203 @@
+{
+  "mawb": "",
+  "de": "DOHA W/H",
+  "updatedAt": "2025-08-24T12:50:34.000Z",
+  "createdAt": "2025-08-10T10:40:46.000Z",
+  "cl": [
+    "Local Move"
+  ],
+  "or": "D. A. SALIM",
+  "bd": "2025-07-21",
+  "pt": [
+    "Others"
+  ],
+  "in": "INV/00322/2025",
+  "cn": "",
+  "totalProfit": 234,
+  "hawb": "",
+  "pb": "ABDUL HADI ",
+  "totalCost": 96,
+  "co": "MR. MARWAN M. BOODAI ",
+  "fv": "",
+  "status": "pending",
+  "gw": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "ca": "",
+  "jfn": "LMK/00088/06/2025",
+  "sm": "",
+  "vw": "",
+  "ts": "",
+  "re": "",
+  "pc": "",
+  "vn": "",
+  "dsc": "",
+  "ch": [
+    {
+      "s": "0",
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Land/Air / Sea Freight:",
+      "c": "0",
+      "s": "0",
+      "k": "freight"
+    },
+    {
+      "c": "0",
+      "k": "surcharge",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Formalities:",
+      "k": "formalities"
+    },
+    {
+      "k": "do_fee",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "l": "Transportation Charges:",
+      "k": "transportation",
+      "s": "100.000",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0",
+      "k": "inspection",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "50.000",
+      "l": "Handling Charges:",
+      "k": "handling",
+      "n": ""
+    },
+    {
+      "k": "labor",
+      "s": "180.000",
+      "n": "",
+      "l": "Labor / Forklift Charges:",
+      "c": "96.000"
+    },
+    {
+      "l": "Documentation Charges:",
+      "k": "documentation",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "l": "Clearance Charges:",
+      "c": "0",
+      "k": "clearance",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "customs_duty",
+      "s": "0",
+      "n": "",
+      "l": "Customs Duty:"
+    },
+    {
+      "c": "0",
+      "k": "thc",
+      "n": "",
+      "s": "0",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "l": "Legalization Charges:",
+      "k": "legalization",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "k": "demurrage",
+      "c": "0"
+    },
+    {
+      "k": "loading",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "c": "0",
+      "k": "dest_clearance",
+      "s": "0",
+      "n": "",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "s": "0",
+      "l": "Packing Charges:",
+      "n": "",
+      "k": "packing",
+      "c": "0"
+    },
+    {
+      "k": "port_charges",
+      "l": "Port Charges:",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "l": "Other Charges:",
+      "c": "0",
+      "n": "",
+      "k": "other",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "PAI Approval :",
+      "c": "0",
+      "k": "pai"
+    },
+    {
+      "c": "0",
+      "l": "Insurance Fee :",
+      "n": "",
+      "k": "insurance",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "l": "EPA Charges :",
+      "c": "0",
+      "k": "epa",
+      "n": ""
+    }
+  ],
+  "tn": "",
+  "po": "",
+  "d": "2025-07-30",
+  "createdBy": "ABDUL HADI ",
+  "sh": "MR. MARWAN M. BOODAI ",
+  "totalSelling": 330
+}
