@@ -1,0 +1,205 @@
+{
+  "ca": "",
+  "createdBy": "ABDUL HADI ",
+  "bd": "2025-08-31",
+  "gw": "",
+  "ts": "",
+  "sm": "",
+  "pb": "ABDUL HADI ",
+  "checkedAt": "2025-08-31T07:19:17.000Z",
+  "vn": "",
+  "fv": "",
+  "tn": "",
+  "totalProfit": 1020,
+  "createdAt": "2025-08-31T07:18:19.000Z",
+  "co": "MR. MARWAN BOODAI",
+  "in": "inv/00390/2025",
+  "totalSelling": 1240,
+  "mawb": "",
+  "de": "",
+  "vw": "",
+  "sh": "MR. MARWAN BOODAI",
+  "d": "2025-08-13",
+  "pc": "",
+  "po": "",
+  "status": "checked",
+  "cl": [
+    "Local Move"
+  ],
+  "or": "",
+  "re": "",
+  "pt": [
+    "Others"
+  ],
+  "cn": "",
+  "ch": [
+    {
+      "s": "0",
+      "n": "",
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge"
+    },
+    {
+      "l": "Formalities:",
+      "k": "formalities",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "transportation",
+      "n": "",
+      "l": "Transportation Charges:",
+      "c": "0",
+      "s": "450.000"
+    },
+    {
+      "k": "inspection",
+      "s": "0",
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "handling",
+      "s": "50.000",
+      "n": "",
+      "l": "Handling Charges:",
+      "c": "0"
+    },
+    {
+      "k": "labor",
+      "n": "",
+      "l": "Labor / Forklift Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "documentation",
+      "s": "0",
+      "l": "Documentation Charges:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "clearance",
+      "l": "Clearance Charges:",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "k": "customs_duty",
+      "n": "",
+      "l": "Customs Duty:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "thc",
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Legalization Charges:",
+      "c": "0",
+      "n": "",
+      "k": "legalization",
+      "s": "0"
+    },
+    {
+      "k": "demurrage",
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "560.000",
+      "l": "Loading / Offloading Charges Hari 15:",
+      "c": "180.000",
+      "n": "",
+      "k": "loading"
+    },
+    {
+      "k": "dest_clearance",
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "180.000",
+      "c": "40.000",
+      "l": "Packing Charges:",
+      "k": "packing"
+    },
+    {
+      "l": "Port Charges:",
+      "k": "port_charges",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Other Charges:",
+      "n": "",
+      "k": "other",
+      "c": "0"
+    },
+    {
+      "k": "pai",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "PAI Approval :"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Insurance Fee :",
+      "n": "",
+      "k": "insurance"
+    },
+    {
+      "l": "EPA Charges :",
+      "k": "epa",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    }
+  ],
+  "totalCost": 220,
+  "hawb": "",
+  "jfn": "LMK/00103/08/2025",
+  "updatedAt": "2025-08-31T07:18:19.000Z",
+  "dsc": "LOCAL MOVE FOR AUGUST ",
+  "checkedBy": "AJMAL KIANI",
+  "lastUpdatedBy": "ABDUL HADI "
+}
