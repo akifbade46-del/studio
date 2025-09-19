@@ -1,0 +1,203 @@
+{
+  "fv": "",
+  "ca": "",
+  "re": "",
+  "totalCost": 40,
+  "co": "DSU A&S SHIPPING AND TRANSPORT",
+  "totalProfit": 195,
+  "pt": [
+    "Others"
+  ],
+  "createdAt": "2025-08-11T10:09:28.000Z",
+  "createdBy": "ANAND MANI",
+  "d": "2025-07-22",
+  "lastUpdatedBy": "ANAND MANI",
+  "pb": "ANAND MANI",
+  "mawb": "",
+  "po": "SKWI0002276",
+  "in": "INV/00351/2025",
+  "cn": "",
+  "or": "AL RAI",
+  "sh": "DSV A&S SHIPPING AND TRANSPORT",
+  "sm": "",
+  "updatedAt": "2025-08-11T10:10:35.000Z",
+  "dsc": "PACKING PICKUP SAGRIGATE AND LABOUR CHARGES",
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "k": "ex_works",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "l": "Land/Air / Sea Freight:",
+      "c": "0",
+      "n": "",
+      "k": "freight",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "formalities",
+      "n": "",
+      "s": "0",
+      "l": "Formalities:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "do_fee",
+      "s": "0",
+      "c": "0",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Transportation Charges:",
+      "s": "0",
+      "k": "transportation"
+    },
+    {
+      "s": "0",
+      "k": "inspection",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Handling Charges:",
+      "k": "handling"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "40.000",
+      "l": "Labor / Forklift Charges:",
+      "k": "labor"
+    },
+    {
+      "k": "documentation",
+      "c": "0",
+      "n": "",
+      "l": "Documentation Charges:",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "k": "clearance",
+      "n": "",
+      "c": "0",
+      "l": "Clearance Charges:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "customs_duty",
+      "c": "0",
+      "l": "Customs Duty:"
+    },
+    {
+      "k": "thc",
+      "c": "0",
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "legalization",
+      "s": "0",
+      "l": "Legalization Charges:"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "demurrage"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "s": "235.000",
+      "c": "0",
+      "l": "Packing Charges:",
+      "n": "",
+      "k": "packing"
+    },
+    {
+      "s": "0",
+      "k": "port_charges",
+      "n": "",
+      "c": "0",
+      "l": "Port Charges:"
+    },
+    {
+      "l": "Other Charges:",
+      "c": "0",
+      "k": "other",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "PAI Approval :",
+      "k": "pai"
+    },
+    {
+      "l": "Insurance Fee :",
+      "n": "",
+      "s": "0",
+      "k": "insurance",
+      "c": "0"
+    },
+    {
+      "k": "epa",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "EPA Charges :"
+    }
+  ],
+  "vn": "",
+  "tn": "",
+  "status": "pending",
+  "gw": "",
+  "cl": [
+    "Local Move"
+  ],
+  "vw": "",
+  "hawb": "",
+  "pc": "",
+  "bd": "2025-07-30",
+  "de": "AL RAI",
+  "totalSelling": 235,
+  "ts": "",
+  "jfn": "LMK/00092/07/2025"
+}
