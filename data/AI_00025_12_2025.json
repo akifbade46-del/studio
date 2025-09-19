@@ -1,0 +1,203 @@
+{
+  "co": "GLOBAL MED TECHNOLOGY",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "ch": [
+    {
+      "c": "0",
+      "n": "",
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "k": "ex_works"
+    },
+    {
+      "n": "",
+      "k": "freight",
+      "l": "Air Freight:",
+      "s": "260.000",
+      "c": "221.516"
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Formalities:",
+      "s": "0",
+      "c": "0",
+      "k": "formalities"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "k": "transportation",
+      "s": "0",
+      "l": "Transportation Charges:",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "inspection",
+      "s": "0",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "l": "Handling Charges:",
+      "k": "handling",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "k": "labor",
+      "c": "0",
+      "s": "0",
+      "l": "Labor / Forklift Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Documentation Charges:",
+      "n": "",
+      "k": "documentation",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "clearance",
+      "l": "Clearance Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "c": "0"
+    },
+    {
+      "c": "37.000",
+      "l": "Terminal Handling Charges:",
+      "k": "thc",
+      "n": "",
+      "s": "37.000"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Legalization Charges:",
+      "k": "legalization",
+      "n": ""
+    },
+    {
+      "k": "demurrage",
+      "c": "0",
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Destination Clearance Charges:",
+      "c": "0",
+      "k": "dest_clearance"
+    },
+    {
+      "l": "Packing Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "packing",
+      "n": ""
+    },
+    {
+      "n": "",
+      "k": "port_charges",
+      "c": "0",
+      "s": "0",
+      "l": "Port Charges:"
+    },
+    {
+      "c": "0",
+      "k": "other",
+      "n": "",
+      "l": "Other Charges:",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "pai",
+      "n": "",
+      "l": "PAI Approval :"
+    },
+    {
+      "c": "0",
+      "l": "Insurance Fee :",
+      "k": "insurance",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "epa",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "EPA Charges :"
+    }
+  ],
+  "jfn": "AI/00025/12/2025",
+  "fv": "",
+  "status": "pending",
+  "d": "2025-12-31",
+  "pt": [
+    "Air Freight"
+  ],
+  "cn": "",
+  "in": "INV/00354/2025",
+  "vn": "",
+  "totalProfit": 38.48,
+  "totalCost": 258.52,
+  "tn": "",
+  "de": "KUWAIT",
+  "hawb": "",
+  "pb": "ABDUL HADI ",
+  "bd": "2025-08-07",
+  "cl": [
+    "Import"
+  ],
+  "totalSelling": 297,
+  "or": "PRG",
+  "createdAt": "2025-08-31T11:12:51.000Z",
+  "updatedAt": "2025-08-31T11:12:51.000Z",
+  "createdBy": "ABDUL HADI ",
+  "dsc": "DENTAL MATERIAL",
+  "po": "",
+  "ts": "",
+  "sm": "",
+  "mawb": "176-96107524",
+  "vw": "",
+  "gw": "2.35 KG",
+  "pc": "1",
+  "re": "",
+  "ca": "EK",
+  "sh": "KERRHWE S.A"
+}
