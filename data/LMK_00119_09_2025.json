@@ -1,0 +1,66 @@
+{
+  "sh": "MR. JASSIM M BOODAI",
+  "mawb": "",
+  "bd": "",
+  "tn": "",
+  "ts": "",
+  "co": "MR. JASSIM M BOODAI",
+  "pc": "880 CARTONS ",
+  "totalCost": 50,
+  "d": "2025-09-16",
+  "pt": [
+    "Others"
+  ],
+  "pb": "ABDUL HADI ",
+  "ch": [
+    {
+      "c": "0",
+      "n": "",
+      "s": "25.000",
+      "l": "Transportation Charges:"
+    },
+    {
+      "l": "Handling Charges:",
+      "n": "",
+      "s": "25.000",
+      "c": "0"
+    },
+    {
+      "s": "20.000",
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "c": "0"
+    },
+    {
+      "s": "160.000",
+      "c": "50.000",
+      "n": "",
+      "l": "Packing Charges:"
+    }
+  ],
+  "dsc": "EMPTY CARTONS",
+  "de": "D.A SALEM",
+  "ca": "",
+  "fv": "",
+  "jfn": "LMK/00119/09/2025",
+  "re": "",
+  "createdAt": "2025-09-16T13:51:05.000Z",
+  "in": "",
+  "sm": "",
+  "cn": "",
+  "totalProfit": 180,
+  "vn": "",
+  "updatedAt": "2025-09-16T13:51:05.000Z",
+  "gw": "",
+  "hawb": "",
+  "vw": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "totalSelling": 230,
+  "po": "",
+  "status": "pending",
+  "cl": [
+    "Local Move"
+  ],
+  "createdBy": "ABDUL HADI ",
+  "or": "AL RAI"
+}
