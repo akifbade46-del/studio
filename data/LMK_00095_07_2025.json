@@ -1,0 +1,203 @@
+{
+  "status": "pending",
+  "fv": "",
+  "re": "",
+  "lastUpdatedBy": "ANAND MANI",
+  "hawb": "",
+  "dsc": "COMMERCIAL",
+  "pb": "ANAND MANI",
+  "co": "JAZEERA AIRWAYS",
+  "sh": "JAZEERA AIRWAYS",
+  "bd": "2025-07-30",
+  "mawb": "",
+  "totalSelling": 605,
+  "d": "2025-07-24",
+  "updatedAt": "2025-08-11T10:49:54.000Z",
+  "or": "AL RAI",
+  "de": "AIRPORT",
+  "pc": "",
+  "po": "",
+  "totalCost": 2.8,
+  "jfn": "LMK/00095/07/2025",
+  "createdBy": "ANAND MANI",
+  "vw": "",
+  "ch": [
+    {
+      "c": "0",
+      "n": "",
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "k": "ex_works"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "freight",
+      "c": "0",
+      "l": "Land/Air / Sea Freight:"
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "n": "",
+      "k": "surcharge",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "formalities",
+      "l": "Formalities:",
+      "n": ""
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "transportation",
+      "l": "Transportation Charges:",
+      "s": "315.000",
+      "c": "0"
+    },
+    {
+      "k": "inspection",
+      "s": "0",
+      "c": "0",
+      "l": "Inspection / Computer Print Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "handling",
+      "c": "0",
+      "n": "",
+      "l": "Handling Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "k": "thc"
+    },
+    {
+      "c": "0",
+      "k": "legalization",
+      "l": "Legalization Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "demurrage"
+    },
+    {
+      "s": "0",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "290.000",
+      "k": "dest_clearance",
+      "n": "",
+      "c": "0",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "l": "Packing Charges:",
+      "n": "",
+      "c": "0",
+      "k": "packing",
+      "s": "0"
+    },
+    {
+      "k": "port_charges",
+      "l": "Port Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "other",
+      "n": "",
+      "c": "2.800",
+      "s": "0",
+      "l": "Other Charges:PACKING"
+    },
+    {
+      "n": "",
+      "l": "PAI Approval :",
+      "c": "0",
+      "s": "0",
+      "k": "pai"
+    },
+    {
+      "k": "insurance",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Insurance Fee :"
+    },
+    {
+      "l": "EPA Charges :",
+      "k": "epa",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    }
+  ],
+  "cl": [
+    "Local Move"
+  ],
+  "tn": "",
+  "in": "INV/00348/2025",
+  "sm": "",
+  "totalProfit": 602.2,
+  "ts": "",
+  "createdAt": "2025-08-11T10:49:54.000Z",
+  "vn": "",
+  "ca": "",
+  "gw": "",
+  "pt": [
+    "Others"
+  ],
+  "cn": ""
+}
