@@ -1,0 +1,205 @@
+{
+  "sm": "",
+  "dsc": "CARPETS",
+  "totalProfit": 120,
+  "or": "AZERIBAIJAN",
+  "d": "2025-08-05",
+  "pt": [
+    "Air Freight"
+  ],
+  "cn": "",
+  "vn": "",
+  "ts": "CLEARANCE AND DELIVERY ",
+  "pc": "3",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "vw": "53 KG",
+  "status": "checked",
+  "in": "INV/00370/2025",
+  "re": "",
+  "sh": "FARID ALASGAROV",
+  "gw": "46 KG",
+  "hawb": "",
+  "checkedBy": "AJMAL KIANI",
+  "de": "KUWAIT",
+  "ch": [
+    {
+      "n": "",
+      "c": "0",
+      "k": "ex_works",
+      "s": "0",
+      "l": "Ex-works Charges:"
+    },
+    {
+      "s": "0",
+      "k": "freight",
+      "c": "0",
+      "n": "",
+      "l": "Land/Air / Sea Freight:"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "surcharge",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Formalities:",
+      "k": "formalities",
+      "s": "0"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "k": "do_fee",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "transportation",
+      "l": "Transportation Charges:",
+      "s": "25.000"
+    },
+    {
+      "s": "8.400",
+      "n": "",
+      "c": "8.400",
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection"
+    },
+    {
+      "k": "handling",
+      "c": "0",
+      "l": "Handling Charges:",
+      "n": "",
+      "s": "25.000"
+    },
+    {
+      "c": "3.000",
+      "k": "labor",
+      "s": "0",
+      "l": "Labor / Forklift Charges:",
+      "n": ""
+    },
+    {
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "n": "",
+      "s": "15.000",
+      "c": "0"
+    },
+    {
+      "l": "Clearance Charges:",
+      "s": "65.000",
+      "c": "30.000",
+      "n": "",
+      "k": "clearance"
+    },
+    {
+      "s": "108.640",
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "c": "108.640",
+      "n": ""
+    },
+    {
+      "c": "69.500",
+      "s": "69.500",
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "k": "thc"
+    },
+    {
+      "c": "0",
+      "k": "legalization",
+      "s": "0",
+      "n": "",
+      "l": "Legalization Charges:"
+    },
+    {
+      "n": "",
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Loading / Offloading Charges:",
+      "k": "loading",
+      "n": "",
+      "s": "20.000",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "n": "",
+      "k": "packing",
+      "s": "0",
+      "l": "Packing Charges:",
+      "c": "0"
+    },
+    {
+      "k": "port_charges",
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Port Charges:"
+    },
+    {
+      "s": "5.000",
+      "k": "other",
+      "c": "2.000",
+      "l": "Bank Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "PAI Approval :",
+      "k": "pai"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Insurance Fee :",
+      "k": "insurance"
+    },
+    {
+      "s": "0",
+      "k": "epa",
+      "n": "",
+      "c": "0",
+      "l": "EPA Charges :"
+    }
+  ],
+  "jfn": "AC/00112/08/2025",
+  "bd": "2025-08-26",
+  "mawb": "703-12207160",
+  "checkedAt": "2025-08-28T12:35:41.000Z",
+  "tn": "",
+  "ca": "JAZEERA AIRWAYS",
+  "cl": [
+    "Import"
+  ],
+  "createdAt": "2025-08-06T10:15:31.000Z",
+  "co": "AISHA BOODAI",
+  "fv": "",
+  "totalSelling": 341.54,
+  "updatedAt": "2025-08-26T13:18:59.000Z",
+  "createdBy": "ABDUL HADI ",
+  "po": "",
+  "totalCost": 221.54,
+  "pb": "ABDUL HADI "
+}
