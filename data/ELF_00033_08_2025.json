@@ -1,0 +1,203 @@
+{
+  "co": "MS. IMAN GEORGE",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "jfn": "ELF/00033/08/2025",
+  "ch": [
+    {
+      "s": "1346.000",
+      "k": "ex_works",
+      "n": "",
+      "l": "DOOR - DOOR Charges:",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "k": "freight",
+      "l": "Land Freight:",
+      "n": "",
+      "c": "131.000"
+    },
+    {
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "formalities",
+      "l": "Formalities:",
+      "n": ""
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "k": "transportation",
+      "s": "0",
+      "c": "260.000",
+      "l": "Transportation Charges: CAR"
+    },
+    {
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "k": "handling",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Handling Charges:"
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "k": "documentation",
+      "c": "0",
+      "l": "Documentation Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Clearance Charges:",
+      "c": "0",
+      "k": "clearance"
+    },
+    {
+      "k": "customs_duty",
+      "c": "0",
+      "l": "Customs Duty:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "k": "thc",
+      "l": "Terminal Handling Charges:",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "legalization",
+      "l": "Legalization Charges:"
+    },
+    {
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "c": "0",
+      "n": "",
+      "k": "demurrage"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "c": "240.831"
+    },
+    {
+      "n": "",
+      "l": "Packing Charges:",
+      "s": "0",
+      "k": "packing",
+      "c": "75.000"
+    },
+    {
+      "k": "port_charges",
+      "n": "",
+      "l": "Port Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "3.000",
+      "s": "0",
+      "k": "other",
+      "l": "Other Charges:",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "pai",
+      "s": "0",
+      "n": "",
+      "l": "PAI Approval :"
+    },
+    {
+      "s": "0",
+      "l": "Insurance Fee :",
+      "k": "insurance",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "epa",
+      "l": "EPA Charges :",
+      "n": "",
+      "c": "0"
+    }
+  ],
+  "status": "pending",
+  "fv": "",
+  "d": "2025-08-20",
+  "pt": [
+    "Land Freight"
+  ],
+  "cn": "",
+  "in": "INV/00365/2025",
+  "vn": "",
+  "totalProfit": 636.17,
+  "totalCost": 709.83,
+  "tn": "",
+  "de": "DUBAI,UAE",
+  "hawb": "",
+  "pb": "ANAND MANI",
+  "bd": "2025-08-25",
+  "cl": [
+    "Export"
+  ],
+  "totalSelling": 1346,
+  "or": "KUWAIT",
+  "createdAt": "2025-08-20T06:31:31.000Z",
+  "updatedAt": "2025-08-31T11:01:54.000Z",
+  "createdBy": "ANAND MANI",
+  "dsc": "CAR & USED HOUSEHOLD ITEMS",
+  "po": "",
+  "ts": "LAND",
+  "vw": "17 CBM",
+  "sm": "DINESH",
+  "mawb": "",
+  "gw": "800 KGS",
+  "pc": "80 BOXES",
+  "re": "",
+  "ca": "TRUCK",
+  "sh": "MS.IMAN GEORGE"
+}
