@@ -1,0 +1,203 @@
+{
+  "totalSelling": 65,
+  "d": "2025-07-20",
+  "sm": "",
+  "pt": [
+    "Air Freight"
+  ],
+  "hawb": "",
+  "pb": "ABDUL HADI ",
+  "fv": "",
+  "updatedAt": "2025-08-10T09:52:27.000Z",
+  "status": "pending",
+  "cl": [
+    "Import"
+  ],
+  "co": "MS. YARA MARWAN MARZOUK",
+  "vn": "",
+  "createdAt": "2025-08-10T09:52:27.000Z",
+  "totalCost": 4,
+  "pc": "1",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "ts": "AIR",
+  "dsc": "BOOKS",
+  "vw": "",
+  "cn": "",
+  "sh": "BOODAI MALLORCA",
+  "tn": "",
+  "re": "",
+  "jfn": "AC/00106/07/2025",
+  "de": "KUWAIT",
+  "mawb": "4961621976",
+  "totalProfit": 61,
+  "bd": "2025-07-21",
+  "ch": [
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "k": "ex_works"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "n": "",
+      "k": "surcharge"
+    },
+    {
+      "s": "0",
+      "k": "formalities",
+      "c": "0",
+      "l": "Formalities:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Delivery Order Fee:",
+      "c": "0",
+      "n": "",
+      "k": "do_fee"
+    },
+    {
+      "l": "Transportation Charges:",
+      "s": "25.000",
+      "k": "transportation",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection"
+    },
+    {
+      "c": "0",
+      "k": "handling",
+      "s": "25.000",
+      "n": "",
+      "l": "Handling Charges:"
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "n": "",
+      "k": "labor",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "documentation",
+      "n": "",
+      "s": "15.000",
+      "c": "0",
+      "l": "Documentation Charges:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "c": "4.000"
+    },
+    {
+      "n": "",
+      "k": "customs_duty",
+      "l": "Customs Duty:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "thc"
+    },
+    {
+      "k": "legalization",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Legalization Charges:"
+    },
+    {
+      "n": "",
+      "l": "Demurrage Charges:",
+      "c": "0",
+      "k": "demurrage",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance",
+      "n": ""
+    },
+    {
+      "n": "",
+      "k": "packing",
+      "l": "Packing Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Port Charges:",
+      "k": "port_charges",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "other",
+      "l": "Other Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "pai",
+      "n": "",
+      "l": "PAI Approval :"
+    },
+    {
+      "c": "0",
+      "l": "Insurance Fee :",
+      "s": "0",
+      "n": "",
+      "k": "insurance"
+    },
+    {
+      "k": "epa",
+      "l": "EPA Charges :",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    }
+  ],
+  "or": "SPAIN",
+  "ca": "DHL",
+  "gw": "15 KG",
+  "po": "",
+  "createdBy": "ABDUL HADI ",
+  "in": "INV/00318/2025"
+}
