@@ -1,0 +1,204 @@
+{
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "ca": "FEDEX",
+  "lastUpdatedBy": "ANAND MANI",
+  "co": "MR.JOSEPH WILLIAM",
+  "sh": "MR.JOSEPH WILLIAM",
+  "pb": "ANAND MANI",
+  "status": "pending",
+  "de": "JEDDAH, SAUDI ARABIA",
+  "gw": "440 KGS",
+  "jfn": "AE/00031/06/2025",
+  "vw": "666KGS",
+  "totalCost": 261.54,
+  "fv": "",
+  "hawb": "",
+  "updatedAt": "2025-08-11T06:28:49.000Z",
+  "mawb": "882148540132",
+  "vn": "",
+  "cn": "",
+  "tn": "",
+  "in": "INV/00341/2025",
+  "cl": [
+    "Export"
+  ],
+  "bd": "2025-07-27",
+  "ch": [
+    {
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "s": "583",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "freight",
+      "c": "119.520",
+      "l": "Land Freight:"
+    },
+    {
+      "s": "0",
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "formalities",
+      "s": "0",
+      "n": "",
+      "l": "Formalities:"
+    },
+    {
+      "k": "do_fee",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "transportation",
+      "l": "Transportation Charges:"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Handling Charges:",
+      "k": "handling",
+      "s": "0"
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "documentation",
+      "l": "Documentation Charges:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "clearance",
+      "c": "0",
+      "l": "Clearance Charges:"
+    },
+    {
+      "s": "0",
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Terminal Handling Charges:",
+      "k": "thc",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Legalization Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "legalization",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "dest_clearance",
+      "c": "0",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Packing Charges:",
+      "k": "packing",
+      "c": "100"
+    },
+    {
+      "k": "port_charges",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Port Charges:"
+    },
+    {
+      "s": "0",
+      "l": "Other Charges:",
+      "n": "",
+      "k": "other",
+      "c": "10"
+    },
+    {
+      "k": "pai",
+      "n": "",
+      "l": "PAI Approval :",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Insurance Fee :",
+      "s": "0",
+      "k": "insurance",
+      "c": "32.019"
+    },
+    {
+      "l": "EPA Charges :",
+      "c": "0",
+      "n": "",
+      "k": "epa",
+      "s": "0"
+    }
+  ],
+  "ts": "LAND",
+  "re": "",
+  "po": "",
+  "createdBy": "ANAND MANI",
+  "d": "2025-08-11",
+  "createdAt": "2025-08-11T06:28:49.000Z",
+  "sm": "DINESH",
+  "pc": "17",
+  "pt": [
+    "Air Freight",
+    "Land Freight"
+  ],
+  "totalProfit": 321.46,
+  "totalSelling": 583,
+  "or": "KUWAIT"
+}
