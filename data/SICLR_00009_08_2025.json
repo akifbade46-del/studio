@@ -1,0 +1,206 @@
+{
+  "fv": "",
+  "ca": "MAERSK ",
+  "re": "",
+  "totalCost": 2916.87,
+  "co": "BOODAI TRADING CO",
+  "totalProfit": 79,
+  "createdBy": "ABDUL HADI ",
+  "createdAt": "2025-08-30T09:54:53.000Z",
+  "pt": [
+    "Sea Freight"
+  ],
+  "d": "2025-08-17",
+  "checkedBy": "AJMAL KIANI",
+  "pb": "ABDUL HADI ",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "mawb": "255455403",
+  "po": "",
+  "in": "INV/00384/2024",
+  "cn": "",
+  "or": "ITALY ",
+  "sm": "",
+  "sh": "ICARO MACHINERY SRC",
+  "updatedAt": "2025-08-31T06:21:31.000Z",
+  "dsc": "CUTTING AND BENDING MACHINES  ",
+  "tn": "",
+  "vn": "",
+  "ch": [
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "ex_works",
+      "l": "Ex-works Charges:"
+    },
+    {
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "surcharge",
+      "c": "0",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0"
+    },
+    {
+      "l": "Formalities:",
+      "s": "0",
+      "k": "formalities",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "190.600",
+      "k": "do_fee",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "c": "190.600"
+    },
+    {
+      "c": "45.000",
+      "s": "70.000",
+      "l": "Transportation Charges:",
+      "n": "",
+      "k": "transportation"
+    },
+    {
+      "s": "55.810",
+      "k": "inspection",
+      "n": "",
+      "c": "55.810",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "l": "Handling Charges:",
+      "n": "",
+      "s": "15.000",
+      "k": "handling",
+      "c": "0"
+    },
+    {
+      "k": "labor",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "k": "documentation",
+      "n": "",
+      "c": "5.000",
+      "l": "Inspection Charges:",
+      "s": "0"
+    },
+    {
+      "c": "7.000",
+      "s": "30.000",
+      "n": "",
+      "l": "Clearance Charges:",
+      "k": "clearance"
+    },
+    {
+      "c": "2572.460",
+      "s": "2572.460",
+      "k": "customs_duty",
+      "n": "",
+      "l": "Customs Duty:"
+    },
+    {
+      "l": "Terminal Handling Charges:",
+      "s": "0",
+      "k": "thc",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "legalization",
+      "n": "",
+      "c": "25.000",
+      "l": "Legalization Charges:",
+      "s": "30.000"
+    },
+    {
+      "k": "demurrage",
+      "c": "1.000",
+      "n": "",
+      "l": "Legalization Fee Charges:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "loading"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "n": ""
+    },
+    {
+      "k": "packing",
+      "c": "1.000",
+      "s": "5.000",
+      "n": "",
+      "l": "Bank Charges:"
+    },
+    {
+      "l": "Port Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "port_charges"
+    },
+    {
+      "c": "2.000",
+      "s": "15.000",
+      "k": "other",
+      "n": "",
+      "l": "Other Service Charges:"
+    },
+    {
+      "s": "12.000",
+      "k": "pai",
+      "n": "",
+      "c": "12.000",
+      "l": "PAI Approval :"
+    },
+    {
+      "s": "0",
+      "k": "insurance",
+      "n": "",
+      "c": "0",
+      "l": "Insurance Fee :"
+    },
+    {
+      "k": "epa",
+      "c": "0",
+      "l": "EPA Charges :",
+      "n": "",
+      "s": "0"
+    }
+  ],
+  "checkedAt": "2025-08-30T10:43:49.000Z",
+  "status": "Out for Delivery",
+  "gw": "21 PALLETS",
+  "cl": [
+    "Import"
+  ],
+  "vw": "",
+  "hawb": "",
+  "pc": "1X40 CONTAINER ",
+  "assignedTo": null,
+  "bd": "2025-08-30",
+  "de": "21410 KS",
+  "totalSelling": 2995.87,
+  "ts": "",
+  "jfn": "SICLR/00009/08/2025"
+}
