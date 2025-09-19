@@ -1,0 +1,201 @@
+{
+  "status": "pending",
+  "totalSelling": 1275,
+  "gw": "1200",
+  "ca": "TRUCK",
+  "ch": [
+    {
+      "c": "0",
+      "s": "1275.000",
+      "n": "",
+      "k": "ex_works",
+      "l": "Ex-works Charges:"
+    },
+    {
+      "l": "Land Freight:",
+      "s": "0",
+      "k": "freight",
+      "c": "300.000",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "n": "",
+      "k": "surcharge"
+    },
+    {
+      "c": "0",
+      "k": "formalities",
+      "n": "",
+      "s": "0",
+      "l": "Formalities:"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Transportation Charges:",
+      "s": "0",
+      "k": "transportation"
+    },
+    {
+      "k": "inspection",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Handling Charges:",
+      "c": "0",
+      "k": "handling",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "labor",
+      "c": "0",
+      "l": "Labor / Forklift Charges:",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "documentation",
+      "c": "0",
+      "l": "Documentation Charges:"
+    },
+    {
+      "l": "Clearance Charges:",
+      "c": "178.350",
+      "k": "clearance",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "customs_duty",
+      "l": "Customs Duty:"
+    },
+    {
+      "l": "Terminal Handling Charges:",
+      "k": "thc",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "l": "Legalization Charges:",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "legalization"
+    },
+    {
+      "n": "",
+      "k": "demurrage",
+      "l": "Demurrage Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "s": "0"
+    },
+    {
+      "c": "86.400",
+      "s": "0",
+      "k": "packing",
+      "n": "",
+      "l": "Packing Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "port_charges",
+      "s": "0",
+      "l": "Port Charges:"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "other",
+      "n": "",
+      "l": "Other Charges:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "pai",
+      "l": "PAI Approval :"
+    },
+    {
+      "s": "0",
+      "k": "insurance",
+      "l": "Insurance Fee :",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "epa",
+      "c": "0",
+      "l": "EPA Charges :",
+      "n": ""
+    }
+  ],
+  "co": "MR. THOMAS WOODHEAD",
+  "totalProfit": 710.25,
+  "or": "KUWAIT",
+  "re": "",
+  "hawb": "",
+  "fv": "",
+  "cn": "",
+  "in": "",
+  "cl": [],
+  "jfn": "ELF/00024/06/2025",
+  "po": "",
+  "pc": "77 BOXES",
+  "updatedAt": "2025-08-17T11:44:45.000Z",
+  "d": "2025-08-17",
+  "vw": "18 CBM",
+  "lastUpdatedBy": "ANAND MANI",
+  "dsc": "",
+  "tn": "",
+  "sh": "MR. THOMAS WOODHEAD",
+  "de": "SAUDI ARABIA",
+  "mawb": "",
+  "bd": "",
+  "ts": "LAND",
+  "vn": "",
+  "totalCost": 564.75,
+  "createdBy": "ANAND MANI",
+  "sm": "DINESH",
+  "pb": "ANAND MANI",
+  "createdAt": "2025-08-17T11:44:45.000Z",
+  "pt": [
+    "Land Freight"
+  ]
+}
