@@ -1,0 +1,201 @@
+{
+  "re": "",
+  "vn": "",
+  "or": "KUWAIT",
+  "sh": "MR.MAHENDRA SIGH",
+  "sm": "DINESH",
+  "totalProfit": 249.19,
+  "pc": "7 BOXES",
+  "status": "pending",
+  "totalCost": 160.81,
+  "ch": [
+    {
+      "l": "Door- Door Charges:",
+      "c": "0",
+      "s": "410",
+      "k": "ex_works",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Air  Freight:",
+      "c": "80.880",
+      "k": "freight"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Formalities:",
+      "s": "0",
+      "k": "formalities"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "s": "0",
+      "k": "do_fee"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Transportation Charges:",
+      "k": "transportation"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0",
+      "n": "",
+      "k": "inspection",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "k": "handling",
+      "l": "Handling Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "labor",
+      "c": "0",
+      "l": "Labor / Forklift Charges:",
+      "s": "0"
+    },
+    {
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "46.330",
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "k": "thc",
+      "s": "0",
+      "n": "",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "s": "0",
+      "k": "legalization",
+      "n": "",
+      "c": "0",
+      "l": "Legalization Charges:"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "demurrage"
+    },
+    {
+      "c": "0",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "k": "dest_clearance",
+      "n": ""
+    },
+    {
+      "k": "packing",
+      "l": "Packing Charges:",
+      "s": "0",
+      "n": "",
+      "c": "33.600"
+    },
+    {
+      "n": "",
+      "l": "Port Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "port_charges"
+    },
+    {
+      "c": "0",
+      "l": "Other Charges:",
+      "k": "other",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "PAI Approval :",
+      "c": "0",
+      "k": "pai"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Insurance Fee :",
+      "k": "insurance",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "k": "epa",
+      "l": "EPA Charges :",
+      "n": "",
+      "c": "0"
+    }
+  ],
+  "pb": "ANAND MANI",
+  "cl": [],
+  "hawb": "",
+  "mawb": "881525631785",
+  "totalSelling": 410,
+  "updatedAt": "2025-08-20T12:48:05.000Z",
+  "in": "INV/00336/2025",
+  "fv": "",
+  "createdAt": "2025-08-20T12:45:59.000Z",
+  "createdBy": "ANAND MANI",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "cn": "",
+  "vw": "336.400KGS",
+  "pt": [
+    "Air Freight"
+  ],
+  "de": "QATAR",
+  "bd": "2025-07-23",
+  "ts": "AIR",
+  "lastUpdatedBy": "ANAND MANI",
+  "po": "",
+  "d": "2025-08-20",
+  "tn": "",
+  "jfn": "AE/00021/06/2025",
+  "co": "MR.MAHENDRA SIGH",
+  "gw": "182kgs",
+  "ca": "FEDEX"
+}
