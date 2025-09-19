@@ -1,0 +1,203 @@
+{
+  "fv": "",
+  "status": "pending",
+  "gw": "",
+  "totalSelling": 2900,
+  "bd": "",
+  "tn": "",
+  "totalCost": 2093.15,
+  "pc": "51 WOODEN CRATES ",
+  "totalProfit": 806.85,
+  "pt": [
+    "Others"
+  ],
+  "cl": [
+    "Local Move"
+  ],
+  "po": "",
+  "createdAt": "2025-08-30T10:09:18.000Z",
+  "mawb": "",
+  "ts": "",
+  "or": "SUBHAN",
+  "pb": "ABDUL HADI ",
+  "jfn": "LMK/00101/07/2025",
+  "sh": "GENERAL CONTROL GROUP",
+  "in": "",
+  "hawb": "",
+  "re": "",
+  "sm": "",
+  "co": "GENERAL CONTROL GROUP",
+  "vw": "",
+  "ch": [
+    {
+      "s": "0",
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight"
+    },
+    {
+      "s": "0",
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Formalities:",
+      "k": "formalities",
+      "c": "5.000"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "do_fee",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "transportation",
+      "l": "Transportation Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0",
+      "k": "inspection",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "110.000",
+      "l": "Packing  Maxim Charges:",
+      "k": "handling"
+    },
+    {
+      "c": "90.000",
+      "k": "labor",
+      "l": "Packing  Husam Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Documentation Charges:",
+      "k": "documentation"
+    },
+    {
+      "k": "clearance",
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Clearance Charges:"
+    },
+    {
+      "l": "Customs Duty:",
+      "n": "",
+      "k": "customs_duty",
+      "s": "0",
+      "c": "1625.000"
+    },
+    {
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "n": "",
+      "k": "thc",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Legalization Charges:",
+      "k": "legalization"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "n": "",
+      "s": "0",
+      "k": "demurrage",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "41.200",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "n": "",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "l": "Packing Charges:",
+      "c": "6.750",
+      "n": "",
+      "k": "packing"
+    },
+    {
+      "c": "40.000",
+      "l": "Packing Charges:",
+      "s": "0",
+      "n": "",
+      "k": "port_charges"
+    },
+    {
+      "n": "",
+      "s": "2900.000",
+      "k": "other",
+      "l": "Other Charges:",
+      "c": "175.200"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "PAI Approval :",
+      "k": "pai",
+      "n": ""
+    },
+    {
+      "l": "Insurance Fee :",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "insurance"
+    },
+    {
+      "s": "0",
+      "k": "epa",
+      "n": "",
+      "l": "EPA Charges :",
+      "c": "0"
+    }
+  ],
+  "d": "2025-07-28",
+  "cn": "",
+  "createdBy": "ABDUL HADI ",
+  "dsc": "MAKING 51 WOODEN CRATES ",
+  "vn": "",
+  "updatedAt": "2025-08-30T10:09:18.000Z",
+  "ca": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "de": ""
+}
