@@ -1,0 +1,203 @@
+{
+  "po": "",
+  "jfn": "LMK/00089/07/2025",
+  "co": "MRS. SHEIKHA BOODAI",
+  "fv": "",
+  "d": "2025-07-01",
+  "ts": "LOCAL MOVE ",
+  "dsc": "",
+  "hawb": "",
+  "updatedAt": "2025-08-10T13:03:17.000Z",
+  "cl": [
+    "Local Move"
+  ],
+  "or": "",
+  "vn": "",
+  "createdAt": "2025-08-10T13:03:17.000Z",
+  "sm": "",
+  "ca": "",
+  "re": "",
+  "de": "MESSILAH",
+  "in": "INV/00325/2025",
+  "cn": "",
+  "bd": "2025-07-22",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "sh": "MRS. SHEIKHA BOODAI",
+  "pt": [
+    "Others"
+  ],
+  "pc": "",
+  "vw": "",
+  "totalCost": 204,
+  "mawb": "",
+  "tn": "",
+  "pb": "ABDUL HADI ",
+  "totalSelling": 1370,
+  "gw": "",
+  "ch": [
+    {
+      "c": "0",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "k": "ex_works",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight"
+    },
+    {
+      "s": "0",
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "formalities",
+      "n": "",
+      "l": "Formalities:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "k": "do_fee",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Transportation Charges:",
+      "c": "0",
+      "k": "transportation",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection",
+      "s": "0"
+    },
+    {
+      "k": "handling",
+      "n": "",
+      "c": "0",
+      "l": "Handling Charges:",
+      "s": "100.000"
+    },
+    {
+      "c": "0",
+      "s": "540.000",
+      "l": "Labor / Forklift Charges:",
+      "n": "",
+      "k": "labor"
+    },
+    {
+      "k": "documentation",
+      "c": "0",
+      "l": "Documentation Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "k": "clearance",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Customs Duty:",
+      "k": "customs_duty"
+    },
+    {
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "c": "0",
+      "k": "thc",
+      "s": "0"
+    },
+    {
+      "l": "Legalization Charges:",
+      "c": "0",
+      "k": "legalization",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "demurrage",
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "n": "",
+      "c": "0",
+      "k": "loading"
+    },
+    {
+      "k": "dest_clearance",
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "c": "204.000",
+      "k": "packing",
+      "l": "Packing Charges:",
+      "n": "",
+      "s": "730.000"
+    },
+    {
+      "k": "port_charges",
+      "l": "Port Charges:",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "other",
+      "l": "Other Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "PAI Approval :",
+      "c": "0",
+      "s": "0",
+      "k": "pai"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Insurance Fee :",
+      "k": "insurance",
+      "n": ""
+    },
+    {
+      "k": "epa",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "EPA Charges :"
+    }
+  ],
+  "totalProfit": 1166,
+  "createdBy": "ABDUL HADI ",
+  "status": "pending"
+}
