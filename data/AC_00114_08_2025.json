@@ -1,0 +1,203 @@
+{
+  "jfn": "AC/00114/08/2025",
+  "createdBy": "ABDUL HADI ",
+  "totalProfit": 0,
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "k": "ex_works",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "freight",
+      "l": "Land/Air / Sea Freight:",
+      "n": ""
+    },
+    {
+      "k": "surcharge",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:"
+    },
+    {
+      "c": "0",
+      "k": "formalities",
+      "l": "Formalities:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "38.000",
+      "s": "38.000",
+      "k": "do_fee",
+      "n": "",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "k": "transportation",
+      "l": "Transportation Charges:",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Handling Charges:",
+      "k": "handling",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "labor",
+      "c": "0",
+      "s": "0",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "c": "0",
+      "l": "Documentation Charges:",
+      "k": "documentation",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "clearance",
+      "c": "0",
+      "n": "",
+      "l": "Clearance Charges:",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "k": "customs_duty",
+      "c": "0",
+      "l": "Customs Duty:",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "thc",
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Legalization Charges:",
+      "n": "",
+      "s": "0",
+      "k": "legalization"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "s": "0",
+      "k": "loading"
+    },
+    {
+      "n": "",
+      "l": "Destination Clearance Charges:",
+      "c": "0",
+      "k": "dest_clearance",
+      "s": "0"
+    },
+    {
+      "k": "packing",
+      "l": "Packing Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "port_charges",
+      "l": "Port Charges:",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "other",
+      "l": "Other Charges:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "PAI Approval :",
+      "k": "pai"
+    },
+    {
+      "l": "Insurance Fee :",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "insurance"
+    },
+    {
+      "l": "EPA Charges :",
+      "c": "0",
+      "k": "epa",
+      "n": "",
+      "s": "0"
+    }
+  ],
+  "ca": "EMIRATES ",
+  "vw": "",
+  "totalSelling": 38,
+  "po": "",
+  "dsc": "BUTTERFILY VALVE ",
+  "in": "",
+  "totalCost": 38,
+  "de": "KUWAIT ",
+  "pc": "1",
+  "or": "KOREA",
+  "sm": "",
+  "tn": "",
+  "fv": "",
+  "cl": [
+    "Import"
+  ],
+  "cn": "",
+  "status": "pending",
+  "gw": "217 KG",
+  "vn": "",
+  "updatedAt": "2025-08-24T12:47:46.000Z",
+  "bd": "",
+  "pb": "ABDUL HADI ",
+  "hawb": "",
+  "ts": "DO AND DELIVERY  ",
+  "mawb": "176-13041965",
+  "re": "",
+  "pt": [
+    "Air Freight"
+  ],
+  "d": "2025-08-24",
+  "sh": "ACE VALVE COMPANY ",
+  "co": "ARABIAN DARB GENERAL TRADING ",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "createdAt": "2025-08-24T10:03:55.000Z"
+}
