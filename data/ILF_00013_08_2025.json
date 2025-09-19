@@ -1,0 +1,55 @@
+{
+  "sm": "MOHAMED RADWAN",
+  "pb": "ABDUL HADI ",
+  "mawb": "215178353233",
+  "cn": "",
+  "sh": "V E N MACHINERY & SPARE PARTS TRADING LLC",
+  "pt": [
+    "Land Freight"
+  ],
+  "rejectionReason": null,
+  "in": "INV/00403/2025",
+  "dsc": "CCOPPER WIRE ",
+  "rejectedAt": null,
+  "lastUpdatedBy": "ABDUL HADI ",
+  "rejectedBy": null,
+  "totalSelling": 84.5,
+  "totalProfit": 7.3,
+  "totalCost": 77.2,
+  "bd": "2025-09-18",
+  "jfn": "ILF/00013/08/2025",
+  "updatedAt": "2025-09-18T12:48:50.000Z",
+  "hawb": "",
+  "tn": "",
+  "checkedBy": "AJMAL KIANI",
+  "de": "KUWAIT ",
+  "po": "",
+  "or": "UAE ",
+  "gw": "248 KG ",
+  "createdAt": "2025-09-14T10:17:14.000Z",
+  "re": "",
+  "status": "checked",
+  "fv": "",
+  "approvedBy": null,
+  "co": "DUCTING & SERVICING CO. DASCO - KSCC",
+  "ca": "SMSA ",
+  "pc": "2",
+  "vn": "",
+  "cl": [
+    "Import"
+  ],
+  "vw": "",
+  "ts": "",
+  "createdBy": "ABDUL HADI ",
+  "ch": [
+    {
+      "l": "Freight and Delivery Order Fee:",
+      "s": "84.500",
+      "n": "",
+      "c": "77.200"
+    }
+  ],
+  "approvedAt": null,
+  "d": "2025-08-28",
+  "checkedAt": "2025-09-18T12:49:40.000Z"
+}
