@@ -1,0 +1,90 @@
+{
+  "pt": [
+    "Air Freight"
+  ],
+  "ca": "SAUDI ARABIAN AIRLINES ",
+  "cl": [
+    "Import"
+  ],
+  "de": "KUWAIT",
+  "createdBy": "ABDUL HADI ",
+  "updatedAt": "2025-09-02T07:28:47.000Z",
+  "ts": "",
+  "dsc": "PERSONAL EFFECTS",
+  "ch": [
+    {
+      "s": "35.000",
+      "c": "0",
+      "l": "Transportation Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "10.800",
+      "c": "10.800"
+    },
+    {
+      "c": "22.2500",
+      "l": "Terminal Handling Charges:",
+      "s": "22.250",
+      "n": ""
+    },
+    {
+      "l": "Loading / Offloading Charges:",
+      "n": "",
+      "c": "5.000",
+      "s": "30.000"
+    },
+    {
+      "s": "15.000",
+      "l": "Documentation Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "65.0",
+      "l": "Clearance Charges:"
+    },
+    {
+      "l": "Handling Charges:",
+      "c": "0",
+      "n": "",
+      "s": "25"
+    },
+    {
+      "n": "",
+      "l": "Reven Stamp",
+      "c": "1",
+      "s": "1"
+    }
+  ],
+  "cn": "",
+  "totalCost": 39.05,
+  "lastUpdatedBy": "ABDUL HADI ",
+  "fv": "",
+  "sm": "",
+  "totalProfit": 165,
+  "tn": "",
+  "sh": "AISHA BOODAI",
+  "mawb": "065-445587006",
+  "hawb": "",
+  "re": "",
+  "d": "2025-08-26",
+  "gw": "230",
+  "totalSelling": 204.05,
+  "po": "",
+  "vw": "",
+  "pc": "9",
+  "createdAt": "2025-09-02T07:28:47.000Z",
+  "or": "SPAIN",
+  "status": "pending",
+  "in": "INV/00378/2025",
+  "bd": "2025-08-30",
+  "jfn": "AC/00118/08/2025",
+  "vn": "",
+  "pb": "ABDUL HADI ",
+  "co": "AISHA BOODAI"
+}
