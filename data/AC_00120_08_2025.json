@@ -1,0 +1,206 @@
+{
+  "vn": "",
+  "totalProfit": 47,
+  "assignedTo": null,
+  "createdBy": "ABDUL HADI ",
+  "vw": "",
+  "co": "JAZEERA AIRWAYS ",
+  "pb": "ABDUL HADI ",
+  "dsc": "SIM CARDS",
+  "checkedBy": null,
+  "bd": "2025-08-30",
+  "pc": "1",
+  "mawb": "883778569089",
+  "hawb": "",
+  "checkedAt": null,
+  "de": "",
+  "in": "INV/00385/2025",
+  "d": "2025-08-26",
+  "re": "",
+  "status": "pending",
+  "fv": "",
+  "gw": "0.50",
+  "totalCost": 69.74,
+  "sm": "",
+  "ch": [
+    {
+      "k": "ex_works",
+      "c": "0",
+      "s": "0",
+      "l": "Ex-works Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "surcharge",
+      "c": "0",
+      "s": "0",
+      "l": "Fuell Security / War Surcharge:"
+    },
+    {
+      "k": "formalities",
+      "n": "",
+      "s": "5.000",
+      "c": "0",
+      "l": "DO Collection Fee :"
+    },
+    {
+      "n": "",
+      "s": "5.000",
+      "c": "05.000",
+      "l": "Delivery Order Fee:",
+      "k": "do_fee"
+    },
+    {
+      "n": "",
+      "s": "15.000",
+      "k": "transportation",
+      "c": "0",
+      "l": "Transportation Charges:"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "c": "14.010",
+      "k": "inspection",
+      "n": "",
+      "s": "14.010"
+    },
+    {
+      "l": "Handling Charges:",
+      "k": "handling",
+      "c": "0",
+      "s": "15.000",
+      "n": ""
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "k": "documentation",
+      "l": "Inspection Charges:",
+      "n": "",
+      "c": "4.000",
+      "s": "0"
+    },
+    {
+      "k": "clearance",
+      "c": "8.000",
+      "l": "Clearance Charges:",
+      "n": "",
+      "s": "20.000"
+    },
+    {
+      "c": "0.730",
+      "k": "customs_duty",
+      "s": "0.730",
+      "n": "",
+      "l": "Customs Duty:"
+    },
+    {
+      "k": "thc",
+      "s": "24.000",
+      "c": "24.000",
+      "l": "Terminal Handling Charges:",
+      "n": ""
+    },
+    {
+      "k": "legalization",
+      "l": "Legalization Charges:",
+      "c": "11.000",
+      "s": "15.000",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "demurrage",
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "loading",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "s": "0"
+    },
+    {
+      "k": "packing",
+      "c": "01.000",
+      "n": "",
+      "l": "Bank Charges:",
+      "s": "03.000"
+    },
+    {
+      "l": "Port Charges:",
+      "n": "",
+      "k": "port_charges",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "k": "other",
+      "s": "0",
+      "c": "2.000",
+      "n": "",
+      "l": "Other Service Charges:"
+    },
+    {
+      "c": "0",
+      "l": "PAI Approval :",
+      "k": "pai",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "insurance",
+      "n": "",
+      "l": "Insurance Fee :"
+    },
+    {
+      "c": "0",
+      "k": "epa",
+      "n": "",
+      "s": "0",
+      "l": "EPA Charges :"
+    }
+  ],
+  "lastUpdatedBy": "ABDUL HADI ",
+  "or": "CANADA",
+  "po": "",
+  "tn": "",
+  "createdAt": "2025-08-30T10:23:39.000Z",
+  "jfn": "AC/00120/08/2025",
+  "totalSelling": 116.74,
+  "ts": "",
+  "cn": "",
+  "sh": "GIGSKY INC",
+  "cl": [
+    "Import"
+  ],
+  "pt": [
+    "Air Freight"
+  ],
+  "ca": "FEDEX",
+  "updatedAt": "2025-08-30T16:40:06.000Z"
+}
