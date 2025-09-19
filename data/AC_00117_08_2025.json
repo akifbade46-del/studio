@@ -1,0 +1,201 @@
+{
+  "updatedAt": "2025-08-31T06:24:02.000Z",
+  "mawb": "157-09649975",
+  "gw": "151KG",
+  "bd": "2025-08-30",
+  "totalSelling": 138.5,
+  "ts": "",
+  "ca": "QATAR AIRWAYS ",
+  "po": "",
+  "createdBy": "ABDUL HADI ",
+  "re": "",
+  "or": "SPAIN",
+  "tn": "",
+  "dsc": "PERSONAL EFFECTS",
+  "pt": [],
+  "fv": "",
+  "vw": "",
+  "vn": "",
+  "pb": "ABDUL HADI ",
+  "d": "2025-08-30",
+  "sh": "MR. YOUSHAA AHMED SALEH",
+  "cl": [],
+  "in": "INV/00379/2025",
+  "co": "MR. YOUSHAA AHMED SALEH",
+  "totalCost": 90.3,
+  "cn": "",
+  "totalProfit": 48.2,
+  "createdAt": "2025-08-31T06:24:02.000Z",
+  "checkedAt": "2025-08-31T06:40:09.000Z",
+  "status": "checked",
+  "sm": "",
+  "checkedBy": "AJMAL KIANI",
+  "pc": "7",
+  "jfn": "AC/00117/08/2025",
+  "ch": [
+    {
+      "s": "0",
+      "l": "Ex-works Charges:",
+      "k": "ex_works",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Land/Air / Sea Freight:",
+      "n": "",
+      "s": "0",
+      "k": "freight",
+      "c": "0"
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "surcharge"
+    },
+    {
+      "k": "formalities",
+      "n": "",
+      "c": "0",
+      "l": "Formalities:",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "c": "0",
+      "k": "do_fee"
+    },
+    {
+      "k": "transportation",
+      "c": "0",
+      "s": "25.000",
+      "n": "",
+      "l": "Transportation Charges:"
+    },
+    {
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "10.800",
+      "k": "inspection",
+      "s": "10.800"
+    },
+    {
+      "n": "",
+      "k": "handling",
+      "s": "15.000",
+      "l": "Handling Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Labor / Forklift Charges:",
+      "c": "0",
+      "k": "labor"
+    },
+    {
+      "k": "documentation",
+      "l": "Inspection Charges:",
+      "c": "10.000",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "c": "20.000",
+      "l": "Clearance Charges:",
+      "s": "30.000",
+      "k": "clearance",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "customs_duty",
+      "l": "Customs Duty:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "38.500",
+      "s": "38.500",
+      "l": "Terminal Handling Charges:",
+      "k": "thc"
+    },
+    {
+      "s": "0",
+      "l": "Legalization Charges:",
+      "c": "0",
+      "n": "",
+      "k": "legalization"
+    },
+    {
+      "n": "",
+      "k": "demurrage",
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading"
+    },
+    {
+      "c": "0",
+      "k": "dest_clearance",
+      "n": "",
+      "l": "Destination Clearance Charges:",
+      "s": "18.200"
+    },
+    {
+      "n": "",
+      "k": "packing",
+      "s": "0",
+      "c": "0",
+      "l": "Packing Charges:"
+    },
+    {
+      "s": "0",
+      "l": "Port Charges:",
+      "k": "port_charges",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "1.000",
+      "l": "Other Charges:",
+      "k": "other",
+      "c": "1.000"
+    },
+    {
+      "s": "0",
+      "l": "PAI Approval :",
+      "n": "",
+      "c": "0",
+      "k": "pai"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "insurance",
+      "l": "Additional Fee :",
+      "c": "10.000"
+    },
+    {
+      "c": "0",
+      "l": "EPA Charges :",
+      "k": "epa",
+      "s": "0",
+      "n": ""
+    }
+  ],
+  "hawb": "",
+  "de": "KUWAIT ",
+  "lastUpdatedBy": "ABDUL HADI "
+}
