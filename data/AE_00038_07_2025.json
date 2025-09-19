@@ -1,0 +1,203 @@
+{
+  "pc": "6",
+  "dsc": "PERSONAL EFFECTS",
+  "status": "pending",
+  "d": "2025-07-06",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "totalProfit": 43.44,
+  "hawb": "",
+  "co": "MR. HUSSAIN MOHAMMED HUSAIN",
+  "vn": "",
+  "fv": "",
+  "or": "KUWAIT",
+  "cl": [
+    "Export"
+  ],
+  "jfn": "AE/00038/07/2025",
+  "tn": "",
+  "pb": "ABDUL HADI ",
+  "po": "",
+  "createdBy": "ABDUL HADI ",
+  "ca": "TURKISH AIRLINE",
+  "totalCost": 131.56,
+  "ts": "AIR",
+  "ch": [
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "k": "ex_works"
+    },
+    {
+      "k": "freight",
+      "s": "175.000",
+      "n": "",
+      "c": "86.250",
+      "l": "Air Freight Door to Door Charges :"
+    },
+    {
+      "c": "0",
+      "l": "Fuel Security / War Surcharge:",
+      "k": "surcharge",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "15.000",
+      "s": "0",
+      "k": "formalities",
+      "l": "Formalities:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "c": "0",
+      "k": "do_fee"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "transportation",
+      "l": "Transportation Charges:"
+    },
+    {
+      "s": "0",
+      "k": "inspection",
+      "n": "",
+      "c": "12.810",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "l": "Handling Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "handling"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Labor / Forklift Charges:",
+      "k": "labor"
+    },
+    {
+      "k": "documentation",
+      "c": "0",
+      "l": "Documentation Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "clearance",
+      "l": "Clearance Charges:",
+      "s": "0"
+    },
+    {
+      "k": "customs_duty",
+      "s": "0",
+      "n": "",
+      "l": "Customs Duty:",
+      "c": "0"
+    },
+    {
+      "c": "17.500",
+      "k": "thc",
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "n": ""
+    },
+    {
+      "k": "legalization",
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Legalization Charges:"
+    },
+    {
+      "c": "0",
+      "k": "demurrage",
+      "n": "",
+      "s": "0",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading"
+    },
+    {
+      "k": "dest_clearance",
+      "s": "0",
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "packing",
+      "l": "Packing Charges:",
+      "c": "0"
+    },
+    {
+      "k": "port_charges",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Port Charges:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "other",
+      "c": "0",
+      "l": "Other Charges:"
+    },
+    {
+      "k": "pai",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "PAI Approval :"
+    },
+    {
+      "l": "Insurance Fee :",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "insurance"
+    },
+    {
+      "k": "epa",
+      "s": "0",
+      "c": "0",
+      "l": "EPA Charges :",
+      "n": ""
+    }
+  ],
+  "pt": [
+    "Air Freight"
+  ],
+  "mawb": "235-98168063",
+  "sh": "MR. HUSSAIN MOHAMMED HUSAIN",
+  "vw": "",
+  "bd": "2025-07-14",
+  "re": "",
+  "cn": "",
+  "in": "INV/00312/2025",
+  "sm": "",
+  "totalSelling": 175,
+  "gw": "125 KG",
+  "de": "MALAGA (SPAIN)",
+  "createdAt": "2025-08-10T09:08:19.000Z",
+  "updatedAt": "2025-08-10T09:08:19.000Z"
+}
