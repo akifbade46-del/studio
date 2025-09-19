@@ -1,0 +1,210 @@
+{
+  "pt": [
+    "Air Freight"
+  ],
+  "ca": "DHL",
+  "cl": [
+    "Import"
+  ],
+  "de": "KUWAIT",
+  "createdBy": "ABDUL HADI ",
+  "updatedAt": "2025-08-26T13:17:16.000Z",
+  "rejectionReason": null,
+  "ts": "AIR",
+  "dsc": "BLANKET",
+  "rejectedBy": null,
+  "ch": [
+    {
+      "s": "0",
+      "n": "",
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "l": "Land/Air / Sea Freight:",
+      "n": "",
+      "c": "0",
+      "k": "freight"
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "surcharge"
+    },
+    {
+      "s": "0",
+      "l": "Formalities:",
+      "n": "",
+      "c": "0",
+      "k": "formalities"
+    },
+    {
+      "n": "",
+      "k": "do_fee",
+      "l": "Delivery Order Fee:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "k": "transportation",
+      "c": "0",
+      "l": "Transportation Charges:",
+      "s": "25.000",
+      "n": ""
+    },
+    {
+      "n": "",
+      "k": "inspection",
+      "s": "0",
+      "c": "0",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "s": "25.000",
+      "l": "Handling Charges:",
+      "n": "",
+      "c": "0",
+      "k": "handling"
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "n": "",
+      "s": "0",
+      "k": "labor",
+      "c": "0"
+    },
+    {
+      "s": "15.000",
+      "l": "Documentation Charges:",
+      "n": "",
+      "k": "documentation",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "clearance",
+      "l": "Clearance Charges:",
+      "c": "4.000"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "customs_duty",
+      "s": "0",
+      "l": "Customs Duty:"
+    },
+    {
+      "k": "thc",
+      "l": "Terminal Handling Charges:",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "legalization",
+      "c": "0",
+      "l": "Legalization Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "k": "packing",
+      "l": "Packing Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "l": "Port Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "port_charges",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Other Charges:",
+      "k": "other"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "insurance",
+      "c": "0",
+      "s": "0",
+      "l": "Insurance Fee :"
+    },
+    {
+      "l": "EPA Charges :",
+      "k": "epa",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    }
+  ],
+  "cn": "",
+  "totalCost": 4,
+  "lastUpdatedBy": "ABDUL HADI ",
+  "fv": "",
+  "checkedAt": "2025-08-28T12:39:58.000Z",
+  "totalProfit": 61,
+  "sm": "",
+  "tn": "",
+  "sh": "NANCY FOSTER ",
+  "rejectedAt": null,
+  "mawb": "6463912954",
+  "hawb": "",
+  "re": "",
+  "d": "2025-08-07",
+  "gw": "4.09 KG",
+  "totalSelling": 65,
+  "po": "",
+  "vw": "",
+  "pc": "1",
+  "createdAt": "2025-08-17T10:49:32.000Z",
+  "or": "SDF",
+  "bd": "2025-08-26",
+  "in": "INV/00368/2025",
+  "status": "checked",
+  "jfn": "AC/00113/08/2025",
+  "vn": "",
+  "pb": "ABDUL HADI ",
+  "approvedBy": null,
+  "approvedAt": null,
+  "co": "MR. MARWAN M BOODAI ",
+  "checkedBy": "AJMAL KIANI"
+}
