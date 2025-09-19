@@ -1,0 +1,114 @@
+{
+  "vw": "140 KG",
+  "tn": "",
+  "re": "",
+  "status": "pending",
+  "createdAt": "2025-09-14T05:58:54.000Z",
+  "fv": "KU412",
+  "pb": "ABDUL HADI ",
+  "de": "KUWAIT",
+  "po": "",
+  "ca": "KUWAIT AIRWAYS",
+  "d": "2025-08-24",
+  "createdBy": "ABDUL HADI ",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "dsc": "INBODY 2705",
+  "or": "KOREA",
+  "totalSelling": 402.09,
+  "cn": "",
+  "hawb": "",
+  "updatedAt": "2025-09-14T05:58:54.000Z",
+  "sh": "INBODY COMAPNY LTD",
+  "totalProfit": 72.5,
+  "mawb": "229-17586041",
+  "gw": "75 KG",
+  "jfn": "AI/00017/08/2025",
+  "vn": "KU",
+  "totalCost": 329.59,
+  "pc": "2",
+  "cl": [
+    "Import"
+  ],
+  "pt": [
+    "Air Freight"
+  ],
+  "co": "MOHAMED NASSER AL HAJERY ",
+  "in": "",
+  "sm": "",
+  "ch": [
+    {
+      "s": "25.000",
+      "l": "Transportation Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "17.610",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "17.610"
+    },
+    {
+      "n": "",
+      "s": "15.750",
+      "l": "Handling Charges:",
+      "c": "0"
+    },
+    {
+      "s": "05.000",
+      "n": "",
+      "l": "Inspection Charges",
+      "c": "04.000"
+    },
+    {
+      "s": "30.000",
+      "l": "Clearance Charges:",
+      "n": "",
+      "c": "8.000"
+    },
+    {
+      "c": "227.730",
+      "l": "Customs Duty:",
+      "s": "227.730",
+      "n": ""
+    },
+    {
+      "c": "19.250",
+      "n": "",
+      "s": "19.250",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "n": "",
+      "c": "26.000",
+      "s": "32.750",
+      "l": "Legalization Charges:"
+    },
+    {
+      "s": "4.000",
+      "n": "",
+      "l": "Demurrage Charges:",
+      "c": "4.000"
+    },
+    {
+      "s": "5.000",
+      "l": "Bank Charges:",
+      "n": "",
+      "c": "1.000"
+    },
+    {
+      "l": "Service Charges",
+      "c": "2.000",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "20.000",
+      "n": "",
+      "c": "20.000",
+      "l": "Citra Approval"
+    }
+  ],
+  "bd": "",
+  "ts": "DDP"
+}
