@@ -1,0 +1,98 @@
+{
+  "vw": "100 KG",
+  "ca": "DHL AVIATION ",
+  "cn": "",
+  "ts": "",
+  "bd": "2025-09-18",
+  "gw": "63 KG",
+  "pt": [
+    "Air Freight"
+  ],
+  "totalProfit": 52,
+  "ch": [
+    {
+      "s": "44.500",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "c": "44.500"
+    },
+    {
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "16.410",
+      "c": "16.410"
+    },
+    {
+      "l": "Clearance Charges:",
+      "c": "18.000",
+      "s": "20.000",
+      "n": ""
+    },
+    {
+      "l": "Customs Duty:",
+      "c": "27.710",
+      "n": "",
+      "s": "27.710"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "5.000",
+      "l": "Bank Fee"
+    },
+    {
+      "c": "4.000",
+      "l": "Terminal Handling Charges:",
+      "n": "",
+      "s": "4.000"
+    },
+    {
+      "s": "30.000",
+      "l": "Legalization Charges:",
+      "n": "",
+      "c": "25.000"
+    },
+    {
+      "n": "",
+      "s": "25.000",
+      "l": "Transportation Charges:",
+      "c": "0"
+    },
+    {
+      "s": "15.000",
+      "n": "",
+      "c": "0",
+      "l": "Handling Charges:"
+    }
+  ],
+  "in": "INV/00398/2025",
+  "re": "",
+  "pc": "01",
+  "co": "BOODAI TRADING CO",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "sh": "ENERPAC TOOL GROUP",
+  "status": "checked",
+  "or": "NEDERLAND ",
+  "vn": "",
+  "cl": [
+    "Import"
+  ],
+  "de": "KUWAIT ",
+  "dsc": "HYDRAULIC CYLINDER ",
+  "tn": "",
+  "hawb": "  ",
+  "updatedAt": "2025-09-18T09:16:51.000Z",
+  "createdBy": "ABDUL HADI ",
+  "createdAt": "2025-09-08T06:11:05.000Z",
+  "checkedAt": "2025-09-18T12:12:06.000Z",
+  "mawb": "615-65509382",
+  "fv": "ES170",
+  "totalCost": 135.62,
+  "d": "2025-09-03",
+  "pb": "ABDUL HADI ",
+  "totalSelling": 187.62,
+  "sm": "",
+  "checkedBy": "AJMAL KIANI",
+  "po": "",
+  "jfn": "AC/00123/09/2025"
+}
