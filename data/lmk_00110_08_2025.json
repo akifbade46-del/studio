@@ -1,0 +1,201 @@
+{
+  "status": "checked",
+  "sh": "MAMA SHEIKHA ALGHANIM",
+  "po": "",
+  "vw": "",
+  "cn": "",
+  "updatedAt": "2025-08-31T07:14:38.000Z",
+  "vn": "",
+  "ts": "",
+  "totalSelling": 635,
+  "jfn": "lmk/00110/08/2025",
+  "pc": "",
+  "checkedAt": "2025-08-31T07:16:52.000Z",
+  "or": "",
+  "sm": "",
+  "ca": "",
+  "hawb": "",
+  "totalProfit": 634.99,
+  "createdAt": "2025-08-30T11:10:12.000Z",
+  "pb": "ABDUL HADI ",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "cl": [],
+  "ch": [
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "ex_works",
+      "l": "Ex-works Charges:"
+    },
+    {
+      "l": "Land/Air / Sea Freight:",
+      "s": "0",
+      "n": "",
+      "k": "freight",
+      "c": "0"
+    },
+    {
+      "k": "surcharge",
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "formalities",
+      "l": "Formalities:",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Transportation Charges:",
+      "k": "transportation",
+      "c": "0",
+      "n": "",
+      "s": "150.000"
+    },
+    {
+      "k": "inspection",
+      "c": "0",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "0"
+    },
+    {
+      "s": "50.000",
+      "n": "",
+      "c": "0",
+      "l": "Handling Charges:",
+      "k": "handling"
+    },
+    {
+      "k": "labor",
+      "s": "0",
+      "c": "0",
+      "l": "Labor / Forklift Charges:",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Documentation Charges:",
+      "s": "0",
+      "k": "documentation",
+      "n": ""
+    },
+    {
+      "l": "Clearance Charges:",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "clearance"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Customs Duty:",
+      "c": "0",
+      "k": "customs_duty"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "k": "thc",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "legalization",
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "k": "demurrage",
+      "n": "",
+      "l": "Demurrage Charges:",
+      "c": "0"
+    },
+    {
+      "k": "loading",
+      "s": "250.000",
+      "l": "Loading / Offloading Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "s": "0",
+      "k": "dest_clearance"
+    },
+    {
+      "c": "00.01",
+      "l": "Packing Charges 48 CRT:",
+      "k": "packing",
+      "s": "185.000",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Port Charges:",
+      "c": "0",
+      "k": "port_charges"
+    },
+    {
+      "k": "other",
+      "s": "0",
+      "l": "Other Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "pai",
+      "c": "0",
+      "l": "PAI Approval :",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "k": "insurance",
+      "l": "Insurance Fee :",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "l": "EPA Charges :",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "epa"
+    }
+  ],
+  "re": "",
+  "mawb": "",
+  "fv": "",
+  "dsc": "",
+  "d": "2025-08-30",
+  "tn": "",
+  "gw": "",
+  "bd": "2025-08-31",
+  "pt": [],
+  "de": "",
+  "totalCost": 0.01,
+  "createdBy": "ABDUL HADI ",
+  "co": " MAMA SHEIKHA ",
+  "in": "INV/00392/2025",
+  "checkedBy": "AJMAL KIANI"
+}
