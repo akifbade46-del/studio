@@ -1,0 +1,203 @@
+{
+  "sm": "DINESH",
+  "de": "UNITED STATES OF AMERICA",
+  "ts": "SEA",
+  "bd": "2025-07-23",
+  "lastUpdatedBy": "ANAND MANI",
+  "pc": "48 BOXES",
+  "pt": [
+    "Sea Freight"
+  ],
+  "status": "pending",
+  "ch": [
+    {
+      "k": "ex_works",
+      "n": "",
+      "l": "Ex-works Charges:",
+      "s": "1450",
+      "c": "0"
+    },
+    {
+      "c": "1162.500",
+      "k": "freight",
+      "l": "Land/Air / Sea Freight:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "k": "surcharge",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Formalities:",
+      "k": "formalities"
+    },
+    {
+      "k": "do_fee",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "transportation",
+      "l": "Transportation Charges:"
+    },
+    {
+      "n": "",
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "handling",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Handling Charges:"
+    },
+    {
+      "s": "0",
+      "k": "labor",
+      "c": "0",
+      "n": "",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "c": "0",
+      "l": "Documentation Charges:",
+      "k": "documentation",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "clearance",
+      "n": "",
+      "l": "Clearance Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Customs Duty:",
+      "k": "customs_duty"
+    },
+    {
+      "k": "thc",
+      "n": "",
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Legalization Charges:",
+      "n": "",
+      "k": "legalization",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "k": "demurrage",
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "k": "packing",
+      "l": "Packing Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "l": "Port Charges:",
+      "k": "port_charges",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "Other Charges:",
+      "k": "other",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "PAI Approval :",
+      "k": "pai",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "insurance",
+      "c": "16.947",
+      "l": "Insurance Fee :",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "EPA Charges :",
+      "n": "",
+      "k": "epa"
+    }
+  ],
+  "totalProfit": 270.55,
+  "jfn": "ELF/00006/03/2025",
+  "sh": "MR.RONALD DAVIS",
+  "fv": "511 E",
+  "ca": "GLOBAL FREIGHT SYSTEMS",
+  "updatedAt": "2025-08-11T06:34:02.000Z",
+  "createdAt": "2025-08-11T05:30:08.000Z",
+  "co": "MR.RONALD DAVIS",
+  "in": "INV/00328/2025",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "mawb": "",
+  "gw": "781 KGS",
+  "totalSelling": 1450,
+  "tn": "",
+  "re": "",
+  "vw": "7.5 CBM",
+  "d": "2025-08-11",
+  "vn": "",
+  "cn": "BEAU 4711787",
+  "hawb": "410115000065",
+  "po": "",
+  "createdBy": "ANAND MANI",
+  "cl": [
+    "Export"
+  ],
+  "totalCost": 1179.45,
+  "pb": "ANAND MANI",
+  "or": "KUWAIT"
+}
