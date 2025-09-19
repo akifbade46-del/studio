@@ -1,0 +1,211 @@
+{
+  "approvedAt": null,
+  "updatedAt": "2025-08-31T06:11:01.000Z",
+  "jfn": "SILCL/00008/2025",
+  "vn": "",
+  "vw": "",
+  "de": "KUWAIT",
+  "pc": "4 PALLETS",
+  "createdBy": "ABDUL HADI ",
+  "bd": "2025-08-30",
+  "pb": "ABDUL HADI ",
+  "mawb": "GLSBKWI2506701",
+  "gw": "1506 KGS",
+  "rejectionReason": null,
+  "dsc": "SHOWER FILTER ",
+  "ts": "DDP",
+  "totalCost": 442.99,
+  "totalSelling": 512.5,
+  "approvedBy": null,
+  "pt": [
+    "Sea Freight"
+  ],
+  "status": "pending",
+  "re": "",
+  "hawb": "",
+  "tn": "",
+  "sm": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "sh": "H201 CO.LTD",
+  "fv": "",
+  "ca": "SSC CONSOLIDATION",
+  "cl": [
+    "Import"
+  ],
+  "in": "INV/00380/2025",
+  "totalProfit": 69.51,
+  "cn": "",
+  "or": "KOREA",
+  "d": "2025-08-10",
+  "checkedAt": null,
+  "po": "",
+  "co": "AL SANBEL AL THAHABEYH GEN",
+  "rejectedBy": null,
+  "checkedBy": null,
+  "rejectedAt": null,
+  "ch": [
+    {
+      "k": "ex_works",
+      "c": "0",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "272.000",
+      "k": "freight",
+      "c": "227.488",
+      "l": " Sea Freight Charges :",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "surcharge",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "formalities",
+      "c": "0",
+      "l": "Formalities:"
+    },
+    {
+      "s": "215.500",
+      "k": "do_fee",
+      "c": "215.500",
+      "n": "",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "c": "0",
+      "k": "transportation",
+      "s": "0",
+      "n": "",
+      "l": "Transportation Charges:"
+    },
+    {
+      "k": "inspection",
+      "c": "0",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "0"
+    },
+    {
+      "s": "25.000",
+      "n": "",
+      "c": "0",
+      "l": "Handling Charges:",
+      "k": "handling"
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "k": "documentation",
+      "c": "0",
+      "l": "Documentation Charges:",
+      "n": ""
+    },
+    {
+      "k": "clearance",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "thc",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "s": "0",
+      "l": "Legalization Charges:",
+      "n": "",
+      "c": "0",
+      "k": "legalization"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "s": "0"
+    },
+    {
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "n": "",
+      "k": "loading",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "n": "",
+      "k": "dest_clearance"
+    },
+    {
+      "l": "Packing Charges:",
+      "s": "0",
+      "k": "packing",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "k": "port_charges",
+      "n": "",
+      "c": "0",
+      "l": "Port Charges:"
+    },
+    {
+      "n": "",
+      "k": "other",
+      "l": "Other Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "PAI Approval :",
+      "k": "pai",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "insurance",
+      "s": "0",
+      "l": "Insurance Fee :"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "epa",
+      "l": "EPA Charges :"
+    }
+  ],
+  "createdAt": "2025-08-26T07:06:38.000Z",
+  "assignedTo": null
+}
