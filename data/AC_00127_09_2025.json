@@ -1,0 +1,92 @@
+{
+  "gw": "87 KG",
+  "createdBy": "ABDUL HADI ",
+  "pc": "01",
+  "sm": "",
+  "in": "INV/00401/2025",
+  "pb": "ABDUL HADI ",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "cn": "",
+  "status": "checked",
+  "po": "",
+  "mawb": "615-65511036`",
+  "co": "BOODAI TRADING CO",
+  "ca": "DHL AVIATION ",
+  "createdAt": "2025-09-09T11:09:00.000Z",
+  "hawb": "",
+  "updatedAt": "2025-09-18T08:59:08.000Z",
+  "d": "2025-09-09",
+  "bd": "2025-09-18",
+  "pt": [
+    "Air Freight"
+  ],
+  "ts": "",
+  "de": "KUWAIT",
+  "tn": "",
+  "or": "NETHERLANDS",
+  "checkedAt": "2025-09-18T12:12:57.000Z",
+  "sh": "ENERPAC BV",
+  "re": "",
+  "cl": [
+    "Import"
+  ],
+  "vw": "100 KG",
+  "fv": "",
+  "dsc": "HYDRAULIC PARTS",
+  "ch": [
+    {
+      "s": "44.500",
+      "l": "Delivery Order Fee:",
+      "c": "44.500",
+      "n": ""
+    },
+    {
+      "c": "16.410",
+      "s": "16.410",
+      "l": "Inspection / Computer Print Charges:",
+      "n": ""
+    },
+    {
+      "l": "Clearance Charges:",
+      "n": "",
+      "c": "18.000",
+      "s": "20.000"
+    },
+    {
+      "l": "Customs Duty:",
+      "s": "138.880",
+      "c": "138.880",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Bank Fee",
+      "n": "",
+      "s": "5.000"
+    },
+    {
+      "s": "30.000",
+      "c": "25.000",
+      "n": "",
+      "l": "Legalization & Service Charges:"
+    },
+    {
+      "s": "25.000",
+      "c": "0",
+      "n": "",
+      "l": "Transportation Charges:"
+    },
+    {
+      "s": "15.000",
+      "c": "0",
+      "l": "Handling Charges:",
+      "n": ""
+    }
+  ],
+  "totalSelling": 294.79,
+  "jfn": "AC/00127/09/2025",
+  "checkedBy": "AJMAL KIANI",
+  "totalProfit": 52,
+  "vn": "",
+  "totalCost": 242.79
+}
