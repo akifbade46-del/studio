@@ -1,0 +1,104 @@
+{
+  "d": "2025-09-01",
+  "cl": [
+    "Import"
+  ],
+  "createdBy": "ABDUL HADI ",
+  "hawb": "",
+  "createdAt": "2025-09-14T06:38:39.000Z",
+  "re": "",
+  "po": "",
+  "ca": "KUWAIT AIRWAYS",
+  "pb": "ABDUL HADI ",
+  "fv": "KU128",
+  "checkedBy": "AJMAL KIANI",
+  "co": "BOODAI TRADING CO",
+  "updatedAt": "2025-09-18T09:21:22.000Z",
+  "totalProfit": 75,
+  "gw": "2 PACKAGE",
+  "status": "checked",
+  "cn": "",
+  "pc": "2 ",
+  "bd": "2025-09-18",
+  "totalSelling": 268.49,
+  "vn": "KU",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "totalCost": 193.49,
+  "de": "204KG",
+  "jfn": "AC/00122/09/2025",
+  "ts": "",
+  "ch": [
+    {
+      "n": "",
+      "s": "30.000",
+      "c": "0",
+      "l": "Transportation Charges:"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "c": "18.810",
+      "n": "",
+      "s": "18.810"
+    },
+    {
+      "l": "Handling Charges:",
+      "c": "0",
+      "s": "15.000",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "15.000",
+      "s": "20.000",
+      "l": "Clearance Charges:"
+    },
+    {
+      "l": "Customs Duty:",
+      "s": "120.640",
+      "n": "",
+      "c": "120.640"
+    },
+    {
+      "c": "2.040",
+      "s": "2.040",
+      "l": "Terminal Handling Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Legalization Charges:",
+      "c": "25.000",
+      "s": "30.000"
+    },
+    {
+      "l": "Bank Fee",
+      "n": "",
+      "c": "0",
+      "s": "5.000"
+    },
+    {
+      "c": "12.000",
+      "l": "PAI Approval :",
+      "s": "12.000",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "15.000",
+      "l": "PAI Service Fee"
+    }
+  ],
+  "sh": "ENERPAC B. V.",
+  "vw": "",
+  "pt": [
+    "Air Freight"
+  ],
+  "checkedAt": "2025-09-18T12:11:49.000Z",
+  "mawb": "229-17559931",
+  "or": "NETHERLAND ",
+  "sm": "",
+  "tn": "",
+  "dsc": "TOOL ",
+  "in": "INV/00397/2025"
+}
