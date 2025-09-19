@@ -1,0 +1,203 @@
+{
+  "cl": [
+    "Export"
+  ],
+  "co": "MR.ABDULLA ISMAEEL",
+  "pt": [
+    "Land Freight"
+  ],
+  "hawb": "",
+  "jfn": "ELF/00020/06/2025",
+  "vw": "950.10KGS",
+  "sh": "MR.DANIEL LEVI",
+  "pc": "30 BOXES",
+  "mawb": "881582658170",
+  "createdAt": "2025-08-11T05:39:31.000Z",
+  "updatedAt": "2025-08-11T05:39:31.000Z",
+  "totalProfit": 270.48,
+  "ca": "FEDEX",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "in": "INV/00333/2025",
+  "re": "",
+  "totalSelling": 344.77,
+  "fv": "",
+  "bd": "2025-07-23",
+  "status": "pending",
+  "or": "KUWAIT",
+  "pb": "ANAND MANI",
+  "gw": "812.70KGS",
+  "po": "",
+  "cn": "",
+  "sm": "DINESH",
+  "lastUpdatedBy": "ANAND MANI",
+  "ts": "LAND",
+  "vn": "",
+  "ch": [
+    {
+      "s": "344.770",
+      "n": "",
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "c": "0"
+    },
+    {
+      "c": "58.390",
+      "n": "",
+      "k": "freight",
+      "s": "0",
+      "l": "Land Freight:"
+    },
+    {
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Formalities:",
+      "k": "formalities",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "do_fee",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "k": "transportation",
+      "l": "Transportation Charges:",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "handling",
+      "l": "Handling Charges:",
+      "n": ""
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Documentation Charges:",
+      "k": "documentation"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Clearance Charges:",
+      "k": "clearance"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "customs_duty",
+      "l": "Customs Duty:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "thc",
+      "l": "Terminal Handling Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Legalization Charges:",
+      "k": "legalization",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "k": "demurrage",
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading"
+    },
+    {
+      "k": "dest_clearance",
+      "s": "0",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "packing",
+      "c": "15.900",
+      "l": "Packing Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Port Charges:",
+      "k": "port_charges"
+    },
+    {
+      "n": "",
+      "k": "other",
+      "l": "Other Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "PAI Approval :",
+      "k": "pai"
+    },
+    {
+      "s": "0",
+      "l": "Insurance Fee :",
+      "c": "0",
+      "k": "insurance",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "epa",
+      "l": "EPA Charges :"
+    }
+  ],
+  "createdBy": "ANAND MANI",
+  "totalCost": 74.29,
+  "tn": "",
+  "d": "2025-08-11",
+  "de": "BAHRAIN"
+}
