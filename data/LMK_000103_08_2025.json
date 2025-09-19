@@ -1,0 +1,199 @@
+{
+  "po": "",
+  "pc": "",
+  "cn": "",
+  "or": "",
+  "in": "",
+  "tn": "",
+  "gw": "",
+  "co": "MR. MARWAN BOODAI",
+  "vn": "",
+  "fv": "",
+  "sm": "",
+  "createdAt": "2025-08-30T11:04:00.000Z",
+  "jfn": "LMK/000103/08/2025",
+  "d": "2025-08-13",
+  "sh": "MR. MARWAN BOODAI",
+  "dsc": "LOCAL MOVEMNET FOR AUGUST 2025",
+  "ts": "",
+  "ca": "",
+  "pb": "ABDUL HADI ",
+  "totalProfit": 860,
+  "totalCost": 180,
+  "lastUpdatedBy": "ABDUL HADI ",
+  "pt": [],
+  "cl": [],
+  "de": "",
+  "createdBy": "ABDUL HADI ",
+  "vw": "",
+  "status": "pending",
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "c": "0",
+      "k": "ex_works",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Formalities:",
+      "k": "formalities",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Transportation Charges:",
+      "n": "",
+      "s": "450.000",
+      "k": "transportation"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "inspection",
+      "c": "0",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "l": "Handling Charges:",
+      "k": "handling",
+      "s": "50.000",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "labor",
+      "l": "Labor / Forklift Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Documentation Charges:",
+      "c": "0",
+      "k": "documentation"
+    },
+    {
+      "n": "",
+      "k": "clearance",
+      "l": "Clearance Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "customs_duty",
+      "l": "Customs Duty:"
+    },
+    {
+      "s": "0",
+      "k": "thc",
+      "n": "",
+      "c": "0",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "legalization",
+      "l": "Legalization Charges:"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "demurrage"
+    },
+    {
+      "c": "180.000",
+      "s": "360.000",
+      "l": "Loading / Offloading Charges Hari 15:",
+      "n": "",
+      "k": "loading"
+    },
+    {
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "k": "dest_clearance",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "180.00",
+      "c": "0",
+      "l": "Packing Charges:",
+      "k": "packing"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "port_charges",
+      "l": "Port Charges:"
+    },
+    {
+      "l": "Other Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "other",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "pai",
+      "n": "",
+      "l": "PAI Approval :"
+    },
+    {
+      "s": "0",
+      "l": "Insurance Fee :",
+      "k": "insurance",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "epa",
+      "l": "EPA Charges :"
+    }
+  ],
+  "updatedAt": "2025-08-30T11:04:00.000Z",
+  "bd": "",
+  "totalSelling": 1040,
+  "re": "",
+  "mawb": "",
+  "hawb": ""
+}
