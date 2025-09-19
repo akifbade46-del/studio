@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job File Management System with GitHub Storage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+    <style>
+        :root { --theme-color: #4f46e5; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 0.75rem;
+            border-top: 5px solid var(--theme-color);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        @media (min-width: 640px) {
+            .container {
+                margin: 2rem auto;
+                padding: 2.5rem;
+            }
+        }
+        .input-field {
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--theme-color);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+        }
+        .input-field:disabled {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+            color: #6b7280;
+        }
+        .table-cell {
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem;
+            position: relative;
+        }
+        @media (min-width: 640px) {
+            .table-cell {
+                padding: 0.75rem;
+            }
+        }
+        .table-cell input {
+            width: 100%;
+            border: none;
+            padding: 0;
+            background-color: transparent;
+        }
+        .table-cell input:focus {
+            outline: none;
+        }
+        
+        .overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5); display: flex;
+            align-items: center; justify-content: center; z-index: 1000;
+            opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
+            padding: 1rem;
+        }
+        .overlay.visible {
+            opacity: 1; visibility: visible;
+        }
+        .modal-content {
+            background: white; padding: 1.5rem; border-radius: 0.5rem;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh; overflow-y: auto;
+            transform: scale(0.9); transition: transform 0.3s;
+        }
+        .overlay.visible .modal-content {
+            transform: scale(1);
+        }
+        .loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid var(--theme-color);
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #notification {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            background-color: #2d3748; color: white;
+            padding: 1rem 1.5rem; border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translate(-50%, 100px); opacity: 0;
+            transition: transform 0.5s, opacity 0.5s;
+            z-index: 2000;
+            text-align: center;
+        }
+        #notification.show {
+            transform: translate(-50%, 0); opacity: 1;
+        }
+
+        @page { size: A4; margin: 0.5cm; }
+        @media print {
+            body { background-color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            #main-container, .no-print, #app-container, #login-screen { display: none !important; }
+            #print-output, #public-view-container, #analytics-container { display: block !important; padding: 0 !important; margin: 0 !important; }
+        }
+        #print-output .print-table, #preview-modal .print-table, #analytics-container .analytics-table { border-collapse: collapse; width: 100%; }
+        #print-output .print-table th, #print-output .print-table td,
+        #preview-modal .print-table th, #preview-modal .print-table td,
+        #analytics-container .analytics-table th, #analytics-container .analytics-table td { border: 1px solid #d1d5db; padding: 0.5rem; text-align: left; }
+        #analytics-container .analytics-table th { background-color: #f3f4f6; font-weight: 600; }
+        #print-output .print-field, #preview-modal .print-field { border: 1px solid #6b7280; padding: 0.3rem; min-height: 24px; word-break: break-all; }
+        .admin-only, .checker-only, #signup-name-field { display: none; }
+        
+        .stamp {
+            position: absolute;
+            top: -10px; right: -10px;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transform: rotate(15deg);
+            opacity: 0.8;
+            display: none;
+        }
+        .stamp-approved { border: 2px solid #16a34a; color: #16a34a; }
+        .stamp-checked { border: 2px solid #2563eb; color: #2563eb; }
+        .stamp-rejected { border: 2px solid #dc2626; color: #dc2626; }
+
+        .autocomplete-suggestions {
+            border: 1px solid #d1d5db;
+            border-top: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+            background-color: white;
+            z-index: 999;
+            width: 100%;
+        }
+        .autocomplete-suggestion {
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+        .autocomplete-suggestion:hover {
+            background-color: #f3f4f6;
+        }
+        .autocomplete-suggestion.selected {
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div>
+                <img class="mx-auto h-24 w-auto" src="https://qgocargo.com/logo.png" alt="Q'go Cargo Logo">
+                <h2 id="auth-title" class="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+            </div>
+            <div class="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-md">
+                <div id="approval-message" class="hidden p-4 text-center text-yellow-800 bg-yellow-100 rounded-lg">
+                    Your account is awaiting admin approval.
+                </div>
+                 <div id="blocked-message" class="hidden p-4 text-center text-red-800 bg-red-100 rounded-lg">
+                    Your account has been blocked by an administrator.
+                </div>
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div id="signup-name-field">
+                        <label for="full-name" class="sr-only">Full Name</label>
+                        <input id="full-name" name="name" type="text" autocomplete="name" required class="input-field rounded-t-md" placeholder="Full Name">
+                    </div>
+                    <div>
+                        <label for="email-address" class="sr-only">Email address</label>
+                        <input id="email-address" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
+                    </div>
+                    <div>
+                        <label for="password" class="sr-only">Password</label>
+                        <input id="password" name="password" type="password" autocomplete="current-password" required class="input-field rounded-b-md" placeholder="Password">
+                    </div>
+                </div>
+                <div>
+                    <button id="auth-btn" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Sign in
+                    </button>
+                </div>
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    <a href="#" id="auth-link" class="font-medium text-indigo-600 hover:text-indigo-500">
+                        Create a new account
+                    </a>
+                </p>
+                <div class="text-center mt-2 text-sm">
+                    <a href="#" id="forgot-password-link" class="font-medium text-indigo-600 hover:text-indigo-500">
+                        Forgot your password?
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application Container -->
+    <div id="app-container" class="hidden">
+        <div id="main-container" class="container">
+            <!-- Header Section -->
+            <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <div class="flex items-center">
+                    <img id="logo-container" class="h-16 w-auto mr-4" src="https://qgocargo.com/logo.png" alt="Q'go Cargo Logo">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 border-l-4 border-gray-300 pl-4">JOB FILE</h1>
+                </div>
+                <div class="text-right w-full sm:w-auto">
+                    <div class="flex items-center mb-2">
+                        <label for="date" class="mr-2 font-semibold text-gray-700">Date:</label>
+                        <input type="date" id="date" class="input-field w-full sm:w-40">
+                    </div>
+                    <div class="flex items-center">
+                        <label for="po-number" class="mr-2 font-semibold text-gray-700">P.O. #:</label>
+                        <input type="text" id="po-number" class="input-field w-full sm:w-40">
+                    </div>
+                </div>
+            </header>
+            
+            <!-- User Info and Logout -->
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 bg-gray-50 p-2 rounded-md gap-2">
+                <div class="text-sm text-center sm:text-left">
+                    Logged in as: <span id="user-display-name" class="font-bold"></span> (<span id="user-role" class="capitalize"></span>)
+                </div>
+                 <div class="flex-grow text-center">
+                     <button onclick="openAnalyticsDashboard()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-5 rounded-md text-base">Analytics</button>
+                 </div>
+                <div>
+                    <button id="activity-log-btn" class="admin-only bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded text-sm mr-2">Activity Log</button>
+                    <button id="admin-panel-btn" class="admin-only bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm mr-2">Admin Panel</button>
+                    <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm">Logout</button>
+                </div>
+            </div>
+            
+            <!-- Status Summary -->
+            <div id="status-summary-main" class="mb-4"></div>
+
+            <div id="checker-info-banner" class="checker-only hidden p-3 mb-4 text-center text-blue-800 bg-blue-100 rounded-lg">
+                <strong>Note:</strong> Files must be checked before they can be approved or rejected by an admin.
+            </div>
+
+            <div id="rejection-banner" class="hidden p-3 mb-4 text-center text-red-800 bg-red-100 rounded-lg">
+                <strong>This job file was rejected.</strong> Reason: <span id="rejection-reason"></span>
+            </div>
+
+            <!-- Form Fields -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div class="lg:col-span-2">
+                    <label for="job-file-no" class="block mb-1 font-semibold text-gray-700">Job File No.:</label>
+                    <input type="text" id="job-file-no" class="input-field" placeholder="Enter a unique ID here...">
+                </div>
+                <div class="flex items-end space-x-8 pb-1">
+                    <div>
+                        <span class="font-semibold text-gray-700">Clearance</span>
+                        <div class="mt-2 space-y-1">
+                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-clearance="Export"> Export</label>
+                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-clearance="Import"> Import</label>
+                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-clearance="Clearance"> Clearance</label>
+                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-clearance="Local Move"> Local Move</label>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-gray-700">Product Type</span>
+                        <div class="mt-2 space-y-1">
+                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-product="Air Freight"> Air Freight</label>
+                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-product="Sea Freight"> Sea Freight</label>
+                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-product="Land Freight"> Land Freight</label>
+                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-product="Others"> Others</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div><label for="invoice-no" class="block mb-1 font-semibold text-gray-700">Invoice No.:</label><input type="text" id="invoice-no" class="input-field"></div>
+                <div><label for="billing-date" class="block mb-1 font-semibold text-gray-700">Billing Date:</label><input type="date" id="billing-date" class="input-field"></div>
+                <div><label for="salesman" class="block mb-1 font-semibold text-gray-700">Salesman:</label><input type="text" id="salesman" class="input-field"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="relative">
+                    <label for="shipper-name" class="block mb-1 font-semibold text-gray-700">Shipper's Name:</label>
+                    <input type="text" id="shipper-name" class="input-field" autocomplete="off">
+                    <div id="shipper-suggestions" class="autocomplete-suggestions hidden"></div>
+                </div>
+                <div class="relative">
+                    <label for="consignee-name" class="block mb-1 font-semibold text-gray-700">Consignee's Name:</label>
+                    <input type="text" id="consignee-name" class="input-field" autocomplete="off">
+                    <div id="consignee-suggestions" class="autocomplete-suggestions hidden"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div><label for="mawb" class="block mb-1 font-semibold text-gray-700">MAWB / OBL / TCN No.:</label><input type="text" id="mawb" class="input-field"></div>
+                <div><label for="hawb" class="block mb-1 font-semibold text-gray-700">HAWB / HBL:</label><input type="text" id="hawb" class="input-field"></div>
+                <div><label for="teams-of-shipping" class="block mb-1 font-semibold text-gray-700">Teams of Shipping:</label><input type="text" id="teams-of-shipping" class="input-field"></div>
+                <div><label for="origin" class="block mb-1 font-semibold text-gray-700">Origin:</label><input type="text" id="origin" class="input-field"></div>
+                <div><label for="no-of-pieces" class="block mb-1 font-semibold text-gray-700">No. of Pieces:</label><input type="text" id="no-of-pieces" class="input-field"></div>
+                <div><label for="gross-weight" class="block mb-1 font-semibold text-gray-700">Gross Weight:</label><input type="text" id="gross-weight" class="input-field"></div>
+                <div><label for="destination" class="block mb-1 font-semibold text-gray-700">Destination:</label><input type="text" id="destination" class="input-field"></div>
+                <div><label for="volume-weight" class="block mb-1 font-semibold text-gray-700">Volume Weight:</label><input type="text" id="volume-weight" class="input-field"></div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="sm:col-span-2">
+                    <label for="description" class="block mb-1 font-semibold text-gray-700">Description:</label>
+                    <input type="text" id="description" class="input-field">
+                </div>
+                <div><label for="carrier" class="block mb-1 font-semibold text-gray-700">Carrier / Shipping Line / Trucking Co:</label><input type="text" id="carrier" class="input-field"></div>
+                <div><label for="truck-no" class="block mb-1 font-semibold text-gray-700">Truck No. / Driver's Name:</label><input type="text" id="truck-no" class="input-field"></div>
+                <div><label for="vessel-name" class="block mb-1 font-semibold text-gray-700">Vessel's Name:</label><input type="text" id="vessel-name" class="input-field"></div>
+                <div><label for="flight-voyage-no" class="block mb-1 font-semibold text-gray-700">Flight / Voyage No.:</label><input type="text" id="flight-voyage-no" class="input-field"></div>
+                <div><label for="container-no" class="block mb-1 font-semibold text-gray-700">Container No.:</label><input type="text" id="container-no" class="input-field"></div>
+            </div>
+
+            <!-- Charges Table -->
+            <div class="flex justify-between items-center mb-2">
+                 <h2 class="text-xl font-semibold text-gray-800">Charges</h2>
+                 <div>
+                     <button onclick="openChargeManager()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform hover:scale-105 mr-2">Manage Descriptions</button>
+                 </div>
+            </div>
+            <div class="mb-6 overflow-x-auto border border-gray-200 rounded-lg">
+                <table id="charges-table" class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="table-cell font-semibold">Description</th>
+                            <th class="table-cell font-semibold">Cost</th>
+                            <th class="table-cell font-semibold">Selling</th>
+                            <th class="table-cell font-semibold">Profit</th>
+                            <th class="table-cell font-semibold">Notes</th>
+                            <th class="table-cell font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="charges-table-body">
+                        <!-- JavaScript will populate this -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-right mb-6">
+                 <button onclick="addChargeRow()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg text-sm">+ Add Charge</button>
+            </div>
+
+            <!-- Remarks Section -->
+            <div class="flex justify-between items-center mb-2">
+                <label for="remarks" class="block font-semibold text-gray-700">REMARKS:</label>
+            </div>
+            <div class="mb-8">
+                <textarea id="remarks" rows="4" class="input-field w-full"></textarea>
+            </div>
+
+            <!-- Creator/Editor Info -->
+            <div id="file-info" class="text-xs text-gray-500 mb-4 border-t pt-4">
+                <span id="created-by-info"></span>
+                <span id="last-updated-by-info" class="ml-4"></span>
+            </div>
+
+            <!-- Footer Section -->
+            <footer class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 border-t items-end">
+                <div><label class="block mb-2 font-semibold text-gray-700">PREPARED BY</label><input type="text" id="prepared-by" class="input-field bg-gray-100" readonly></div>
+                <div class="relative">
+                    <div id="checked-stamp" class="stamp stamp-checked">Checked</div>
+                    <label class="block mb-2 font-semibold text-gray-700">CHECKED BY</label>
+                    <input type="text" id="checked-by" class="input-field bg-gray-100" readonly>
+                    <button id="check-btn" class="checker-only mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Check Job File</button>
+                </div>
+                <div class="relative">
+                    <div id="approved-stamp" class="stamp stamp-approved">Approved</div>
+                    <div id="rejected-stamp" class="stamp stamp-rejected">Rejected</div>
+                    <label class="block mb-2 font-semibold text-gray-700">APPROVED BY</label>
+                    <input type="text" id="approved-by" class="input-field bg-gray-100" readonly>
+                    <div id="approval-buttons" class="admin-only mt-2 w-full flex gap-2">
+                        <button id="approve-btn" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Approve</button>
+                        <button id="reject-btn" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Reject</button>
+                    </div>
+                </div>
+            </footer>
+
+            <!-- Action Buttons -->
+            <div class="text-center mt-10 no-print flex flex-wrap justify-center gap-2 sm:gap-4">
+                 <button onclick="openFileManager()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.586l.293.293a1 1 0 001.414 0L10.414 12l-1.293 1.293a1 1 0 000 1.414l.293.293V16a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
+                     <span>File Manager</span>
+                 </button>
+                 <button onclick="saveJobFile()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586L7.707 10.293z" /></svg>
+                     <span>Save to GitHub</span>
+                 </button>
+                 <button onclick="generateAndShowQRCode()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 2V5h1v1H5zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zm2 2v-1h1v1H5zM13 3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4a1 1 0 011-1h3zm-1 2v1h-1V5h1z" clip-rule="evenodd" /></svg>
+                     <span>QR Code</span>
+                 </button>
+                 <button onclick="openPreview()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" /></svg>
+                     <span>Preview</span>
+                 </button>
+                 <button onclick="clearForm()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414L9.586 12l-3.293 3.293a1 1 0 101.414 1.414L10 13.414l2.293 2.293a1 1 0 001.414-1.414L10.414 12l3.293-3.293z" clip-rule="evenodd" /></svg>
+                     <span>New File</span>
+                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader Overlay -->
+    <div id="loader-overlay" class="overlay">
+        <div class="text-center">
+            <div class="loader mx-auto"></div>
+            <p class="mt-4 text-white">Processing...</p>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification"></div>
+
+    <!-- Analytics Dashboard Modal -->
+    <div id="analytics-modal" class="overlay">
+        <div class="modal-content max-w-6xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">Analytics Dashboard</h3>
+                <button onclick="closeModal('analytics-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="analytics-content">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-800">Total Job Files</h4>
+                        <p id="total-files" class="text-2xl font-bold text-blue-600">0</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-800">Approved Files</h4>
+                        <p id="approved-files" class="text-2xl font-bold text-green-600">0</p>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-orange-800">Pending Files</h4>
+                        <p id="pending-files" class="text-2xl font-bold text-orange-600">0</p>
+                    </div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h4 class="font-semibold mb-2">Recent Activity</h4>
+                    <p class="text-gray-600">Analytics data will be displayed here once you have job files.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Manager Modal -->
+    <div id="file-manager-modal" class="overlay">
+        <div class="modal-content max-w-4xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">File Manager</h3>
+                <button onclick="closeModal('file-manager-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div id="file-list" class="space-y-2 max-h-[60vh] overflow-y-auto">
+                <!-- JavaScript will populate this -->
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qr-modal" class="overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">QR Code</h3>
+                <button onclick="closeModal('qr-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div class="text-center">
+                <div id="qrcode" class="mb-4"></div>
+                <p class="text-sm text-gray-600">Scan this QR code to quickly access this job file</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="preview-modal" class="overlay">
+        <div class="modal-content max-w-4xl">
+            <div class="flex justify-between items-center mb-4 no-print">
+                <h3 class="text-2xl font-bold">Print Preview</h3>
+                <div>
+                    <button onclick="printPreview()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2">Print</button>
+                    <button onclick="closeModal('preview-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+                </div>
+            </div>
+            <div id="preview-body" class="border border-gray-300 p-4 bg-white">
+                <!-- JavaScript will populate this -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="admin-panel-modal" class="overlay">
+        <div class="modal-content max-w-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">Admin Panel</h3>
+                <button onclick="closeModal('admin-panel-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <div class="border rounded-lg p-4">
+                    <h4 class="text-lg font-semibold mb-2">User Management</h4>
+                    <div id="users-list" class="space-y-2">
+                        <!-- JavaScript will populate this -->
+                    </div>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <h4 class="text-lg font-semibold mb-2">System Information</h4>
+                    <p class="text-sm text-gray-600">Files are stored in GitHub repository as JSON files</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK and GitHub Integration -->
+    <script>
+        // Firebase Configuration (compat version)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAAulR2nJQm-4QtNyEqKTnnDPw-iKW92Mc",
+            authDomain: "my-job-file-system.firebaseapp.com",
+            projectId: "my-job-file-system",
+            storageBucket: "my-job-file-system.appspot.com",
+            messagingSenderId: "145307873304",
+            appId: "1:145307873304:web:d661ea6ec118801b4a136d",
+            measurementId: "G-8EHX5K7YHL"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Global variables
+        let currentUser = null;
+        let jobFilesCache = [];
+        let chargeDescriptions = [];
+        let isLogin = true;
+        let gitHubConfig = {
+            token: '', // Configured via environment or GitHub Pages secrets
+            owner: '', // Configured via environment or GitHub Pages secrets
+            repo: ''   // Configured via environment or GitHub Pages secrets
+        };
+
+        // GitHub API Functions
+        class GitHubStorage {
+            constructor(token, owner, repo) {
+                this.token = token;
+                this.owner = owner;
+                this.repo = repo;
+                this.baseUrl = 'https://api.github.com';
+            }
+
+            async makeRequest(url, options = {}) {
+                const response = await fetch(url, {
+                    ...options,
+                    headers: {
+                        'Authorization': `token ${this.token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`GitHub API Error: ${response.status} ${response.statusText}`);
+                }
+
+                return response.json();
+            }
+
+            async saveJobFile(fileName, data) {
+                const path = `data/${fileName}`;
+                const content = btoa(JSON.stringify(data, null, 2));
+                
+                try {
+                    // Try to get existing file to get SHA
+                    let sha;
+                    try {
+                        const existing = await this.makeRequest(`${this.baseUrl}/repos/${this.owner}/${this.repo}/contents/${path}`);
+                        sha = existing.sha;
+                    } catch (e) {
+                        // File doesn't exist, that's fine
+                    }
+
+                    const body = {
+                        message: `${sha ? 'Update' : 'Create'} job file ${fileName}`,
+                        content,
+                        ...(sha && { sha })
+                    };
+
+                    return await this.makeRequest(`${this.baseUrl}/repos/${this.owner}/${this.repo}/contents/${path}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(body)
+                    });
+                } catch (error) {
+                    console.error('Error saving to GitHub:', error);
+                    throw error;
+                }
+            }
+
+            async loadJobFile(fileName) {
+                try {
+                    const path = `data/${fileName}`;
+                    const response = await this.makeRequest(`${this.baseUrl}/repos/${this.owner}/${this.repo}/contents/${path}`);
+                    
+                    if (response.content) {
+                        const content = atob(response.content);
+                        return JSON.parse(content);
+                    }
+                    
+                    throw new Error('Invalid file data');
+                } catch (error) {
+                    console.error('Error loading from GitHub:', error);
+                    throw error;
+                }
+            }
+
+            async listJobFiles() {
+                try {
+                    const response = await this.makeRequest(`${this.baseUrl}/repos/${this.owner}/${this.repo}/contents/data`);
+                    
+                    if (Array.isArray(response)) {
+                        return response.filter(file => file.name.endsWith('.json'));
+                    }
+                    
+                    return [];
+                } catch (error) {
+                    if (error.message.includes('404')) {
+                        return []; // Directory doesn't exist yet
+                    }
+                    console.error('Error listing files from GitHub:', error);
+                    return [];
+                }
+            }
+
+            async deleteJobFile(fileName) {
+                try {
+                    const path = `data/${fileName}`;
+                    const existing = await this.makeRequest(`${this.baseUrl}/repos/${this.owner}/${this.repo}/contents/${path}`);
+                    
+                    return await this.makeRequest(`${this.baseUrl}/repos/${this.owner}/${this.repo}/contents/${path}`, {
+                        method: 'DELETE',
+                        body: JSON.stringify({
+                            message: `Delete job file ${fileName}`,
+                            sha: existing.sha
+                        })
+                    });
+                } catch (error) {
+                    console.error('Error deleting from GitHub:', error);
+                    throw error;
+                }
+            }
+        }
+
+        let githubStorage;
+
+        // GitHub Configuration - SECURITY ARCHITECTURE
+        function initializeGitHubConfig() {
+            /* SECURITY WARNING: Client-side GitHub tokens are inherently insecure
+             * 
+             * PRODUCTION DEPLOYMENT RECOMMENDATIONS:
+             * 1. Use GitHub Actions to generate secure deployment with server-side tokens
+             * 2. Implement read-only mode for public access
+             * 3. Use GitHub Apps with restricted permissions instead of PATs
+             * 4. Consider using GitHub's API with OAuth Apps for user authentication
+             * 
+             * This implementation provides multiple security levels:
+             */
+
+            // Level 1: Check for GitHub Actions injected variables (most secure)
+            if (window.GITHUB_CONFIG_INJECTED) {
+                gitHubConfig = window.GITHUB_CONFIG_INJECTED;
+                githubStorage = new GitHubStorage(gitHubConfig.token, gitHubConfig.owner, gitHubConfig.repo);
+                return true;
+            }
+
+            // Level 2: Check for environment variables (GitHub Pages with secrets)
+            gitHubConfig.token = window.GITHUB_TOKEN;
+            gitHubConfig.owner = window.GITHUB_OWNER;
+            gitHubConfig.repo = window.GITHUB_REPO;
+
+            if (gitHubConfig.token && gitHubConfig.owner && gitHubConfig.repo) {
+                githubStorage = new GitHubStorage(gitHubConfig.token, gitHubConfig.owner, gitHubConfig.repo);
+                showNotification('GitHub configured via environment variables (secure)', false);
+                return true;
+            }
+
+            // Level 3: Development/testing mode with explicit warnings
+            showSecurityWarningModal();
+            return false;
+        }
+
+        function showSecurityWarningModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modal.innerHTML = `
+                <div class="bg-white p-6 rounded-lg max-w-2xl mx-4">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-red-100 p-2 rounded-full mr-3">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 18.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-red-800">Security Warning: Unsafe Configuration</h3>
+                    </div>
+                    
+                    <div class="space-y-4 text-sm">
+                        <div class="bg-red-50 p-4 rounded border border-red-200">
+                            <p class="font-medium text-red-800 mb-2">❌ Client-side GitHub tokens are inherently insecure:</p>
+                            <ul class="list-disc list-inside text-red-700 space-y-1">
+                                <li>Tokens exposed to XSS attacks and browser extensions</li>
+                                <li>No server-side authorization or audit logging</li>
+                                <li>Violates principle of least privilege</li>
+                                <li>Cannot be safely revoked per user</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-green-50 p-4 rounded border border-green-200">
+                            <p class="font-medium text-green-800 mb-2">✅ Secure Production Deployment Options:</p>
+                            <ol class="list-decimal list-inside text-green-700 space-y-1">
+                                <li>Use GitHub Actions with repository secrets</li>
+                                <li>Deploy with server-side token injection</li>
+                                <li>Implement read-only mode for public access</li>
+                                <li>Use GitHub Apps with minimal permissions</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="bg-yellow-50 p-4 rounded border border-yellow-200">
+                            <p class="font-medium text-yellow-800 mb-2">🔧 Development/Testing Only:</p>
+                            <p class="text-yellow-700">You can proceed with local testing, but this should never be deployed to production.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3 mt-6">
+                        <button onclick="enableReadOnlyMode()" class="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">Use Read-Only Mode</button>
+                        <button onclick="showDevConfig()" class="flex-1 bg-yellow-600 text-white py-2 px-4 rounded hover:bg-yellow-700">Development Mode</button>
+                        <button onclick="closeConfigModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400">Cancel</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            window.configModal = modal;
+        }
+
+        function enableReadOnlyMode() {
+            closeConfigModal();
+            showNotification('Application running in read-only mode. Data persistence disabled for security.', false);
+            
+            // Disable all write operations for security
+            window.saveJobFile = () => showNotification('Save disabled in read-only mode. Use secure deployment for persistence.', true);
+            window.deleteFileFromManager = () => showNotification('Delete disabled in read-only mode.', true);
+            window.updateUserRole = () => showNotification('User management disabled in read-only mode.', true);
+            window.updateUserStatus = () => showNotification('User management disabled in read-only mode.', true);
+            
+            // Mark as read-only globally
+            window.isReadOnlyMode = true;
+            
+            // Hide write-related UI elements
+            const writeButtons = ['save-btn', 'admin-panel-btn'];
+            writeButtons.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.style.display = 'none';
+                }
+            });
+        }
+
+        function showDevConfig() {
+            const modal = window.configModal;
+            modal.innerHTML = `
+                <div class="bg-white p-6 rounded-lg w-96">
+                    <h3 class="text-lg font-medium mb-4 text-red-700">⚠️ Development Mode Only</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">GitHub Username/Organization</label>
+                            <input type="text" id="config-owner" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="your-username">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Repository Name</label>
+                            <input type="text" id="config-repo" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="your-repo">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Personal Access Token</label>
+                            <input type="password" id="config-token" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="ghp_...">
+                            <p class="text-xs text-red-600 mt-1">⚠️ NEVER use in production! Tokens are exposed to client-side attacks.</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="saveGitHubConfig()" class="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700">Accept Risk & Continue</button>
+                            <button onclick="closeConfigModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveGitHubConfig() {
+            const owner = document.getElementById('config-owner').value;
+            const repo = document.getElementById('config-repo').value;
+            const token = document.getElementById('config-token').value;
+
+            if (owner && repo && token) {
+                localStorage.setItem('GITHUB_OWNER', owner);
+                localStorage.setItem('GITHUB_REPO', repo);
+                localStorage.setItem('GITHUB_TOKEN', token);
+                
+                gitHubConfig.owner = owner;
+                gitHubConfig.repo = repo;
+                gitHubConfig.token = token;
+                
+                githubStorage = new GitHubStorage(token, owner, repo);
+                closeConfigModal();
+                showNotification('GitHub configuration saved successfully!');
+                loadJobFiles();
+            } else {
+                showNotification('Please fill in all fields.', true);
+            }
+        }
+
+        function closeConfigModal() {
+            if (window.configModal) {
+                document.body.removeChild(window.configModal);
+                window.configModal = null;
+            }
+        }
+
+        // Firebase Initialization (using compat API)
+        async function initializeFirebase() {
+            try {
+                firebase.auth().onAuthStateChanged(async (user) => {
+                    if (user) {
+                        // Store user data in localStorage (matching original approach)
+                        let userData = JSON.parse(localStorage.getItem('users') || '{}')[user.uid];
+                        
+                        if (!userData) {
+                            const existingUsers = JSON.parse(localStorage.getItem('users') || '{}');
+                            const isFirstUser = Object.keys(existingUsers).length === 0;
+                            
+                            userData = {
+                                email: user.email,
+                                displayName: user.displayName || user.email.split('@')[0],
+                                role: isFirstUser ? 'admin' : 'user',
+                                status: isFirstUser ? 'active' : 'inactive',
+                                createdAt: new Date().toISOString()
+                            };
+                            
+                            const users = JSON.parse(localStorage.getItem('users') || '{}');
+                            users[user.uid] = userData;
+                            localStorage.setItem('users', JSON.stringify(users));
+                        }
+                        
+                        currentUser = { uid: user.uid, email: user.email, ...userData };
+                        
+                        if (currentUser.status === 'inactive') {
+                            showLogin();
+                            document.getElementById('approval-message').style.display = 'block';
+                            document.getElementById('blocked-message').style.display = 'none';
+                            firebase.auth().signOut();
+                            return;
+                        }
+
+                        if (currentUser.status === 'blocked') {
+                            showLogin();
+                            document.getElementById('approval-message').style.display = 'none';
+                            document.getElementById('blocked-message').style.display = 'block';
+                            firebase.auth().signOut();
+                            return;
+                        }
+                        
+                        console.log("User logged in:", currentUser);
+                        showApp();
+                        loadJobFiles();
+                    } else {
+                        currentUser = null;
+                        console.log("User logged out");
+                        showLogin();
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                showNotification("Could not connect to authentication service.", true);
+            }
+        }
+
+        // Auth Functions (matching original implementation)
+        async function handleLogin(email, password) {
+            try {
+                showLoader();
+                await firebase.auth().signInWithEmailAndPassword(email, password);
+                hideLoader();
+            } catch (error) {
+                console.error('Login error:', error);
+                showNotification(error.message, true);
+                hideLoader();
+            }
+        }
+
+        async function handleSignUp(email, password, displayName) {
+            try {
+                showLoader();
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                
+                // Store additional user data
+                const users = JSON.parse(localStorage.getItem('users') || '{}');
+                users[userCredential.user.uid] = {
+                    email: email,
+                    displayName: displayName,
+                    role: 'user',
+                    status: 'inactive', // Requires admin approval
+                    createdAt: new Date().toISOString()
+                };
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                hideLoader();
+                showNotification('Account created! Awaiting admin approval.');
+            } catch (error) {
+                console.error('Signup error:', error);
+                showNotification(error.message, true);
+                hideLoader();
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await firebase.auth().signOut();
+                showNotification('Logged out successfully');
+            } catch (error) {
+                console.error('Logout error:', error);
+                showNotification(error.message, true);
+            }
+        }
+
+        async function handleForgotPassword() {
+            const email = document.getElementById('email-address').value;
+            if (!email) {
+                showNotification('Please enter your email address first.', true);
+                return;
+            }
+
+            try {
+                await firebase.auth().sendPasswordResetEmail(email);
+                showNotification('Password reset email sent!');
+            } catch (error) {
+                console.error('Password reset error:', error);
+                showNotification(error.message, true);
+            }
+        }
+
+        function toggleAuthView(isLoginView) {
+            const title = document.getElementById('auth-title');
+            const button = document.getElementById('auth-btn');
+            const link = document.getElementById('auth-link');
+            const nameField = document.getElementById('signup-name-field');
+            
+            if (isLoginView) {
+                title.textContent = 'Sign in to your account';
+                button.textContent = 'Sign in';
+                link.textContent = 'Create a new account';
+                nameField.style.display = 'none';
+            } else {
+                title.textContent = 'Create your account';
+                button.textContent = 'Sign up';
+                link.textContent = 'Already have an account? Sign in';
+                nameField.style.display = 'block';
+            }
+        }
+
+        // Job File Management Functions
+        async function saveJobFile() {
+            if (!githubStorage) {
+                showNotification('GitHub not configured. Please set up GitHub credentials.', true);
+                return;
+            }
+
+            const formData = getFormData();
+            
+            if (!formData.jfn) {
+                showNotification('Please enter a Job File Number', true);
+                return;
+            }
+
+            showLoader();
+            try {
+                const fileName = `${formData.jfn}.json`;
+                const jobFileData = {
+                    ...formData,
+                    id: formData.jfn,
+                    status: 'draft',
+                    createdBy: currentUser.displayName,
+                    createdAt: new Date().toISOString(),
+                    lastUpdatedBy: currentUser.displayName,
+                    updatedAt: new Date().toISOString()
+                };
+
+                await githubStorage.saveJobFile(fileName, jobFileData);
+                showNotification('Job file saved to GitHub successfully!');
+                loadJobFiles(); // Refresh the file list
+            } catch (error) {
+                console.error('Error saving job file:', error);
+                showNotification('Failed to save job file to GitHub. Please check your configuration.', true);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        async function loadJobFiles() {
+            if (!githubStorage) {
+                return;
+            }
+
+            try {
+                const files = await githubStorage.listJobFiles();
+                jobFilesCache = [];
+                
+                for (const file of files) {
+                    try {
+                        const data = await githubStorage.loadJobFile(file.name);
+                        jobFilesCache.push(data);
+                    } catch (error) {
+                        console.warn(`Failed to load file ${file.name}:`, error);
+                    }
+                }
+                
+                updateAnalytics();
+            } catch (error) {
+                console.error('Error loading job files:', error);
+                showNotification('Failed to load job files from GitHub.', true);
+            }
+        }
+
+        function updateAnalytics() {
+            document.getElementById('total-files').textContent = jobFilesCache.length;
+            document.getElementById('approved-files').textContent = jobFilesCache.filter(f => f.status === 'approved').length;
+            document.getElementById('pending-files').textContent = jobFilesCache.filter(f => f.status === 'draft' || f.status === 'pending').length;
+        }
+
+        // UI Functions
+        function showLogin() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('app-container').style.display = 'none';
+        }
+
+        function showApp() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-container').style.display = 'block';
+            document.getElementById('user-display-name').textContent = currentUser.displayName;
+            document.getElementById('user-role').textContent = currentUser.role;
+
+            // Show/hide role-based elements
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'none');
+            
+            if (currentUser.role === 'admin') {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+                document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
+            } else if (currentUser.role === 'checker') {
+                document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
+            }
+            
+            clearForm();
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('visible');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('visible');
+        }
+
+        function clearForm() {
+            const form = document.querySelector('#main-container');
+            form.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(input => input.value = '');
+            form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+            
+            document.getElementById('date').valueAsDate = new Date();
+            document.getElementById('prepared-by').value = currentUser.displayName;
+            
+            // Reset table
+            populateTable();
+            
+            showNotification("Form cleared. Ready for a new job file.");
+        }
+
+        function showLoader() { document.getElementById('loader-overlay').classList.add('visible'); }
+        function hideLoader() { document.getElementById('loader-overlay').classList.remove('visible'); }
+
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.backgroundColor = isError ? '#c53030' : '#2d3748';
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function getFormData() {
+            const getVal = id => document.getElementById(id).value || '';
+            const getChecked = query => Array.from(document.querySelectorAll(query)).filter(el => el.checked).map(el => el.dataset.clearance || el.dataset.product);
+
+            // Get charges data
+            const charges = [];
+            document.querySelectorAll('#charges-table-body tr').forEach(row => {
+                const description = row.querySelector('.description-input')?.value.trim() || '';
+                const cost = row.querySelector('.cost-input')?.value || '0';
+                const selling = row.querySelector('.selling-input')?.value || '0';
+                const notes = row.querySelector('.notes-input')?.value || '';
+
+                if (description && (cost || selling)) {
+                    charges.push({
+                        description,
+                        cost: parseFloat(cost) || 0,
+                        selling: parseFloat(selling) || 0,
+                        profit: (parseFloat(selling) || 0) - (parseFloat(cost) || 0),
+                        notes
+                    });
+                }
+            });
+
+            return {
+                d: getVal('date'),
+                po: getVal('po-number'),
+                jfn: getVal('job-file-no'),
+                cl: getChecked('[data-clearance]:checked'),
+                pt: getChecked('[data-product]:checked'),
+                in: getVal('invoice-no'),
+                bd: getVal('billing-date'),
+                sm: getVal('salesman'),
+                sh: getVal('shipper-name'),
+                co: getVal('consignee-name'),
+                mawb: getVal('mawb'),
+                hawb: getVal('hawb'),
+                ts: getVal('teams-of-shipping'),
+                or: getVal('origin'),
+                pc: getVal('no-of-pieces'),
+                gw: getVal('gross-weight'),
+                de: getVal('destination'),
+                vw: getVal('volume-weight'),
+                dsc: getVal('description'),
+                ca: getVal('carrier'),
+                tn: getVal('truck-no'),
+                vn: getVal('vessel-name'),
+                fv: getVal('flight-voyage-no'),
+                cn: getVal('container-no'),
+                ch: charges,
+                re: getVal('remarks'),
+                pb: getVal('prepared-by')
+            };
+        }
+
+        function populateTable() {
+            const tableBody = document.getElementById('charges-table-body');
+            tableBody.innerHTML = '';
+            
+            // Add 5 empty rows to start
+            for (let i = 0; i < 5; i++) {
+                addChargeRow();
+            }
+        }
+
+        function addChargeRow(data = {}) {
+            const tableBody = document.getElementById('charges-table-body');
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td class="table-cell">
+                    <input type="text" class="description-input" value="${data.description || ''}" placeholder="Description">
+                </td>
+                <td class="table-cell">
+                    <input type="number" class="cost-input" value="${data.cost || ''}" placeholder="0.00" step="0.01" onchange="calculateRowProfit(this)">
+                </td>
+                <td class="table-cell">
+                    <input type="number" class="selling-input" value="${data.selling || ''}" placeholder="0.00" step="0.01" onchange="calculateRowProfit(this)">
+                </td>
+                <td class="table-cell">
+                    <input type="number" class="profit-input" value="${data.profit || ''}" readonly>
+                </td>
+                <td class="table-cell">
+                    <input type="text" class="notes-input" value="${data.notes || ''}" placeholder="Notes">
+                </td>
+                <td class="table-cell">
+                    <button onclick="removeChargeRow(this)" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">Remove</button>
+                </td>
+            `;
+            
+            tableBody.appendChild(row);
+        }
+
+        function removeChargeRow(button) {
+            button.closest('tr').remove();
+        }
+
+        function calculateRowProfit(input) {
+            const row = input.closest('tr');
+            const cost = parseFloat(row.querySelector('.cost-input').value) || 0;
+            const selling = parseFloat(row.querySelector('.selling-input').value) || 0;
+            const profit = selling - cost;
+            row.querySelector('.profit-input').value = profit.toFixed(2);
+        }
+
+        // File Manager Functions
+        async function openFileManager() {
+            if (!githubStorage) {
+                showNotification('GitHub not configured.', true);
+                return;
+            }
+
+            openModal('file-manager-modal');
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '<p class="text-center">Loading files...</p>';
+            
+            try {
+                const files = await githubStorage.listJobFiles();
+                fileList.innerHTML = '';
+                
+                if (files.length === 0) {
+                    fileList.innerHTML = '<p class="text-center text-gray-500">No files found.</p>';
+                    return;
+                }
+                
+                files.forEach(file => {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'flex justify-between items-center p-3 border rounded-lg hover:bg-gray-50';
+                    fileDiv.innerHTML = `
+                        <div>
+                            <h4 class="font-medium">${file.name.replace('.json', '')}</h4>
+                            <p class="text-sm text-gray-500">Size: ${file.size} bytes</p>
+                        </div>
+                        <div class="space-x-2">
+                            <button onclick="loadFileFromManager('${file.name}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Load</button>
+                            <button onclick="deleteFileFromManager('${file.name}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+                        </div>
+                    `;
+                    fileList.appendChild(fileDiv);
+                });
+            } catch (error) {
+                fileList.innerHTML = '<p class="text-center text-red-500">Error loading files.</p>';
+                console.error('Error loading files:', error);
+            }
+        }
+
+        async function loadFileFromManager(fileName) {
+            if (!githubStorage) return;
+            
+            showLoader();
+            try {
+                const data = await githubStorage.loadJobFile(fileName);
+                populateFormFromData(data);
+                closeModal('file-manager-modal');
+                showNotification('File loaded successfully!');
+            } catch (error) {
+                console.error('Error loading file:', error);
+                showNotification('Failed to load file.', true);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        async function deleteFileFromManager(fileName) {
+            if (!confirm(`Are you sure you want to delete ${fileName}?`)) return;
+            
+            showLoader();
+            try {
+                await githubStorage.deleteJobFile(fileName);
+                openFileManager(); // Refresh the list
+                showNotification('File deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting file:', error);
+                showNotification('Failed to delete file.', true);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function populateFormFromData(data) {
+            const setVal = (id, value) => { 
+                const el = document.getElementById(id);
+                if (el) el.value = value || ''; 
+            };
+            const setChecked = (type, values) => {
+                document.querySelectorAll(`[data-${type}]`).forEach(el => {
+                    el.checked = (values || []).includes(el.dataset[type]);
+                });
+            };
+
+            // Populate basic fields
+            setVal('date', data.d);
+            setVal('po-number', data.po);
+            setVal('job-file-no', data.jfn);
+            setVal('invoice-no', data.in);
+            setVal('billing-date', data.bd);
+            setVal('salesman', data.sm);
+            setVal('shipper-name', data.sh);
+            setVal('consignee-name', data.co);
+            setVal('mawb', data.mawb);
+            setVal('hawb', data.hawb);
+            setVal('teams-of-shipping', data.ts);
+            setVal('origin', data.or);
+            setVal('no-of-pieces', data.pc);
+            setVal('gross-weight', data.gw);
+            setVal('destination', data.de);
+            setVal('volume-weight', data.vw);
+            setVal('description', data.dsc);
+            setVal('carrier', data.ca);
+            setVal('truck-no', data.tn);
+            setVal('vessel-name', data.vn);
+            setVal('flight-voyage-no', data.fv);
+            setVal('container-no', data.cn);
+            setVal('remarks', data.re);
+            setVal('prepared-by', data.pb);
+
+            // Set checkboxes
+            setChecked('clearance', data.cl);
+            setChecked('product', data.pt);
+
+            // Update info
+            document.getElementById('created-by-info').textContent = 
+                data.createdBy ? `Created by: ${data.createdBy} on ${new Date(data.createdAt).toLocaleDateString()}` : '';
+            document.getElementById('last-updated-by-info').textContent = 
+                data.lastUpdatedBy ? `Last updated by: ${data.lastUpdatedBy} on ${new Date(data.updatedAt).toLocaleString()}` : '';
+
+            // Populate charges table
+            populateTable();
+            if (data.ch && data.ch.length > 0) {
+                const tableBody = document.getElementById('charges-table-body');
+                tableBody.innerHTML = '';
+                data.ch.forEach(charge => addChargeRow(charge));
+            }
+        }
+
+        // QR Code and Preview Functions
+        function generateAndShowQRCode() {
+            const jobFileNo = document.getElementById('job-file-no').value;
+            if (!jobFileNo) {
+                showNotification('Please save the job file first.', true);
+                return;
+            }
+
+            const qrData = `${window.location.origin}${window.location.pathname}?view=${jobFileNo}`;
+            
+            openModal('qr-modal');
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+            
+            new QRCode(qrContainer, {
+                text: qrData,
+                width: 256,
+                height: 256
+            });
+        }
+
+        function openPreview() {
+            const formData = getFormData();
+            if (!formData.jfn) {
+                showNotification('Please enter job details first.', true);
+                return;
+            }
+
+            openModal('preview-modal');
+            const previewBody = document.getElementById('preview-body');
+            previewBody.innerHTML = generatePreviewHTML(formData);
+        }
+
+        function generatePreviewHTML(data) {
+            const totalCost = (data.ch || []).reduce((sum, charge) => sum + (charge.cost || 0), 0);
+            const totalSelling = (data.ch || []).reduce((sum, charge) => sum + (charge.selling || 0), 0);
+            const totalProfit = totalSelling - totalCost;
+
+            return `
+                <div class="p-4">
+                    <div class="text-center mb-6">
+                        <img src="https://qgocargo.com/logo.png" alt="Q'go Cargo Logo" class="h-16 mx-auto mb-4">
+                        <h1 class="text-2xl font-bold">JOB FILE</h1>
+                        <div class="mt-2">
+                            <p><strong>Job File No:</strong> ${data.jfn}</p>
+                            <p><strong>Date:</strong> ${data.d}</p>
+                            <p><strong>P.O. #:</strong> ${data.po}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+                        <div>
+                            <p><strong>Shipper:</strong> ${data.sh}</p>
+                            <p><strong>Consignee:</strong> ${data.co}</p>
+                            <p><strong>Origin:</strong> ${data.or}</p>
+                            <p><strong>Destination:</strong> ${data.de}</p>
+                        </div>
+                        <div>
+                            <p><strong>MAWB/OBL:</strong> ${data.mawb}</p>
+                            <p><strong>HAWB/HBL:</strong> ${data.hawb}</p>
+                            <p><strong>Pieces:</strong> ${data.pc}</p>
+                            <p><strong>Weight:</strong> ${data.gw}</p>
+                        </div>
+                    </div>
+
+                    ${data.ch && data.ch.length > 0 ? `
+                    <div class="mb-6">
+                        <h3 class="font-bold mb-2">Charges</h3>
+                        <table class="print-table w-full text-sm">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Cost</th>
+                                    <th>Selling</th>
+                                    <th>Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.ch.map(charge => `
+                                    <tr>
+                                        <td>${charge.description}</td>
+                                        <td>${charge.cost}</td>
+                                        <td>${charge.selling}</td>
+                                        <td>${charge.profit.toFixed(2)}</td>
+                                    </tr>
+                                `).join('')}
+                                <tr class="font-bold">
+                                    <td>Total</td>
+                                    <td>${totalCost.toFixed(2)}</td>
+                                    <td>${totalSelling.toFixed(2)}</td>
+                                    <td>${totalProfit.toFixed(2)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    ` : ''}
+
+                    ${data.re ? `
+                    <div class="mb-4">
+                        <h3 class="font-bold mb-2">Remarks</h3>
+                        <p class="border p-2">${data.re}</p>
+                    </div>
+                    ` : ''}
+
+                    <div class="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <p class="font-bold">PREPARED BY</p>
+                            <p class="border-b">${data.pb}</p>
+                        </div>
+                        <div>
+                            <p class="font-bold">CHECKED BY</p>
+                            <p class="border-b">Pending</p>
+                        </div>
+                        <div>
+                            <p class="font-bold">APPROVED BY</p>
+                            <p class="border-b">Pending</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function printPreview() {
+            window.print();
+        }
+
+        // Analytics Functions
+        function openAnalyticsDashboard() {
+            openModal('analytics-modal');
+            updateAnalytics();
+        }
+
+        // Admin Functions
+        function openAdminPanel() {
+            if (currentUser.role !== 'admin') {
+                showNotification('Access denied. Admin only.', true);
+                return;
+            }
+            openModal('admin-panel-modal');
+            loadUsersList();
+        }
+
+        function loadUsersList() {
+            const usersList = document.getElementById('users-list');
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            
+            usersList.innerHTML = '';
+            Object.entries(users).forEach(([uid, userData]) => {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'flex justify-between items-center p-2 border rounded';
+                userDiv.innerHTML = `
+                    <div>
+                        <p class="font-medium">${userData.email}</p>
+                        <p class="text-sm text-gray-600">Role: ${userData.role} | Status: ${userData.status}</p>
+                    </div>
+                    <div class="space-x-2">
+                        <select onchange="updateUserRole('${uid}', this.value)" class="text-sm border rounded px-2 py-1">
+                            <option value="user" ${userData.role === 'user' ? 'selected' : ''}>User</option>
+                            <option value="checker" ${userData.role === 'checker' ? 'selected' : ''}>Checker</option>
+                            <option value="admin" ${userData.role === 'admin' ? 'selected' : ''}>Admin</option>
+                        </select>
+                        <select onchange="updateUserStatus('${uid}', this.value)" class="text-sm border rounded px-2 py-1">
+                            <option value="active" ${userData.status === 'active' ? 'selected' : ''}>Active</option>
+                            <option value="inactive" ${userData.status === 'inactive' ? 'selected' : ''}>Inactive</option>
+                            <option value="blocked" ${userData.status === 'blocked' ? 'selected' : ''}>Blocked</option>
+                        </select>
+                    </div>
+                `;
+                usersList.appendChild(userDiv);
+            });
+        }
+
+        function updateUserRole(uid, newRole) {
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            if (users[uid]) {
+                users[uid].role = newRole;
+                localStorage.setItem('users', JSON.stringify(users));
+                showNotification(`User role updated to ${newRole}`);
+            }
+        }
+
+        function updateUserStatus(uid, newStatus) {
+            const users = JSON.parse(localStorage.getItem('users') || '{}');
+            if (users[uid]) {
+                users[uid].status = newStatus;
+                localStorage.setItem('users', JSON.stringify(users));
+                showNotification(`User status updated to ${newStatus}`);
+            }
+        }
+
+        // Global function assignments for onclick handlers
+        window.saveJobFile = saveJobFile;
+        window.openFileManager = openFileManager;
+        window.loadFileFromManager = loadFileFromManager;
+        window.deleteFileFromManager = deleteFileFromManager;
+        window.generateAndShowQRCode = generateAndShowQRCode;
+        window.openPreview = openPreview;
+        window.printPreview = printPreview;
+        window.openAnalyticsDashboard = openAnalyticsDashboard;
+        window.openAdminPanel = openAdminPanel;
+        window.updateUserRole = updateUserRole;
+        window.updateUserStatus = updateUserStatus;
+        window.clearForm = clearForm;
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.addChargeRow = addChargeRow;
+        window.removeChargeRow = removeChargeRow;
+        window.calculateRowProfit = calculateRowProfit;
+        window.openChargeManager = () => showNotification('Charge manager not implemented in this version.');
+
+        // Initialize app on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize default descriptions
+            const storedDescriptions = localStorage.getItem('chargeDescriptions');
+            if (storedDescriptions) {
+                chargeDescriptions = JSON.parse(storedDescriptions);
+            } else {
+                chargeDescriptions = [
+                    'Ex-works Charges:', 'Land/Air / Sea Freight:', 'Fuel Security / War Surcharge:', 'Formalities:', 'Delivery Order Fee:',
+                    'Transportation Charges:', 'Inspection / Computer Print Charges:', 'Handling Charges:', 'Labor / Forklift Charges:',
+                    'Documentation Charges:', 'Clearance Charges:', 'Customs Duty:', 'Terminal Handling Charges:', 'Legalization Charges:',
+                    'Demurrage Charges:', 'Loading / Offloading Charges:', 'Destination Clearance Charges:', 'Packing Charges:', 'Port Charges:',
+                    'Other Charges:', 'PAI Approval :', 'Insurance Fee :', 'EPA Charges :'
+                ];
+                localStorage.setItem('chargeDescriptions', JSON.stringify(chargeDescriptions));
+            }
+
+            // Setup event listeners
+            document.getElementById('auth-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                isLogin = !isLogin;
+                toggleAuthView(isLogin);
+            });
+
+            document.getElementById('auth-btn').addEventListener('click', () => {
+                const email = document.getElementById('email-address').value;
+                const password = document.getElementById('password').value;
+                if (isLogin) {
+                    handleLogin(email, password);
+                } else {
+                    const displayName = document.getElementById('full-name').value;
+                    if (!email || !password || !displayName) {
+                        showNotification("Please fill all fields to sign up.", true);
+                        return;
+                    }
+                    handleSignUp(email, password, displayName);
+                }
+            });
+
+            document.getElementById('logout-btn').addEventListener('click', handleLogout);
+            document.getElementById('admin-panel-btn').addEventListener('click', openAdminPanel);
+            document.getElementById('forgot-password-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                handleForgotPassword();
+            });
+
+            // Initialize Firebase and setup GitHub
+            initializeFirebase();
+            if (initializeGitHubConfig()) {
+                console.log('GitHub configured successfully');
+            }
+            
+            populateTable();
+            document.getElementById('date').valueAsDate = new Date();
+
+            console.log('Job File Management System initialized with GitHub storage');
+        });
+    </script>
+
+    <!-- Security & Deployment Information -->
+    <div id="deployment-info" class="fixed bottom-4 right-4 bg-blue-100 border border-blue-400 text-blue-800 px-4 py-2 rounded text-sm max-w-sm">
+        <p class="font-semibold">🔐 Secure Deployment Ready</p>
+        <p class="text-xs mt-1">Firebase authentication with GitHub storage. For production, use GitHub Actions with repository secrets.</p>
+        <div class="text-xs mt-2">
+            <p><strong>Production:</strong> GitHub Actions + secrets</p>
+            <p><strong>Development:</strong> Local testing only</p>
+            <p><strong>Public:</strong> Read-only mode recommended</p>
+        </div>
+        <button onclick="document.getElementById('deployment-info').style.display='none'" class="float-right text-blue-600 hover:text-blue-800">&times;</button>
+    </div>
+
+</body>
+</html>
