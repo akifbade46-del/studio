@@ -502,7 +502,8 @@
         <div class="modal-content max-w-2xl">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-2xl font-bold">Admin Panel</h3>
-                <button onclick="closeModal('admin-panel-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
+                <!-- Use closeAllModals to ensure the panel closes even if z-index issues arise -->
+                <button onclick="closeAllModals()" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
             </div>
         
             <!-- User Management -->
@@ -1029,7 +1030,15 @@
                 if (branch) GITHUB_BRANCH = branch;
                 if (path || path === '') GITHUB_DATA_PATH = path;
                 if (token) GITHUB_TOKEN = token;
-                showNotification('GitHub configuration saved!');
+            showNotification('GitHub configuration saved!');
+            // Reload job files from the newly configured GitHub repository
+            try {
+                if (typeof loadJobFiles === 'function') {
+                    loadJobFiles();
+                }
+            } catch (err) {
+                console.error('Failed to reload job files after updating GitHub config:', err);
+            }
             } catch (err) {
                 console.error('Failed to save GitHub configuration:', err);
                 showNotification('Failed to save GitHub configuration.', true);
@@ -1347,7 +1356,20 @@
             let filesHtml = '';
             files.forEach((docData) => {
                 const deleteButton = currentUser.role === 'admin' ? `<button onclick="confirmDelete('${docData.id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm">Delete</button>` : '';
-                const lastUpdated = docData.updatedAt?.toDate ? docData.updatedAt.toDate().toLocaleString() : 'N/A';
+                // Normalize last updated timestamp for both Firestore Timestamp and ISO string
+                let lastUpdated = 'N/A';
+                if (docData.updatedAt) {
+                    if (typeof docData.updatedAt.toDate === 'function') {
+                        try {
+                            lastUpdated = docData.updatedAt.toDate().toLocaleString();
+                        } catch (e) {}
+                    } else {
+                        const d = new Date(docData.updatedAt);
+                        if (!isNaN(d.getTime())) {
+                            lastUpdated = d.toLocaleString();
+                        }
+                    }
+                }
                 
                 const searchTerm = [docData.jfn, docData.sh, docData.co].join(' ').toLowerCase();
 
@@ -1663,7 +1685,22 @@
                 totalCost += cost;
                 totalProfit += profit;
 
-                profitByFile.push({ id: job.id, jfn: job.jfn, shipper: job.sh, consignee: job.co, profit: profit, status: status, date: job.updatedAt?.toDate() || new Date(0), cost: cost, dsc: job.dsc, mawb: job.mawb, createdBy: creator });
+                // Convert updatedAt into a proper Date instance. When data comes
+                // from Firestore it will be a Timestamp with a toDate() method,
+                // but when loaded from GitHub it is stored as an ISO string. To
+                // accommodate both formats we check for the existence of
+                // toDate() and fall back to new Date(string).
+                let updatedDate;
+                if (job.updatedAt) {
+                    if (typeof job.updatedAt.toDate === 'function') {
+                        updatedDate = job.updatedAt.toDate();
+                    } else {
+                        updatedDate = new Date(job.updatedAt);
+                    }
+                } else {
+                    updatedDate = new Date(0);
+                }
+                profitByFile.push({ id: job.id, jfn: job.jfn, shipper: job.sh, consignee: job.co, profit: profit, status: status, date: updatedDate, cost: cost, dsc: job.dsc, mawb: job.mawb, createdBy: creator });
 
                 if (job.sh) {
                     profitByShipper[job.sh] = (profitByShipper[job.sh] || 0) + profit;
@@ -2434,8 +2471,18 @@
             const createdInfo = document.getElementById('created-by-info');
             const updatedInfo = document.getElementById('last-updated-by-info');
             
-            createdInfo.textContent = data.createdBy ? `Created by: ${data.createdBy} on ${data.createdAt?.toDate().toLocaleDateString()}` : '';
-            updatedInfo.textContent = data.lastUpdatedBy ? `Last updated by: ${data.lastUpdatedBy} on ${data.updatedAt?.toDate().toLocaleString()}` : '';
+            // Format creation and update dates to accommodate both Firestore Timestamps and ISO strings
+            const _formatDate = (val) => {
+                if (!val) return '';
+                try {
+                    const dObj = typeof val.toDate === 'function' ? val.toDate() : new Date(val);
+                    return dObj.toLocaleDateString();
+                } catch (e) {
+                    return '';
+                }
+            };
+            createdInfo.textContent = data.createdBy ? `Created by: ${data.createdBy} on ${_formatDate(data.createdAt)}` : '';
+            updatedInfo.textContent = data.lastUpdatedBy ? `Last updated by: ${data.lastUpdatedBy} on ${_formatDate(data.updatedAt)}` : '';
             
             document.getElementById('checked-stamp').style.display = 'none';
             document.getElementById('approved-stamp').style.display = 'none';
@@ -2446,7 +2493,8 @@
 
             const checkBtn = document.getElementById('check-btn');
             if (data.checkedBy) {
-                const checkedDate = data.checkedAt?.toDate() ? ` on ${data.checkedAt.toDate().toLocaleDateString()}` : '';
+                const _checkedDateStr = _formatDate(data.checkedAt);
+                const checkedDate = _checkedDateStr ? ` on ${_checkedDateStr}` : '';
                 setVal('checked-by', `${data.checkedBy}${checkedDate}`);
                 checkBtn.disabled = true;
                 checkBtn.textContent = 'Checked';
@@ -2458,11 +2506,13 @@
             }
 
             if (data.status === 'approved') {
-                const approvedDate = data.approvedAt?.toDate() ? ` on ${data.approvedAt.toDate().toLocaleDateString()}` : '';
+                const _approvedDateStr = _formatDate(data.approvedAt);
+                const approvedDate = _approvedDateStr ? ` on ${_approvedDateStr}` : '';
                 setVal('approved-by', `${data.approvedBy}${approvedDate}`);
                 document.getElementById('approved-stamp').style.display = 'block';
             } else if (data.status === 'rejected') {
-                const rejectedDate = data.rejectedAt?.toDate() ? ` on ${data.rejectedAt.toDate().toLocaleDateString()}` : '';
+                const _rejectedDateStr = _formatDate(data.rejectedAt);
+                const rejectedDate = _rejectedDateStr ? ` on ${_rejectedDateStr}` : '';
                 setVal('approved-by', `Rejected by ${data.rejectedBy}${rejectedDate}`);
                 document.getElementById('rejected-stamp').style.display = 'block';
                 document.getElementById('rejection-banner').style.display = 'block';
@@ -2551,15 +2601,26 @@
             const totalSelling = data.totalSelling || 0;
             const totalProfit = data.totalProfit || 0;
             
-            const checkedByText = data.checkedBy ? `${data.checkedBy} on ${data.checkedAt?.toDate().toLocaleDateString()}` : 'Pending';
+            // Helper to format Firestore Timestamp or ISO string dates.
+            const formatDate = (val) => {
+                if (!val) return '';
+                try {
+                    const dateObj = typeof val.toDate === 'function' ? val.toDate() : new Date(val);
+                    return dateObj.toLocaleDateString();
+                } catch (e) {
+                    return '';
+                }
+            };
+
+            const checkedByText = data.checkedBy ? `${data.checkedBy} on ${formatDate(data.checkedAt)}` : 'Pending';
             let approvedByText = 'Pending Approval';
             if (data.status === 'approved') {
-                approvedByText = `${data.approvedBy} on ${data.approvedAt?.toDate().toLocaleDateString()}`;
+                approvedByText = `${data.approvedBy} on ${formatDate(data.approvedAt)}`;
             } else if (data.status === 'rejected') {
                 approvedByText = `REJECTED: ${data.rejectionReason}`;
             }
-            
-            const createdByText = data.createdBy ? `${data.createdBy} on ${data.createdAt?.toDate().toLocaleDateString()}` : (data.pb || 'N/A');
+
+            const createdByText = data.createdBy ? `${data.createdBy} on ${formatDate(data.createdAt)}` : (data.pb || 'N/A');
             
             const checkedStampHtml = data.checkedBy ? `<div class="stamp stamp-checked" style="display: block;">Checked</div>` : '';
             let approvalStampHtml = '';
