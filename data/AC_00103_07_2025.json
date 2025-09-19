@@ -1,0 +1,203 @@
+{
+  "jfn": "AC/00103/07/2025",
+  "gw": "20 KG",
+  "ts": "CLEARANCE AND DELIVERY ",
+  "pt": [
+    "Air Freight"
+  ],
+  "po": "",
+  "bd": "2025-07-21",
+  "de": "KUWAIT",
+  "in": "INV/00319/2025",
+  "status": "pending",
+  "pc": "3",
+  "fv": "",
+  "vw": "",
+  "ca": "TURKISH AIRLINE",
+  "totalSelling": 409.64,
+  "ch": [
+    {
+      "k": "ex_works",
+      "c": "0",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "freight",
+      "s": "0",
+      "c": "0",
+      "l": "Land/Air / Sea Freight:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "formalities",
+      "l": "Formalities:"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "k": "do_fee"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "25.000",
+      "k": "transportation",
+      "l": "Transportation Charges:"
+    },
+    {
+      "s": "15.210",
+      "c": "15.210",
+      "n": "",
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "s": "25.000",
+      "c": "0",
+      "l": "Handling Charges:",
+      "n": "",
+      "k": "handling"
+    },
+    {
+      "k": "labor",
+      "n": "",
+      "l": "Labor / Forklift Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "15.000",
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "65.000",
+      "l": "Clearance Charges:",
+      "c": "53.000",
+      "n": "",
+      "k": "clearance"
+    },
+    {
+      "s": "107.430",
+      "k": "customs_duty",
+      "l": "Customs Duty:",
+      "n": "",
+      "c": "107.430"
+    },
+    {
+      "c": "52.000",
+      "l": "Terminal Handling Charges:",
+      "n": "",
+      "s": "52.000",
+      "k": "thc"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "legalization",
+      "l": "Legalization Charges:"
+    },
+    {
+      "k": "demurrage",
+      "c": "0",
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Destination Clearance Charges:",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "dest_clearance"
+    },
+    {
+      "k": "packing",
+      "l": "Baladiya  Charges:",
+      "c": "0",
+      "n": "",
+      "s": "75.000"
+    },
+    {
+      "c": "0",
+      "k": "port_charges",
+      "s": "5.000",
+      "n": "",
+      "l": "Bank Charges:"
+    },
+    {
+      "n": "",
+      "k": "other",
+      "s": "0",
+      "l": "Other Charges:",
+      "c": "0"
+    },
+    {
+      "l": "PAF Approval :",
+      "c": "20.000",
+      "k": "pai",
+      "n": "",
+      "s": "20.000"
+    },
+    {
+      "l": "Storage Fee :",
+      "c": "5.000",
+      "k": "insurance",
+      "n": "",
+      "s": "5.000"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "epa",
+      "l": "EPA Charges :",
+      "n": ""
+    }
+  ],
+  "cl": [
+    "Import"
+  ],
+  "co": "MRS. GHANIMA MARWAN BOODAI",
+  "tn": "",
+  "updatedAt": "2025-08-10T10:04:26.000Z",
+  "cn": "",
+  "sh": "PABLO FREIXAS SALVA",
+  "d": "2025-07-17",
+  "totalProfit": 157,
+  "createdAt": "2025-08-10T10:04:26.000Z",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "createdBy": "ABDUL HADI ",
+  "pb": "ABDUL HADI ",
+  "vn": "",
+  "hawb": "",
+  "sm": "",
+  "totalCost": 252.64,
+  "mawb": "235-30442436",
+  "dsc": "ORANGE BLOSSOM WATER ",
+  "re": "",
+  "or": "BARCELONA "
+}
