@@ -1,0 +1,203 @@
+{
+  "totalSelling": 590,
+  "ca": "",
+  "pt": [
+    "Others"
+  ],
+  "po": "",
+  "re": "",
+  "dsc": "INVENTRY - JULY 2025",
+  "sm": "",
+  "ts": "",
+  "totalProfit": 500,
+  "tn": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "cn": "",
+  "co": "DSV A&S SHIPPING & TRASPORT ",
+  "mawb": "",
+  "totalCost": 90,
+  "hawb": "",
+  "updatedAt": "2025-08-11T10:14:08.000Z",
+  "in": "INV/00352/2025",
+  "fv": "",
+  "pb": "ABDUL HADI ",
+  "jfn": "LMK/00091/07/2025",
+  "gw": "",
+  "cl": [
+    "Local Move"
+  ],
+  "vn": "",
+  "bd": "2025-07-30",
+  "or": "AL RAI",
+  "sh": "DSV A&S SHIPPING & TRASPORT ",
+  "createdAt": "2025-08-11T10:14:08.000Z",
+  "vw": "",
+  "de": "",
+  "createdBy": "ABDUL HADI ",
+  "pc": "",
+  "status": "pending",
+  "ch": [
+    {
+      "c": "0",
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "freight",
+      "l": "Land/Air / Sea Freight:",
+      "n": ""
+    },
+    {
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Formalities:",
+      "s": "0",
+      "c": "0",
+      "k": "formalities"
+    },
+    {
+      "k": "do_fee",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Transportation Charges:",
+      "c": "0",
+      "k": "transportation",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0",
+      "k": "inspection",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "k": "handling",
+      "c": "0",
+      "s": "0",
+      "l": "Handling Charges:"
+    },
+    {
+      "c": "90.000",
+      "s": "590.000",
+      "n": "",
+      "k": "labor",
+      "l": "Labor / Segregation Charges:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "documentation",
+      "c": "0",
+      "l": "Documentation Charges:"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "customs_duty",
+      "n": "",
+      "l": "Customs Duty:",
+      "s": "0"
+    },
+    {
+      "l": "Terminal Handling Charges:",
+      "s": "0",
+      "k": "thc",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Legalization Charges:",
+      "s": "0",
+      "k": "legalization"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "dest_clearance",
+      "n": "",
+      "l": "Destination Clearance Charges:",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "packing",
+      "n": "",
+      "l": "Packing Charges:"
+    },
+    {
+      "n": "",
+      "k": "port_charges",
+      "s": "0",
+      "l": "Port Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Other Charges:",
+      "k": "other"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Insurance Fee :",
+      "n": "",
+      "k": "insurance"
+    },
+    {
+      "n": "",
+      "k": "epa",
+      "s": "0",
+      "l": "EPA Charges :",
+      "c": "0"
+    }
+  ],
+  "d": "2025-07-22"
+}
