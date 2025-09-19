@@ -1,0 +1,203 @@
+{
+  "po": "",
+  "cl": [
+    "Export"
+  ],
+  "cn": "",
+  "gw": "3 KG",
+  "ts": "DOOR TO DOOR",
+  "de": "ABU DHABI",
+  "updatedAt": "2025-08-24T12:49:01.000Z",
+  "sh": "EXECUTIVE GENERAL TRADING",
+  "fv": "",
+  "vw": "",
+  "status": "pending",
+  "dsc": "CEREMIC BOWL ",
+  "createdBy": "ABDUL HADI ",
+  "pt": [
+    "Air Freight"
+  ],
+  "totalProfit": 18.63,
+  "pc": "1",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "createdAt": "2025-08-10T09:34:41.000Z",
+  "jfn": "AE/00025/06/2025",
+  "pb": "ABDUL HADI ",
+  "co": "EXECUTIVE GENERAL TRADING",
+  "totalSelling": 45,
+  "in": "INV/00315/2025",
+  "ca": "FEDEX",
+  "totalCost": 26.37,
+  "vn": "",
+  "ch": [
+    {
+      "n": "",
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "ex_works"
+    },
+    {
+      "n": "",
+      "c": "26.370",
+      "k": "freight",
+      "l": "Air Freight Door to Door Charges:",
+      "s": "45.000"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Formalities:",
+      "k": "formalities"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "c": "0",
+      "k": "do_fee",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Transportation Charges:",
+      "k": "transportation"
+    },
+    {
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "k": "handling",
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Handling Charges:"
+    },
+    {
+      "k": "labor",
+      "n": "",
+      "c": "0",
+      "l": "Labor / Forklift Charges:",
+      "s": "0"
+    },
+    {
+      "k": "documentation",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Documentation Charges:"
+    },
+    {
+      "k": "clearance",
+      "l": "Clearance Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "thc",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "k": "legalization",
+      "l": "Legalization Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "demurrage",
+      "c": "0",
+      "n": "",
+      "l": "Demurrage Charges:",
+      "s": "0"
+    },
+    {
+      "k": "loading",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "c": "0",
+      "k": "dest_clearance",
+      "s": "0",
+      "l": "Destination Clearance Charges:",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "packing",
+      "l": "Packing Charges:"
+    },
+    {
+      "s": "0",
+      "l": "Port Charges:",
+      "n": "",
+      "c": "0",
+      "k": "port_charges"
+    },
+    {
+      "k": "other",
+      "l": "Other Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "PAI Approval :",
+      "k": "pai",
+      "c": "0"
+    },
+    {
+      "l": "Insurance Fee :",
+      "k": "insurance",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "EPA Charges :",
+      "k": "epa"
+    }
+  ],
+  "hawb": "",
+  "re": "",
+  "d": "2025-07-16",
+  "sm": "",
+  "bd": "2025-07-15",
+  "or": "KUWAIT",
+  "tn": "",
+  "mawb": "882036594342"
+}
