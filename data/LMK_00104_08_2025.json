@@ -1,0 +1,203 @@
+{
+  "ca": "",
+  "jfn": "LMK/00104/08/2025",
+  "ts": "LAND",
+  "sh": "MS.JUANITA MEJIA RENGIFO",
+  "status": "pending",
+  "re": "",
+  "vn": "",
+  "tn": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "updatedAt": "2025-08-31T11:05:00.000Z",
+  "in": "INV/003861/2025",
+  "co": "MS.JUANITA MEJIA RENGIFO",
+  "sm": "DINESH",
+  "mawb": "",
+  "bd": "2025-08-25",
+  "createdAt": "2025-08-20T14:03:07.000Z",
+  "hawb": "",
+  "po": "",
+  "d": "2025-08-20",
+  "createdBy": "ANAND MANI",
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "c": "0",
+      "s": "60.000",
+      "k": "ex_works",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Land/Air / Sea Freight:",
+      "s": "0",
+      "k": "freight",
+      "c": "0.01"
+    },
+    {
+      "k": "surcharge",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Formalities:",
+      "c": "0",
+      "s": "0",
+      "k": "formalities",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "s": "0",
+      "c": "0",
+      "k": "do_fee"
+    },
+    {
+      "n": "",
+      "l": "Transportation Charges:",
+      "s": "0",
+      "k": "transportation",
+      "c": "0"
+    },
+    {
+      "k": "inspection",
+      "c": "0",
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Handling Charges:",
+      "c": "0",
+      "k": "handling"
+    },
+    {
+      "n": "",
+      "k": "labor",
+      "s": "0",
+      "l": "Labor / Forklift Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Documentation Charges:",
+      "k": "documentation"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Clearance Charges:",
+      "n": "",
+      "k": "clearance"
+    },
+    {
+      "k": "customs_duty",
+      "n": "",
+      "l": "Customs Duty:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "k": "thc",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "legalization",
+      "l": "Legalization Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "demurrage"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading"
+    },
+    {
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "dest_clearance"
+    },
+    {
+      "n": "",
+      "k": "packing",
+      "l": "Packing Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Port Charges:",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "port_charges"
+    },
+    {
+      "s": "0",
+      "l": "Other Charges:",
+      "n": "",
+      "k": "other",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "PAI Approval :",
+      "s": "0",
+      "k": "pai",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "insurance",
+      "s": "0",
+      "l": "Insurance Fee :"
+    },
+    {
+      "k": "epa",
+      "l": "EPA Charges :",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    }
+  ],
+  "gw": "",
+  "vw": "",
+  "totalCost": 0.01,
+  "cn": "",
+  "pc": "",
+  "totalProfit": 59.99,
+  "totalSelling": 60,
+  "cl": [
+    "Local Move"
+  ],
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "de": "KUWAIT",
+  "fv": "",
+  "pb": "ANAND MANI",
+  "or": "KUWAIT",
+  "pt": [
+    "Others"
+  ]
+}
