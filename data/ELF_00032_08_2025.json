@@ -1,0 +1,210 @@
+{
+  "gw": "3800 KGS",
+  "sh": "MR. ASHWIN RABIN GUNGABISSOON",
+  "totalProfit": 583.98,
+  "co": "MR. ASHWIN RABIN GUNGABISSOON",
+  "pc": "220 BOXES",
+  "approvedAt": null,
+  "or": "KUWAIT",
+  "tn": "",
+  "totalSelling": 1300,
+  "mawb": "",
+  "pb": "ANAND MANI",
+  "pt": [
+    "Land Freight"
+  ],
+  "fv": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "ca": "TRUCK",
+  "approvedBy": null,
+  "checkedAt": null,
+  "createdBy": "ANAND MANI",
+  "updatedAt": "2025-08-31T11:02:53.000Z",
+  "sm": "DINESH",
+  "in": "INV/00364/2025",
+  "vw": "40 CBM",
+  "rejectionReason": null,
+  "totalCost": 716.02,
+  "checkedBy": null,
+  "createdAt": "2025-08-17T11:56:33.000Z",
+  "cn": "",
+  "status": "pending",
+  "bd": "2025-08-25",
+  "hawb": "",
+  "ts": "LAND",
+  "rejectedBy": null,
+  "d": "2025-08-17",
+  "re": "",
+  "cl": [
+    "Export"
+  ],
+  "po": "",
+  "jfn": "ELF/00032/08/2025",
+  "rejectedAt": null,
+  "vn": "",
+  "de": "ABUDHABI",
+  "dsc": "CAR & USED HOUSEHOLD ITEMS",
+  "ch": [
+    {
+      "s": "1300.000",
+      "k": "ex_works",
+      "c": "0",
+      "l": "Ex-works Charges:",
+      "n": ""
+    },
+    {
+      "c": "131.000",
+      "l": "Land Freight:",
+      "s": "0",
+      "n": "",
+      "k": "freight"
+    },
+    {
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "l": "Formalities:",
+      "n": "",
+      "s": "0",
+      "k": "formalities"
+    },
+    {
+      "k": "do_fee",
+      "c": "0",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "l": "Transportation Charges:( CAR)",
+      "n": "",
+      "c": "260.000",
+      "k": "transportation"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Handling Charges:",
+      "n": "",
+      "k": "handling"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Labor / Forklift Charges:",
+      "k": "labor"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Documentation Charges:",
+      "k": "documentation",
+      "n": ""
+    },
+    {
+      "l": "Clearance Charges:",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "clearance"
+    },
+    {
+      "s": "0",
+      "k": "customs_duty",
+      "l": "Customs Duty:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Terminal Handling Charges:",
+      "n": "",
+      "k": "thc",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Legalization Charges:",
+      "k": "legalization",
+      "n": ""
+    },
+    {
+      "l": "Demurrage Charges:",
+      "c": "0",
+      "n": "",
+      "k": "demurrage",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "loading",
+      "s": "0",
+      "c": "0",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "c": "240.831",
+      "k": "dest_clearance",
+      "n": "",
+      "s": "0",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "l": "Packing Charges:",
+      "k": "packing",
+      "n": "",
+      "c": "47.500",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Port Charges:",
+      "n": "",
+      "k": "port_charges"
+    },
+    {
+      "k": "other",
+      "c": "3.000",
+      "n": "",
+      "s": "0",
+      "l": "Other Charges:"
+    },
+    {
+      "k": "pai",
+      "l": "PAI Approval :",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "Insurance Fee :",
+      "n": "",
+      "k": "insurance",
+      "c": "33.694",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "epa",
+      "l": "EPA Charges :",
+      "c": "0",
+      "s": "0"
+    }
+  ]
+}
