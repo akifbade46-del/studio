@@ -1,0 +1,210 @@
+{
+  "totalCost": 355.84,
+  "cn": "",
+  "po": "",
+  "sm": "",
+  "tn": "",
+  "approvedBy": null,
+  "ts": "CLEARANCE AND DELIVERY ",
+  "de": "KUWAIT",
+  "checkedBy": "AJMAL KIANI",
+  "dsc": "DRESSES",
+  "bd": "2025-08-26",
+  "pt": [
+    "Air Freight"
+  ],
+  "vn": "",
+  "cl": [
+    "Import"
+  ],
+  "rejectedAt": null,
+  "rejectedBy": null,
+  "totalSelling": 487.84,
+  "co": "GHANIMA BOODAI",
+  "gw": "10.887 KG",
+  "vw": "",
+  "sh": "NET A PORTER ",
+  "approvedAt": null,
+  "updatedAt": "2025-08-26T13:16:28.000Z",
+  "totalProfit": 132,
+  "pc": "3",
+  "d": "2025-08-08",
+  "hawb": "",
+  "re": "",
+  "status": "checked",
+  "ch": [
+    {
+      "n": "",
+      "s": "0",
+      "l": "Ex-works Charges:",
+      "c": "0",
+      "k": "ex_works"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight",
+      "n": ""
+    },
+    {
+      "n": "",
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Formalities:",
+      "s": "0",
+      "k": "formalities"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "do_fee"
+    },
+    {
+      "k": "transportation",
+      "l": "Transportation Charges:",
+      "s": "25.000",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "s": "16.410",
+      "k": "inspection",
+      "c": "16.410"
+    },
+    {
+      "s": "25.000",
+      "l": "Handling Charges:",
+      "n": "",
+      "c": "0",
+      "k": "handling"
+    },
+    {
+      "k": "labor",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "l": "Documentation Charges:",
+      "n": "",
+      "s": "15.000",
+      "c": "0",
+      "k": "documentation"
+    },
+    {
+      "k": "clearance",
+      "n": "",
+      "s": "65.000",
+      "c": "48.000",
+      "l": "Clearance Charges:"
+    },
+    {
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "n": "",
+      "c": "267.430",
+      "s": "267.430"
+    },
+    {
+      "l": "Terminal Handling Charges:",
+      "n": "",
+      "s": "24.000",
+      "c": "24.000",
+      "k": "thc"
+    },
+    {
+      "k": "legalization",
+      "c": "0",
+      "l": "Legalization Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "demurrage",
+      "c": "0",
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Loading / Offloading Charges:",
+      "n": "",
+      "s": "0",
+      "k": "loading"
+    },
+    {
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "k": "dest_clearance",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Packing Charges:",
+      "k": "packing",
+      "s": "0"
+    },
+    {
+      "k": "port_charges",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Port Charges:"
+    },
+    {
+      "n": "",
+      "k": "other",
+      "l": "Bank Charges:",
+      "c": "0",
+      "s": "5.000"
+    },
+    {
+      "c": "0",
+      "s": "45.000",
+      "k": "pai",
+      "l": "Additional Charges to Clear the Shipment",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Insurance Fee :",
+      "n": "",
+      "k": "insurance",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "EPA Charges :",
+      "k": "epa",
+      "s": "0",
+      "c": "0"
+    }
+  ],
+  "pb": "ABDUL HADI ",
+  "checkedAt": "2025-08-28T12:41:53.000Z",
+  "jfn": "AE/00045/08/2025",
+  "createdBy": "ABDUL HADI ",
+  "or": "ITALY",
+  "rejectionReason": null,
+  "mawb": "2526745826",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "fv": "",
+  "ca": "DHL",
+  "createdAt": "2025-08-17T10:45:30.000Z",
+  "in": "INV/00366/2025"
+}
