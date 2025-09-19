@@ -1,0 +1,203 @@
+{
+  "createdBy": "ANAND MANI",
+  "pt": [
+    "Land Freight"
+  ],
+  "totalProfit": 56.34,
+  "fv": "",
+  "updatedAt": "2025-08-10T07:58:39.000Z",
+  "d": "2025-08-10",
+  "re": "",
+  "sh": "MS. SAMANTHA RUSSELL JASES HOGG",
+  "totalSelling": 800,
+  "or": "KUWAIT",
+  "bd": "2025-07-23",
+  "cn": "",
+  "in": "INV/00332/2025",
+  "pb": "ANAND MANI",
+  "vn": "",
+  "cl": [
+    "Export"
+  ],
+  "sm": "DINESH",
+  "gw": "2000 KGS",
+  "createdAt": "2025-08-10T07:56:56.000Z",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "tn": "",
+  "status": "pending",
+  "ts": "LAND",
+  "jfn": "ELF/00025/06/2025",
+  "vw": "2800 KGS",
+  "lastUpdatedBy": "ANAND MANI",
+  "pc": "108 BOXES",
+  "po": "",
+  "de": "DUBAI",
+  "co": "MS. SAMANTHA RUSSELL JASES HOGG",
+  "mawb": "",
+  "totalCost": 743.66,
+  "hawb": "",
+  "ch": [
+    {
+      "c": "0",
+      "n": "",
+      "s": "800",
+      "k": "ex_works",
+      "l": "Ex-works Charges:"
+    },
+    {
+      "k": "freight",
+      "l": "Land Freight:",
+      "n": "",
+      "s": "0",
+      "c": "300"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge"
+    },
+    {
+      "n": "",
+      "l": "Formalities:",
+      "c": "0",
+      "s": "0",
+      "k": "formalities"
+    },
+    {
+      "s": "0",
+      "k": "do_fee",
+      "c": "0",
+      "n": "",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "transportation",
+      "l": "Transportation Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "inspection",
+      "s": "0",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "s": "0",
+      "k": "handling",
+      "l": "Handling Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "labor",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "documentation",
+      "c": "0",
+      "l": "Documentation Charges:"
+    },
+    {
+      "n": "",
+      "l": "Clearance Charges:",
+      "s": "0",
+      "c": "250.400",
+      "k": "clearance"
+    },
+    {
+      "k": "customs_duty",
+      "s": "0",
+      "l": "Customs Duty:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Terminal Handling Charges:",
+      "s": "0",
+      "k": "thc"
+    },
+    {
+      "n": "",
+      "l": "Legalization Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "legalization"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "demurrage",
+      "s": "0",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "k": "loading",
+      "c": "0",
+      "l": "Loading / Offloading Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "packing",
+      "c": "165.320",
+      "l": "Packing Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "port_charges",
+      "l": "Port Charges:"
+    },
+    {
+      "k": "other",
+      "c": "0",
+      "n": "",
+      "l": "Other Charges:",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "PAI Approval :",
+      "k": "pai",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "c": "27.944",
+      "l": "Insurance Fee :",
+      "k": "insurance",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "EPA Charges :",
+      "n": "",
+      "s": "0",
+      "k": "epa"
+    }
+  ],
+  "ca": "TRUCK"
+}
