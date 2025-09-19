@@ -1,0 +1,203 @@
+{
+  "ca": "EMIRATES ",
+  "or": "DUBAI",
+  "jfn": "AC/00100/07/2025",
+  "gw": "155KG",
+  "status": "pending",
+  "tn": "",
+  "re": "",
+  "vn": "",
+  "sh": "YALINI KALAISELVAN",
+  "po": "",
+  "pb": "ABDUL HADI ",
+  "fv": "",
+  "createdAt": "2025-08-10T10:26:52.000Z",
+  "cl": [
+    "Import"
+  ],
+  "updatedAt": "2025-08-10T10:26:52.000Z",
+  "in": "INV/00320/2025",
+  "totalCost": 132.54,
+  "pt": [
+    "Air Freight"
+  ],
+  "sm": "",
+  "cn": "",
+  "de": "KUWAIT",
+  "totalProfit": 166,
+  "pc": "3",
+  "co": "MRS. GHANIMA MARWAN BOODAI",
+  "dsc": "ELECTRIC TABLE ",
+  "hawb": "",
+  "totalSelling": 298.54,
+  "vw": "",
+  "bd": "2025-07-21",
+  "ts": "AIR ",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "createdBy": "ABDUL HADI ",
+  "mawb": "176-12853013",
+  "d": "2025-07-13",
+  "ch": [
+    {
+      "n": "",
+      "k": "ex_works",
+      "s": "0",
+      "l": "Ex-works Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "freight",
+      "l": "Land/Air / Sea Freight:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "k": "surcharge",
+      "n": "",
+      "s": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0"
+    },
+    {
+      "l": "Formalities:",
+      "c": "0",
+      "s": "0",
+      "k": "formalities",
+      "n": ""
+    },
+    {
+      "k": "do_fee",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "n": "",
+      "k": "transportation",
+      "s": "45.000",
+      "l": "Transportation Charges:",
+      "c": "0"
+    },
+    {
+      "s": "10.800",
+      "k": "inspection",
+      "c": "10.800",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "s": "25.000",
+      "l": "Handling Charges:",
+      "k": "handling",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "labor",
+      "s": "40.000",
+      "n": "",
+      "c": "0",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "l": "Documentation Charges:",
+      "c": "0",
+      "k": "documentation",
+      "s": "15.000",
+      "n": ""
+    },
+    {
+      "c": "29.000",
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "s": "65.000",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "54.240",
+      "l": "Customs Duty:",
+      "s": "54.240",
+      "k": "customs_duty"
+    },
+    {
+      "n": "",
+      "k": "thc",
+      "c": "38.500",
+      "s": "38.500",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "k": "legalization",
+      "s": "0",
+      "c": "0",
+      "l": "Legalization Charges:",
+      "n": ""
+    },
+    {
+      "k": "demurrage",
+      "n": "",
+      "c": "0",
+      "l": "Demurrage Charges:",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "dest_clearance",
+      "s": "0",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "n": "",
+      "l": "Packing Charges:",
+      "k": "packing",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Port Charges:",
+      "s": "0",
+      "k": "port_charges"
+    },
+    {
+      "l": "Bank  Charges:",
+      "k": "other",
+      "s": "5.000",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "pai",
+      "n": "",
+      "l": "PAI Approval :",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Insurance Fee :",
+      "k": "insurance",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "EPA Charges :",
+      "k": "epa"
+    }
+  ]
+}
