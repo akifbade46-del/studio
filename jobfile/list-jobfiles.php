@@ -15,7 +15,6 @@ function json_response($status, $message, $data = null) {
 $is_full_data_request = isset($_GET['full']);
 $show_deleted = isset($_GET['deleted']);
 
-// Determine which directories to scan based on the request
 $directories_to_scan = [];
 if ($show_deleted) {
     if (is_dir('recycle_bin/')) $directories_to_scan[] = 'recycle_bin/*.json';
@@ -33,21 +32,19 @@ foreach ($directories_to_scan as $pattern) {
         $content = file_get_contents($file);
         $data = json_decode($content, true);
         
-        if (!$data) continue;
+        if (!$data || !isset($data['jfn'])) continue;
 
-        // Use ISO 8601 format for dates (e.g., 2004-02-12T15:19:21+00:00) which JS understands
+        // Use ISO 8601 format for dates which JS understands reliably
         $updatedTimestamp = filemtime($file);
         $updatedAtISO = date('c', $updatedTimestamp);
 
         if ($is_full_data_request) {
-            // Ensure date fields exist and are formatted, but send the whole object
             $data['updatedAt'] = $updatedAtISO;
             $data['createdAt'] = $data['createdAt'] ?? $updatedAtISO;
             $file_data[] = $data;
         } else {
-            // For list requests, only send essential data
             $file_info = [
-                'jfn' => $data['jfn'] ?? basename($file, '.json'),
+                'jfn' => $data['jfn'],
                 'sh' => $data['sh'] ?? 'N/A',
                 'co' => $data['co'] ?? 'N/A',
                 'mawb' => $data['mawb'] ?? 'N/A',
@@ -69,7 +66,6 @@ usort($file_data, function($a, $b) {
     $dateB = $b['updatedAt'] ?? '1970-01-01T00:00:00+00:00';
     return strcmp($dateB, $dateA);
 });
-
 
 json_response(200, 'success', $file_data);
 ?>
