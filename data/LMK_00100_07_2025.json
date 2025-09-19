@@ -1,0 +1,203 @@
+{
+  "in": "INV/00353/2025",
+  "createdAt": "2025-08-11T10:17:59.000Z",
+  "mawb": "",
+  "cl": [
+    "Local Move"
+  ],
+  "pt": [
+    "Others"
+  ],
+  "gw": "",
+  "fv": "",
+  "status": "pending",
+  "jfn": "LMK/00100/07/2025",
+  "sm": "",
+  "totalSelling": 382.5,
+  "bd": "2025-07-30",
+  "po": "SKWI0002262",
+  "totalProfit": 382.49,
+  "ca": "",
+  "d": "2025-07-27",
+  "ts": "",
+  "co": "DSV A&S SHIPPING & TRANSPORT ",
+  "cn": "",
+  "vn": "",
+  "pb": "ABDUL HADI ",
+  "totalCost": 0.01,
+  "de": "",
+  "dsc": "WAREHOUSING CHARGES - JULY 2025",
+  "pc": "",
+  "tn": "",
+  "ch": [
+    {
+      "n": "",
+      "l": "Ex-works Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "ex_works"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "k": "surcharge"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "formalities",
+      "l": "Formalities:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Delivery Order Fee:",
+      "k": "do_fee"
+    },
+    {
+      "k": "transportation",
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Transportation Charges:"
+    },
+    {
+      "k": "inspection",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "l": "Handling Charges:",
+      "n": "",
+      "c": "0",
+      "k": "handling",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "k": "labor",
+      "n": "",
+      "l": "Labor / Forklift Charges:",
+      "s": "0"
+    },
+    {
+      "k": "documentation",
+      "n": "",
+      "l": "Documentation Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Clearance Charges:",
+      "s": "0",
+      "k": "clearance"
+    },
+    {
+      "l": "Customs Duty:",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "customs_duty"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "k": "thc",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "0",
+      "k": "legalization"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "n": ""
+    },
+    {
+      "l": "Loading / Offloading Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "loading"
+    },
+    {
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Packing Charges:",
+      "k": "packing",
+      "n": ""
+    },
+    {
+      "l": "Port Charges:",
+      "k": "port_charges",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "382.500",
+      "l": "Monthly Charges:",
+      "k": "other",
+      "n": "",
+      "c": "00.01"
+    },
+    {
+      "l": "PAI Approval :",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "pai"
+    },
+    {
+      "s": "0",
+      "k": "insurance",
+      "n": "",
+      "l": "Insurance Fee :",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "epa",
+      "l": "EPA Charges :",
+      "s": "0"
+    }
+  ],
+  "sh": "DSV A&S SHIPPING & TRANSPORT ",
+  "vw": "",
+  "updatedAt": "2025-08-11T10:17:59.000Z",
+  "re": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "hawb": "",
+  "createdBy": "ABDUL HADI ",
+  "or": "ALRAI "
+}
