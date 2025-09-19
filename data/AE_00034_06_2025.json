@@ -1,0 +1,203 @@
+{
+  "po": "",
+  "d": "2025-08-11",
+  "sm": "DINESH",
+  "co": "MS.VANESSA JEANNE MOLINA",
+  "createdBy": "ANAND MANI",
+  "createdAt": "2025-08-11T06:32:59.000Z",
+  "pt": [
+    "Air Freight"
+  ],
+  "totalProfit": 49.8,
+  "vw": "71.30 KGS",
+  "ca": "FEDEX",
+  "in": "INV/00340/2025",
+  "cn": "",
+  "fv": "",
+  "ts": "AIR",
+  "vn": "",
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "c": "0",
+      "n": "",
+      "k": "ex_works",
+      "s": "165"
+    },
+    {
+      "c": "115.200",
+      "s": "0",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "surcharge",
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:"
+    },
+    {
+      "k": "formalities",
+      "l": "Formalities:",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "k": "do_fee",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Transportation Charges:",
+      "c": "0",
+      "k": "transportation"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "n": ""
+    },
+    {
+      "l": "Handling Charges:",
+      "n": "",
+      "k": "handling",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "labor",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "n": "",
+      "l": "Documentation Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "documentation"
+    },
+    {
+      "n": "",
+      "k": "clearance",
+      "l": "Clearance Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "customs_duty",
+      "s": "0",
+      "l": "Customs Duty:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "thc",
+      "l": "Terminal Handling Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Legalization Charges:",
+      "s": "0",
+      "k": "legalization"
+    },
+    {
+      "k": "demurrage",
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Loading / Offloading Charges:",
+      "s": "0",
+      "k": "loading"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "packing",
+      "c": "0",
+      "l": "Packing Charges:"
+    },
+    {
+      "c": "0",
+      "k": "port_charges",
+      "n": "",
+      "l": "Port Charges:",
+      "s": "0"
+    },
+    {
+      "l": "Other Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "other"
+    },
+    {
+      "k": "pai",
+      "n": "",
+      "s": "0",
+      "l": "PAI Approval :",
+      "c": "0"
+    },
+    {
+      "k": "insurance",
+      "l": "Insurance Fee :",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "l": "EPA Charges :",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "epa"
+    }
+  ],
+  "pb": "ANAND MANI",
+  "status": "pending",
+  "lastUpdatedBy": "ANAND MANI",
+  "de": "UNITED STATES OF AMERICA ",
+  "sh": "MS.VANESSA JEANNE MOLINA",
+  "re": "",
+  "pc": "2 BOXES",
+  "tn": "",
+  "or": "KUWAIT",
+  "mawb": "882149388035",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "totalSelling": 165,
+  "bd": "2025-07-27",
+  "cl": [
+    "Export"
+  ],
+  "updatedAt": "2025-08-11T06:32:59.000Z",
+  "jfn": "AE/00034/06/2025",
+  "gw": "63.10 KGS",
+  "hawb": "",
+  "totalCost": 115.2
+}
