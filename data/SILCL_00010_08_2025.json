@@ -1,0 +1,146 @@
+{
+  "tn": "",
+  "totalSelling": 918.82,
+  "ca": "UNITED LOGISTIC",
+  "createdBy": "ABDUL HADI ",
+  "co": "BOODAI TRADING CO",
+  "bd": "2025-09-18",
+  "vw": "",
+  "jfn": "SILCL/00010/08/2025",
+  "cl": [
+    "Import"
+  ],
+  "de": "KUWAIT",
+  "po": "",
+  "cn": "MSDU5220456",
+  "checkedAt": "2025-09-18T12:11:28.000Z",
+  "or": "NETHERLAND ",
+  "status": "checked",
+  "checkedBy": "AJMAL KIANI",
+  "dsc": "PUMPS",
+  "vn": "MSC POSITION",
+  "in": "INV/00396/2025",
+  "createdAt": "2025-09-14T06:24:55.000Z",
+  "re": "",
+  "gw": "540 KG",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "fv": " JE533A",
+  "totalProfit": 94,
+  "mawb": "35060953",
+  "pb": "ABDUL HADI ",
+  "ch": [
+    {
+      "l": "Delivery Order Fee:",
+      "c": "95.000",
+      "s": "95.000",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "20.000",
+      "s": "35.000",
+      "l": "Transportation Charges:"
+    },
+    {
+      "s": "22.800",
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "c": "22.800"
+    },
+    {
+      "s": "15.000",
+      "n": "",
+      "l": "Handling Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Inspection Charges:",
+      "c": "5.000",
+      "s": "0"
+    },
+    {
+      "s": "30.000",
+      "n": "",
+      "l": "Clearance Charges:",
+      "c": "8.000"
+    },
+    {
+      "s": "501.020",
+      "n": "",
+      "c": "501.020",
+      "l": "Customs Duty:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "1.000",
+      "l": "Legalization Charges:"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "15.000",
+      "l": "PAI 52 FEE"
+    },
+    {
+      "s": "15.000",
+      "n": "",
+      "l": "CITRA FEE",
+      "c": "5.000"
+    },
+    {
+      "s": "5.000",
+      "l": "Bank charges",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Port Charges:",
+      "s": "78.000",
+      "c": "78.000",
+      "n": ""
+    },
+    {
+      "l": "Service Charges",
+      "n": "",
+      "s": "15.000",
+      "c": "2.000"
+    },
+    {
+      "c": "30.000",
+      "s": "30.000",
+      "n": "",
+      "l": "PAI Approval :"
+    },
+    {
+      "s": "20.0000",
+      "l": "Citra Approval",
+      "c": "20.000",
+      "n": ""
+    },
+    {
+      "l": "PAI",
+      "s": "12.000",
+      "n": "",
+      "c": "12.000"
+    },
+    {
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "30.000",
+      "c": "25.000"
+    }
+  ],
+  "pc": "3 PALLETS ",
+  "totalCost": 824.82,
+  "d": "2025-08-25",
+  "updatedAt": "2025-09-18T09:23:28.000Z",
+  "sm": "",
+  "pt": [
+    "Sea Freight"
+  ],
+  "ts": "",
+  "sh": "ENERPAC B.V",
+  "hawb": ""
+}
