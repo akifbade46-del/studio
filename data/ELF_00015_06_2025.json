@@ -1,0 +1,203 @@
+{
+  "d": "2025-08-11",
+  "de": "DUBAI,UAE",
+  "ch": [
+    {
+      "s": "695",
+      "c": "0",
+      "k": "ex_works",
+      "n": "",
+      "l": "Ex-works Charges:"
+    },
+    {
+      "c": "150.000",
+      "s": "0",
+      "l": "Land/Air / Sea Freight:",
+      "n": "",
+      "k": "freight"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "surcharge",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "formalities",
+      "c": "0",
+      "l": "Formalities:"
+    },
+    {
+      "k": "do_fee",
+      "c": "0",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "l": "Transportation Charges:",
+      "n": "",
+      "k": "transportation",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "inspection",
+      "s": "0",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "n": "",
+      "l": "Handling Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "handling"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "s": "0"
+    },
+    {
+      "k": "documentation",
+      "c": "0",
+      "l": "Documentation Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "c": "186.235",
+      "k": "clearance"
+    },
+    {
+      "s": "0",
+      "k": "customs_duty",
+      "n": "",
+      "l": "Customs Duty:",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "thc",
+      "c": "0",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "l": "Legalization Charges:",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "legalization"
+    },
+    {
+      "c": "0",
+      "k": "demurrage",
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "k": "loading"
+    },
+    {
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Packing Charges:",
+      "s": "0",
+      "k": "packing",
+      "c": "130.672"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Port Charges:",
+      "k": "port_charges"
+    },
+    {
+      "s": "0",
+      "c": "132.079",
+      "n": "",
+      "k": "other",
+      "l": "Other Charges: ( Quot8)"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "n": ""
+    },
+    {
+      "k": "insurance",
+      "s": "0",
+      "l": "Insurance Fee :",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "epa",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "EPA Charges :"
+    }
+  ],
+  "vn": "",
+  "hawb": "",
+  "status": "pending",
+  "sm": "DINESH",
+  "or": "KUWAIT",
+  "createdAt": "2025-08-11T06:55:55.000Z",
+  "updatedAt": "2025-08-11T06:55:55.000Z",
+  "tn": "",
+  "createdBy": "ANAND MANI",
+  "totalProfit": 96.01,
+  "fv": "",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "in": "INV/00329/2025",
+  "totalSelling": 695,
+  "ts": "LAND",
+  "jfn": "ELF/00015/06/2025",
+  "bd": "2025-07-23",
+  "co": "MS.GHADA KAMIL",
+  "vw": "18 CBM",
+  "sh": "MS.GHADA KAMIL",
+  "totalCost": 598.99,
+  "re": "",
+  "gw": "1800 KG ",
+  "pb": "ANAND MANI",
+  "pc": "62BOXES",
+  "po": "",
+  "ca": "TRUCK",
+  "cl": [
+    "Export"
+  ],
+  "cn": "",
+  "mawb": "",
+  "pt": [
+    "Land Freight"
+  ],
+  "lastUpdatedBy": "ANAND MANI"
+}
