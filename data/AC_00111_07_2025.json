@@ -1,0 +1,210 @@
+{
+  "lastUpdatedBy": "ABDUL HADI ",
+  "checkedBy": "AJMAL KIANI",
+  "dsc": "MAKEUP PRODUCTS",
+  "status": "checked",
+  "ts": "CLEARANCE AND DELIVERY ",
+  "rejectedAt": null,
+  "rejectionReason": null,
+  "pc": "1",
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "k": "ex_works",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Land/Air / Sea Freight:",
+      "n": "",
+      "k": "freight"
+    },
+    {
+      "s": "0",
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Formalities:",
+      "c": "0",
+      "k": "formalities",
+      "s": "0"
+    },
+    {
+      "k": "do_fee",
+      "c": "7.000",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "s": "7.000"
+    },
+    {
+      "l": "Transportation Charges:",
+      "k": "transportation",
+      "n": "",
+      "c": "0",
+      "s": "25.000"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "s": "12.000",
+      "c": "12.000",
+      "n": "",
+      "k": "inspection"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "handling",
+      "l": "Handling Charges:",
+      "s": "25.000"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "s": "0"
+    },
+    {
+      "s": "15.000",
+      "c": "0",
+      "l": "Documentation Charges:",
+      "k": "documentation",
+      "n": ""
+    },
+    {
+      "k": "clearance",
+      "n": "",
+      "l": "Clearance Charges:",
+      "s": "65.000",
+      "c": "30.000"
+    },
+    {
+      "l": "Customs Duty:",
+      "n": "",
+      "k": "customs_duty",
+      "s": "11.170",
+      "c": "11.170"
+    },
+    {
+      "n": "",
+      "k": "thc",
+      "l": "Terminal Handling Charges:",
+      "c": "3.000",
+      "s": "3.000"
+    },
+    {
+      "l": "Legalization Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "legalization"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "demurrage",
+      "c": "0",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "k": "loading",
+      "c": "0",
+      "l": "Loading / Offloading Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Packing Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "packing"
+    },
+    {
+      "k": "port_charges",
+      "n": "",
+      "l": "Port Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "s": "5.000",
+      "c": "2.000",
+      "k": "other",
+      "l": "Bank Charges:",
+      "n": ""
+    },
+    {
+      "k": "pai",
+      "c": "27.000",
+      "n": "",
+      "l": "MOH service Fee :",
+      "s": "75.000"
+    },
+    {
+      "k": "insurance",
+      "l": "Insurance Fee :",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "EPA Charges :",
+      "n": "",
+      "k": "epa"
+    }
+  ],
+  "or": "ROMANIA",
+  "tn": "",
+  "ca": "DHL",
+  "checkedAt": "2025-08-27T06:00:41.000Z",
+  "approvedAt": null,
+  "bd": "2025-08-26",
+  "jfn": "AC/00111/07/2025",
+  "totalSelling": 243.17,
+  "cn": "",
+  "pt": [
+    "Air Freight"
+  ],
+  "fv": "",
+  "sm": "",
+  "updatedAt": "2025-08-26T13:20:05.000Z",
+  "in": "INV/00369/2025",
+  "po": "",
+  "vw": "",
+  "re": "",
+  "createdBy": "ABDUL HADI ",
+  "totalProfit": 151,
+  "co": "GHANIMA BOODAI",
+  "vn": "",
+  "rejectedBy": null,
+  "sh": "DANESSA MYRICKS BEAUTY EUROPE SRL",
+  "mawb": "1391911032",
+  "createdAt": "2025-08-06T11:02:50.000Z",
+  "totalCost": 92.17,
+  "cl": [
+    "Import"
+  ],
+  "hawb": "",
+  "approvedBy": null,
+  "d": "2025-07-31",
+  "de": "KUWAIT",
+  "gw": "1.25 KG",
+  "pb": "ABDUL HADI "
+}
