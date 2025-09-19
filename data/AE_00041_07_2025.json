@@ -1,0 +1,203 @@
+{
+  "pb": "ANAND MANI",
+  "mawb": "882289118522",
+  "tn": "",
+  "ca": "FEDEX",
+  "po": "",
+  "createdBy": "ANAND MANI",
+  "re": "",
+  "createdAt": "2025-08-11T05:51:19.000Z",
+  "or": "KUWAIT",
+  "cn": "",
+  "fv": "",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "updatedAt": "2025-08-11T05:51:19.000Z",
+  "vw": "327.20 KGS",
+  "bd": "2025-07-27",
+  "ts": "LAND",
+  "cl": [
+    "Export"
+  ],
+  "hawb": "",
+  "totalProfit": 132.28,
+  "vn": "",
+  "d": "2025-08-11",
+  "sm": "DINESH",
+  "in": "INV/00339/2025",
+  "de": "DUBAI,UAE",
+  "pt": [
+    "Land Freight"
+  ],
+  "co": "MR.MOSTAFA ABDELFATTAH SAYED SALE",
+  "lastUpdatedBy": "ANAND MANI",
+  "totalCost": 36.72,
+  "status": "pending",
+  "totalSelling": 169,
+  "ch": [
+    {
+      "c": "0",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "k": "ex_works",
+      "s": "169"
+    },
+    {
+      "c": "36.720",
+      "l": "Land Freight:",
+      "k": "freight",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "k": "surcharge",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "formalities",
+      "l": "Formalities:",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "c": "0",
+      "k": "do_fee"
+    },
+    {
+      "k": "transportation",
+      "c": "0",
+      "l": "Transportation Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0",
+      "n": "",
+      "k": "inspection",
+      "s": "0"
+    },
+    {
+      "k": "handling",
+      "n": "",
+      "s": "0",
+      "l": "Handling Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "labor"
+    },
+    {
+      "l": "Documentation Charges:",
+      "s": "0",
+      "k": "documentation",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Clearance Charges:",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "clearance"
+    },
+    {
+      "l": "Customs Duty:",
+      "n": "",
+      "k": "customs_duty",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "k": "thc",
+      "n": "",
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Legalization Charges:",
+      "k": "legalization"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "c": "0",
+      "n": "",
+      "k": "demurrage",
+      "s": "0"
+    },
+    {
+      "k": "loading",
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "dest_clearance",
+      "n": "",
+      "l": "Destination Clearance Charges:",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Packing Charges:",
+      "k": "packing"
+    },
+    {
+      "l": "Port Charges:",
+      "k": "port_charges",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "other",
+      "l": "Other Charges:"
+    },
+    {
+      "k": "pai",
+      "l": "PAI Approval :",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "k": "insurance",
+      "n": "",
+      "c": "0",
+      "l": "Insurance Fee :"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "epa",
+      "l": "EPA Charges :",
+      "s": "0"
+    }
+  ],
+  "sh": "MR.MOSTAFA ABDELFATTAH SAYED SALE",
+  "gw": "324.50 KGS",
+  "pc": "9 BOXES",
+  "jfn": "AE/00041/07/2025"
+}
