@@ -1,0 +1,203 @@
+{
+  "mawb": "",
+  "de": "AIRPORT",
+  "updatedAt": "2025-08-11T10:30:02.000Z",
+  "cl": [
+    "Local Move"
+  ],
+  "createdAt": "2025-08-11T10:30:02.000Z",
+  "or": "AL RAI",
+  "bd": "2025-07-30",
+  "totalProfit": 14.99,
+  "cn": "",
+  "in": "INV/00346/2025",
+  "pt": [
+    "Others"
+  ],
+  "hawb": "",
+  "pb": "ABDUL HADI ",
+  "totalCost": 0.01,
+  "co": "JAZEERA AIRWAYS ",
+  "fv": "",
+  "status": "pending",
+  "gw": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "ca": "",
+  "jfn": "LMK/00098/07/2025",
+  "sm": "",
+  "ts": "LOCAL MOVE ",
+  "vw": "",
+  "pc": "",
+  "re": "",
+  "vn": "",
+  "dsc": "FINANCE DEPARTMENT ",
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "ex_works"
+    },
+    {
+      "s": "0",
+      "k": "freight",
+      "l": "Land/Air / Sea Freight:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "formalities",
+      "n": "",
+      "l": "Formalities:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Delivery Order Fee:",
+      "k": "do_fee"
+    },
+    {
+      "l": "Transportation Charges :",
+      "s": "15.000",
+      "n": "",
+      "c": "00.01",
+      "k": "transportation"
+    },
+    {
+      "n": "",
+      "k": "inspection",
+      "c": "0",
+      "s": "0",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "c": "0",
+      "l": "Handling Charges:",
+      "s": "0",
+      "k": "handling",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "labor",
+      "s": "0",
+      "n": "",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "s": "0",
+      "l": "Documentation Charges:",
+      "n": "",
+      "c": "0",
+      "k": "documentation"
+    },
+    {
+      "n": "",
+      "l": "Clearance Charges:",
+      "c": "0",
+      "k": "clearance",
+      "s": "0"
+    },
+    {
+      "k": "customs_duty",
+      "n": "",
+      "l": "Customs Duty:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "c": "0",
+      "k": "thc"
+    },
+    {
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "legalization"
+    },
+    {
+      "n": "",
+      "k": "demurrage",
+      "l": "Demurrage Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "loading",
+      "n": "",
+      "c": "0",
+      "l": "Loading / Offloading Charges:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Packing Charges:",
+      "s": "0",
+      "k": "packing",
+      "c": "0"
+    },
+    {
+      "k": "port_charges",
+      "s": "0",
+      "l": "Port Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Other Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "other"
+    },
+    {
+      "k": "pai",
+      "l": "PAI Approval :",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Insurance Fee :",
+      "c": "0",
+      "s": "0",
+      "k": "insurance"
+    },
+    {
+      "n": "",
+      "l": "EPA Charges :",
+      "s": "0",
+      "c": "0",
+      "k": "epa"
+    }
+  ],
+  "tn": "",
+  "po": "",
+  "createdBy": "ABDUL HADI ",
+  "d": "2025-07-24",
+  "sh": "JAZEERA AIRWAYS ",
+  "totalSelling": 15
+}
