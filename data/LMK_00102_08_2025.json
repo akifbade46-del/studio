@@ -1,0 +1,210 @@
+{
+  "lastUpdatedBy": "ABDUL HADI ",
+  "dsc": "COMMERCIAL",
+  "approvedAt": null,
+  "gw": "",
+  "totalSelling": 505,
+  "ch": [
+    {
+      "k": "ex_works",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Ex-works Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight",
+      "s": "0"
+    },
+    {
+      "k": "surcharge",
+      "n": "",
+      "s": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "k": "formalities",
+      "l": "Formalities:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "do_fee",
+      "s": "0",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "s": "255.000",
+      "k": "transportation",
+      "l": "Transportation Charges 18 TRIP:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "c": "0",
+      "k": "inspection",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "k": "handling",
+      "l": "Handling Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "labor",
+      "l": "Labor / Forklift Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "k": "clearance",
+      "n": "",
+      "s": "0",
+      "l": "Clearance Charges:"
+    },
+    {
+      "k": "customs_duty",
+      "c": "0",
+      "s": "0",
+      "l": "Customs Duty:",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "thc",
+      "n": "",
+      "s": "0",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "n": "",
+      "k": "legalization",
+      "c": "0",
+      "s": "0",
+      "l": "Legalization Charges:"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "c": "0",
+      "n": "",
+      "k": "demurrage",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "k": "loading",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "s": "0",
+      "k": "dest_clearance"
+    },
+    {
+      "l": "Pallets Charges:",
+      "k": "packing",
+      "n": "",
+      "s": "225.000",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Trolley Pickup Charges from Airport to AL-Rai W/H:",
+      "k": "port_charges",
+      "s": "25.000",
+      "c": "0"
+    },
+    {
+      "k": "other",
+      "l": "Parking Charges:",
+      "c": "3.200",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "pai",
+      "l": "PAI Approval :"
+    },
+    {
+      "n": "",
+      "k": "insurance",
+      "s": "0",
+      "l": "Insurance Fee :",
+      "c": "0"
+    },
+    {
+      "l": "EPA Charges :",
+      "k": "epa",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    }
+  ],
+  "cn": "",
+  "pc": "",
+  "checkedAt": "2025-08-31T07:13:58.000Z",
+  "sh": "JAZEERA AIRWAYS ",
+  "updatedAt": "2025-08-31T07:11:11.000Z",
+  "status": "checked",
+  "in": "INV/00394/2025",
+  "totalCost": 3.2,
+  "po": "",
+  "ts": "LOCAL MOVE ",
+  "vn": "",
+  "ca": "",
+  "d": "2025-08-10",
+  "pb": "ABDUL HADI ",
+  "createdBy": "ABDUL HADI ",
+  "bd": "2025-08-31",
+  "or": "AL RAI",
+  "re": "",
+  "mawb": "",
+  "hawb": "",
+  "tn": "",
+  "checkedBy": "AJMAL KIANI",
+  "approvedBy": null,
+  "totalProfit": 501.8,
+  "rejectedBy": null,
+  "createdAt": "2025-08-30T07:57:58.000Z",
+  "jfn": "LMK/00102/08/2025",
+  "sm": "",
+  "de": "AIRPORT ",
+  "co": "JAZEERA AIRWAYS",
+  "fv": "",
+  "rejectionReason": null,
+  "cl": [
+    "Local Move"
+  ],
+  "vw": "",
+  "rejectedAt": null,
+  "pt": [
+    "Others"
+  ]
+}
