@@ -1,0 +1,182 @@
+{
+  "ch": [
+    {
+      "c": "0",
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Land/Air / Sea Freight:",
+      "c": "0"
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "l": "Formalities:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "s": "0"
+    },
+    {
+      "l": "Transportation Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Handling Charges:",
+      "s": "0"
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Documentation Charges:",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Clearance Charges:"
+    },
+    {
+      "c": "0",
+      "l": "Customs Duty:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Legalization Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "l": "Monthly Storage Charges for the month of August 2025:",
+      "s": "321.750",
+      "c": "00.001",
+      "n": ""
+    },
+    {
+      "l": "Packing Charges:",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Port Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Other Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "PAI Approval :",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Insurance Fee :"
+    },
+    {
+      "s": "0",
+      "l": "EPA Charges :",
+      "c": "0",
+      "n": ""
+    }
+  ],
+  "co": "DSV AIR & SEA ",
+  "totalCost": 0,
+  "status": "checked",
+  "re": "",
+  "totalSelling": 321.75,
+  "vn": "",
+  "updatedAt": "2025-08-31T14:00:25.000Z",
+  "pt": [
+    "Others"
+  ],
+  "sm": "",
+  "ts": "",
+  "vw": "",
+  "cn": "",
+  "or": "AL RAI ",
+  "bd": "2025-08-31",
+  "d": "2025-08-31",
+  "po": "",
+  "hawb": "",
+  "sh": "DSV AIR & SEA ",
+  "createdAt": "2025-08-31T13:41:05.000Z",
+  "pb": "ABDUL HADI ",
+  "mawb": "",
+  "createdBy": "ABDUL HADI ",
+  "fv": "",
+  "pc": "",
+  "lastUpdatedBy": "AJMAL KIANI",
+  "in": "INV/00395/2025",
+  "cl": [
+    "Local Move"
+  ],
+  "de": "",
+  "ca": "",
+  "gw": "",
+  "checkedAt": "2025-08-31T14:00:27.000Z",
+  "tn": "",
+  "jfn": "LMK/00113/08/2025",
+  "totalProfit": 321.75,
+  "checkedBy": "AJMAL KIANI",
+  "dsc": "MONTHLY STORAGE CHARGES FOR AUGUST 2025"
+}
