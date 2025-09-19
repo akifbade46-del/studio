@@ -1,0 +1,203 @@
+{
+  "cl": [
+    "Export"
+  ],
+  "createdAt": "2025-08-24T08:56:49.000Z",
+  "totalProfit": 527.85,
+  "bd": "",
+  "or": "KUWAIT",
+  "tn": "",
+  "status": "pending",
+  "co": "MR. MOHAMMED JASSIM BOODAI",
+  "cn": "",
+  "vw": "",
+  "totalCost": 736.46,
+  "mawb": "157-95048914",
+  "createdBy": "ABDUL HADI ",
+  "pc": "UESD MOTOR BIKE",
+  "ca": "QATAR AIRWAYS ",
+  "hawb": "",
+  "ts": "AIR",
+  "totalSelling": 1264.31,
+  "gw": "280 GK",
+  "pb": "ABDUL HADI ",
+  "d": "2025-08-14",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "vn": "",
+  "ch": [
+    {
+      "n": "",
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "k": "ex_works",
+      "c": "0"
+    },
+    {
+      "s": "709.000",
+      "l": "Air Freight:",
+      "n": "",
+      "c": "420.750",
+      "k": "freight"
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "29.000",
+      "k": "formalities",
+      "l": "Formalities:",
+      "s": "65.000"
+    },
+    {
+      "s": "0",
+      "c": "3.700",
+      "l": "Data trans:",
+      "n": "",
+      "k": "do_fee"
+    },
+    {
+      "s": "35.000",
+      "l": "Transportation Charges:",
+      "n": "",
+      "c": "0",
+      "k": "transportation"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "s": "12.810",
+      "c": "12.810",
+      "k": "inspection"
+    },
+    {
+      "s": "25.000",
+      "k": "handling",
+      "l": "Handling Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "l": "Manual Booking :",
+      "k": "labor",
+      "c": "07.700",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "s": "15.000",
+      "l": "Documentation Charges:",
+      "k": "documentation",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "clearance",
+      "n": "",
+      "l": "Clearance Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Customs Duty:",
+      "c": "0",
+      "k": "customs_duty",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "k": "thc",
+      "n": "",
+      "s": "82.500",
+      "c": "82.500",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "k": "legalization",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Legalization Charges:"
+    },
+    {
+      "k": "demurrage",
+      "c": "24.000",
+      "l": "Bike cancellation  Charges:",
+      "s": "65.000",
+      "n": ""
+    },
+    {
+      "s": "30.000",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "n": "",
+      "c": "04.000"
+    },
+    {
+      "k": "dest_clearance",
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "packing",
+      "s": "0",
+      "n": "",
+      "l": "Insurance Charges:",
+      "c": "52.000"
+    },
+    {
+      "k": "port_charges",
+      "n": "",
+      "c": "72.500",
+      "s": "150.000",
+      "l": "Packing Charges:"
+    },
+    {
+      "l": "DG Fee:",
+      "c": "27.500",
+      "n": "",
+      "k": "other",
+      "s": "75.000"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "pai",
+      "n": "",
+      "l": "PAI Approval :"
+    },
+    {
+      "c": "0",
+      "l": "Insurance Fee :",
+      "k": "insurance",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "k": "epa",
+      "l": "EPA Charges :",
+      "s": "0",
+      "c": "0"
+    }
+  ],
+  "de": "BEIRUT ",
+  "sh": "MR. MOHAMMED JASSIM BOODAI",
+  "updatedAt": "2025-08-24T12:08:26.000Z",
+  "re": "",
+  "in": "",
+  "po": "",
+  "pt": [
+    "Air Freight"
+  ],
+  "fv": "",
+  "dsc": "USED MOTOR BIKE ",
+  "sm": "",
+  "jfn": "AE/00047/08/2025"
+}
