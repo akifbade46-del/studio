@@ -113,7 +113,7 @@ export function createDeliveryCard(delivery) {
         if (currentUser.role === 'admin') {
             actionButtons += `<button data-action="cancel-pod" data-id="${delivery.id}" data-job="${jobData.jfn}" class="btn btn-danger btn-xs text-xs">Cancel POD</button>`;
         }
-        actionButtons += `${delivery.podId ? `<button data-action="view-receipt" data-id="${delivery.id}" class="btn btn-secondary btn-xs text-xs">View Receipt</button>` : ''}`;
+        actionButtons += `${delivery.podId ? `<button data-action="view-receipt" data-id="${delivery.id}" class="btn btn-secondary btn-xs text-xs">View Receipt</button> <button data-action="copy-pod-link" data-id="${delivery.id}" class="btn btn-primary btn-xs text-xs">Copy Download Link</button>` : ''}`;
     } else if (status === 'In Progress' && (currentUser.role === 'admin' || currentUser.role === 'staff')) {
         actionButtons += `<button data-action="track-driver" data-id="${delivery.id}" class="btn btn-primary btn-xs text-xs">Track Driver</button>`;
     }
@@ -169,6 +169,8 @@ export function createDeliveryCard(delivery) {
 
         if (action === 'view-receipt') {
             openReceiptModal(id);
+        } else if (action === 'copy-pod-link') {
+            copyPodDownloadLink(id);
         } else if (action === 'cancel-pod') {
             const jobNo = target.dataset.job;
             confirmPodCancel(id, jobNo);
@@ -198,7 +200,7 @@ export function createDriverTaskCard(task) {
     } else if (status === 'In Progress') {
         actionButton = `<button data-action="complete-delivery" data-id="${task.id}" class="btn btn-success text-sm">Complete Delivery</button>`;
     } else { // Delivered
-        actionButton = `<button data-action="view-receipt" data-id="${task.id}" class="btn btn-secondary text-sm">View Receipt</button>`;
+        actionButton = `<button data-action="view-receipt" data-id="${task.id}" class="btn btn-secondary text-sm">View Receipt</button> <button data-action="copy-pod-link" data-id="${task.id}" class="btn btn-primary text-sm">Copy Download Link</button>`;
     }
     
     const statusColors = {
@@ -223,10 +225,15 @@ export function createDriverTaskCard(task) {
             </div>
         </div>
     `;
-    taskCard.querySelector('button')?.addEventListener('click', (e) => {
+    
+    // Add event listeners to all buttons in the task card
+    taskCard.addEventListener('click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        
         e.stopPropagation();
-        const action = e.target.dataset.action;
-        const id = e.target.dataset.id;
+        const action = target.dataset.action;
+        const id = target.dataset.id;
         const deliveryTask = deliveriesCache.find(t => t.id === id);
 
         if (action === 'start-delivery') {
@@ -235,8 +242,11 @@ export function createDriverTaskCard(task) {
             openCompletionModal(deliveryTask);
         } else if (action === 'view-receipt') {
             openReceiptModal(id);
+        } else if (action === 'copy-pod-link') {
+            copyPodDownloadLink(id);
         }
     });
+    
     return taskCard;
 }
 
@@ -920,9 +930,14 @@ export async function showPublicPodView(podId) {
             view.style.display = 'block';
             view.innerHTML = `
                 <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+                    <div class="text-center mb-4">
+                        <h1 class="text-2xl font-bold text-gray-800 mb-2">Proof of Delivery (POD)</h1>
+                        <p class="text-gray-600">Download or share this delivery receipt</p>
+                    </div>
                     <div id="receipt-content-public" class="p-4 border rounded-md bg-white shadow-lg"></div>
-                    <div class="text-center mt-4">
-                        <button id="public-download-pdf" class="btn btn-primary">Download PDF</button>
+                    <div class="text-center mt-6 space-y-3">
+                        <button id="public-download-pdf" class="btn btn-primary btn-lg">📥 Download PDF Receipt</button>
+                        <p class="text-sm text-gray-500">You can bookmark this page or share this URL to access the POD anytime</p>
                     </div>
                 </div>`;
             
@@ -1323,6 +1338,15 @@ export function copyReceiptLink() {
     const publicUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}?podId=${activeDeliveryForReceipt.deliveryId}`;
     navigator.clipboard.writeText(publicUrl).then(() => {
         showNotification("Link copied to clipboard!");
+    }, () => {
+        showNotification("Could not copy link.", true);
+    });
+}
+
+export function copyPodDownloadLink(deliveryId) {
+    const publicUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}?podId=${deliveryId}`;
+    navigator.clipboard.writeText(publicUrl).then(() => {
+        showNotification("POD download link copied to clipboard!");
     }, () => {
         showNotification("Could not copy link.", true);
     });
