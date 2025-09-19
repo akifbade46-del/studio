@@ -247,6 +247,13 @@
                 </div>
             </div>
             
+            <!-- Quick Stats Section -->
+            <div id="quick-stats-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-white">
+                <div class="bg-green-500 p-4 rounded-lg shadow-md"><p class="font-semibold">Total Profit</p><p id="stat-total-profit" class="text-2xl font-bold">0.000</p></div>
+                <div class="bg-blue-500 p-4 rounded-lg shadow-md"><p class="font-semibold">Jobs This Month</p><p id="stat-jobs-month" class="text-2xl font-bold">0</p></div>
+                <div class="bg-purple-500 p-4 rounded-lg shadow-md"><p class="font-semibold">Average Profit</p><p id="stat-avg-profit" class="text-2xl font-bold">0.000</p></div>
+            </div>
+            
             <!-- Status Summary -->
             <div id="status-summary-main" class="mb-4"></div>
 
@@ -431,35 +438,24 @@
             </div>
             
             <!-- Search and Filter Controls -->
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
-                <div class="md:col-span-2">
-                    <label for="search-bar" class="text-sm font-medium text-gray-700">Search</label>
-                    <input type="text" id="search-bar" class="input-field mt-1" placeholder="Job No, Shipper, etc.">
-                </div>
-                <div>
-                    <label for="filter-status" class="text-sm font-medium text-gray-700">Status</label>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
+                <div class="md:col-span-2"><label for="search-bar" class="block text-sm font-medium text-gray-700">Search (Job No, Shipper, Consignee)</label><input type="text" id="search-bar" class="input-field mt-1" /></div>
+                <div><label for="filter-status" class="block text-sm font-medium text-gray-700">Status</label>
                     <select id="filter-status" class="input-field mt-1">
-                        <option value="">All Statuses</option>
-                        <option value="pending">Pending</option>
-                        <option value="checked">Checked</option>
-                        <option value="approved">Approved</option>
-                        <option value="rejected">Rejected</option>
+                        <option value="">All</option><option value="pending">Pending</option><option value="checked">Checked</option><option value="approved">Approved</option><option value="rejected">Rejected</option>
                     </select>
                 </div>
-                <div>
-                    <label for="filter-date-from" class="text-sm font-medium text-gray-700">From Date</label>
-                    <input type="date" id="filter-date-from" class="input-field mt-1">
-                </div>
-                <div>
-                    <label for="filter-date-to" class="text-sm font-medium text-gray-700">To Date</label>
-                    <input type="date" id="filter-date-to" class="input-field mt-1">
-                </div>
-                <div class="flex items-end">
-                    <button id="clear-filters-btn" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded text-sm">Clear Filters</button>
+                <div><label for="filter-date-from" class="block text-sm font-medium text-gray-700">Date Range</label>
+                    <div class="flex items-center mt-1">
+                        <input type="date" id="filter-date-from" class="input-field" /><span class="mx-2">to</span><input type="date" id="filter-date-to" class="input-field" />
+                    </div>
                 </div>
             </div>
+            <div class="text-right mb-4">
+               <button id="clear-filters-btn" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Clear Filters</button>
+            </div>
             <div id="status-summary-file-manager" class="mb-4"></div>
-            <div id="job-files-list" class="space-y-2 max-h-[60vh] overflow-y-auto"></div>
+            <div id="job-files-list" class="space-y-3 max-h-[50vh] overflow-y-auto border p-2 rounded-md bg-gray-50"></div>
         </div>
     </div>
     
@@ -509,15 +505,15 @@
              <!-- Data Backup & Restore (Local) -->
             <div class="border rounded-lg p-4 mt-6">
                 <h4 class="text-lg font-semibold mb-3">Data Backup & Restore</h4>
-                <p class="text-sm text-gray-600 mb-4">Backup all job files to a single JSON file, or restore from a backup.</p>
+                <p class="text-sm text-gray-600 mb-4">Backup all job files to a single JSON file, or restore from the `BACKUP/` directory on the server.</p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button onclick="backupAllData()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                         Backup All Data
                     </button>
-                    <button onclick="restoreFromBackup()" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-1.707-1.707A1 1 0 00.879 11L5.879 16a1 1 0 001.414 0L12.293 11a1 1 0 00-1.414-1.414L9 11.586V8a4 4 0 118 0v2a1 1 0 102 0V8a6 6 0 00-6-6z" /></svg>
-                        Restore from Backup
+                     <button onclick="restoreFromBackup()" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-1.707-1.707A1 1 0 00.879 11L5.879 16a1 1 0 001.414 0L12.293 11a1 1 0 00-1.414-1.414L9 11.586V8a4 4 0 118 0v2a1 1 0 102 0V8a6 6 0 00-6-6z" /></svg>
+                         Restore from Backup
                     </button>
                 </div>
             </div>
@@ -703,6 +699,7 @@
         let chargeDescriptions = [];
         let analyticsDataCache = null; // Caches full data for analytics
         let currentJobFile = null; // Holds the currently loaded job file data
+        let profitChartInstance, salesmanChartInstance;
 
         // --- Firebase Configuration ---
         const firebaseConfig = {
@@ -901,6 +898,7 @@
             if (result && result.files) {
                 jobFilesCache = result.files;
                 jobFilesCache.sort((a,b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
+                updateMainPageStats();
                 applyFiltersAndDisplay();
                 return true;
             }
@@ -1023,7 +1021,7 @@
             document.getElementById('app-container').style.display = 'none';
         }
 
-        function showApp() {
+        async function showApp() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'block';
             document.getElementById('user-display-name').textContent = currentUser.displayName;
@@ -1043,6 +1041,7 @@
             }
             
             clearForm();
+            await loadJobFiles(); // This will now also update the stats
             loadClients();
         }
 
@@ -1463,6 +1462,18 @@
             `;
         };
         
+        function updateMainPageStats() {
+            const files = jobFilesCache.filter(f => !f.isDeleted);
+            const totalProfit = files.reduce((sum, file) => sum + (file.totalProfit || 0), 0);
+            const currentMonth = new Date().toISOString().substring(0, 7); // "YYYY-MM"
+            const jobsThisMonth = files.filter(file => file.createdAt && file.createdAt.startsWith(currentMonth)).length;
+            const avgProfit = files.length > 0 ? totalProfit / files.length : 0;
+            
+            document.getElementById('stat-total-profit').textContent = totalProfit.toFixed(3);
+            document.getElementById('stat-jobs-month').textContent = jobsThisMonth;
+            document.getElementById('stat-avg-profit').textContent = avgProfit.toFixed(3);
+        }
+
         // --- CLIENT MANAGEMENT (Firebase) ---
         function openClientManager() { loadClients(); openModal('client-manager-modal'); }
         function loadClients() {
@@ -1684,10 +1695,16 @@
                   <h4 class="text-xl font-bold mb-2">Files by Month (Job Date)</h4>
                   ${renderTableFromData(files, (f) => f.d ? f.d.substring(0, 7) : 'N/A', 'Month', ['profit', 'count'], (month) => showMonthlyJobs(month, 'd'))}
                 </div>
+                <div>
+                  <h4 class="text-xl font-bold mb-2">Files by Salesman</h4>
+                  ${renderTableFromData(files, 'sm', 'Salesman', ['profit', 'count'], showSalesmanJobs)}
+                </div>
             `;
             // Init Charts
+            if (profitChartInstance) profitChartInstance.destroy();
+            if (salesmanChartInstance) salesmanChartInstance.destroy();
             const sortedMonths = Object.keys(monthlyData).sort();
-            new Chart(document.getElementById('monthly-profit-chart'), {
+            profitChartInstance = new Chart(document.getElementById('monthly-profit-chart'), {
                 type: 'line',
                 data: {
                     labels: sortedMonths,
@@ -1695,7 +1712,7 @@
                 },
                 options: { plugins: { title: { display: true, text: 'Monthly Profit Over Time' } } }
             });
-             new Chart(document.getElementById('salesman-profit-chart'), {
+             salesmanChartInstance = new Chart(document.getElementById('salesman-profit-chart'), {
                 type: 'bar',
                 data: {
                     labels: sortedSalesmen.map(s => s[0]),
@@ -1737,6 +1754,12 @@
             const monthFiles = analyticsDataCache.filter(f => f[dateType] && f[dateType].startsWith(month));
             displayJobFiles(monthFiles, 'user-jobs-list');
             document.getElementById('user-jobs-modal-title').textContent = `Job Files for ${month}`;
+            openModal('user-jobs-modal', true);
+        }
+        function showSalesmanJobs(salesmanName) {
+            const salesmanFiles = analyticsDataCache.filter(f => (f.sm || 'N/A') === salesmanName);
+            displayJobFiles(salesmanFiles, 'user-jobs-list');
+            document.getElementById('user-jobs-modal-title').textContent = `Jobs by Salesman: ${salesmanName}`;
             openModal('user-jobs-modal', true);
         }
         function showStatusJobs(status){
@@ -1879,6 +1902,7 @@
             window.saveChargeDescription = saveChargeDescription; window.deleteChargeDescription = deleteChargeDescription;
             window.openAdminPanel = openAdminPanel; window.saveUserChanges = saveUserChanges;
             window.editClient = editClient; window.showUserJobs = showUserJobs; window.showMonthlyJobs = showMonthlyJobs;
+            window.showSalesmanJobs = showSalesmanJobs;
             window.showStatusJobs = showStatusJobs;
             window.openAnalyticsDashboard = openAnalyticsDashboard; window.closeAnalyticsDashboard = closeAnalyticsDashboard;
             window.downloadAnalyticsCsv = downloadAnalyticsCsv;
@@ -1944,3 +1968,5 @@
 </html>
 
   
+
+    
