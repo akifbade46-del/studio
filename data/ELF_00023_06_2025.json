@@ -1,0 +1,203 @@
+{
+  "lastUpdatedBy": "ANAND MANI",
+  "createdAt": "2025-08-11T06:39:59.000Z",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "vn": "",
+  "sh": "MR.SAJJAD ALI DILDAR",
+  "cn": "",
+  "hawb": "",
+  "ch": [
+    {
+      "c": "0",
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "s": "1247",
+      "n": ""
+    },
+    {
+      "n": "",
+      "k": "freight",
+      "l": "Land Freight:",
+      "s": "0",
+      "c": "335"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "formalities",
+      "l": "Formalities:"
+    },
+    {
+      "k": "do_fee",
+      "c": "0",
+      "s": "0",
+      "l": "Delivery Order Fee:",
+      "n": ""
+    },
+    {
+      "k": "transportation",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Transportation Charges:"
+    },
+    {
+      "k": "inspection",
+      "c": "0",
+      "s": "0",
+      "l": "Inspection / Computer Print Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "handling",
+      "n": "",
+      "l": "Handling Charges:"
+    },
+    {
+      "n": "",
+      "k": "labor",
+      "s": "0",
+      "l": "Labor / Forklift Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "c": "297.350"
+    },
+    {
+      "l": "Customs Duty:",
+      "c": "0",
+      "n": "",
+      "k": "customs_duty",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "thc"
+    },
+    {
+      "n": "",
+      "k": "legalization",
+      "s": "0",
+      "l": "Legalization Charges:",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "c": "0"
+    },
+    {
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "packing",
+      "c": "167.500",
+      "n": "",
+      "l": "Packing Charges:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Port Charges:",
+      "s": "0",
+      "k": "port_charges",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Other Charges:",
+      "k": "other",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "k": "pai",
+      "n": "",
+      "l": "PAI Approval :",
+      "c": "0"
+    },
+    {
+      "c": "84.657",
+      "l": "Insurance Fee :",
+      "n": "",
+      "k": "insurance",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "epa",
+      "s": "0",
+      "l": "EPA Charges :"
+    }
+  ],
+  "pt": [
+    "Land Freight"
+  ],
+  "or": "KUWAIT",
+  "pb": "ANAND MANI",
+  "pc": "276 BOXES",
+  "cl": [
+    "Export"
+  ],
+  "in": "INV/00331/2025",
+  "vw": "60 CBM",
+  "updatedAt": "2025-08-11T06:40:22.000Z",
+  "po": "",
+  "status": "pending",
+  "ca": "TRUCK",
+  "mawb": "",
+  "fv": "",
+  "totalCost": 884.51,
+  "jfn": "ELF/00023/06/2025",
+  "totalProfit": 362.49,
+  "totalSelling": 1247,
+  "co": "MR.SAJJAD ALI DILDAR",
+  "sm": "DINESH",
+  "tn": "",
+  "gw": "3200 KGS ",
+  "createdBy": "ANAND MANI",
+  "ts": "LAND",
+  "re": "",
+  "bd": "2025-07-23",
+  "de": "DUBAI, UAE",
+  "d": "2025-08-11"
+}
