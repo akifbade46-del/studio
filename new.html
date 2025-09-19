@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2228,27 +2229,43 @@
                         closeConfirm();
                         showLoader();
                         try {
+                            // Restore users into Firestore using a batch
                             const restoreBatch = writeBatch(db);
-                            
-                            backupData.data.jobfiles.forEach(jobFile => {
-                                const docRef = doc(db, 'jobfiles', jobFile.id);
-                                const { id, ...dataToRestore } = jobFile;
-                                restoreBatch.set(docRef, dataToRestore);
-                            });
-
                             backupData.data.users.forEach(user => {
                                 const docRef = doc(db, 'users', user.id);
                                 const { id, ...dataToRestore } = user;
                                 restoreBatch.set(docRef, dataToRestore);
                             });
-
                             await restoreBatch.commit();
-                            showNotification("Data restored successfully! The page will now reload.");
-                            setTimeout(() => window.location.reload(), 2000);
 
+                            // Restore job files to GitHub
+                            if (!GITHUB_OWNER || !GITHUB_REPO || !GITHUB_BRANCH || !GITHUB_TOKEN) {
+                                showNotification('GitHub configuration is incomplete. Please configure GitHub before restoring job files.', true);
+                            } else {
+                                for (const jobFile of backupData.data.jobfiles) {
+                                    const { id, ...dataToRestore } = jobFile;
+                                    // Convert Firestore Timestamp objects to ISO strings
+                                    Object.keys(dataToRestore).forEach(key => {
+                                        const val = dataToRestore[key];
+                                        if (val && typeof val === 'object' && val.seconds !== undefined) {
+                                            dataToRestore[key] = new Date(val.seconds * 1000).toISOString();
+                                        }
+                                    });
+                                    try {
+                                        await saveJobFileToGitHub(dataToRestore, id);
+                                    } catch (err) {
+                                        console.error('Failed to save job file to GitHub:', id, err);
+                                    }
+                                }
+                                // Refresh the job file list from GitHub
+                                if (typeof loadJobFiles === 'function') {
+                                    await loadJobFiles();
+                                }
+                                showNotification('Data restored successfully!');
+                            }
                         } catch (error) {
-                            console.error("Restore failed:", error);
-                            showNotification("An error occurred during restore. Data may be partially restored.", true);
+                            console.error('Restore failed:', error);
+                            showNotification('An error occurred during restore. Data may be partially restored.', true);
                         } finally {
                             hideLoader();
                         }
