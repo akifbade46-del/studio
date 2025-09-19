@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Job File Management System with Database</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/></head>
+<body class="bg-gray-100">
+<!-- Login Screen -->
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" id="login-screen">
+<div class="max-w-md w-full space-y-8">
+<div>
+<img alt="Q'go Cargo Logo" class="mx-auto h-24 w-auto" src="http://qgocargo.com/logo.png"/>
+<h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900" id="auth-title">Sign in to your account</h2>
+</div>
+<div class="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-md">
+<div class="hidden p-4 text-center text-yellow-800 bg-yellow-100 rounded-lg" id="approval-message">
+                    Your account is awaiting admin approval.
+                </div>
+<div class="hidden p-4 text-center text-red-800 bg-red-100 rounded-lg" id="blocked-message">
+                    Your account has been blocked by an administrator.
+                </div>
+<div class="rounded-md shadow-sm -space-y-px">
+<div id="signup-name-field">
+<label class="sr-only" for="full-name">Full Name</label>
+<input autocomplete="name" class="input-field rounded-t-md" id="full-name" name="name" placeholder="Full Name" required="" type="text"/>
+</div>
+<div>
+<label class="sr-only" for="email-address">Email address</label>
+<input autocomplete="email" class="input-field" id="email-address" name="email" placeholder="Email address" required="" type="email"/>
+</div>
+<div>
+<label class="sr-only" for="password">Password</label>
+<input autocomplete="current-password" class="input-field rounded-b-md" id="password" name="password" placeholder="Password" required="" type="password"/>
+</div>
+</div>
+<div>
+<button class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" id="auth-btn">
+                        Sign in
+                    </button>
+</div>
+<p class="mt-2 text-center text-sm text-gray-600">
+<a class="font-medium text-indigo-600 hover:text-indigo-500" href="#" id="auth-link">
+                        Create a new account
+                    </a>
+</p>
+<div class="text-center mt-2 text-sm">
+<a class="font-medium text-indigo-600 hover:text-indigo-500" href="#" id="forgot-password-link">
+                        Forgot your password?
+                    </a>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Application Container (Hidden by default) -->
+<div class="hidden" id="app-container">
+<div class="container" id="main-container">
+<!-- Header Section -->
+<header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+<div class="flex items-center">
+<img alt="Q'go Cargo Logo" class="h-16 w-auto mr-4" id="logo-container" src="http://qgocargo.com/logo.png"/>
+<h1 class="text-3xl sm:text-4xl font-bold text-gray-800 border-l-4 border-gray-300 pl-4">JOB FILE</h1>
+</div>
+<div class="text-right w-full sm:w-auto">
+<div class="flex items-center mb-2">
+<label class="mr-2 font-semibold text-gray-700" for="date">Date:</label>
+<input class="input-field w-full sm:w-40" id="date" type="date"/>
+</div>
+<div class="flex items-center">
+<label class="mr-2 font-semibold text-gray-700" for="po-number">P.O. #:</label>
+<input class="input-field w-full sm:w-40" id="po-number" type="text"/>
+</div>
+</div>
+</header>
+<!-- User Info and Logout -->
+<div class="flex flex-col sm:flex-row justify-between items-center mb-4 bg-gray-50 p-2 rounded-md gap-2">
+<div class="text-sm text-center sm:text-left">
+                    Logged in as: <span class="font-bold" id="user-display-name"></span> (<span class="capitalize" id="user-role"></span>)
+                </div>
+<div class="flex-grow text-center">
+<button class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-5 rounded-md text-base" onclick="openAnalyticsDashboard()">Analytics</button>
+</div>
+<div>
+<button class="admin-only bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded text-sm mr-2" id="activity-log-btn">Activity Log</button>
+<button class="admin-only bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm mr-2" id="admin-panel-btn">Admin Panel</button>
+<button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm" id="logout-btn">Logout</button>
+</div>
+</div>
+<!-- Status Summary -->
+<div class="mb-4" id="status-summary-main"></div>
+<div class="checker-only hidden p-3 mb-4 text-center text-blue-800 bg-blue-100 rounded-lg" id="checker-info-banner">
+<strong>Note:</strong> Files must be checked before they can be approved or rejected by an admin.
+            </div>
+<div class="hidden p-3 mb-4 text-center text-red-800 bg-red-100 rounded-lg" id="rejection-banner">
+<strong>This job file was rejected.</strong> Reason: <span id="rejection-reason"></span>
+</div>
+<!-- Form Fields -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+<div class="lg:col-span-2">
+<label class="block mb-1 font-semibold text-gray-700" for="job-file-no">Job File No.:</label>
+<input class="input-field" id="job-file-no" placeholder="Enter a unique ID here..." type="text"/>
+</div>
+<div class="flex items-end space-x-8 pb-1">
+<div>
+<span class="font-semibold text-gray-700">Clearance</span>
+<div class="mt-2 space-y-1">
+<label class="flex items-center"><input class="mr-2" data-clearance="Export" type="checkbox"/> Export</label>
+<label class="flex items-center"><input class="mr-2" data-clearance="Import" type="checkbox"/> Import</label>
+<label class="flex items-center"><input class="mr-2" data-clearance="Clearance" type="checkbox"/> Clearance</label>
+<label class="flex items-center"><input class="mr-2" data-clearance="Local Move" type="checkbox"/> Local Move</label>
+</div>
+</div>
+<div>
+<span class="font-semibold text-gray-700">Product Type</span>
+<div class="mt-2 space-y-1">
+<label class="flex items-center"><input class="mr-2" data-product="Air Freight" type="checkbox"/> Air Freight</label>
+<label class="flex items-center"><input class="mr-2" data-product="Sea Freight" type="checkbox"/> Sea Freight</label>
+<label class="flex items-center"><input class="mr-2" data-product="Land Freight" type="checkbox"/> Land Freight</label>
+<label class="flex items-center"><input class="mr-2" data-product="Others" type="checkbox"/> Others</label>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+<div><label class="block mb-1 font-semibold text-gray-700" for="invoice-no">Invoice No.:</label><input class="input-field" id="invoice-no" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="billing-date">Billing Date:</label><input class="input-field" id="billing-date" type="date"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="salesman">Salesman:</label><input class="input-field" id="salesman" type="text"/></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="relative">
+<label class="block mb-1 font-semibold text-gray-700" for="shipper-name">Shipper's Name:</label>
+<input autocomplete="off" class="input-field" id="shipper-name" type="text"/>
+<div class="autocomplete-suggestions hidden" id="shipper-suggestions"></div>
+</div>
+<div class="relative">
+<label class="block mb-1 font-semibold text-gray-700" for="consignee-name">Consignee's Name:</label>
+<input autocomplete="off" class="input-field" id="consignee-name" type="text"/>
+<div class="autocomplete-suggestions hidden" id="consignee-suggestions"></div>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<div><label class="block mb-1 font-semibold text-gray-700" for="mawb">MAWB / OBL / TCN No.:</label><input class="input-field" id="mawb" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="hawb">HAWB / HBL:</label><input class="input-field" id="hawb" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="teams-of-shipping">Teams of Shipping:</label><input class="input-field" id="teams-of-shipping" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="origin">Origin:</label><input class="input-field" id="origin" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="no-of-pieces">No. of Pieces:</label><input class="input-field" id="no-of-pieces" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="gross-weight">Gross Weight:</label><input class="input-field" id="gross-weight" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="destination">Destination:</label><input class="input-field" id="destination" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="volume-weight">Volume Weight:</label><input class="input-field" id="volume-weight" type="text"/></div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="sm:col-span-2">
+<label class="block mb-1 font-semibold text-gray-700" for="description">Description:</label>
+<input class="input-field" id="description" type="text"/>
+</div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="carrier">Carrier / Shipping Line / Trucking Co:</label><input class="input-field" id="carrier" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="truck-no">Truck No. / Driver's Name:</label><input class="input-field" id="truck-no" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="vessel-name">Vessel's Name:</label><input class="input-field" id="vessel-name" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="flight-voyage-no">Flight / Voyage No.:</label><input class="input-field" id="flight-voyage-no" type="text"/></div>
+<div><label class="block mb-1 font-semibold text-gray-700" for="container-no">Container No.:</label><input class="input-field" id="container-no" type="text"/></div>
+</div>
+<!-- Charges Table -->
+<div class="flex justify-between items-center mb-2">
+<h2 class="text-xl font-semibold text-gray-800">Charges</h2>
+<div>
+<button class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform hover:scale-105 mr-2" onclick="openChargeManager()">Manage Descriptions</button>
+<button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform hover:scale-105" onclick="suggestCharges()">Suggest Charges ✨</button>
+</div>
+</div>
+<div class="mb-6 overflow-x-auto border border-gray-200 rounded-lg">
+<table class="w-full border-collapse" id="charges-table">
+<!-- JS will populate this -->
+</table>
+</div>
+<div class="text-right mb-6">
+<button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg text-sm" onclick="addChargeRow()">+ Add Charge</button>
+</div>
+<!-- Remarks Section -->
+<div class="flex justify-between items-center mb-2">
+<label class="block font-semibold text-gray-700" for="remarks">REMARKS:</label>
+<button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform hover:scale-105" onclick="generateRemarks()">Generate Remarks ✨</button>
+</div>
+<div class="mb-8">
+<textarea class="input-field w-full" id="remarks" rows="4"></textarea>
+</div>
+<!-- Creator/Editor Info -->
+<div class="text-xs text-gray-500 mb-4 border-t pt-4" id="file-info">
+<span id="created-by-info"></span>
+<span class="ml-4" id="last-updated-by-info"></span>
+</div>
+<!-- Footer Section -->
+<footer class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 border-t items-end">
+<div><label class="block mb-2 font-semibold text-gray-700">PREPARED BY</label><input class="input-field bg-gray-100" id="prepared-by" readonly="" type="text"/></div>
+<div class="relative">
+<div class="stamp stamp-checked" id="checked-stamp">Checked</div>
+<label class="block mb-2 font-semibold text-gray-700">CHECKED BY</label>
+<input class="input-field bg-gray-100" id="checked-by" readonly="" type="text"/>
+<button class="checker-only mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" id="check-btn">Check Job File</button>
+</div>
+<div class="relative">
+<div class="stamp stamp-approved" id="approved-stamp">Approved</div>
+<div class="stamp stamp-rejected" id="rejected-stamp">Rejected</div>
+<label class="block mb-2 font-semibold text-gray-700">APPROVED BY</label>
+<input class="input-field bg-gray-100" id="approved-by" readonly="" type="text"/>
+<div class="admin-only mt-2 w-full flex gap-2" id="approval-buttons">
+<button class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded" id="approve-btn">Approve</button>
+<button class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded" id="reject-btn">Reject</button>
+</div>
+</div>
+</footer>
+<!-- Action Buttons -->
+<div class="text-center mt-10 no-print flex flex-wrap justify-center gap-2 sm:gap-4">
+<button class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2" onclick="openClientManager()">
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
+<span>Clients</span>
+</button>
+<button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2" onclick="openFileManager()">
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.586l.293.293a1 1 0 001.414 0L10.414 12l-1.293 1.293a1 1 0 000 1.414l.293.293V16a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm8 2a1 1 0 000-2H4a1 1 0 00-1 1v10a1 1 0 001 1h4a1 1 0 001-1v-1.586l-.293-.293a1 1 0 01-1.414 0L6.586 12l1.293-1.293a1 1 0 011.414 0l.293-.293V8z" fill-rule="evenodd"></path><path d="M18 8a2 2 0 00-2-2h-4l-2-2h-4a2 2 0 00-2 2v.5a1 1 0 002 0V6a1 1 0 011-1h2.586l2 2H16a1 1 0 011 1v8a1 1 0 01-1 1h-2.5a1 1 0 100 2H16a2 2 0 002-2V8z"></path></svg>
+<span>File Manager</span>
+</button>
+<button class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2" onclick="saveJobFile()">
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586L7.707 10.293zM3 4a1 1 0 011-1h12a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 00-1 1v4a1 1 0 001 1h2a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 001-1V9a1 1 0 00-1-1H4a1 1 0 01-1-1V4z"></path></svg>
+<span>Save to DB</span>
+</button>
+<button class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2" onclick="clearForm()">
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.898 0V3a1 1 0 112 0v2.101a7.002 7.002 0 01-11.898 0V3a1 1 0 01-1-1zM12 10a2 2 0 11-4 0 2 2 0 014 0zM4 10a2 2 0 00-2 2v2a2 2 0 002 2h12a2 2 0 002-2v-2a2 2 0 00-2-2h-1.101A7.002 7.002 0 0010 12c-2.256 0-4.233-.996-5.5-2.543A7.002 7.002 0 004 10z" fill-rule="evenodd"></path></svg>
+<span>New Job</span>
+</button>
+<button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2" onclick="printPage()">
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" fill-rule="evenodd"></path></svg>
+<span>Print</span>
+</button>
+</div>
+</div>
+</div>
+<!-- This container is hidden by default and will be populated for printing/preview -->
+<div class="hidden" id="print-output"></div>
+<!-- This container is for the public QR code view -->
+<div id="public-view-container"></div>
+<!-- Analytics Full-Screen Page -->
+<div class="hidden" id="analytics-container">
+<div class="container">
+<div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 no-print">
+<h3 class="text-2xl font-bold">Analytics Dashboard</h3>
+<div>
+<button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4" onclick="printAnalytics()" title="Print Analytics">🖨️ Print</button>
+<button class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded" onclick="closeAnalyticsDashboard()">Back to Job File</button>
+</div>
+</div>
+<div class="space-y-6" id="analytics-body"></div>
+</div>
+</div>
+<!-- Modals -->
+<div class="overlay" id="loader-overlay"><div class="loader"></div></div>
+<div id="notification"></div>
+<!-- File Manager Modal -->
+<div class="overlay" id="file-manager-modal">
+<div class="modal-content max-w-5xl"> <!-- Increased width for filters -->
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-2xl font-bold">File Manager</h3>
+<div>
+<button class="admin-only bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded text-sm mr-4" onclick="openRecycleBin()">Recycle Bin</button>
+<button class="text-gray-500 hover:text-gray-800 text-3xl" onclick="closeModal('file-manager-modal')">×</button>
+</div>
+</div>
+<!-- Search and Filter Controls -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
+<div class="md:col-span-2">
+<label class="text-sm font-medium text-gray-700" for="search-bar">Search</label>
+<input class="input-field mt-1" id="search-bar" placeholder="Job No, Shipper, etc." type="text"/>
+</div>
+<div>
+<label class="text-sm font-medium text-gray-700" for="filter-status">Status</label>
+<select class="input-field mt-1" id="filter-status">
+<option value="">All Statuses</option>
+<option value="pending">Pending</option>
+<option value="checked">Checked</option>
+<option value="approved">Approved</option>
+<option value="rejected">Rejected</option>
+</select>
+</div>
+<div>
+<label class="text-sm font-medium text-gray-700" for="filter-date-from">From Date</label>
+<input class="input-field mt-1" id="filter-date-from" type="date"/>
+</div>
+<div>
+<label class="text-sm font-medium text-gray-700" for="filter-date-to">To Date</label>
+<input class="input-field mt-1" id="filter-date-to" type="date"/>
+</div>
+<div class="flex items-end">
+<button class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded text-sm" id="clear-filters-btn">Clear Filters</button>
+</div>
+</div>
+<div class="space-y-2 max-h-[60vh] overflow-y-auto" id="job-files-list"></div>
+</div>
+</div>
+<!-- Confirmation Modal -->
+<div class="overlay" id="confirm-modal">
+<div class="modal-content max-w-sm">
+<h3 class="text-lg font-bold mb-4" id="confirm-title">Confirm Action</h3>
+<div class="mb-4 text-sm" id="confirm-message">Are you sure?</div>
+<div class="text-right mt-6 space-x-2">
+<button class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded" id="confirm-cancel">Cancel</button>
+<button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" id="confirm-ok">Confirm</button>
+</div>
+</div>
+</div>
+<!-- Preview Modal -->
+<div class="overlay" id="preview-modal">
+<div class="modal-content max-w-4xl">
+<div class="flex flex-col sm:flex-row justify-between items-center mb-4 no-print gap-2">
+<h3 class="text-2xl font-bold">Job File Preview</h3>
+<div>
+<button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4" onclick="printPreview()" title="Print Preview">🖨️ Print</button>
+<button class="text-gray-500 hover:text-gray-800 text-3xl align-middle" onclick="closeModal('preview-modal')">×</button>
+</div>
+</div>
+<div id="preview-body"></div>
+</div>
+</div>
+<!-- Admin Panel Modal -->
+<div class="overlay" id="admin-panel-modal">
+<div class="modal-content max-w-2xl">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-2xl font-bold">Admin Panel</h3>
+<!-- Use closeAllModals to ensure the panel closes even if z-index issues arise -->
+<button class="text-gray-500 hover:text-gray-800 text-3xl" onclick="closeAllModals()">×</button>
+</div>
+<!-- User Management -->
+<div class="border rounded-lg p-4">
+<h4 class="text-lg font-semibold mb-2">User Management</h4>
+<div class="space-y-2 max-h-[40vh] overflow-y-auto" id="user-list"></div>
+<div class="text-right mt-4">
+<button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onclick="saveUserChanges()">Save User Changes</button>
+</div>
+</div>
+<!-- Data Backup & Restore -->
+<div class="border rounded-lg p-4 mt-6">
+<h4 class="text-lg font-semibold mb-3">Data Backup &amp; Restore</h4>
+<p class="text-sm text-gray-600 mb-4">Backup all job files and user data to a single JSON file. This can be used for offline storage or to restore the database to a previous state.</p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2" onclick="backupAllData()">
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" fill-rule="evenodd"></path></svg>
+                        Backup All Data
+                    </button>
+<label class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2 cursor-pointer" for="restore-file-input">
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" fill-rule="evenodd"></path></svg>
+                         Restore From File
+                         <input accept=".json" class="hidden" id="restore-file-input" onchange="handleRestoreFile(event)" type="file"/>
+</label>
+</div>
+</div>
+<!-- GitHub Configuration -->
+<div class="border rounded-lg p-4 mt-6">
+<h4 class="text-lg font-semibold mb-3">GitHub Configuration</h4>
+<p class="text-sm text-gray-600 mb-4">Configure the GitHub repository used to store job files as JSON. Only admins can update these settings.</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block text-sm font-medium text-gray-700" for="github-owner">Owner/Organization</label>
+<input class="input-field mt-1" id="github-owner" placeholder="e.g. myusername" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700" for="github-repo">Repository Name</label>
+<input class="input-field mt-1" id="github-repo" placeholder="e.g. job-files-repo" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700" for="github-branch">Branch</label>
+<input class="input-field mt-1" id="github-branch" placeholder="e.g. main" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700" for="github-path">Folder Path</label>
+<input class="input-field mt-1" id="github-path" placeholder="e.g. jobfiles" type="text"/>
+</div>
+<div class="sm:col-span-2">
+<label class="block text-sm font-medium text-gray-700" for="github-token">Personal Access Token</label>
+<input class="input-field mt-1" id="github-token" placeholder="GitHub token with repo scope" type="password"/>
+</div>
+</div>
+<div class="text-right mt-4">
+<button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded" onclick="saveGithubConfig()">Save GitHub Config</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Rejection Reason Modal -->
+<div class="overlay" id="reject-reason-modal">
+<div class="modal-content max-w-md">
+<h3 class="text-lg font-bold mb-4">Rejection Reason</h3>
+<p class="mb-4">Please provide a reason for rejecting this job file.</p>
+<textarea class="input-field w-full" id="rejection-reason-input" rows="3"></textarea>
+<div class="text-right mt-6 space-x-2">
+<button class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded" onclick="closeModal('reject-reason-modal')">Cancel</button>
+<button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" id="confirm-reject-btn">Confirm Rejection</button>
+</div>
+</div>
+</div>
+<!-- Forgot Password Modal -->
+<div class="overlay" id="forgot-password-modal">
+<div class="modal-content max-w-md">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-bold">Reset Password</h3>
+<button class="text-gray-500 hover:text-gray-800 text-3xl" onclick="closeModal('forgot-password-modal')">×</button>
+</div>
+<p class="mb-4 text-gray-600">Enter your email address and we will send you a link to reset your password.</p>
+<div>
+<label class="sr-only" for="reset-email">Email address</label>
+<input autocomplete="email" class="input-field" id="reset-email" name="email" placeholder="Email address" required="" type="email"/>
+</div>
+<div class="text-right mt-6">
+<button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded" id="send-reset-link-btn">
+                    Send Password Reset Link
+                </button>
+</div>
+</div>
+</div>
+<!-- Client Manager Modal -->
+<div class="overlay" id="client-manager-modal">
+<div class="modal-content max-w-4xl">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-2xl font-bold">Client Management</h3>
+<button class="text-gray-500 hover:text-gray-800 text-3xl" onclick="closeModal('client-manager-modal')">×</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Add/Edit Client Form -->
+<div>
+<h4 class="text-xl font-semibold mb-4" id="client-form-title">Add New Client</h4>
+<form class="space-y-4" id="client-form">
+<input id="client-id" type="hidden"/>
+<div>
+<label class="block text-sm font-medium text-gray-700" for="client-name">Client Name</label>
+<input class="input-field mt-1" id="client-name" required="" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700" for="client-address">Address</label>
+<textarea class="input-field mt-1" id="client-address" rows="2"></textarea>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700" for="client-contact-person">Contact Person</label>
+<input class="input-field mt-1" id="client-contact-person" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700" for="client-phone">Phone</label>
+<input class="input-field mt-1" id="client-phone" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700">Client Type</label>
+<select class="input-field mt-1" id="client-type">
+<option value="Shipper">Shipper</option>
+<option value="Consignee">Consignee</option>
+<option value="Both">Both</option>
+</select>
+</div>
+<div class="flex gap-4">
+<button class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit">Save Client</button>
+<button class="w-full bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded" id="clear-client-form-btn" type="button">Clear</button>
+</div>
+</form>
+</div>
+<!-- Client List -->
+<div>
+<h4 class="text-xl font-semibold mb-4">Existing Clients</h4>
+<input class="input-field mb-4" id="client-search-bar" placeholder="Search clients..." type="text"/>
+<div class="space-y-2 max-h-[50vh] overflow-y-auto" id="client-list">
+<!-- Client list will be populated by JS -->
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Charge Manager Modal -->
+<div class="overlay" id="charge-manager-modal">
+<div class="modal-content max-w-lg">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-2xl font-bold">Manage Charge Descriptions</h3>
+<button class="text-gray-500 hover:text-gray-800 text-3xl" onclick="closeModal('charge-manager-modal')">×</button>
+</div>
+<div class="space-y-4">
+<div>
+<h4 class="text-lg font-semibold mb-2">Add New Description</h4>
+<div class="flex gap-2">
+<input class="input-field" id="new-charge-description" placeholder="E.g., Customs Duty" type="text"/>
+<button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onclick="saveChargeDescription()">Add</button>
+</div>
+</div>
+<div>
+<h4 class="text-lg font-semibold mb-2">Existing Descriptions</h4>
+<div class="space-y-2 max-h-[50vh] overflow-y-auto" id="charge-description-list">
+<!-- JS will populate this list -->
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Activity Log Modal -->
+<div class="overlay" id="activity-log-modal">
+<div class="modal-content max-w-4xl">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-2xl font-bold">User Activity Log</h3>
+<button class="text-gray-500 hover:text-gray-800 text-3xl" onclick="closeModal('activity-log-modal')">×</button>
+</div>
+<div class="max-h-[70vh] overflow-y-auto">
+<table class="w-full text-sm">
+<thead>
+<tr class="bg-gray-100">
+<th class="table-cell font-semibold text-left">User Name</th>
+<th class="table-cell font-semibold text-left">Job File No.</th>
+<th class="table-cell font-semibold text-left">Time Opened</th>
+</tr>
+</thead>
+<tbody id="activity-log-body">
+<!-- JS will populate this -->
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- User-Specific Jobs Modal -->
+<div class="overlay" id="user-jobs-modal">
+<div class="modal-content max-w-5xl">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-2xl font-bold" id="user-jobs-modal-title">User's Job Files</h3>
+<button class="text-gray-500 hover:text-gray-800 text-3xl" onclick="closeModal('user-jobs-modal')">×</button>
+</div>
+<div class="space-y-2 max-h-[70vh] overflow-y-auto" id="user-jobs-list">
+<!-- JS will populate this list -->
+</div>
+</div>
+</div>
+<!-- Recycle Bin Modal -->
+<div class="overlay" id="recycle-bin-modal">
+<div class="modal-content max-w-5xl">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-2xl font-bold">Recycle Bin</h3>
+<button class="text-gray-500 hover:text-gray-800 text-3xl" onclick="closeModal('recycle-bin-modal')">×</button>
+</div>
+<div class="space-y-2 max-h-[70vh] overflow-y-auto" id="recycle-bin-list">
+<!-- JS will populate this list -->
+</div>
+</div>
+</div>
+<!-- Firebase SDK and App Logic -->
+<script src="modules/globals.js"></script><script src="modules/firebase_init.js" type="module"></script><script src="modules/authentication-logic.js"></script><script src="modules/data-handling-firestore.js"></script><script src="modules/github-configuration.js"></script><script src="modules/analytics-dashboard-logic.js"></script><script src="modules/admin-panel-and-backup-restore-logic.js"></script><script src="modules/ui-functions.js"></script><script src="modules/gemini-api-integration.js"></script><script src="modules/client-management-functions.js"></script><script src="modules/recycle-bin-functions.js"></script><script src="modules/app-initialization.js"></script></body>
+</html>
