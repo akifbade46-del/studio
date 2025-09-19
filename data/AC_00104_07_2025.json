@@ -1,0 +1,210 @@
+{
+  "jfn": "AC/00104/07/2025",
+  "createdBy": "ABDUL HADI ",
+  "ch": [
+    {
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Land/Air / Sea Freight:",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "freight"
+    },
+    {
+      "k": "surcharge",
+      "s": "0",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0"
+    },
+    {
+      "l": "Formalities:",
+      "k": "formalities",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "10.000",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "c": "0",
+      "k": "do_fee"
+    },
+    {
+      "c": "0",
+      "k": "transportation",
+      "l": "Transportation Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "15.000",
+      "n": "",
+      "c": "0",
+      "l": "Handling Charges:",
+      "k": "handling"
+    },
+    {
+      "k": "labor",
+      "c": "0",
+      "l": "Labor / Forklift Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "documentation",
+      "l": "Documentation Charges:"
+    },
+    {
+      "n": "",
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Customs Duty:",
+      "s": "0",
+      "k": "customs_duty",
+      "c": "0"
+    },
+    {
+      "l": "Terminal Handling Charges:",
+      "c": "33.500",
+      "n": "",
+      "k": "thc",
+      "s": "33.500"
+    },
+    {
+      "k": "legalization",
+      "c": "0",
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "0"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "demurrage"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "dest_clearance"
+    },
+    {
+      "l": "Packing Charges:",
+      "n": "",
+      "k": "packing",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Port Charges:",
+      "s": "0",
+      "k": "port_charges",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "other",
+      "l": "Other Charges:",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "k": "insurance",
+      "l": "Insurance Fee :",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "k": "epa",
+      "l": "EPA Charges :",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    }
+  ],
+  "totalProfit": 25,
+  "ca": "EMIRATES ",
+  "rejectedBy": null,
+  "vw": "",
+  "totalSelling": 58.5,
+  "po": "",
+  "rejectionReason": null,
+  "dsc": "RETAINER PACKING GLAND BOTTOM ",
+  "in": "",
+  "totalCost": 33.5,
+  "de": "KUWAIT ",
+  "or": "INCHEON ",
+  "rejectedAt": null,
+  "pc": "1",
+  "sm": "",
+  "tn": "",
+  "fv": "",
+  "cl": [
+    "Import"
+  ],
+  "status": "checked",
+  "cn": "",
+  "checkedBy": "AJMAL KIANI",
+  "gw": "61 KG",
+  "vn": "",
+  "updatedAt": "2025-08-18T08:25:16.000Z",
+  "bd": "",
+  "pb": "ABDUL HADI ",
+  "hawb": "",
+  "ts": "DO SERVICE ",
+  "mawb": "176-13041184",
+  "re": "",
+  "pt": [
+    "Air Freight"
+  ],
+  "d": "2025-07-20",
+  "sh": "ACE VALVE COMPANY LTD",
+  "lastUpdatedBy": "AJMAL KIANI",
+  "co": "ARABIAN DARB GENERAL TRADING ",
+  "approvedAt": null,
+  "createdAt": "2025-08-17T10:54:42.000Z",
+  "approvedBy": null,
+  "checkedAt": "2025-08-18T08:27:26.000Z"
+}
