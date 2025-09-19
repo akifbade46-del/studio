@@ -1,0 +1,210 @@
+{
+  "ca": "TRUCK",
+  "createdBy": "ANAND MANI",
+  "rejectedBy": null,
+  "bd": "2025-08-25",
+  "gw": "1200 KGS",
+  "sm": "DINESH",
+  "pb": "ANAND MANI",
+  "ts": "LAND",
+  "checkedAt": null,
+  "vn": "",
+  "fv": "",
+  "tn": "",
+  "approvedBy": null,
+  "co": "MR. THAMEEN ANSARI",
+  "totalProfit": 654.15,
+  "createdAt": "2025-08-17T12:41:43.000Z",
+  "in": "INV/00363/2025",
+  "totalSelling": 1480,
+  "mawb": "",
+  "de": "DUBAI",
+  "rejectedAt": null,
+  "vw": "17 CBM",
+  "sh": "MR. THAMEEN ANSARI",
+  "d": "2025-08-17",
+  "pc": "79 BOXES",
+  "approvedAt": null,
+  "po": "",
+  "status": "pending",
+  "cl": [
+    "Export"
+  ],
+  "or": "KUWAIT",
+  "re": "",
+  "pt": [
+    "Land Freight"
+  ],
+  "cn": "",
+  "ch": [
+    {
+      "c": "0",
+      "s": "1480",
+      "l": "Door to door Service Charges With Insurance :",
+      "n": "",
+      "k": "ex_works"
+    },
+    {
+      "l": "Land Freight:",
+      "n": "",
+      "s": "0",
+      "k": "freight",
+      "c": "310.000"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "k": "surcharge"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Formalities:",
+      "c": "0",
+      "k": "formalities"
+    },
+    {
+      "n": "",
+      "k": "do_fee",
+      "l": "Delivery Order Fee:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "transportation",
+      "s": "0",
+      "l": "Transportation Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection"
+    },
+    {
+      "l": "Handling Charges:",
+      "n": "",
+      "k": "handling",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "labor",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "k": "documentation",
+      "n": "",
+      "l": "Documentation Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "clearance",
+      "n": "",
+      "l": "Clearance Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "customs_duty",
+      "l": "Customs Duty:"
+    },
+    {
+      "n": "",
+      "k": "thc",
+      "c": "0",
+      "l": "Terminal Handling Charges:",
+      "s": "0"
+    },
+    {
+      "l": "Legalization Charges:",
+      "k": "legalization",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "demurrage",
+      "l": "Demurrage Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading",
+      "s": "0"
+    },
+    {
+      "c": "370.059",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "k": "dest_clearance",
+      "s": "0"
+    },
+    {
+      "l": "Packing Charges:",
+      "c": "50.000",
+      "n": "",
+      "s": "0",
+      "k": "packing"
+    },
+    {
+      "s": "0",
+      "l": "Port Charges:",
+      "k": "port_charges",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "other",
+      "s": "0",
+      "n": "",
+      "l": "Other Charges:",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "PAI Approval :",
+      "k": "pai",
+      "n": ""
+    },
+    {
+      "l": "Insurance Fee :",
+      "c": "95.793",
+      "k": "insurance",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "EPA Charges :",
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "epa"
+    }
+  ],
+  "totalCost": 825.85,
+  "hawb": "",
+  "rejectionReason": null,
+  "jfn": "ELF/00030/07/2025",
+  "updatedAt": "2025-08-31T11:03:28.000Z",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "checkedBy": null,
+  "lastUpdatedBy": "ABDUL HADI "
+}
