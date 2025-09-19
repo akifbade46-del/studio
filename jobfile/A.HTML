@@ -743,9 +743,9 @@
                             userDoc = await getDoc(userDocRef);
                         }
                         
-                        currentUser = { uid: user.uid, email: user.email, ...userDoc.data() };
+                        const userData = userDoc.data();
                         
-                        if (currentUser.status === 'inactive') {
+                        if (userData.status === 'inactive') {
                             showLogin();
                             document.getElementById('approval-message').style.display = 'block';
                             document.getElementById('blocked-message').style.display = 'none';
@@ -753,7 +753,7 @@
                             return;
                         }
 
-                        if (currentUser.status === 'blocked') {
+                        if (userData.status === 'blocked') {
                             showLogin();
                             document.getElementById('approval-message').style.display = 'none';
                             document.getElementById('blocked-message').style.display = 'block';
@@ -761,6 +761,7 @@
                             return;
                         }
                         
+                        currentUser = { uid: user.uid, ...userData };
                         console.log("User logged in:", currentUser);
                         showApp();
                     } else {
@@ -901,7 +902,9 @@
                 jobFilesCache = result.files;
                 jobFilesCache.sort((a,b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
                 applyFiltersAndDisplay();
+                return true;
             }
+            return false;
         }
 
         async function loadJobFileById(docId) {
@@ -934,19 +937,37 @@
             }
         }
 
-        async function checkJobFile() { await updateStatus(null, 'checked'); }
-        async function approveJobFile() { await updateStatus(null, 'approved'); }
-        function promptForRejection() { openModal('reject-reason-modal'); }
+        async function checkJobFile(docId = null, fromModal = false) { 
+            const jobFileId = docId || (currentJobFile ? currentJobFile.jfn.replace(/\//g, '_') : null);
+            if (!jobFileId) { showNotification("No file specified to check.", true); return; }
+            await updateStatus(jobFileId, 'checked');
+            if(fromModal) openFileManager();
+        }
+        async function approveJobFile(docId = null, fromModal = false) { 
+             const jobFileId = docId || (currentJobFile ? currentJobFile.jfn.replace(/\//g, '_') : null);
+            if (!jobFileId) { showNotification("No file specified to approve.", true); return; }
+            await updateStatus(jobFileId, 'approved'); 
+            if(fromModal) openFileManager();
+        }
+        function promptForRejection(docId = null) { 
+            const jobFileId = docId || (currentJobFile ? currentJobFile.jfn.replace(/\//g, '_') : null);
+            if (!jobFileId) { showNotification("No file specified to reject.", true); return; }
+            // Store the ID in a global variable or a data attribute on the modal confirm button
+            document.getElementById('confirm-reject-btn').dataset.jobId = jobFileId;
+            openModal('reject-reason-modal');
+        }
         async function rejectJobFile() {
             const reason = document.getElementById('rejection-reason-input').value;
+            const jobFileId = document.getElementById('confirm-reject-btn').dataset.jobId;
             if (!reason) { showNotification("Please provide a reason for rejection.", true); return; }
-            await updateStatus(null, 'rejected', reason);
+            await updateStatus(jobFileId, 'rejected', reason);
         }
         
         function confirmDelete(docId, type = 'jobfile') {
              if (currentUser.role !== 'admin') { showNotification("Only admins can delete.", true); return; }
             
-            let message, title, handler;
+            let message, title;
+            let handler = () => {};
             
             if (type === 'jobfile' || type === 'recycle') {
                 const isPermanent = type === 'recycle';
@@ -966,9 +987,9 @@
             }
 
             const modal = document.getElementById('confirm-delete-modal');
+            modal.querySelector('h3').textContent = title;
             modal.querySelector('#confirm-delete-message').innerHTML = message;
             
-            // Clone button to remove old listeners
             const okButton = modal.querySelector('#confirm-delete-btn');
             const newOkButton = okButton.cloneNode(true);
             okButton.parentNode.replaceChild(newOkButton, okButton);
@@ -988,10 +1009,12 @@
         }
         
         async function restoreJobFile(docId) {
-            closeModal('confirm-delete-modal');
             const result = await handleApiRequest(`restore-jobfile.php?file=${docId}.json`, { method: 'GET' }, 
                 "File restored successfully.", "Failed to restore file.");
-            if(result) openRecycleBin();
+            if(result) {
+                closeModal('confirm-delete-modal');
+                openRecycleBin(); // Refresh recycle bin view
+            }
         }
 
         // --- UI Functions ---
@@ -1342,8 +1365,12 @@
         }
 
         async function openFileManager() {
-            await loadJobFiles();
-            openModal('file-manager-modal');
+            showLoader();
+            const success = await loadJobFiles();
+            hideLoader();
+            if (success) {
+                openModal('file-manager-modal');
+            }
         }
 
         function applyFiltersAndDisplay() {
@@ -1804,7 +1831,9 @@
 
         // --- RECYCLE BIN & BACKUP ---
         async function openRecycleBin() {
+            showLoader();
             const result = await handleApiRequest('list-jobfiles.php?deleted=true', { method: 'GET' }, null, "Could not load recycle bin.");
+            hideLoader();
             if(result && result.files) {
                 jobFilesCache = [...jobFilesCache.filter(f => !f.isDeleted), ...result.files]; // merge recycle bin files into cache
                 displayJobFiles(result.files, 'recycle-bin-list', true);
@@ -1855,6 +1884,7 @@
             window.downloadAnalyticsCsv = downloadAnalyticsCsv;
             window.openUserActivityLog = openUserActivityLog; window.backupAllData = backupAllData;
             window.restoreFromBackup = restoreFromBackup;
+            window.rejectJobFile = rejectJobFile;
             
             // Load local data
             chargeDescriptions = JSON.parse(localStorage.getItem('chargeDescriptions') || '["Ex-works Charges:", "Land/Air / Sea Freight:", "Fuell Security / War Surcharge:", "Formalities:", "Delivery Order Fee:", "Transportation Charges:", "Inspection / Computer Print Charges:", "Handling Charges:", "Labor / Forklift Charges:", "Documentation Charges:", "Clearance Charges:", "Customs Duty:", "Terminal Handling Charges:", "Legalization Charges:", "Demurrage Charges:", "Loading / Offloading Charges:", "Destination Clearance Charges:", "Packing Charges:", "Port Charges:", "Other Charges:", "PAI Approval :", "Insurance Fee :", "EPA Charges :"]');
@@ -1875,9 +1905,9 @@
             document.getElementById('activity-log-btn').addEventListener('click', openUserActivityLog);
             document.getElementById('admin-panel-btn').addEventListener('click', openAdminPanel);
             
-            document.getElementById('check-btn').addEventListener('click', checkJobFile);
-            document.getElementById('approve-btn').addEventListener('click', approveJobFile);
-            document.getElementById('reject-btn').addEventListener('click', promptForRejection);
+            document.getElementById('check-btn').addEventListener('click', () => checkJobFile(null));
+            document.getElementById('approve-btn').addEventListener('click', () => approveJobFile(null));
+            document.getElementById('reject-btn').addEventListener('click', () => promptForRejection(null));
             document.getElementById('confirm-reject-btn').addEventListener('click', rejectJobFile);
             
             // Filter Listeners
@@ -1903,14 +1933,9 @@
             setupAutocomplete(document.getElementById('shipper-name'), 'shipper-suggestions', 'Shipper');
             setupAutocomplete(document.getElementById('consignee-name'), 'consignee-suggestions', 'Consignee');
             
-            document.getElementById('confirm-delete-btn').addEventListener('click', function() {
-                // The actual logic is now attached dynamically in confirmDelete
-            });
              document.getElementById('confirm-delete-modal').querySelector('button[onclick^="closeModal"]').addEventListener('click', () => {
                 closeModal('confirm-delete-modal');
-                const okButton = document.getElementById('confirm-delete-btn');
-                const newOkButton = okButton.cloneNode(true);
-                okButton.parentNode.replaceChild(newOkButton, okButton);
+                // The dynamic listener removal is handled by the confirmDelete function itself
             });
 
         });
@@ -1918,4 +1943,4 @@
 </body>
 </html>
 
-    
+  

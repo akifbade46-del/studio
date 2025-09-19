@@ -22,9 +22,10 @@ $files = [];
 if ($show_all) {
     $data_files = glob('data/*.json');
     $recycle_files = glob('recycle_bin/*.json');
-    $files = array_merge($data_files, $recycle_files);
+    $files = array_merge($data_files ? $data_files : [], $recycle_files ? $recycle_files : []);
 } else {
-    $files = glob($directory . '*.json');
+    $found_files = glob($directory . '*.json');
+    $files = $found_files ? $found_files : [];
 }
 
 $file_data = [];
@@ -33,7 +34,12 @@ foreach ($files as $file) {
     $content = file_get_contents($file);
     $data = json_decode($content, true);
     if ($data) {
+        // Use file modification time as the primary source for 'updatedAt' for sorting
+        $updatedAtTimestamp = filemtime($file);
+        $updatedAtISO = date('c', $updatedAtTimestamp);
+
         if ($is_full_data_request) {
+            $data['updatedAt'] = $updatedAtISO;
             $file_data[] = $data;
         } else {
             // Only get necessary fields for list view to keep payload small
@@ -44,7 +50,7 @@ foreach ($files as $file) {
                 'mawb' => $data['mawb'] ?? 'N/A',
                 'd' => $data['d'] ?? null,
                 'status' => $data['status'] ?? 'pending',
-                'updatedAt' => $data['updatedAt'] ?? null,
+                'updatedAt' => $updatedAtISO,
                 'deletedAt' => $data['deletedAt'] ?? null,
                 'deletedBy' => $data['deletedBy'] ?? null,
                 'isDeleted' => $show_deleted,
@@ -55,3 +61,5 @@ foreach ($files as $file) {
 
 json_response(200, 'success', $file_data);
 ?>
+
+  
