@@ -1,0 +1,203 @@
+{
+  "po": "",
+  "co": "MS.NATALYA WISELY",
+  "d": "2025-08-11",
+  "lastUpdatedBy": "ANAND MANI",
+  "totalProfit": 164,
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "status": "pending",
+  "hawb": "",
+  "tn": "",
+  "pc": "2 BOXES",
+  "vn": "",
+  "vw": "75.30 KGS",
+  "ca": "FEDEX",
+  "cn": "",
+  "or": "KUWAIT",
+  "totalCost": 126,
+  "pb": "ANAND MANI",
+  "createdBy": "ANAND MANI",
+  "de": "KAZAKHSTAN",
+  "mawb": "882081484970",
+  "sh": "MS.NATALYA WISELY",
+  "ts": "AIR",
+  "createdAt": "2025-08-11T06:17:48.000Z",
+  "cl": [
+    "Export"
+  ],
+  "totalSelling": 290,
+  "fv": "",
+  "sm": "DINESH",
+  "bd": "2025-07-28",
+  "jfn": "AE/00035/06/2025",
+  "ch": [
+    {
+      "k": "ex_works",
+      "s": "290",
+      "n": "",
+      "c": "0",
+      "l": "Ex-works Charges:"
+    },
+    {
+      "l": "Land/Air / Sea Freight:",
+      "s": "0",
+      "k": "freight",
+      "n": "",
+      "c": "126"
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "n": "",
+      "c": "0",
+      "k": "surcharge",
+      "s": "0"
+    },
+    {
+      "l": "Formalities:",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "formalities"
+    },
+    {
+      "c": "0",
+      "l": "Delivery Order Fee:",
+      "s": "0",
+      "n": "",
+      "k": "do_fee"
+    },
+    {
+      "k": "transportation",
+      "n": "",
+      "l": "Transportation Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "inspection",
+      "s": "0",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Handling Charges:",
+      "k": "handling",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "l": "Labor / Forklift Charges:",
+      "n": "",
+      "c": "0",
+      "k": "labor"
+    },
+    {
+      "n": "",
+      "l": "Documentation Charges:",
+      "k": "documentation",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "k": "clearance",
+      "n": "",
+      "c": "0",
+      "l": "Clearance Charges:"
+    },
+    {
+      "n": "",
+      "l": "Customs Duty:",
+      "s": "0",
+      "k": "customs_duty",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "k": "thc",
+      "l": "Terminal Handling Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "legalization"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Loading / Offloading Charges:",
+      "s": "0",
+      "k": "loading",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance"
+    },
+    {
+      "k": "packing",
+      "l": "Packing Charges:",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "l": "Port Charges:",
+      "k": "port_charges",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Other Charges:",
+      "s": "0",
+      "n": "",
+      "k": "other"
+    },
+    {
+      "k": "pai",
+      "s": "0",
+      "c": "0",
+      "l": "PAI Approval :",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "insurance",
+      "n": "",
+      "l": "Insurance Fee :"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "epa",
+      "c": "0",
+      "l": "EPA Charges :"
+    }
+  ],
+  "gw": "44KGS",
+  "updatedAt": "2025-08-11T06:17:48.000Z",
+  "re": "",
+  "pt": [
+    "Air Freight"
+  ],
+  "in": "INV/00344/2025"
+}
