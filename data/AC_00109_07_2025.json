@@ -1,0 +1,203 @@
+{
+  "lastUpdatedBy": "ABDUL HADI ",
+  "hawb": "",
+  "pt": [
+    "Others"
+  ],
+  "sh": "COPYTRON TECHNOLOGIES PTE TLD",
+  "de": " KUWAIT",
+  "pb": "ABDUL HADI ",
+  "tn": "",
+  "gw": "138 KG",
+  "cn": "",
+  "ts": "AIR ",
+  "ca": "SAUDI ARABIAN AIRLINES ",
+  "jfn": "AC/00109/07/2025",
+  "pc": "1",
+  "dsc": "COPIER SUPPLIES ",
+  "updatedAt": "2025-08-11T10:43:28.000Z",
+  "totalProfit": 25,
+  "d": "2025-07-27",
+  "createdBy": "ABDUL HADI ",
+  "in": "INV/00345/2025",
+  "vw": "",
+  "co": "OFFITECH INTERNATIONAL GENERAL TRADING COMPANY ",
+  "mawb": "065-48842533",
+  "bd": "2025-07-29",
+  "totalSelling": 46.25,
+  "fv": "",
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "n": "",
+      "k": "ex_works",
+      "c": "0"
+    },
+    {
+      "l": "Land/Air / Sea Freight:",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "freight"
+    },
+    {
+      "n": "",
+      "k": "surcharge",
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "formalities",
+      "l": "Formalities:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "s": "10.000"
+    },
+    {
+      "l": "Transportation Charges:",
+      "s": "0",
+      "k": "transportation",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "Handling Charges:",
+      "n": "",
+      "k": "handling",
+      "c": "0",
+      "s": "15.000"
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "documentation",
+      "n": "",
+      "c": "0",
+      "l": "Documentation Charges:",
+      "s": "0"
+    },
+    {
+      "k": "clearance",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Customs Duty:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "customs_duty"
+    },
+    {
+      "s": "21.250",
+      "c": "21.250",
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "k": "thc"
+    },
+    {
+      "l": "Legalization Charges:",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "legalization"
+    },
+    {
+      "s": "0",
+      "k": "demurrage",
+      "c": "0",
+      "n": "",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "n": "",
+      "k": "loading",
+      "s": "0"
+    },
+    {
+      "k": "dest_clearance",
+      "s": "0",
+      "n": "",
+      "l": "Destination Clearance Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Packing Charges:",
+      "c": "0",
+      "k": "packing",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "Port Charges:",
+      "s": "0",
+      "n": "",
+      "k": "port_charges",
+      "c": "0"
+    },
+    {
+      "l": "Other Charges:",
+      "s": "0",
+      "k": "other",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "PAI Approval :",
+      "s": "0",
+      "k": "pai"
+    },
+    {
+      "k": "insurance",
+      "l": "Insurance Fee :",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "k": "epa",
+      "c": "0",
+      "n": "",
+      "l": "EPA Charges :"
+    }
+  ],
+  "cl": [
+    "Local Move"
+  ],
+  "vn": "",
+  "re": "",
+  "status": "pending",
+  "totalCost": 21.25,
+  "sm": "",
+  "or": "SINGAPORE ",
+  "po": "",
+  "createdAt": "2025-08-11T10:43:28.000Z"
+}
