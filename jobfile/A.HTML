@@ -388,7 +388,7 @@
                  </button>
                  <button onclick="saveJobFile()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293zM5 4a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" /></svg>
-                     <span>Save</span>
+                     <span>Save to DB</span>
                  </button>
                  <button onclick="clearForm()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
@@ -464,13 +464,13 @@
     </div>
     
     <!-- Confirmation Modal -->
-    <div id="confirm-modal" class="overlay">
-        <div class="modal-content max-w-sm">
-            <h3 class="text-lg font-bold mb-4" id="confirm-title">Confirm Action</h3>
-            <div id="confirm-message" class="mb-4 text-sm">Are you sure?</div>
-            <div class="text-right mt-6 space-x-2">
-                <button id="confirm-cancel-btn" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
-                <button id="confirm-ok-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm</button>
+    <div id="confirm-delete-modal" class="overlay">
+        <div class="modal-content max-w-sm text-center">
+            <h3 class="text-lg font-bold mb-4">Are you sure?</h3>
+            <p id="confirm-delete-message" class="mb-6">Do you really want to delete this file? This action cannot be undone.</p>
+            <div class="flex justify-center gap-4">
+                <button onclick="closeModal('confirm-delete-modal')" class="bg-gray-300 py-2 px-6 rounded-md hover:bg-gray-400">Cancel</button>
+                <button id="confirm-delete-btn" class="bg-red-600 text-white py-2 px-6 rounded-md hover:bg-red-700">Delete</button>
             </div>
         </div>
     </div>
@@ -499,7 +499,7 @@
         
             <!-- User Management -->
             <div class="border rounded-lg p-4">
-                <h4 class="text-lg font-semibold mb-2">User Management (From Firebase)</h4>
+                <h4 class="text-lg font-semibold mb-2">User Management (Firebase)</h4>
                 <div id="user-list" class="space-y-2 max-h-[40vh] overflow-y-auto"></div>
                 <div class="text-right mt-4">
                     <button onclick="saveUserChanges()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save User Changes</button>
@@ -508,12 +508,16 @@
         
              <!-- Data Backup & Restore (Local) -->
             <div class="border rounded-lg p-4 mt-6">
-                <h4 class="text-lg font-semibold mb-3">Data Backup & Restore (Hostinger)</h4>
-                <p class="text-sm text-gray-600 mb-4">Backup all job files from Hostinger to a single JSON file. This can be used for offline storage or migration.</p>
+                <h4 class="text-lg font-semibold mb-3">Data Backup & Restore</h4>
+                <p class="text-sm text-gray-600 mb-4">Backup all job files to a single JSON file, or restore from a backup.</p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button onclick="backupAllData()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
                         Backup All Data
+                    </button>
+                    <button onclick="restoreFromBackup()" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-1.707-1.707A1 1 0 00.879 11L5.879 16a1 1 0 001.414 0L12.293 11a1 1 0 00-1.414-1.414L9 11.586V8a4 4 0 118 0v2a1 1 0 102 0V8a6 6 0 00-6-6z" /></svg>
+                        Restore from Backup
                     </button>
                 </div>
             </div>
@@ -961,20 +965,21 @@
                 return;
             }
 
-            const modal = document.getElementById('confirm-modal');
-            modal.querySelector('#confirm-title').textContent = title;
-            modal.querySelector('#confirm-message').innerHTML = message;
-            openModal('confirm-modal', true);
-
-            const okButton = modal.querySelector('#confirm-ok-btn');
+            const modal = document.getElementById('confirm-delete-modal');
+            modal.querySelector('#confirm-delete-message').innerHTML = message;
+            
+            // Clone button to remove old listeners
+            const okButton = modal.querySelector('#confirm-delete-btn');
             const newOkButton = okButton.cloneNode(true);
             okButton.parentNode.replaceChild(newOkButton, okButton);
-            newOkButton.addEventListener('click', handler, { once: true });
+            newOkButton.addEventListener('click', handler);
+
+            openModal('confirm-delete-modal', true);
         }
         
         async function deleteJobFile(docId, isPermanent) {
-            closeModal('confirm-modal');
-            const result = await handleApiRequest(`delete-jobfile.php?file=${docId}.json&permanent=${isPermanent ? '1' : '0'}`, { method: 'GET' }, 
+            closeModal('confirm-delete-modal');
+            const result = await handleApiRequest(`delete-jobfile.php?file=${docId}.json&permanent=${isPermanent ? '1' : '0'}&user=${currentUser.displayName}`, { method: 'GET' }, 
                 isPermanent ? "File permanently deleted." : "File moved to recycle bin.", 
                 "Failed to delete file.");
             if (result) {
@@ -983,7 +988,7 @@
         }
         
         async function restoreJobFile(docId) {
-            closeModal('confirm-modal');
+            closeModal('confirm-delete-modal');
             const result = await handleApiRequest(`restore-jobfile.php?file=${docId}.json`, { method: 'GET' }, 
                 "File restored successfully.", "Failed to restore file.");
             if(result) openRecycleBin();
@@ -1027,7 +1032,7 @@
             if (!modal) return;
             if (keepParent) {
                  const highestZ = Array.from(document.querySelectorAll('.overlay.visible'))
-                    .reduce((max, el) => Math.max(max, parseInt(window.getComputedStyle(el).zIndex || '1000', 10)), 1000);
+                    .reduce((max, el) => Math.max(max, parseInt(window.getComputedStyle(el).zIndex || 1000)), 1000);
                 modal.style.zIndex = `${highestZ + 1}`;
             } else {
                 closeAllModals();
@@ -1188,7 +1193,7 @@
             const totalSelling = data.totalSelling || 0;
             const totalProfit = data.totalProfit || 0;
             
-            let chargesHtml = data.ch.map(c => `
+            let chargesHtml = (data.ch || []).map(c => `
                 <tr>
                     <td class="px-2 py-1 border">${c.l}</td>
                     <td class="px-2 py-1 border text-right">${parseFloat(c.c || 0).toFixed(3)}</td>
@@ -1359,7 +1364,6 @@
 
             displayJobFiles(filtered, 'job-files-list');
             updateStatusSummary('status-summary-file-manager', filtered);
-            updateStatusSummary('status-summary-main', filtered);
         }
 
         function displayJobFiles(files, elementId, isRecycleBin = false) {
@@ -1498,7 +1502,7 @@
             }
         }
         async function deleteClient(clientId) {
-            closeModal('confirm-modal');
+            closeModal('confirm-delete-modal');
             showLoader();
             try { await deleteDoc(doc(db, 'clients', clientId)); showNotification("Client deleted."); }
             catch(e) { showNotification("Error deleting client.", true); }
@@ -1579,9 +1583,9 @@
         
         // --- Analytics Dashboard ---
         async function openAnalyticsDashboard() {
-            const result = await handleApiRequest('list-jobfiles.php?full=true', { method: 'GET' }, null, "Could not load data for analytics.");
+            const result = await handleApiRequest('list-jobfiles.php?full=true&all=true', { method: 'GET' }, null, "Could not load data for analytics.");
             if(!result || !result.files) return;
-            analyticsDataCache = result.files;
+            analyticsDataCache = result.files.filter(f => !f.isDeleted); // only non-deleted
             
             const container = document.getElementById('analytics-container');
             container.innerHTML = `
@@ -1798,7 +1802,7 @@
             openModal('activity-log-modal');
         }
 
-        // --- RECYCLE BIN ---
+        // --- RECYCLE BIN & BACKUP ---
         async function openRecycleBin() {
             const result = await handleApiRequest('list-jobfiles.php?deleted=true', { method: 'GET' }, null, "Could not load recycle bin.");
             if(result && result.files) {
@@ -1821,6 +1825,16 @@
             showNotification("Backup downloaded.");
         }
 
+        async function restoreFromBackup() {
+            const confirmed = confirm("This is a developer tool. Are you sure you want to restore all job files from the backup file? This will overwrite any existing files with the same name.");
+            if (!confirmed) return;
+            const result = await handleApiRequest('restore.php', { method: 'GET' }, null, "Failed to restore data.");
+            if(result) {
+                showNotification(result.message);
+                loadJobFiles();
+            }
+        }
+
         // --- App Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             initializeFirebase(); 
@@ -1840,6 +1854,7 @@
             window.openAnalyticsDashboard = openAnalyticsDashboard; window.closeAnalyticsDashboard = closeAnalyticsDashboard;
             window.downloadAnalyticsCsv = downloadAnalyticsCsv;
             window.openUserActivityLog = openUserActivityLog; window.backupAllData = backupAllData;
+            window.restoreFromBackup = restoreFromBackup;
             
             // Load local data
             chargeDescriptions = JSON.parse(localStorage.getItem('chargeDescriptions') || '["Ex-works Charges:", "Land/Air / Sea Freight:", "Fuell Security / War Surcharge:", "Formalities:", "Delivery Order Fee:", "Transportation Charges:", "Inspection / Computer Print Charges:", "Handling Charges:", "Labor / Forklift Charges:", "Documentation Charges:", "Clearance Charges:", "Customs Duty:", "Terminal Handling Charges:", "Legalization Charges:", "Demurrage Charges:", "Loading / Offloading Charges:", "Destination Clearance Charges:", "Packing Charges:", "Port Charges:", "Other Charges:", "PAI Approval :", "Insurance Fee :", "EPA Charges :"]');
@@ -1888,14 +1903,19 @@
             setupAutocomplete(document.getElementById('shipper-name'), 'shipper-suggestions', 'Shipper');
             setupAutocomplete(document.getElementById('consignee-name'), 'consignee-suggestions', 'Consignee');
             
-            document.getElementById('confirm-cancel-btn').addEventListener('click', () => {
-                const okButton = document.getElementById('confirm-ok-btn');
-                const newOkButton = okButton.cloneNode(true); // Remove old listeners
+            document.getElementById('confirm-delete-btn').addEventListener('click', function() {
+                // The actual logic is now attached dynamically in confirmDelete
+            });
+             document.getElementById('confirm-delete-modal').querySelector('button[onclick^="closeModal"]').addEventListener('click', () => {
+                closeModal('confirm-delete-modal');
+                const okButton = document.getElementById('confirm-delete-btn');
+                const newOkButton = okButton.cloneNode(true);
                 okButton.parentNode.replaceChild(newOkButton, okButton);
-                closeModal('confirm-modal');
             });
 
         });
     </script>
 </body>
 </html>
+
+    

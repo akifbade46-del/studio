@@ -1,0 +1,136 @@
+{
+  "version": "1.0",
+  "collection": "users",
+  "createdAt": "2025-09-19T07:55:30.739Z",
+  "data": [
+    {
+      "id": "2mlgXCIdzsQ1l61lfahl5PxhHqG2",
+      "email": "anand@qgoaviation.com",
+      "displayName": "anand",
+      "pod_role": "worker",
+      "role": "user",
+      "status": "inactive",
+      "createdAt": {
+        "seconds": 1754484842,
+        "nanoseconds": 855000000
+      }
+    },
+    {
+      "id": "KOAS6XxoOJh4NnKjVoIIbYF6C8L2",
+      "canManageWarehouse": true,
+      "email": "akifbade46@gmail.com",
+      "status": "active",
+      "role": "admin",
+      "displayName": "AKIF BADE",
+      "createdAt": {
+        "seconds": 1754241239,
+        "nanoseconds": 486000000
+      }
+    },
+    {
+      "id": "LEvHdndFjLZPM3oaujvQTn9xisE3",
+      "role": "driver",
+      "status": "active",
+      "email": "NISAR@GMAIL.COM",
+      "createdAt": {
+        "seconds": 1756972237,
+        "nanoseconds": 19000000
+      },
+      "displayName": "NISAR"
+    },
+    {
+      "id": "W8pJr260MBTpUX9zuMCAk3szNtU2",
+      "displayName": "Yehia",
+      "status": "active",
+      "email": "yehia@qgoaviation.com",
+      "canManageWarehouse": true,
+      "createdAt": {
+        "seconds": 1754288358,
+        "nanoseconds": 63000000
+      },
+      "role": "admin"
+    },
+    {
+      "id": "a72pWckSBmX9XhZ4BO8N9TyHwtb2",
+      "status": "active",
+      "pod_role": "supervisor",
+      "role": "user",
+      "createdAt": {
+        "seconds": 1754248281,
+        "nanoseconds": 616000000
+      },
+      "email": "a.bedekar@qgoaviation.com",
+      "displayName": "ABDUL HADI "
+    },
+    {
+      "id": "bZ2f19Z0OmbiXXTPZ2cWWkv8f0h1",
+      "email": "acshona143@gmail.com",
+      "pod_role": "worker",
+      "role": "warehouse_supervisor",
+      "displayName": "TEST",
+      "status": "active",
+      "createdAt": {
+        "seconds": 1754241271,
+        "nanoseconds": 646000000
+      }
+    },
+    {
+      "id": "gML9hNSgJSajyzogtjCw764reMw1",
+      "status": "active",
+      "role": "driver",
+      "email": "A@GMAIL.COM",
+      "displayName": "NISARR",
+      "createdAt": {
+        "seconds": 1756973152,
+        "nanoseconds": 944000000
+      }
+    },
+    {
+      "id": "ifKuAFonNtUeNnbMyxbvijVWL5L2",
+      "email": "anandsure199816@gmail.com",
+      "role": "user",
+      "pod_role": "supervisor",
+      "status": "active",
+      "createdAt": {
+        "seconds": 1754551503,
+        "nanoseconds": 798000000
+      },
+      "displayName": "ANAND MANI"
+    },
+    {
+      "id": "qFVC2CjT5igS7wGqnnHqpLtkPFo1",
+      "displayName": "DEMO",
+      "role": "admin",
+      "createdAt": {
+        "seconds": 1757247436,
+        "nanoseconds": 693000000
+      },
+      "email": "DEMO@QGO.COM",
+      "status": "active"
+    },
+    {
+      "id": "tmybexv3xIR4dEVlXa5Dkl5wTYG3",
+      "displayName": "AJMAL KIANI",
+      "canManageWarehouse": true,
+      "createdAt": {
+        "seconds": 1754297136,
+        "nanoseconds": 130000000
+      },
+      "pod_role": "supervisor",
+      "role": "checker",
+      "email": "ajmalkiani@gmail.com",
+      "status": "active"
+    },
+    {
+      "id": "x2Uvfv4Y15V7DFKu47cEGsuPdq13",
+      "createdAt": {
+        "seconds": 1756625413,
+        "nanoseconds": 189000000
+      },
+      "role": "user",
+      "status": "active",
+      "email": "shakkirknandi@gmail.com",
+      "displayName": "shakkirknandi"
+    }
+  ]
+}

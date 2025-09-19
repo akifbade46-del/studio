@@ -1,0 +1,103 @@
+{
+  "version": "1.0",
+  "collection": "clients",
+  "createdAt": "2025-09-19T07:55:33.162Z",
+  "data": [
+    {
+      "id": "3YBNIeUiNnIX9WdpHNNR",
+      "createdAt": {
+        "seconds": 1754399128,
+        "nanoseconds": 107000000
+      },
+      "type": "Consignee",
+      "address": "",
+      "contactPerson": "",
+      "updatedAt": {
+        "seconds": 1754399128,
+        "nanoseconds": 107000000
+      },
+      "phone": "",
+      "name": "AISHA BOODAI"
+    },
+    {
+      "id": "LbsxH7ZWb6hyhNVAXgZG",
+      "name": "NOOR BOODAI",
+      "createdAt": {
+        "seconds": 1754399135,
+        "nanoseconds": 766000000
+      },
+      "updatedAt": {
+        "seconds": 1754399135,
+        "nanoseconds": 766000000
+      },
+      "address": "",
+      "phone": "",
+      "contactPerson": "",
+      "type": "Consignee"
+    },
+    {
+      "id": "Mib0BRDuvhCkCTFRCCNr",
+      "type": "Consignee",
+      "updatedAt": {
+        "seconds": 1754399119,
+        "nanoseconds": 751000000
+      },
+      "address": "",
+      "phone": "",
+      "name": "BOODAI TRADING CO",
+      "createdAt": {
+        "seconds": 1754399119,
+        "nanoseconds": 751000000
+      },
+      "contactPerson": ""
+    },
+    {
+      "id": "VjE9X72GWC6xDyH34yEz",
+      "phone": "",
+      "address": "",
+      "name": "AC/00112/08/2025",
+      "type": "Shipper",
+      "updatedAt": {
+        "seconds": 1755425856,
+        "nanoseconds": 197000000
+      },
+      "contactPerson": "",
+      "createdAt": {
+        "seconds": 1755425856,
+        "nanoseconds": 197000000
+      }
+    },
+    {
+      "id": "cpvViV5OSN12VUO56JKC",
+      "createdAt": {
+        "seconds": 1755425856,
+        "nanoseconds": 17000000
+      },
+      "address": "",
+      "type": "Shipper",
+      "name": "AC/00112/08/2025",
+      "phone": "",
+      "updatedAt": {
+        "seconds": 1755425856,
+        "nanoseconds": 17000000
+      },
+      "contactPerson": ""
+    },
+    {
+      "id": "pK1S7HysiwojbyYgZbCt",
+      "address": "",
+      "updatedAt": {
+        "seconds": 1754399143,
+        "nanoseconds": 621000000
+      },
+      "type": "Consignee",
+      "phone": "",
+      "contactPerson": "",
+      "name": "GHANIMA BOODAI",
+      "createdAt": {
+        "seconds": 1754399143,
+        "nanoseconds": 621000000
+      }
+    }
+  ]
+}
