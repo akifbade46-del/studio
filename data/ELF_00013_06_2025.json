@@ -1,0 +1,203 @@
+{
+  "status": "pending",
+  "totalSelling": 815,
+  "gw": "1800 KGS",
+  "ca": "TRUCK",
+  "ch": [
+    {
+      "s": "815.000",
+      "n": "",
+      "c": "0",
+      "l": "Door- Door Charges:",
+      "k": "ex_works"
+    },
+    {
+      "l": "Land Freight:",
+      "s": "0",
+      "k": "freight",
+      "c": "150.000",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "surcharge",
+      "s": "0",
+      "l": "Fuell Security / War Surcharge:"
+    },
+    {
+      "n": "",
+      "l": "Formalities:",
+      "s": "0",
+      "c": "0",
+      "k": "formalities"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "do_fee"
+    },
+    {
+      "s": "0",
+      "l": "Transportation Charges:",
+      "n": "",
+      "c": "0",
+      "k": "transportation"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "c": "81.000",
+      "l": "Handling Charges:",
+      "n": "",
+      "k": "handling",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "labor",
+      "s": "0",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "l": "Documentation Charges:",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "documentation"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "clearance",
+      "l": "Clearance Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Customs Duty:",
+      "s": "0",
+      "n": "",
+      "k": "customs_duty",
+      "c": "0"
+    },
+    {
+      "l": "Terminal Handling Charges:",
+      "s": "0",
+      "k": "thc",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "legalization",
+      "l": "Legalization Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "demurrage",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "n": "",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "c": "186.235",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "packing",
+      "c": "191.688",
+      "l": "Packing Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "port_charges",
+      "l": "Port Charges:",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "other",
+      "n": "",
+      "l": "Other Charges:"
+    },
+    {
+      "k": "pai",
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "PAI Approval :"
+    },
+    {
+      "k": "insurance",
+      "l": "Insurance Fee :",
+      "n": "",
+      "s": "0",
+      "c": "17.481"
+    },
+    {
+      "k": "epa",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "EPA Charges :"
+    }
+  ],
+  "co": "MR.HARISH ",
+  "totalProfit": 188.6,
+  "or": "KUWAIT",
+  "re": "",
+  "fv": "",
+  "hawb": "",
+  "cn": "",
+  "cl": [
+    "Export"
+  ],
+  "in": "INV/00330/2025",
+  "jfn": "ELF/00013/06/2025",
+  "po": "",
+  "pc": "83 BOXES",
+  "updatedAt": "2025-08-24T12:49:53.000Z",
+  "d": "2025-08-21",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "vw": "180CBM",
+  "tn": "",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "sh": "MR.HARSIH",
+  "de": "ABUDHABI",
+  "ts": "LAND",
+  "mawb": "",
+  "bd": "2025-07-23",
+  "vn": "",
+  "totalCost": 626.4,
+  "createdBy": "ANAND MANI",
+  "sm": "DINESH",
+  "pb": "ANAND MANI",
+  "createdAt": "2025-08-21T08:26:36.000Z",
+  "pt": [
+    "Land Freight"
+  ]
+}
