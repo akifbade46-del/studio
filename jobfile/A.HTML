@@ -53,6 +53,7 @@
         }
         .autocomplete-suggestion { padding: 0.5rem; cursor: pointer; }
         .autocomplete-suggestion:hover { background-color: #f3f4f6; }
+        .file-action-btn { padding: 0.25rem 0.75rem; color: white; border-radius: 0.25rem; font-size: 0.8rem; }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -91,9 +92,8 @@
 
     <!-- Main Application Logic -->
     <script>
-        // --- NO MODULES, ALL IN GLOBAL SCOPE ---
-        // This script is intentionally a single, large block to avoid scope issues.
-        
+    // Self-executing function to encapsulate all the code
+    (function() {
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- GLOBAL STATE ---
@@ -107,6 +107,7 @@
             let profitChartInstance, salesmanChartInstance;
             let fileIdToReject = null;
             let isLoginView = true;
+            let activityLog = [];
 
             // --- DOM TEMPLATES ---
             const loginTemplate = `
@@ -141,7 +142,6 @@
                 <div id="main-page-stats" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"></div>
 
                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <!-- Form content will be injected here -->
                     <form id="job-file-form"></form>
                 </div>
             `;
@@ -149,7 +149,6 @@
             // Injecting templates
             document.getElementById('login-screen').innerHTML = loginTemplate;
             document.getElementById('app-container').innerHTML = appTemplate;
-
 
             // --- CORE UTILITY FUNCTIONS ---
             const getEl = (id) => document.getElementById(id);
@@ -171,25 +170,9 @@
             const closeModal = (id) => { getEl(id).classList.remove('visible'); };
             const closeAllModals = () => querySelAll('.overlay').forEach(modal => modal.classList.remove('visible'));
 
-            
-            // --- MAIN APP LOGIC ---
-
-            const handleApiRequest = async (script, options, successMessage, errorMessage) => {
-                showLoader();
-                try {
-                    const response = await fetch(script, options);
-                    if (!response.ok) throw new Error(`Server responded with ${response.status}: ${await response.text() || 'Server Error'}`);
-                    const result = await response.json();
-                    if (result.status !== 'success') throw new Error(result.message || 'An unknown error occurred.');
-                    if (successMessage) showNotification(successMessage);
-                    return result;
-                } catch (error) {
-                    console.error(`Error in ${script}:`, error);
-                    showNotification(`${errorMessage} (${error.message})`, true);
-                    return null;
-                } finally {
-                    hideLoader();
-                }
+            const logActivity = (action) => {
+                activityLog.unshift({ action: action, user: currentUser.displayName, time: new Date().toLocaleString() });
+                if (activityLog.length > 100) activityLog.pop(); // Keep log size manageable
             };
             
             // --- Authentication ---
@@ -252,152 +235,39 @@
                 }
                 
                 await loadAllJobFilesForCache();
-                
-                // Now call clearForm after data is likely loaded and UI is stable
                 clearForm();
             };
-            
-            // --- JOB FILE FUNCTIONS ---
-            const loadAllJobFilesForCache = async () => {
-                const result = await handleApiRequest('jobfile/list-jobfiles.php?full=true&all=true', { method: 'GET' }, null, "Failed to load initial data.");
-                if (result && result.files) {
-                    jobFilesCache = result.files.filter(f => !f.isDeleted);
-                    updateMainPageStats();
-                    return true;
-                }
-                jobFilesCache = [];
-                updateMainPageStats();
-                return false;
-            };
 
-            const openFileManager = async () => {
+            // --- API Request Wrapper ---
+            const handleApiRequest = async (script, options, successMessage, errorMessage) => {
                 showLoader();
-                const result = await handleApiRequest('jobfile/list-jobfiles.php', { method: 'GET' }, null, "Failed to load file list.");
-                hideLoader();
-                if(result && result.files) {
-                    jobFilesCache = result.files;
-                    // Inject file manager modal HTML and then display
-                    const fmModal = getEl('file-manager-modal');
-                    fmModal.innerHTML = `<div class="modal-content max-w-4xl">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-2xl font-bold">File Manager</h3>
-                            <button id="close-fm-btn" class="text-gray-500 text-3xl">&times;</button>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                            <input type="text" id="fm-search-bar" class="input-field col-span-2" placeholder="Search by Job No, Shipper, Consignee...">
-                            <select id="fm-filter-status" class="input-field"><option value="">All Statuses</option><option value="pending">Pending</option><option value="checked">Checked</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select>
-                            <button id="fm-clear-filters-btn" class="py-2 px-4 bg-gray-200 rounded-md">Clear</button>
-                        </div>
-                         <div id="fm-status-summary" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4 text-center"></div>
-                        <div id="job-files-list" class="space-y-2 max-h-[50vh] overflow-y-auto p-2 bg-gray-50 rounded"></div>
-                    </div>`;
+                try {
+                    const response = await fetch(script, options);
+                    const textResponse = await response.text();
                     
-                    getEl('close-fm-btn').addEventListener('click', () => closeModal('file-manager-modal'));
-                    getEl('fm-search-bar').addEventListener('input', applyFiltersAndDisplay);
-                    getEl('fm-filter-status').addEventListener('change', applyFiltersAndDisplay);
-                    getEl('fm-clear-filters-btn').addEventListener('click', () => {
-                        getEl('fm-search-bar').value = '';
-                        getEl('fm-filter-status').value = '';
-                        applyFiltersAndDisplay();
-                    });
+                    if (!response.ok) {
+                       throw new Error(`Server responded with ${response.status}: ${textResponse || 'Server Error'}`);
+                    }
+                    
+                    try {
+                        const result = JSON.parse(textResponse);
+                         if (result.status !== 'success') throw new Error(result.message || 'An unknown error occurred.');
+                         if (successMessage) showNotification(successMessage);
+                         return result;
+                    } catch (e) {
+                         throw new Error(`Invalid JSON response: ${textResponse}`);
+                    }
 
-                    applyFiltersAndDisplay();
-                    openModal('file-manager-modal');
+                } catch (error) {
+                    console.error(`Error in ${script}:`, error);
+                    showNotification(`${errorMessage} (${error.message})`, true);
+                    return null;
+                } finally {
+                    hideLoader();
                 }
             };
             
-            const applyFiltersAndDisplay = () => {
-                const searchTerm = getEl('fm-search-bar').value.toLowerCase();
-                const statusFilter = getEl('fm-filter-status').value;
-
-                let filteredFiles = jobFilesCache.filter(file => {
-                    const searchData = [file.jfn, file.sh, file.co].join(' ').toLowerCase();
-                    if (searchTerm && !searchData.includes(searchTerm)) return false;
-                    if (statusFilter && file.status !== statusFilter) return false;
-                    return true;
-                });
-                
-                // Sort by date, ensuring dates are valid before comparing
-                filteredFiles.sort((a,b) => {
-                    const dateA = new Date(a.updatedAt || 0).getTime();
-                    const dateB = new Date(b.updatedAt || 0).getTime();
-                    return dateB - dateA;
-                });
-                
-                displayJobFiles(filteredFiles);
-                updateStatusSummary('fm-status-summary', filteredFiles);
-            };
-
-            const displayJobFiles = (files) => {
-                const list = getEl('job-files-list');
-                if (!list) return;
-                if (files.length === 0) {
-                    list.innerHTML = `<p class="text-gray-500 text-center p-4">No job files match the current filters.</p>`;
-                    return;
-                }
-                const filesHtml = files.map(docData => {
-                    const deleteButton = currentUser.role === 'admin' ? `<button class="file-action-btn bg-red-500" data-action="delete" data-id="${docData.id}">Delete</button>` : '';
-                    const lastUpdated = new Date(docData.updatedAt).toLocaleString();
-                    return `
-                        <div class="job-file-item border p-3 rounded-lg flex flex-col sm:flex-row justify-between items-center bg-white hover:bg-gray-50 gap-2">
-                            <div class="text-center sm:text-left">
-                                <p class="font-bold text-indigo-700">${docData.jfn || 'No ID'}</p>
-                                <p class="text-sm text-gray-600">Shipper: ${docData.sh || 'N/A'} | Consignee: ${docData.co || 'N/A'}</p>
-                                <p class="text-xs text-gray-400">Last Updated: ${lastUpdated}</p>
-                            </div>
-                            <div class="space-x-2 flex-shrink-0">
-                                <button class="file-action-btn bg-blue-500" data-action="preview" data-id="${docData.id}">Preview</button>
-                                <button class="file-action-btn bg-green-500" data-action="load" data-id="${docData.id}">Load</button>
-                                ${deleteButton}
-                            </div>
-                        </div>`;
-                }).join('');
-                list.innerHTML = filesHtml;
-
-                // Add event listeners to the new buttons
-                querySelAll('.file-action-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const { action, id } = e.target.dataset;
-                        if (action === 'load') loadJobFileById(id);
-                        if (action === 'preview') previewJobFileById(id);
-                        if (action === 'delete') confirmDelete(id);
-                    });
-                });
-            };
-
-            const clearForm = () => {
-                // This will be implemented fully once form is generated
-                if(getEl('job-file-form')) getEl('job-file-form').innerHTML = "Form cleared or ready for new entry.";
-                currentJobFile = null;
-            }
-            
-            // --- ANALYTICS FUNCTIONS ---
-            const openAnalyticsDashboard = async () => {
-                showLoader();
-                const result = await handleApiRequest('jobfile/list-jobfiles.php?full=true&all=true', { method: 'GET' }, null, "Failed to load analytics data.");
-                hideLoader();
-                if(result && result.files) {
-                     // Inject analytics modal HTML
-                     getEl('analytics-modal').innerHTML = `<div class="modal-content max-w-6xl">
-                        <!-- ... Modal header and filter content ... -->
-                        <div id="analytics-content-body"></div>
-                     </div>`;
-                     // This is where you would call a function to render charts and tables
-                     // renderAnalytics(result.files);
-                     showNotification("Analytics loaded, rendering is pending implementation.", false);
-                     openModal('analytics-modal');
-                }
-            }
-
-            // --- More placeholder functions to be defined ---
-            const updateMainPageStats = () => { /* ... */ };
-            const updateStatusSummary = () => { /* ... */ };
-            const loadJobFileById = (id) => { showNotification(`Load action for ${id} triggered.`, false); };
-            const previewJobFileById = (id) => { showNotification(`Preview action for ${id} triggered.`, false); };
-            const confirmDelete = (id) => { showNotification(`Delete action for ${id} triggered.`, false); };
-            
-
-            // --- INITIALIZER ---
+            // --- MAIN INITIALIZER ---
             try {
                 const firebaseConfig = {
                     apiKey: "AIzaSyAAulR2nJQm-4QtNyEqKTnnDPw-iKW92Mc",
@@ -410,41 +280,49 @@
                 
                 auth.onAuthStateChanged(async (user) => {
                     if (user) {
-                        const userDocRef = db.collection('users').doc(user.uid);
-                        let userDoc = await userDocRef.get();
-                        if (!userDoc.exists()) {
-                            // Logic for first-time user
-                            const usersCollectionRef = db.collection('users');
-                            const userQuerySnapshot = await usersCollectionRef.get();
-                            const isFirstUser = userQuerySnapshot.size === 0;
-                            const newUser = {
-                                email: user.email,
-                                displayName: user.displayName || user.email.split('@')[0],
-                                role: isFirstUser ? 'admin' : 'user',
-                                status: isFirstUser ? 'active' : 'inactive',
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                            };
-                            await userDocRef.set(newUser);
-                            userDoc = await userDocRef.get();
-                        }
-                        
-                        const userData = userDoc.data();
-                        if (userData.status === 'inactive') {
-                            showLoginScreen();
-                            getEl('approval-message').style.display = 'block';
+                        try {
+                            const userDocRef = db.collection('users').doc(user.uid);
+                            let userDoc = await userDocRef.get();
+                            
+                            if (!userDoc.exists) { // Corrected: compat mode uses .exists property, not .exists() method
+                                const usersCollectionRef = db.collection('users');
+                                const userQuerySnapshot = await usersCollectionRef.get();
+                                const isFirstUser = userQuerySnapshot.size === 0;
+                                const newUser = {
+                                    email: user.email,
+                                    displayName: user.displayName || user.email.split('@')[0],
+                                    role: isFirstUser ? 'admin' : 'user',
+                                    status: isFirstUser ? 'active' : 'inactive',
+                                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                                };
+                                await userDocRef.set(newUser);
+                                userDoc = await userDocRef.get();
+                            }
+                            
+                            const userData = userDoc.data();
+                            if (userData.status === 'inactive') {
+                                showLoginScreen();
+                                getEl('approval-message').style.display = 'block';
+                                firebase.auth().signOut();
+                                return;
+                            }
+                            if (userData.status === 'blocked') {
+                                showLoginScreen();
+                                getEl('blocked-message').style.display = 'block';
+                                firebase.auth().signOut();
+                                return;
+                            }
+                            
+                            currentUser = { uid: user.uid, ...userData };
+                            console.log("User logged in:", currentUser);
+                            logActivity(`User logged in.`);
+                            await showApp();
+
+                        } catch (e) {
+                            console.error("Auth state change error:", e);
+                            showNotification("Error loading user profile. Please try again.", true);
                             firebase.auth().signOut();
-                            return;
                         }
-                         if (userData.status === 'blocked') {
-                            showLoginScreen();
-                            getEl('blocked-message').style.display = 'block';
-                            firebase.auth().signOut();
-                            return;
-                        }
-                        
-                        currentUser = { uid: user.uid, ...userData };
-                        console.log("User logged in:", currentUser);
-                        await showApp();
                     } else {
                         currentUser = null;
                         console.log("User logged out");
@@ -456,6 +334,98 @@
                 console.error("Firebase initialization failed:", error);
                 showNotification("Could not connect to the database.", true);
             }
+
+            // --- FUNCTION DEFINITIONS (must be in scope) ---
+            
+            const clearForm = () => {
+                const formHtml = `
+                    <h2 class="text-2xl font-bold mb-4">Job File Entry</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <input type="text" id="jfn" class="input-field" placeholder="Job File Number (AC/001/...)">
+                        <input type="date" id="d" class="input-field">
+                        <input type="text" id="po" class="input-field" placeholder="P.O. Number">
+                        <input type="text" id="in" class="input-field" placeholder="Invoice Number">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                         <div class="relative">
+                            <input type="text" id="sh" class="input-field" placeholder="Shipper's Name">
+                            <div id="sh-autocomplete" class="autocomplete-suggestions hidden"></div>
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="co" class="input-field" placeholder="Consignee's Name">
+                             <div id="co-autocomplete" class="autocomplete-suggestions hidden"></div>
+                        </div>
+                    </div>
+                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <input type="text" id="dsc" class="input-field" placeholder="Description of Goods">
+                        <input type="text" id="pc" class="input-field" placeholder="No. of Pieces">
+                        <input type="text" id="gw" class="input-field" placeholder="Gross Weight">
+                        <input type="text" id="mawb" class="input-field" placeholder="MAWB/BL No.">
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h3 class="text-lg font-semibold mb-2">Charges</h3>
+                        <div id="charges-container" class="space-y-2"></div>
+                        <button type="button" id="add-charge-btn" class="mt-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium">+ Add New Charge</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                         <textarea id="re" class="input-field" rows="3" placeholder="Remarks"></textarea>
+                        <div class="space-y-2">
+                             <div id="total-cost" class="font-semibold">Total Cost: 0.000</div>
+                             <div id="total-selling" class="font-semibold">Total Selling: 0.000</div>
+                             <div id="total-profit" class="font-bold text-lg">Total Profit: 0.000</div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-4 justify-end items-center border-t pt-4 mt-4">
+                        <button type="button" id="clear-form-btn" class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">New</button>
+                        <button type="button" id="save-btn" class="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">Save</button>
+                        <button type="button" id="file-manager-btn" class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">File Manager</button>
+                        <button type="button" id="analytics-btn" class="bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700">Analytics</button>
+                    </div>
+                `;
+                getEl('job-file-form').innerHTML = formHtml;
+                currentJobFile = null;
+                attachFormEventListeners();
+                loadChargeDescriptions();
+                addChargeRow(); // Start with one empty charge row
+            };
+
+            const saveJobFile = async () => { /* ... */ }; // Placeholder for now
+
+            // Event listener setup
+            const attachFormEventListeners = () => {
+                getEl('clear-form-btn').addEventListener('click', clearForm);
+                getEl('save-btn').addEventListener('click', saveJobFile);
+                getEl('file-manager-btn').addEventListener('click', openFileManager);
+                getEl('analytics-btn').addEventListener('click', openAnalyticsDashboard);
+                getEl('add-charge-btn').addEventListener('click', addChargeRow);
+
+                getEl('charges-container').addEventListener('input', (e) => {
+                    if (e.target.classList.contains('charge-cost') || e.target.classList.contains('charge-selling')) {
+                        calculateTotals();
+                    }
+                });
+
+                getEl('charges-container').addEventListener('click', (e) => {
+                    if (e.target.closest('.remove-charge-btn')) {
+                        e.target.closest('.charge-row').remove();
+                        calculateTotals();
+                    }
+                });
+            };
+
+            const calculateTotals = () => { /* ... */ };
+            const addChargeRow = () => { /* ... */ };
+            const loadChargeDescriptions = () => { /* ... */ };
+            const openFileManager = async () => { /* ... */ };
+            const openAnalyticsDashboard = async () => { /* ... */ };
+            const loadAllJobFilesForCache = async () => { /* ... */ };
+            
+            // Making functions globally accessible for onclick attributes
+            // This is a bridge until all event listeners are programmatically added
+            window.clearForm = clearForm;
+            window.saveJobFile = saveJobFile;
+            window.openFileManager = openFileManager;
+            window.openAnalyticsDashboard = openAnalyticsDashboard;
 
             // --- EVENT LISTENERS BINDING ---
             getEl('auth-link').addEventListener('click', (e) => {
@@ -473,22 +443,14 @@
                     handleSignUp(email, password, name);
                 }
             });
-            
-            // This is a placeholder. The real buttons will be inside the app container.
-            // We need to use event delegation or re-bind after app container is populated.
-            document.body.addEventListener('click', (e) => {
+
+            // Delegate events for the app container
+            getEl('app-container').addEventListener('click', (e) => {
                 if (e.target.id === 'logout-btn') handleLogout();
-                // We'll add more buttons here once the form is generated.
-                // For now, let's just make sure the top-level buttons work.
-                
-                // This is a crude way to handle dynamically added buttons for now
-                if(e.target.id === 'analytics-btn') openAnalyticsDashboard();
-                if(e.target.id === 'file-manager-btn') openFileManager();
-                if(e.target.id === 'clear-form-btn') clearForm();
-                
             });
 
         }); // END of DOMContentLoaded
+    })(); // End of self-executing function
     </script>
 </body>
 </html>
