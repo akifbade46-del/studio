@@ -1,0 +1,98 @@
+{
+  "lastUpdatedBy": "ABDUL HADI ",
+  "pb": "ABDUL HADI ",
+  "checkedBy": "AJMAL KIANI",
+  "cl": [
+    "Import"
+  ],
+  "ts": "",
+  "status": "checked",
+  "hawb": "",
+  "or": "MUMBAI INDIA",
+  "updatedAt": "2025-09-18T09:13:24.000Z",
+  "po": "",
+  "d": "2025-09-08",
+  "vw": "19 KG",
+  "createdAt": "2025-09-08T06:13:33.000Z",
+  "createdBy": "ABDUL HADI ",
+  "fv": "KU",
+  "cn": "",
+  "gw": "19 KG ",
+  "pc": "01",
+  "totalProfit": 50,
+  "pt": [
+    "Air Freight"
+  ],
+  "ch": [
+    {
+      "n": "",
+      "s": "15.210",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "15.210"
+    },
+    {
+      "l": "Clearance Charges:",
+      "n": "",
+      "c": "18.000",
+      "s": "20.000"
+    },
+    {
+      "s": "36.060",
+      "l": "Customs Duty:",
+      "c": "36.060",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "s": "5.000",
+      "n": "",
+      "l": "Bank Fee"
+    },
+    {
+      "n": "",
+      "s": "19.000",
+      "c": "19.000",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "c": "25.000",
+      "l": "Legalization & Service Charges:",
+      "n": "",
+      "s": "30.000"
+    },
+    {
+      "c": "0",
+      "s": "25.000",
+      "n": "",
+      "l": "Transportation Charges:"
+    },
+    {
+      "n": "",
+      "s": "15.000",
+      "c": "0",
+      "l": "Handling Charges:"
+    },
+    {
+      "s": "0",
+      "c": "2.000",
+      "n": "",
+      "l": "Storage Charges"
+    }
+  ],
+  "de": "KUWAIT ",
+  "dsc": "SPARE PARTS",
+  "re": "",
+  "co": "BOODAI TRADING CO",
+  "vn": "KU",
+  "tn": "",
+  "sh": "KIRLOSKAR OIL ENGINES LTD",
+  "totalSelling": 165.27,
+  "jfn": "AC/00124/09/2025",
+  "checkedAt": "2025-09-18T12:12:26.000Z",
+  "ca": "KUWAIT AIRWAYYS ",
+  "mawb": "229-17343966",
+  "bd": "2025-09-18",
+  "in": "INV/00399/2025",
+  "totalCost": 115.27,
+  "sm": ""
+}
