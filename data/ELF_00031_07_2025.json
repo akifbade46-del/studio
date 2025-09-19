@@ -1,0 +1,210 @@
+{
+  "totalSelling": 852,
+  "approvedBy": null,
+  "tn": "",
+  "ca": "TRUCK",
+  "createdBy": "ANAND MANI",
+  "bd": "2025-08-25",
+  "co": "MR.TARINDER PAL SINGH",
+  "vw": "18 CBM",
+  "jfn": "ELF/00031/07/2025",
+  "cl": [
+    "Export"
+  ],
+  "de": "SAUDI ARABIA",
+  "po": "",
+  "rejectedBy": null,
+  "or": "KUWAIT",
+  "checkedAt": null,
+  "cn": "",
+  "status": "pending",
+  "checkedBy": null,
+  "rejectedAt": null,
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "vn": "",
+  "approvedAt": null,
+  "in": "INV/00360/2025",
+  "rejectionReason": null,
+  "createdAt": "2025-08-17T10:55:05.000Z",
+  "re": "",
+  "gw": "1800 KGS",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "fv": "",
+  "totalProfit": 397.47,
+  "mawb": "",
+  "pb": "ANAND MANI",
+  "ch": [
+    {
+      "l": "Door to door Service Charges with Insurance:",
+      "c": "0",
+      "s": "852.000",
+      "n": "",
+      "k": "ex_works"
+    },
+    {
+      "c": "150.000",
+      "k": "freight",
+      "l": "Land Freight:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "k": "surcharge",
+      "s": "0",
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:"
+    },
+    {
+      "l": "Formalities:",
+      "k": "formalities",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "k": "do_fee"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "transportation",
+      "l": "Transportation Charges:"
+    },
+    {
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "inspection"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Handling Charges:",
+      "k": "handling"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "labor",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Documentation Charges:",
+      "s": "0",
+      "k": "documentation"
+    },
+    {
+      "k": "clearance",
+      "c": "0",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "n": ""
+    },
+    {
+      "k": "customs_duty",
+      "c": "0",
+      "s": "0",
+      "l": "Customs Duty:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Terminal Handling Charges:",
+      "k": "thc",
+      "n": ""
+    },
+    {
+      "l": "Legalization Charges:",
+      "n": "",
+      "k": "legalization",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "loading",
+      "s": "0",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "n": "",
+      "k": "dest_clearance",
+      "s": "0",
+      "c": "239.250",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "l": "Packing Charges:",
+      "n": "",
+      "c": "47.500",
+      "s": "0",
+      "k": "packing"
+    },
+    {
+      "l": "Port Charges:",
+      "s": "0",
+      "n": "",
+      "k": "port_charges",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "other",
+      "l": "Other Charges:"
+    },
+    {
+      "l": "PAI Approval :",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "pai"
+    },
+    {
+      "k": "insurance",
+      "c": "17.784",
+      "n": "",
+      "s": "0",
+      "l": "Insurance Fee :"
+    },
+    {
+      "l": "EPA Charges :",
+      "k": "epa",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    }
+  ],
+  "pc": "134 BOXES",
+  "totalCost": 454.53,
+  "d": "2025-08-17",
+  "updatedAt": "2025-08-31T11:06:19.000Z",
+  "sm": "DINESH",
+  "pt": [
+    "Land Freight"
+  ],
+  "ts": "LAND",
+  "sh": "MR.TARINDER PAL SINGH",
+  "hawb": ""
+}
