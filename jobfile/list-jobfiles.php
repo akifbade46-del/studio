@@ -12,29 +12,44 @@ function json_response($status, $message, $data = null) {
     exit();
 }
 
-$directory = 'data/';
+$is_full_data_request = isset($_GET['full']);
+$show_deleted = isset($_GET['deleted']);
+$show_all = isset($_GET['all']); // To get both deleted and non-deleted for backup
 
-if (!is_dir($directory)) {
-    json_response(200, 'success', []); // Return empty array if directory doesn't exist
+$directory = $show_deleted ? 'recycle_bin/' : 'data/';
+$files = [];
+
+if ($show_all) {
+    $data_files = glob('data/*.json');
+    $recycle_files = glob('recycle_bin/*.json');
+    $files = array_merge($data_files, $recycle_files);
+} else {
+    $files = glob($directory . '*.json');
 }
 
-$files = glob($directory . '*.json');
 $file_data = [];
 
 foreach ($files as $file) {
     $content = file_get_contents($file);
     $data = json_decode($content, true);
     if ($data) {
-        // Only get necessary fields for list view to keep payload small
-        $file_data[] = [
-            'jfn' => $data['jfn'] ?? basename($file, '.json'),
-            'sh' => $data['sh'] ?? 'N/A',
-            'co' => $data['co'] ?? 'N/A',
-            'mawb' => $data['mawb'] ?? 'N/A',
-            'd' => $data['d'] ?? null,
-            'status' => $data['status'] ?? 'pending',
-            'updatedAt' => $data['updatedAt'] ?? null,
-        ];
+        if ($is_full_data_request) {
+            $file_data[] = $data;
+        } else {
+            // Only get necessary fields for list view to keep payload small
+            $file_data[] = [
+                'jfn' => $data['jfn'] ?? basename($file, '.json'),
+                'sh' => $data['sh'] ?? 'N/A',
+                'co' => $data['co'] ?? 'N/A',
+                'mawb' => $data['mawb'] ?? 'N/A',
+                'd' => $data['d'] ?? null,
+                'status' => $data['status'] ?? 'pending',
+                'updatedAt' => $data['updatedAt'] ?? null,
+                'deletedAt' => $data['deletedAt'] ?? null,
+                'deletedBy' => $data['deletedBy'] ?? null,
+                'isDeleted' => $show_deleted,
+            ];
+        }
     }
 }
 

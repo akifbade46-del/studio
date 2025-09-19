@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job File Management System with Database</title>
+    <title>Job File Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -41,7 +42,7 @@
             border-color: var(--theme-color);
             box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3); /* Improved focus ring */
         }
-        .input-field:disabled {
+        .input-field:disabled, .input-field[readonly] {
             background-color: #f3f4f6;
             cursor: not-allowed;
             color: #6b7280;
@@ -328,7 +329,7 @@
                  <h2 class="text-xl font-semibold text-gray-800">Charges</h2>
                  <div>
                      <button onclick="openChargeManager()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform hover:scale-105 mr-2">Manage Descriptions</button>
-                     <button onclick="suggestCharges()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform hover:scale-105">Suggest Charges ✨</button>
+                     <button onclick="suggestCharges()" class="hidden bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform hover:scale-105">Suggest Charges ✨</button>
                  </div>
             </div>
             <div class="mb-6 overflow-x-auto border border-gray-200 rounded-lg">
@@ -343,7 +344,6 @@
             <!-- Remarks Section -->
             <div class="flex justify-between items-center mb-2">
                 <label for="remarks" class="block font-semibold text-gray-700">REMARKS:</label>
-                <button onclick="generateRemarks()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform hover:scale-105">Generate Remarks ✨</button>
             </div>
             <div class="mb-8">
                 <textarea id="remarks" rows="4" class="input-field w-full"></textarea>
@@ -415,16 +415,6 @@
 
     <!-- Analytics Full-Screen Page -->
     <div id="analytics-container" class="hidden">
-        <div class="container">
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 no-print">
-                <h3 class="text-2xl font-bold">Analytics Dashboard</h3>
-                <div>
-                    <button onclick="printAnalytics()" title="Print Analytics" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
-                    <button onclick="closeAnalyticsDashboard()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded">Back to Job File</button>
-                </div>
-            </div>
-            <div id="analytics-body" class="space-y-6"></div>
-        </div>
     </div>
 
 
@@ -437,10 +427,7 @@
         <div class="modal-content max-w-5xl"> <!-- Increased width for filters -->
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-2xl font-bold">File Manager</h3>
-                <div>
-                    <button onclick="openRecycleBin()" class="admin-only bg-gray-600 hover:bg-gray-700 text-white font-bold py-1 px-3 rounded text-sm mr-4">Recycle Bin</button>
-                    <button onclick="closeModal('file-manager-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-                </div>
+                <button onclick="closeModal('file-manager-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
             </div>
             
             <!-- Search and Filter Controls -->
@@ -482,8 +469,8 @@
             <h3 class="text-lg font-bold mb-4" id="confirm-title">Confirm Action</h3>
             <div id="confirm-message" class="mb-4 text-sm">Are you sure?</div>
             <div class="text-right mt-6 space-x-2">
-                <button id="confirm-cancel" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
-                <button id="confirm-ok" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm</button>
+                <button id="confirm-cancel-btn" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
+                <button id="confirm-ok-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm</button>
             </div>
         </div>
     </div>
@@ -494,7 +481,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-center mb-4 no-print gap-2">
                 <h3 class="text-2xl font-bold">Job File Preview</h3>
                 <div>
-                    <button onclick="printPreview()" title="Print Preview" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
+                    <button onclick="printPage()" title="Print Preview" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
                     <button onclick="closeModal('preview-modal')" class="text-gray-500 hover:text-gray-800 text-3xl align-middle">&times;</button>
                 </div>
             </div>
@@ -512,27 +499,22 @@
         
             <!-- User Management -->
             <div class="border rounded-lg p-4">
-                <h4 class="text-lg font-semibold mb-2">User Management</h4>
+                <h4 class="text-lg font-semibold mb-2">User Management (From Firebase)</h4>
                 <div id="user-list" class="space-y-2 max-h-[40vh] overflow-y-auto"></div>
                 <div class="text-right mt-4">
                     <button onclick="saveUserChanges()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save User Changes</button>
                 </div>
             </div>
         
-            <!-- Data Backup & Restore -->
+             <!-- Data Backup & Restore (Local) -->
             <div class="border rounded-lg p-4 mt-6">
-                <h4 class="text-lg font-semibold mb-3">Data Backup & Restore (Firebase)</h4>
-                <p class="text-sm text-gray-600 mb-4">Backup all job files and user data from Firebase to a single JSON file. This can be used for offline storage or to restore the database to a previous state.</p>
+                <h4 class="text-lg font-semibold mb-3">Data Backup & Restore (Hostinger)</h4>
+                <p class="text-sm text-gray-600 mb-4">Backup all job files from Hostinger to a single JSON file. This can be used for offline storage or migration.</p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button onclick="backupAllData()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
-                        Backup Firebase Data
+                        Backup All Data
                     </button>
-                    <label for="restore-file-input" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2 cursor-pointer">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                         Restore to Firebase
-                         <input type="file" id="restore-file-input" class="hidden" accept=".json" onchange="handleRestoreFile(event)">
-                    </label>
                 </div>
             </div>
         </div>
@@ -575,12 +557,12 @@
     <div id="client-manager-modal" class="overlay">
         <div class="modal-content max-w-4xl">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">Client Management</h3>
+                <h3 class="text-2xl font-bold">Client Management (Firebase)</h3>
                 <button onclick="closeModal('client-manager-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Add/Edit Client Form -->
-                <div>
+                <div class="md:col-span-1">
                     <h4 id="client-form-title" class="text-xl font-semibold mb-4">Add New Client</h4>
                     <form id="client-form" class="space-y-4">
                         <input type="hidden" id="client-id">
@@ -615,8 +597,7 @@
                     </form>
                 </div>
                 <!-- Client List -->
-                <div>
-                    <h4 class="text-xl font-semibold mb-4">Existing Clients</h4>
+                <div class="md:col-span-2">
                     <input type="text" id="client-search-bar" class="input-field mb-4" placeholder="Search clients...">
                     <div id="client-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
                         <!-- Client list will be populated by JS -->
@@ -675,7 +656,7 @@
         </div>
     </div>
 
-    <!-- User-Specific Jobs Modal -->
+    <!-- User-Specific Jobs Modal (Analytics) -->
     <div id="user-jobs-modal" class="overlay">
         <div class="modal-content max-w-5xl">
             <div class="flex justify-between items-center mb-4">
@@ -707,19 +688,17 @@
         // Import Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp, getDocs, writeBatch, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, query, where, serverTimestamp, getDocs, writeBatch, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
         // --- Global variables ---
         let db, auth;
         let currentUser = null;
-        let jobFilesCache = [];
-        let clientsCache = [];
+        let jobFilesCache = []; // Caches job files from Hostinger
+        let clientsCache = [];  // Caches clients from Firebase
+        let allUsersCache = []; // Caches all users from Firebase for Admin Panel
         let chargeDescriptions = [];
-        let analyticsDataCache = null;
-        let currentFilteredJobs = [];
-        let fileIdToReject = null; 
-        let profitChartInstance = null;
-        let currentJobFile = null;
+        let analyticsDataCache = null; // Caches full data for analytics
+        let currentJobFile = null; // Holds the currently loaded job file data
 
         // --- Firebase Configuration ---
         const firebaseConfig = {
@@ -780,7 +759,6 @@
                         
                         console.log("User logged in:", currentUser);
                         showApp();
-                        loadClients();
                     } else {
                         currentUser = null;
                         console.log("User logged out");
@@ -794,20 +772,22 @@
             }
         }
         
+        // --- Central API Handler ---
         async function handleApiRequest(script, options, successMessage, errorMessage) {
             showLoader();
             try {
                 const response = await fetch(script, options);
+                if (!response.ok) { // Check for non-2xx responses
+                    const errorText = await response.text();
+                    throw new Error(`Server responded with ${response.status}: ${errorText}`);
+                }
                 const result = await response.json();
-
-                if (!response.ok || result.status !== 'success') {
+                if (result.status !== 'success') {
                     throw new Error(result.message || 'An unknown error occurred.');
                 }
-
                 if (successMessage) showNotification(successMessage);
                 hideLoader();
                 return result;
-
             } catch (error) {
                 console.error(`Error in ${script}:`, error);
                 showNotification(errorMessage + ` (${error.message})`, true);
@@ -848,10 +828,7 @@
         
         async function handleForgotPassword() {
             const email = document.getElementById('reset-email').value.trim();
-            if (!email) {
-                showNotification("Please enter your email address.", true);
-                return;
-            }
+            if (!email) { showNotification("Please enter your email address.", true); return; }
             showLoader();
             try {
                 await sendPasswordResetEmail(auth, email);
@@ -862,27 +839,20 @@
                 hideLoader();
                 console.error("Password reset error:", error);
                 let message = "Could not send reset link. Please try again.";
-                if(error.code === 'auth/user-not-found'){
-                    message = "No account found with this email address.";
-                }
+                if(error.code === 'auth/user-not-found'){ message = "No account found with this email address."; }
                 showNotification(message, true);
             }
         }
 
-        function handleLogout() {
-            signOut(auth);
-        }
+        function handleLogout() { signOut(auth); }
 
-        // --- NEW Data Handling (Hostinger via PHP) ---
+        // --- DATA HANDLING (Hostinger via PHP) ---
         async function saveJobFile() {
             const jobFileNoInput = document.getElementById('job-file-no');
             const jobFileNo = jobFileNoInput.value.trim();
             const isUpdating = jobFileNoInput.disabled;
 
-            if (!jobFileNo) { 
-                showNotification("Please enter a Job File No.", true); 
-                return; 
-            }
+            if (!jobFileNo) { showNotification("Please enter a Job File No.", true); return; }
             
             const data = getFormData();
             data.totalCost = parseFloat(document.getElementById('total-cost').textContent) || 0;
@@ -894,13 +864,14 @@
             if (isUpdating && currentJobFile) { // Merge with existing data
                 data.createdBy = currentJobFile.createdBy || currentUser.displayName;
                 data.createdAt = currentJobFile.createdAt || new Date().toISOString();
-                // Reset status on edit
-                data.status = 'pending';
-                data.checkedBy = null;
-                data.checkedAt = null;
-                data.approvedBy = null;
-                data.approvedAt = null;
-                data.rejectionReason = null;
+                 // Reset status on edit
+                if (currentJobFile.status === 'approved' || currentJobFile.status === 'checked') {
+                    data.status = 'pending';
+                    data.checkedBy = null; data.checkedAt = null;
+                    data.approvedBy = null; data.approvedAt = null;
+                    data.rejectionReason = null; data.rejectedBy = null; data.rejectedAt = null;
+                    showNotification("File modified. Re-approval is now required.");
+                }
             } else {
                 data.createdBy = currentUser.displayName;
                 data.createdAt = new Date().toISOString();
@@ -910,13 +881,13 @@
             const result = await handleApiRequest('save-jobfile.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filename: jobFileNo.replace(/\//g, '_') + '.json', data: data }),
+                body: JSON.stringify({ filename: jobFileNo.replace(/\//g, '_') + '.json', data: data, isUpdating: isUpdating }),
             }, "Job file saved successfully!", "Error saving job file.");
 
             if(result) {
                 jobFileNoInput.disabled = true;
-                currentJobFile = data;
-                populateFormFromData(data); // Refresh form with new status
+                currentJobFile = result.data; // Use returned data
+                populateFormFromData(currentJobFile); // Refresh form with new status
             }
         }
         
@@ -929,58 +900,22 @@
             }
         }
 
-        function displayJobFiles(files) {
-             const list = document.getElementById('job-files-list');
-             if (!files || files.length === 0) {
-                 list.innerHTML = `<p class="text-gray-500 text-center p-4">No job files match the current filters.</p>`;
-                 return;
-            }
-            const filesHtml = files.map(file => {
-                const docId = file.jfn.replace(/\//g, '_');
-                const deleteButton = currentUser.role === 'admin' ? `<button onclick="confirmDelete('${docId}')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm">Delete</button>` : '';
-                return `
-                    <div class="job-file-item border p-3 rounded-lg flex flex-col sm:flex-row justify-between items-center bg-gray-50 hover:bg-gray-100 gap-2">
-                        <div class="text-center sm:text-left">
-                            <p class="font-bold text-indigo-700">${file.jfn || 'No ID'}</p>
-                            <p class="text-sm text-gray-600">Shipper: ${file.sh || 'N/A'} | Consignee: ${file.co || 'N/A'}</p>
-                            <p class="text-xs text-gray-400">Last Updated: ${file.updatedAt ? new Date(file.updatedAt).toLocaleString() : 'N/A'}</p>
-                        </div>
-                        <div class="space-x-2 flex-shrink-0">
-                            <button onclick="previewJobFileById('${docId}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-sm">Preview</button>
-                            <button onclick="loadJobFileById('${docId}')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-sm">Load</button>
-                            ${deleteButton}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            list.innerHTML = filesHtml;
-        }
-        
         async function loadJobFileById(docId) {
             const filename = docId + '.json';
             const result = await handleApiRequest(`load-jobfile.php?file=${filename}`, { method: 'GET' }, null, "Could not load job file.");
             if (result && result.data) {
-                currentJobFile = result.data;
                 populateFormFromData(result.data);
                 logUserActivity(result.data.jfn);
-                document.getElementById('job-file-no').disabled = true;
                 closeAllModals();
                 showNotification("Job file loaded successfully.");
             }
         }
         
         async function updateStatus(docId, status, reason = null) {
-            const filename = (docId || currentJobFile?.jfn?.replace(/\//g, '_')) + '.json';
-            if (!filename) {
-                showNotification("No job file loaded to update status.", true);
-                return;
-            }
+            const filename = (docId || currentJobFile.jfn.replace(/\//g, '_')) + '.json';
+            if (!filename) { showNotification("No job file loaded to update status.", true); return; }
             
-            const payload = {
-                filename: filename,
-                status: status,
-                user: currentUser.displayName
-            };
+            const payload = { filename, status, user: currentUser.displayName };
             if (reason) payload.reason = reason;
 
             const result = await handleApiRequest('update-status.php', {
@@ -990,63 +925,79 @@
             }, `Job file ${status}!`, `Failed to update status.`);
             
             if (result && result.data) {
-                currentJobFile = result.data;
-                populateFormFromData(result.data); // Refresh form with new status
+                populateFormFromData(result.data);
                 closeModal('reject-reason-modal');
             }
         }
 
         async function checkJobFile() { await updateStatus(null, 'checked'); }
         async function approveJobFile() { await updateStatus(null, 'approved'); }
-        async function promptForRejection() {
-            fileIdToReject = currentJobFile.jfn.replace(/\//g, '_');
-            openModal('reject-reason-modal');
-        }
+        function promptForRejection() { openModal('reject-reason-modal'); }
         async function rejectJobFile() {
             const reason = document.getElementById('rejection-reason-input').value;
-            if (!reason) {
-                showNotification("Please provide a reason for rejection.", true);
-                return;
-            }
-            await updateStatus(fileIdToReject, 'rejected', reason);
+            if (!reason) { showNotification("Please provide a reason for rejection.", true); return; }
+            await updateStatus(null, 'rejected', reason);
         }
         
-        function confirmDelete(docId) {
-             if (currentUser.role !== 'admin') {
-                 showNotification("Only admins can delete files.", true);
-                 return;
-            }
-            const fileToDelete = jobFilesCache.find(f => f.jfn.replace(/\//g, '_') === docId);
-            const message = `Are you sure you want to delete the file "${fileToDelete?.jfn || docId}"? This will move it to the recycle bin.`;
+        function confirmDelete(docId, type = 'jobfile') {
+             if (currentUser.role !== 'admin') { showNotification("Only admins can delete.", true); return; }
             
+            let message, title, handler;
+            
+            if (type === 'jobfile' || type === 'recycle') {
+                const isPermanent = type === 'recycle';
+                const fileCache = isPermanent ? jobFilesCache.filter(f => f.isDeleted) : jobFilesCache;
+                const fileToDelete = fileCache.find(f => f.jfn.replace(/\//g, '_') === docId);
+                title = isPermanent ? 'Confirm Permanent Deletion' : 'Confirm Deletion';
+                message = isPermanent ? `This will permanently delete the file "${fileToDelete?.jfn || docId}". This action CANNOT be undone.`
+                                      : `Are you sure you want to delete the file "${fileToDelete?.jfn || docId}"? This will move it to the recycle bin.`;
+                handler = () => deleteJobFile(docId, isPermanent);
+            } else if (type === 'client') {
+                const client = clientsCache.find(c => c.id === docId);
+                title = 'Confirm Client Deletion';
+                message = `Are you sure you want to delete the client "${client?.name || docId}"?`;
+                handler = () => deleteClient(docId);
+            } else {
+                return;
+            }
+
             const modal = document.getElementById('confirm-modal');
-            modal.querySelector('#confirm-title').textContent = 'Confirm Deletion';
+            modal.querySelector('#confirm-title').textContent = title;
             modal.querySelector('#confirm-message').innerHTML = message;
             openModal('confirm-modal', true);
 
-            const okButton = modal.querySelector('#confirm-ok');
-            const newOkButton = okButton.cloneNode(true); // Remove old listeners
+            const okButton = modal.querySelector('#confirm-ok-btn');
+            const newOkButton = okButton.cloneNode(true);
             okButton.parentNode.replaceChild(newOkButton, okButton);
-
-            newOkButton.addEventListener('click', async () => {
-                await handleApiRequest(`delete-jobfile.php?file=${docId}.json`, { method: 'GET' }, "File moved to recycle bin.", "Failed to delete file.");
-                closeModal('confirm-modal');
-                loadJobFiles();
-            }, { once: true });
+            newOkButton.addEventListener('click', handler, { once: true });
+        }
+        
+        async function deleteJobFile(docId, isPermanent) {
+            closeModal('confirm-modal');
+            const result = await handleApiRequest(`delete-jobfile.php?file=${docId}.json&permanent=${isPermanent ? '1' : '0'}`, { method: 'GET' }, 
+                isPermanent ? "File permanently deleted." : "File moved to recycle bin.", 
+                "Failed to delete file.");
+            if (result) {
+                if(isPermanent) openRecycleBin(); else openFileManager();
+            }
+        }
+        
+        async function restoreJobFile(docId) {
+            closeModal('confirm-modal');
+            const result = await handleApiRequest(`restore-jobfile.php?file=${docId}.json`, { method: 'GET' }, 
+                "File restored successfully.", "Failed to restore file.");
+            if(result) openRecycleBin();
         }
 
-
-        // --- UI Functions (Mostly unchanged) ---
+        // --- UI Functions ---
         function showLogin() {
             document.getElementById('login-screen').style.display = 'flex';
             document.getElementById('app-container').style.display = 'none';
-            document.getElementById('analytics-container').style.display = 'none';
         }
 
         function showApp() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'block';
-            document.getElementById('analytics-container').style.display = 'none';
             document.getElementById('user-display-name').textContent = currentUser.displayName;
             document.getElementById('user-role').textContent = currentUser.role;
 
@@ -1056,20 +1007,19 @@
             if (currentUser.role === 'admin') {
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
                 document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
-                document.getElementById('checker-info-banner').style.display = 'block';
             } else if (currentUser.role === 'checker') {
                 document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
+            }
+            if(currentUser.role === 'checker' || currentUser.role === 'admin'){
                 document.getElementById('checker-info-banner').style.display = 'block';
             }
             
             clearForm();
+            loadClients();
         }
 
         function closeAllModals() {
-            document.querySelectorAll('.overlay').forEach(modal => {
-                modal.classList.remove('visible');
-                modal.style.zIndex = ''; 
-            });
+            document.querySelectorAll('.overlay').forEach(modal => modal.classList.remove('visible'));
         }
 
         function openModal(id, keepParent = false) {
@@ -1105,8 +1055,10 @@
             document.getElementById('approved-stamp').style.display = 'none';
             document.getElementById('rejected-stamp').style.display = 'none';
             document.getElementById('rejection-banner').style.display = 'none';
+
             document.getElementById('check-btn').style.display = 'none';
             document.getElementById('approval-buttons').style.display = 'none';
+
             showNotification("Form cleared.");
         }
 
@@ -1118,9 +1070,7 @@
             notification.textContent = message;
             notification.style.backgroundColor = isError ? '#c53030' : '#2d3748';
             notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
+            setTimeout(() => { notification.classList.remove('show'); }, 3000);
         }
 
         function getFormData() {
@@ -1132,7 +1082,6 @@
                 const description = row.querySelector('.description-input').value.trim();
                 const cost = row.querySelector('.cost-input').value;
                 const selling = row.querySelector('.selling-input').value;
-
                 if (description && (cost || selling)) {
                     charges.push({ l: description, c: cost || '0', s: selling || '0', n: row.querySelector('.notes-input').value || '' });
                 }
@@ -1154,17 +1103,17 @@
         }
         
         function populateFormFromData(data) {
-            const setVal = (id, value) => { if(document.getElementById(id)) document.getElementById(id).value = value || '' };
-            const setChecked = (type, values) => {
-                document.querySelectorAll(`[data-${type}]`).forEach(el => {
-                    el.checked = (values || []).includes(el.dataset[type]);
-                });
-            };
-            
             clearForm(); // Start with a clean slate
             currentJobFile = data;
+            
+            const setVal = (id, value) => { if(document.getElementById(id)) document.getElementById(id).value = value || '' };
+            const setChecked = (type, values) => {
+                document.querySelectorAll(`[data-${type}]`).forEach(el => { el.checked = (values || []).includes(el.dataset[type]); });
+            };
 
             setVal('date', data.d); setVal('po-number', data.po); setVal('job-file-no', data.jfn);
+            document.getElementById('job-file-no').disabled = true;
+
             setVal('invoice-no', data.in); setVal('billing-date', data.bd);
             setVal('salesman', data.sm); setVal('shipper-name', data.sh); setVal('consignee-name', data.co);
             setVal('mawb', data.mawb); setVal('hawb', data.hawb); setVal('teams-of-shipping', data.ts);
@@ -1198,6 +1147,8 @@
                 if (isAdmin) document.getElementById('approval-buttons').style.display = 'flex';
             } else if (data.status === 'approved') {
                 document.getElementById('approved-stamp').style.display = 'block';
+                document.getElementById('checked-stamp').style.display = 'block';
+                setVal('checked-by', `${data.checkedBy} on ${new Date(data.checkedAt).toLocaleDateString()}`);
                 setVal('approved-by', `${data.approvedBy} on ${new Date(data.approvedAt).toLocaleDateString()}`);
             } else if (data.status === 'rejected') {
                 document.getElementById('rejected-stamp').style.display = 'block';
@@ -1210,18 +1161,6 @@
         }
         
         function printPage() {
-            const data = getFormData();
-            const printHTML = getPrintViewHtml(data, false);
-            const printContainer = document.getElementById('print-output');
-            printContainer.innerHTML = printHTML;
-
-            const qrContainer = printContainer.querySelector('.qrcode-container');
-            if (qrContainer && data.jfn) {
-                qrContainer.innerHTML = '';
-                const baseUrl = window.location.href.split('?')[0].replace('A.HTML', 'load-jobfile.php');
-                const qrText = `${baseUrl}?jobId=${encodeURIComponent(data.jfn)}`;
-                new QRCode(qrContainer, { text: qrText, width: 96, height: 96, correctLevel: QRCode.CorrectLevel.H });
-            }
             window.print();
         }
 
@@ -1231,21 +1170,21 @@
             data.totalSelling = parseFloat(document.getElementById('total-selling').textContent);
             data.totalProfit = parseFloat(document.getElementById('total-profit').textContent);
             
-            const previewHTML = getPrintViewHtml(data, false);
+            const previewHTML = getPrintViewHtml(data);
             document.getElementById('preview-body').innerHTML = previewHTML;
+            document.getElementById('print-output').innerHTML = previewHTML;
 
             const qrContainer = document.getElementById('preview-body').querySelector('.qrcode-container');
             if (qrContainer && data.jfn) {
                 qrContainer.innerHTML = '';
-                const baseUrl = window.location.href.split('?')[0].replace('A.HTML', 'load-jobfile.php');
-                const qrText = `${baseUrl}?jobId=${encodeURIComponent(data.jfn)}`;
-                new QRCode(qrContainer, { text: qrText, width: 96, height: 96, correctLevel: QRCode.CorrectLevel.H });
+                const publicUrl = window.location.href.split('?')[0].replace('A.HTML', '') + `public.php?jobId=${encodeURIComponent(data.jfn)}`;
+                new QRCode(qrContainer, { text: publicUrl, width: 96, height: 96 });
             }
             openModal('preview-modal');
         }
         
-        function getPrintViewHtml(data, isPublicView = false) {
-             const totalCost = data.totalCost || 0;
+        function getPrintViewHtml(data) {
+            const totalCost = data.totalCost || 0;
             const totalSelling = data.totalSelling || 0;
             const totalProfit = data.totalProfit || 0;
             
@@ -1268,27 +1207,22 @@
                         <p><strong>P.O. #:</strong> ${data.po || ''}</p>
                     </div>
                 </div>
-
                 <div class="grid grid-cols-4 gap-4 mb-4">
                     <div><strong class="font-semibold">Job File No:</strong><div class="print-field">${data.jfn || ''}</div></div>
                     <div class="col-span-3"><strong class="font-semibold">Clearance:</strong><div class="print-field">${(data.cl || []).join(', ')}</div></div>
                     <div><strong class="font-semibold">Invoice No:</strong><div class="print-field">${data.in || ''}</div></div>
                     <div><strong class="font-semibold">Billing Date:</strong><div class="print-field">${data.bd || ''}</div></div>
                     <div class="col-span-2"><strong class="font-semibold">Product Type:</strong><div class="print-field">${(data.pt || []).join(', ')}</div></div>
-                    
                     <div class="col-span-2"><strong class="font-semibold">Shipper's Name:</strong><div class="print-field">${data.sh || ''}</div></div>
                     <div class="col-span-2"><strong class="font-semibold">Consignee's Name:</strong><div class="print-field">${data.co || ''}</div></div>
-
                     <div><strong class="font-semibold">MAWB/OBL/TCN No.:</strong><div class="print-field">${data.mawb || ''}</div></div>
                     <div><strong class="font-semibold">HAWB/HBL:</strong><div class="print-field">${data.hawb || ''}</div></div>
                     <div><strong class="font-semibold">Origin:</strong><div class="print-field">${data.or || ''}</div></div>
                     <div><strong class="font-semibold">Destination:</strong><div class="print-field">${data.de || ''}</div></div>
-
                     <div><strong class="font-semibold">No. of Pieces:</strong><div class="print-field">${data.pc || ''}</div></div>
                     <div><strong class="font-semibold">Gross Weight:</strong><div class="print-field">${data.gw || ''}</div></div>
                     <div><strong class="font-semibold">Volume Weight:</strong><div class="print-field">${data.vw || ''}</div></div>
                     <div><strong class="font-semibold">Salesman:</strong><div class="print-field">${data.sm || ''}</div></div>
-
                      <div class="col-span-4"><strong class="font-semibold">Description:</strong><div class="print-field">${data.dsc || ''}</div></div>
                 </div>
 
@@ -1301,9 +1235,7 @@
                         <th class="px-2 py-1 border font-semibold">Profit</th>
                         <th class="px-2 py-1 border font-semibold">Notes</th>
                     </tr></thead>
-                    <tbody>
-                        ${chargesHtml}
-                    </tbody>
+                    <tbody>${chargesHtml}</tbody>
                     <tfoot><tr class="bg-gray-100 font-bold">
                         <td class="px-2 py-1 border text-right">TOTAL</td>
                         <td class="px-2 py-1 border text-right">${totalCost.toFixed(3)}</td>
@@ -1312,19 +1244,13 @@
                         <td class="px-2 py-1 border"></td>
                     </tr></tfoot>
                 </table>
-                <div class="mb-4">
-                    <strong class="font-semibold">REMARKS:</strong>
-                    <div class="print-field">${data.re || ''}</div>
-                </div>
-
+                <div class="mb-4"><strong class="font-semibold">REMARKS:</strong><div class="print-field">${data.re || ''}</div></div>
                  <footer class="grid grid-cols-3 gap-8 pt-6 border-t items-end text-center">
                     <div><p class="font-semibold">PREPARED BY</p><div class="print-field mt-2">${data.pb || data.createdBy || ''}</div></div>
-                    <div><p class="font-semibold">CHECKED BY</p><div class="print-field mt-2">${data.checkedBy || ''}</div></div>
-                    <div><p class="font-semibold">APPROVED BY</p><div class="print-field mt-2">${data.approvedBy || ''}</div></div>
+                    <div><p class="font-semibold">CHECKED BY</p><div class="print-field mt-2">${data.checkedBy ? `${data.checkedBy} on ${new Date(data.checkedAt).toLocaleDateString()}` : ''}</div></div>
+                    <div><p class="font-semibold">APPROVED BY</p><div class="print-field mt-2">${data.approvedBy ? `${data.approvedBy} on ${new Date(data.approvedAt).toLocaleDateString()}` : ''}</div></div>
                 </footer>
-                 <div class="flex justify-end mt-4">
-                    <div class="qrcode-container"></div>
-                </div>
+                 <div class="flex justify-end mt-4"><div class="qrcode-container"></div></div>
             </div>`;
         }
 
@@ -1355,8 +1281,7 @@
                          <th class="table-cell font-semibold"></th>
                     </tr>
                 </thead>
-                <tbody id="charges-table-body">
-                </tbody>
+                <tbody id="charges-table-body"></tbody>
                 <tfoot>
                      <tr id="total-row" class="bg-gray-100 font-bold">
                         <td class="table-cell text-right">TOTAL:</td>
@@ -1367,14 +1292,11 @@
                     </tr>
                 </tfoot>
             `;
-
             const tableBody = document.getElementById('charges-table-body');
             tableBody.addEventListener('input', e => {
-                if (e.target.classList.contains('cost-input') || e.target.classList.contains('selling-input')) {
-                    calculate();
-                }
+                if (e.target.classList.contains('cost-input') || e.target.classList.contains('selling-input')) { calculate(); }
             });
-             for(let i=0; i<5; i++) addChargeRow();
+            for(let i=0; i<5; i++) addChargeRow();
         }
 
         function addChargeRow(data = {}) {
@@ -1382,7 +1304,10 @@
             const newRow = document.createElement('tr');
 
             newRow.innerHTML = `
-                <td class="table-cell"><input type="text" class="description-input input-field" value="${data.l || ''}" autocomplete="off"></td>
+                <td class="table-cell relative">
+                    <input type="text" class="description-input input-field" value="${data.l || ''}" autocomplete="off">
+                    <div class="autocomplete-suggestions hidden"></div>
+                </td>
                 <td class="table-cell"><input type="number" step="0.001" class="cost-input input-field" value="${data.c || ''}"></td>
                 <td class="table-cell"><input type="number" step="0.001" class="selling-input input-field" value="${data.s || ''}"></td>
                 <td class="table-cell profit-output bg-gray-50 text-right">${((data.s || 0) - (data.c || 0)).toFixed(3)}</td>
@@ -1391,7 +1316,7 @@
             `;
 
             const descriptionInput = newRow.querySelector('.description-input');
-            // setupChargeAutocomplete(descriptionInput);
+            setupChargeAutocomplete(descriptionInput);
             
             const deleteButton = newRow.querySelector('button');
             deleteButton.addEventListener('click', () => { newRow.remove(); calculate(); });
@@ -1399,20 +1324,20 @@
             tableBody.appendChild(newRow);
         }
         
-        function toggleAuthView(showLogin) {
+        function toggleAuthView(isLogin) {
             const nameField = document.getElementById('signup-name-field');
             const emailField = document.getElementById('email-address');
             
-            document.getElementById('auth-title').textContent = showLogin ? 'Sign in to your account' : 'Create a new account';
-            document.getElementById('auth-btn').textContent = showLogin ? 'Sign in' : 'Sign up';
-            document.getElementById('auth-link').textContent = showLogin ? 'Create a new account' : 'Already have an account? Sign in';
-            nameField.style.display = showLogin ? 'none' : 'block';
-            emailField.classList.toggle('rounded-t-md', !showLogin);
+            document.getElementById('auth-title').textContent = isLogin ? 'Sign in to your account' : 'Create a new account';
+            document.getElementById('auth-btn').textContent = isLogin ? 'Sign in' : 'Sign up';
+            document.getElementById('auth-link').textContent = isLogin ? 'Create a new account' : 'Already have an account? Sign in';
+            nameField.style.display = isLogin ? 'none' : 'block';
+            emailField.classList.toggle('rounded-t-md', !isLogin);
             document.getElementById('approval-message').style.display = 'none';
         }
 
-        function openFileManager() {
-            loadJobFiles();
+        async function openFileManager() {
+            await loadJobFiles();
             openModal('file-manager-modal');
         }
 
@@ -1423,7 +1348,7 @@
             const toDate = document.getElementById('filter-date-to').value;
 
             let filtered = jobFilesCache.filter(file => {
-                if (!file || !file.jfn) return false;
+                if (!file || !file.jfn || file.isDeleted) return false;
                 const searchData = [file.jfn, file.sh, file.co, file.mawb].join(' ').toLowerCase();
                 if (searchTerm && !searchData.includes(searchTerm)) return false;
                 if (statusFilter && file.status !== statusFilter) return false;
@@ -1432,18 +1357,58 @@
                 return true;
             });
 
-            displayJobFiles(filtered);
+            displayJobFiles(filtered, 'job-files-list');
             updateStatusSummary('status-summary-file-manager', filtered);
+            updateStatusSummary('status-summary-main', filtered);
+        }
+
+        function displayJobFiles(files, elementId, isRecycleBin = false) {
+             const list = document.getElementById(elementId);
+             if (!files || files.length === 0) {
+                 list.innerHTML = `<p class="text-gray-500 text-center p-4">No job files found.</p>`;
+                 return;
+            }
+            const filesHtml = files.map(file => {
+                const docId = file.jfn.replace(/\//g, '_');
+                let buttons = '';
+                if(isRecycleBin){
+                    buttons = `
+                        <button onclick="restoreJobFile('${docId}')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-sm">Restore</button>
+                        <button onclick="confirmDelete('${docId}', 'recycle')" class="bg-red-700 hover:bg-red-800 text-white font-bold py-1 px-3 rounded text-sm">Delete Forever</button>
+                    `;
+                } else {
+                    const deleteButton = currentUser.role === 'admin' ? `<button onclick="confirmDelete('${docId}', 'jobfile')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm">Delete</button>` : '';
+                    buttons = `
+                        <button onclick="previewJobFileById('${docId}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-sm">Preview</button>
+                        <button onclick="loadJobFileById('${docId}')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-sm">Load</button>
+                        ${deleteButton}
+                    `;
+                }
+                const deletedInfo = isRecycleBin ? `<p class="text-xs text-red-400">Deleted by: ${file.deletedBy} on ${new Date(file.deletedAt).toLocaleString()}</p>` : `<p class="text-xs text-gray-400">Last Updated: ${file.updatedAt ? new Date(file.updatedAt).toLocaleString() : 'N/A'}</p>`;
+
+                return `
+                    <div class="job-file-item border p-3 rounded-lg flex flex-col sm:flex-row justify-between items-center bg-gray-50 hover:bg-gray-100 gap-2">
+                        <div class="text-center sm:text-left">
+                            <p class="font-bold text-indigo-700">${file.jfn || 'No ID'}</p>
+                            <p class="text-sm text-gray-600">Shipper: ${file.sh || 'N/A'} | Consignee: ${file.co || 'N/A'}</p>
+                            ${deletedInfo}
+                        </div>
+                        <div class="space-x-2 flex-shrink-0">
+                            ${buttons}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            list.innerHTML = filesHtml;
         }
         
         async function previewJobFileById(docId) {
-            const file = jobFilesCache.find(f => f.jfn.replace(/\//g, '_') === docId);
-            if(file) {
-                 const previewHTML = getPrintViewHtml(file, false);
+             const filename = docId + '.json';
+            const result = await handleApiRequest(`load-jobfile.php?file=${filename}`, { method: 'GET' }, null, "Could not load file for preview.");
+            if (result && result.data) {
+                 const previewHTML = getPrintViewHtml(result.data);
                  document.getElementById('preview-body').innerHTML = previewHTML;
                  openModal('preview-modal');
-            } else {
-                showNotification("Could not find file data to preview.", true);
             }
         }
         
@@ -1459,36 +1424,27 @@
             summaryEl.innerHTML = `
                 <div class="flex flex-wrap justify-center gap-2 text-xs">
                     <span class="font-bold">Total: ${files.length}</span>
-                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">Pending: ${counts['pending'] || 0}</span>
-                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full">Checked: ${counts['checked'] || 0}</span>
-                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full">Approved: ${counts['approved'] || 0}</span>
-                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full">Rejected: ${counts['rejected'] || 0}</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full cursor-pointer" onclick="showStatusJobs('pending')">Pending: ${counts['pending'] || 0}</span>
+                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full cursor-pointer" onclick="showStatusJobs('checked')">Checked: ${counts['checked'] || 0}</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full cursor-pointer" onclick="showStatusJobs('approved')">Approved: ${counts['approved'] || 0}</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full cursor-pointer" onclick="showStatusJobs('rejected')">Rejected: ${counts['rejected'] || 0}</span>
                 </div>
             `;
         };
-
-        // --- Client Management (Firebase dependent, can remain) ---
-        function openClientManager() { openModal('client-manager-modal'); }
-
+        
+        // --- CLIENT MANAGEMENT (Firebase) ---
+        function openClientManager() { loadClients(); openModal('client-manager-modal'); }
         function loadClients() {
             if (!db) return;
-            const clientsCollection = collection(db, 'clients');
-            onSnapshot(query(clientsCollection), (snapshot) => {
+            onSnapshot(collection(db, 'clients'), (snapshot) => {
                 clientsCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 clientsCache.sort((a, b) => a.name.localeCompare(b.name)); 
                 displayClients(clientsCache);
-            }, (error) => {
-                console.error("Error loading clients:", error);
-                showNotification("Could not load clients from Firebase.", true);
-            });
+            }, (error) => showNotification("Could not load clients from Firebase.", true));
         }
-
         function displayClients(clients) {
             const list = document.getElementById('client-list');
-            if (clients.length === 0) {
-                list.innerHTML = `<p class="text-gray-500 text-center p-4">No clients found.</p>`;
-                return;
-            }
+            if (clients.length === 0) { list.innerHTML = `<p class="text-gray-500 text-center p-4">No clients found.</p>`; return; }
             list.innerHTML = clients.map(client => `
                 <div class="client-item border p-3 rounded-lg bg-gray-50 hover:bg-gray-100" data-search-term="${client.name.toLowerCase()}">
                     <div class="flex justify-between items-start">
@@ -1497,55 +1453,448 @@
                             <p class="text-sm text-gray-600">${client.address || ''}</p>
                             <p class="text-xs text-gray-500">${client.contactPerson || ''} - ${client.phone || ''}</p>
                         </div>
+                        <div class="flex-shrink-0 space-x-2">
+                           <button onclick="editClient('${client.id}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded text-xs">Edit</button>
+                           <button onclick="confirmDelete('${client.id}', 'client')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-xs">Delete</button>
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
-        
-        function logUserActivity(jobFileNo) {
-            if (!currentUser || !jobFileNo) return;
-            // Logging to local storage is fine as is
+        async function saveClient() {
+            const id = document.getElementById('client-id').value;
+            const data = {
+                name: document.getElementById('client-name').value,
+                address: document.getElementById('client-address').value,
+                contactPerson: document.getElementById('client-contact-person').value,
+                phone: document.getElementById('client-phone').value,
+                type: document.getElementById('client-type').value,
+            };
+            if(!data.name) { showNotification("Client name is required.", true); return; }
+            showLoader();
+            try {
+                const docRef = id ? doc(db, 'clients', id) : doc(collection(db, 'clients'));
+                await setDoc(docRef, data, { merge: true });
+                showNotification("Client saved successfully.");
+                clearClientForm();
+            } catch (e) { console.error(e); showNotification("Error saving client.", true); }
+            hideLoader();
+        }
+        function clearClientForm() {
+            document.getElementById('client-form').reset();
+            document.getElementById('client-id').value = '';
+            document.getElementById('client-form-title').textContent = 'Add New Client';
+        }
+        function editClient(clientId) {
+            const client = clientsCache.find(c => c.id === clientId);
+            if(client) {
+                document.getElementById('client-id').value = client.id;
+                document.getElementById('client-name').value = client.name;
+                document.getElementById('client-address').value = client.address || '';
+                document.getElementById('client-contact-person').value = client.contactPerson || '';
+                document.getElementById('client-phone').value = client.phone || '';
+                document.getElementById('client-type').value = client.type || 'Shipper';
+                document.getElementById('client-form-title').textContent = 'Edit Client';
+            }
+        }
+        async function deleteClient(clientId) {
+            closeModal('confirm-modal');
+            showLoader();
+            try { await deleteDoc(doc(db, 'clients', clientId)); showNotification("Client deleted."); }
+            catch(e) { showNotification("Error deleting client.", true); }
+            hideLoader();
+        }
+        function setupAutocomplete(inputElement, suggestionsElementId, clientType) {
+            const suggestionsPanel = document.getElementById(suggestionsElementId);
+            inputElement.addEventListener('input', () => {
+                const value = inputElement.value.toLowerCase();
+                if (!value) { suggestionsPanel.classList.add('hidden'); return; }
+
+                const filtered = clientsCache.filter(c => 
+                    (c.type === clientType || c.type === 'Both') && c.name.toLowerCase().includes(value)
+                );
+                
+                if (filtered.length > 0) {
+                    suggestionsPanel.innerHTML = filtered.map(c => `<div class="autocomplete-suggestion" data-name="${c.name}">${c.name}</div>`).join('');
+                    suggestionsPanel.classList.remove('hidden');
+                } else {
+                    suggestionsPanel.classList.add('hidden');
+                }
+            });
+            suggestionsPanel.addEventListener('click', (e) => {
+                if (e.target.classList.contains('autocomplete-suggestion')) {
+                    inputElement.value = e.target.dataset.name;
+                    suggestionsPanel.classList.add('hidden');
+                }
+            });
+            inputElement.addEventListener('blur', () => setTimeout(() => suggestionsPanel.classList.add('hidden'), 150));
+        }
+
+        // --- ADMIN PANEL (Firebase) ---
+        async function openAdminPanel() {
+            if (currentUser.role !== 'admin') { return; }
+            showLoader();
+            try {
+                const snapshot = await getDocs(collection(db, 'users'));
+                allUsersCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                const userListEl = document.getElementById('user-list');
+                userListEl.innerHTML = allUsersCache.map(user => {
+                    return `
+                    <div class="p-2 border-b grid grid-cols-3 gap-4 items-center">
+                        <div>
+                            <p class="font-medium">${user.displayName}</p>
+                            <p class="text-xs text-gray-500">${user.email}</p>
+                        </div>
+                        <div class="text-sm text-gray-600 capitalize">${user.role}</div>
+                        <div>
+                            <select data-uid="${user.id}" class="input-field status-select text-sm p-1">
+                                <option value="active" ${user.status === 'active' ? 'selected':''}>Active</option>
+                                <option value="inactive" ${user.status === 'inactive' ? 'selected':''}>Inactive</option>
+                                <option value="blocked" ${user.status === 'blocked' ? 'selected':''}>Blocked</option>
+                            </select>
+                        </div>
+                    </div>`;
+                }).join('');
+                openModal('admin-panel-modal');
+            } catch(e) { showNotification("Could not load user data.", true); }
+            hideLoader();
+        }
+        async function saveUserChanges() {
+            showLoader();
+            const batch = writeBatch(db);
+            document.querySelectorAll('.status-select').forEach(select => {
+                const uid = select.dataset.uid;
+                const newStatus = select.value;
+                const docRef = doc(db, 'users', uid);
+                batch.update(docRef, { status: newStatus });
+            });
+            try {
+                await batch.commit();
+                showNotification("User changes saved.");
+                closeModal('admin-panel-modal');
+            } catch(e) { showNotification("Error saving user changes.", true); }
+            hideLoader();
         }
         
-        // --- GEMINI API INTEGRATION (No changes needed) ---
-        // ... generateRemarks and suggestCharges functions ...
+        // --- Analytics Dashboard ---
+        async function openAnalyticsDashboard() {
+            const result = await handleApiRequest('list-jobfiles.php?full=true', { method: 'GET' }, null, "Could not load data for analytics.");
+            if(!result || !result.files) return;
+            analyticsDataCache = result.files;
+            
+            const container = document.getElementById('analytics-container');
+            container.innerHTML = `
+                <div class="container">
+                    <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 no-print">
+                        <h3 class="text-2xl font-bold">Analytics Dashboard</h3>
+                        <div>
+                            <button onclick="downloadAnalyticsCsv()" title="Download CSV" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded mr-4">📄 CSV</button>
+                            <button onclick="printPage()" title="Print Analytics" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
+                            <button onclick="closeAnalyticsDashboard()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded">Back to Job File</button>
+                        </div>
+                    </div>
+                    <div id="analytics-body" class="space-y-6"></div>
+                </div>`;
+            renderAnalytics(analyticsDataCache);
+            document.getElementById('app-container').style.display = 'none';
+            container.style.display = 'block';
+        }
 
+        function closeAnalyticsDashboard() {
+            document.getElementById('analytics-container').style.display = 'none';
+            document.getElementById('app-container').style.display = 'block';
+        }
+        function renderAnalytics(files) {
+            const body = document.getElementById('analytics-body');
+            const totals = files.reduce((acc, file) => {
+                acc.cost += file.totalCost || 0;
+                acc.selling += file.totalSelling || 0;
+                acc.profit += file.totalProfit || 0;
+                return acc;
+            }, { cost: 0, selling: 0, profit: 0 });
+
+            const monthlyData = files.reduce((acc, file) => {
+                if(!file.d) return acc;
+                const month = file.d.substring(0, 7); // YYYY-MM
+                if(!acc[month]) acc[month] = { cost: 0, selling: 0, profit: 0, count: 0 };
+                acc[month].cost += file.totalCost || 0;
+                acc[month].selling += file.totalSelling || 0;
+                acc[month].profit += file.totalProfit || 0;
+                acc[month].count++;
+                return acc;
+            }, {});
+
+            const salesmanData = files.reduce((acc, file) => {
+                const salesman = file.sm || 'N/A';
+                if(!acc[salesman]) acc[salesman] = { profit: 0, count: 0 };
+                acc[salesman].profit += file.totalProfit || 0;
+                acc[salesman].count++;
+                return acc;
+            }, {});
+            
+            const sortedSalesmen = Object.entries(salesmanData).sort((a,b) => b[1].profit - a[1].profit);
+
+            body.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div class="bg-red-100 p-4 rounded-lg"><p class="text-sm font-medium">Total Cost</p><p class="text-2xl font-bold">${totals.cost.toFixed(3)}</p></div>
+                    <div class="bg-blue-100 p-4 rounded-lg"><p class="text-sm font-medium">Total Selling</p><p class="text-2xl font-bold">${totals.selling.toFixed(3)}</p></div>
+                    <div class="bg-green-100 p-4 rounded-lg"><p class="text-sm font-medium">Total Profit</p><p class="text-2xl font-bold">${totals.profit.toFixed(3)}</p></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white p-4 rounded-lg shadow"><canvas id="monthly-profit-chart"></canvas></div>
+                    <div class="bg-white p-4 rounded-lg shadow"><canvas id="salesman-profit-chart"></canvas></div>
+                </div>
+                <div>
+                  <h4 class="text-xl font-bold mb-2">Files by Creator</h4>
+                  ${renderTableFromData(files, 'createdBy', 'Creator', ['profit', 'count'], showUserJobs)}
+                </div>
+                 <div>
+                  <h4 class="text-xl font-bold mb-2">Files by Month (Job Date)</h4>
+                  ${renderTableFromData(files, (f) => f.d ? f.d.substring(0, 7) : 'N/A', 'Month', ['profit', 'count'], (month) => showMonthlyJobs(month, 'd'))}
+                </div>
+            `;
+            // Init Charts
+            const sortedMonths = Object.keys(monthlyData).sort();
+            new Chart(document.getElementById('monthly-profit-chart'), {
+                type: 'line',
+                data: {
+                    labels: sortedMonths,
+                    datasets: [{ label: 'Monthly Profit', data: sortedMonths.map(m => monthlyData[m].profit), tension: 0.1, borderColor: '#16a34a' }]
+                },
+                options: { plugins: { title: { display: true, text: 'Monthly Profit Over Time' } } }
+            });
+             new Chart(document.getElementById('salesman-profit-chart'), {
+                type: 'bar',
+                data: {
+                    labels: sortedSalesmen.map(s => s[0]),
+                    datasets: [{ label: 'Salesman Profit', data: sortedSalesmen.map(s => s[1].profit), backgroundColor: '#2563eb' }]
+                },
+                options: { plugins: { title: { display: true, text: 'Top Salesmen by Profit' } } }
+            });
+        }
+        
+        function renderTableFromData(files, keyField, keyHeader, valueHeaders, clickHandler) {
+            const data = files.reduce((acc, file) => {
+                const key = typeof keyField === 'function' ? keyField(file) : (file[keyField] || 'N/A');
+                if(!acc[key]) acc[key] = { profit: 0, cost: 0, selling: 0, count: 0 };
+                acc[key].profit += file.totalProfit || 0;
+                acc[key].cost += file.totalCost || 0;
+                acc[key].selling += file.totalSelling || 0;
+                acc[key].count++;
+                return acc;
+            }, {});
+            let table = `<table class="w-full analytics-table"><thead><tr><th>${keyHeader}</th>`;
+            valueHeaders.forEach(h => table += `<th>${h.charAt(0).toUpperCase() + h.slice(1)}</th>`);
+            table += '</tr></thead><tbody>';
+            Object.entries(data).sort((a, b) => b[1].profit - a[1].profit).forEach(([key, values]) => {
+                table += `<tr class="hover:bg-gray-100 cursor-pointer" onclick="${clickHandler.name}('${key}')"><td>${key}</td>`;
+                valueHeaders.forEach(h => table += `<td>${typeof values[h] === 'number' ? values[h].toFixed(3) : values[h]}</td>`);
+                table += `</tr>`;
+            });
+            table += '</tbody></table>';
+            return table;
+        }
+
+        function showUserJobs(userName) {
+            const userFiles = analyticsDataCache.filter(f => (f.createdBy || 'N/A') === userName);
+            displayJobFiles(userFiles, 'user-jobs-list');
+            document.getElementById('user-jobs-modal-title').textContent = `Job Files Created By ${userName}`;
+            openModal('user-jobs-modal', true);
+        }
+        function showMonthlyJobs(month, dateType) {
+            const monthFiles = analyticsDataCache.filter(f => f[dateType] && f[dateType].startsWith(month));
+            displayJobFiles(monthFiles, 'user-jobs-list');
+            document.getElementById('user-jobs-modal-title').textContent = `Job Files for ${month}`;
+            openModal('user-jobs-modal', true);
+        }
+        function showStatusJobs(status){
+            const statusFiles = jobFilesCache.filter(f => (f.status || 'pending') === status);
+            displayJobFiles(statusFiles, 'user-jobs-list');
+            document.getElementById('user-jobs-modal-title').textContent = `Job Files with Status: ${status.charAt(0).toUpperCase() + status.slice(1)}`;
+            openModal('user-jobs-modal');
+        }
+        function downloadAnalyticsCsv() {
+             let csvContent = "data:text/csv;charset=utf-8,Job File No,Date,Shipper,Consignee,Salesman,Created By,Status,Total Cost,Total Selling,Total Profit\n";
+             analyticsDataCache.forEach(file => {
+                 const row = [file.jfn, file.d, `"${file.sh}"`, `"${file.co}"`, file.sm, file.createdBy, file.status, file.totalCost, file.totalSelling, file.totalProfit].join(',');
+                 csvContent += row + "\r\n";
+             });
+             const encodedUri = encodeURI(csvContent);
+             const link = document.createElement("a");
+             link.setAttribute("href", encodedUri);
+             link.setAttribute("download", `jobfiles_analytics_${new Date().toISOString().split('T')[0]}.csv`);
+             document.body.appendChild(link);
+             link.click();
+             document.body.removeChild(link);
+        }
+
+        // --- Charge & Activity Log (Local Storage) ---
+        function openChargeManager() {
+            const listEl = document.getElementById('charge-description-list');
+            listEl.innerHTML = chargeDescriptions.map(d => `
+                <div class="flex justify-between items-center p-2 border-b">
+                    <span>${d}</span>
+                    <button onclick="deleteChargeDescription('${d}')" class="text-red-500 font-bold">&times;</button>
+                </div>
+            `).join('');
+            openModal('charge-manager-modal');
+        }
+        function saveChargeDescription() {
+            const input = document.getElementById('new-charge-description');
+            const newDesc = input.value.trim();
+            if(newDesc && !chargeDescriptions.includes(newDesc)){
+                chargeDescriptions.unshift(newDesc);
+                localStorage.setItem('chargeDescriptions', JSON.stringify(chargeDescriptions));
+                input.value = '';
+                openChargeManager(); // Refresh list
+            }
+        }
+        function deleteChargeDescription(description) {
+            chargeDescriptions = chargeDescriptions.filter(d => d !== description);
+            localStorage.setItem('chargeDescriptions', JSON.stringify(chargeDescriptions));
+            openChargeManager(); // Refresh list
+        }
+        function setupChargeAutocomplete(inputElement) {
+            const suggestionsPanel = inputElement.nextElementSibling;
+            if(!suggestionsPanel) return;
+            inputElement.addEventListener('input', () => {
+                const value = inputElement.value.toLowerCase();
+                suggestionsPanel.innerHTML = '';
+                if (!value) { suggestionsPanel.classList.add('hidden'); return; }
+                const filtered = chargeDescriptions.filter(d => d.toLowerCase().includes(value));
+                if(filtered.length > 0) {
+                    suggestionsPanel.innerHTML = filtered.map(d => `<div class="autocomplete-suggestion">${d}</div>`).join('');
+                    suggestionsPanel.classList.remove('hidden');
+                } else {
+                    suggestionsPanel.classList.add('hidden');
+                }
+            });
+            suggestionsPanel.addEventListener('click', e => {
+                if (e.target.classList.contains('autocomplete-suggestion')) {
+                    inputElement.value = e.target.textContent;
+                    suggestionsPanel.classList.add('hidden');
+                }
+            });
+            inputElement.addEventListener('blur', () => setTimeout(() => suggestionsPanel.classList.add('hidden'), 150));
+        }
+        function logUserActivity(jobFileNo) {
+            if (!currentUser || !jobFileNo) return;
+            const logEntry = { user: currentUser.displayName, file: jobFileNo, timestamp: new Date().toISOString() };
+            let logs = [];
+            try { logs = JSON.parse(localStorage.getItem('userActivityLog')) || []; } catch(e) { logs = []; }
+            logs.unshift(logEntry);
+            if(logs.length > 200) logs.splice(200);
+            localStorage.setItem('userActivityLog', JSON.stringify(logs));
+        }
+        function openUserActivityLog() {
+            const logs = JSON.parse(localStorage.getItem('userActivityLog') || '[]');
+            const body = document.getElementById('activity-log-body');
+            body.innerHTML = logs.map(log => `<tr>
+                <td class="table-cell">${log.user}</td>
+                <td class="table-cell">${log.file}</td>
+                <td class="table-cell">${new Date(log.timestamp).toLocaleString()}</td>
+            </tr>`).join('');
+            openModal('activity-log-modal');
+        }
+
+        // --- RECYCLE BIN ---
+        async function openRecycleBin() {
+            const result = await handleApiRequest('list-jobfiles.php?deleted=true', { method: 'GET' }, null, "Could not load recycle bin.");
+            if(result && result.files) {
+                jobFilesCache = [...jobFilesCache.filter(f => !f.isDeleted), ...result.files]; // merge recycle bin files into cache
+                displayJobFiles(result.files, 'recycle-bin-list', true);
+                openModal('recycle-bin-modal');
+            }
+        }
+        
+        async function backupAllData() {
+            const result = await handleApiRequest('list-jobfiles.php?full=true&all=true', { method: 'GET' }, null, "Could not load data for backup.");
+            if(!result || !result.files) return;
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(result.files, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `jobfiles_backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+            showNotification("Backup downloaded.");
+        }
 
         // --- App Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            initializeFirebase(); // Initialize Firebase for Auth and Clients
+            initializeFirebase(); 
             
-            // Assign functions to window object
-            window.openFileManager = openFileManager;
-            window.saveJobFile = saveJobFile;
-            window.clearForm = clearForm;
-            window.printPreview = printPreview;
-            window.openClientManager = openClientManager;
-            window.loadJobFileById = loadJobFileById;
-            window.previewJobFileById = previewJobFileById;
-            window.confirmDelete = confirmDelete;
-            window.checkJobFile = checkJobFile;
-            window.approveJobFile = approveJobFile;
-            window.promptForRejection = promptForRejection;
-            window.closeModal = closeModal;
-            window.addChargeRow = addChargeRow;
-            window.printPage = printPage;
+            // Global Function Assignment
+            window.closeModal = closeModal; window.printPage = printPage;
+            window.openFileManager = openFileManager; window.saveJobFile = saveJobFile; window.clearForm = clearForm;
+            window.printPreview = printPreview; window.openClientManager = openClientManager; window.openRecycleBin = openRecycleBin;
+            window.loadJobFileById = loadJobFileById; window.previewJobFileById = previewJobFileById;
+            window.confirmDelete = confirmDelete; window.restoreJobFile = restoreJobFile;
+            window.checkJobFile = checkJobFile; window.approveJobFile = approveJobFile; window.promptForRejection = promptForRejection;
+            window.addChargeRow = addChargeRow; window.openChargeManager = openChargeManager;
+            window.saveChargeDescription = saveChargeDescription; window.deleteChargeDescription = deleteChargeDescription;
+            window.openAdminPanel = openAdminPanel; window.saveUserChanges = saveUserChanges;
+            window.editClient = editClient; window.showUserJobs = showUserJobs; window.showMonthlyJobs = showMonthlyJobs;
+            window.showStatusJobs = showStatusJobs;
+            window.openAnalyticsDashboard = openAnalyticsDashboard; window.closeAnalyticsDashboard = closeAnalyticsDashboard;
+            window.downloadAnalyticsCsv = downloadAnalyticsCsv;
+            window.openUserActivityLog = openUserActivityLog; window.backupAllData = backupAllData;
             
-            // Event listeners
+            // Load local data
+            chargeDescriptions = JSON.parse(localStorage.getItem('chargeDescriptions') || '["Ex-works Charges:", "Land/Air / Sea Freight:", "Fuell Security / War Surcharge:", "Formalities:", "Delivery Order Fee:", "Transportation Charges:", "Inspection / Computer Print Charges:", "Handling Charges:", "Labor / Forklift Charges:", "Documentation Charges:", "Clearance Charges:", "Customs Duty:", "Terminal Handling Charges:", "Legalization Charges:", "Demurrage Charges:", "Loading / Offloading Charges:", "Destination Clearance Charges:", "Packing Charges:", "Port Charges:", "Other Charges:", "PAI Approval :", "Insurance Fee :", "EPA Charges :"]');
+
+            // Event Listeners
+            let isLoginView = true;
+            document.getElementById('auth-link').addEventListener('click', (e) => { e.preventDefault(); isLoginView = !isLoginView; toggleAuthView(isLoginView); });
             document.getElementById('auth-btn').addEventListener('click', () => {
                 const email = document.getElementById('email-address').value;
                 const password = document.getElementById('password').value;
-                // Assuming isLoginView logic exists or is handled elsewhere
-                handleLogin(email, password); 
+                if (isLoginView) { handleLogin(email, password); } 
+                else { const name = document.getElementById('full-name').value; handleSignUp(email, password, name); }
             });
             document.getElementById('logout-btn').addEventListener('click', handleLogout);
-            document.getElementById('admin-panel-btn').addEventListener('click', () => console.log('admin panel'));
+            document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
+            document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
+            
+            document.getElementById('activity-log-btn').addEventListener('click', openUserActivityLog);
+            document.getElementById('admin-panel-btn').addEventListener('click', openAdminPanel);
+            
+            document.getElementById('check-btn').addEventListener('click', checkJobFile);
+            document.getElementById('approve-btn').addEventListener('click', approveJobFile);
+            document.getElementById('reject-btn').addEventListener('click', promptForRejection);
             document.getElementById('confirm-reject-btn').addEventListener('click', rejectJobFile);
+            
+            // Filter Listeners
+            const applyFilters = () => applyFiltersAndDisplay();
+            document.getElementById('search-bar').addEventListener('input', applyFilters);
+            document.getElementById('filter-status').addEventListener('change', applyFilters);
+            document.getElementById('filter-date-from').addEventListener('change', applyFilters);
+            document.getElementById('filter-date-to').addEventListener('change', applyFilters);
+            document.getElementById('clear-filters-btn').addEventListener('click', () => {
+                document.getElementById('search-bar').value = ''; document.getElementById('filter-status').value = '';
+                document.getElementById('filter-date-from').value = ''; document.getElementById('filter-date-to').value = '';
+                applyFilters();
+            });
+            
+            // Client Manager Listeners
+            document.getElementById('client-form').addEventListener('submit', (e) => { e.preventDefault(); saveClient(); });
+            document.getElementById('clear-client-form-btn').addEventListener('click', clearClientForm);
+            document.getElementById('client-search-bar').addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = clientsCache.filter(c => c.name.toLowerCase().includes(term));
+                displayClients(filtered);
+            });
+            setupAutocomplete(document.getElementById('shipper-name'), 'shipper-suggestions', 'Shipper');
+            setupAutocomplete(document.getElementById('consignee-name'), 'consignee-suggestions', 'Consignee');
+            
+            document.getElementById('confirm-cancel-btn').addEventListener('click', () => {
+                const okButton = document.getElementById('confirm-ok-btn');
+                const newOkButton = okButton.cloneNode(true); // Remove old listeners
+                okButton.parentNode.replaceChild(newOkButton, okButton);
+                closeModal('confirm-modal');
+            });
 
-            document.getElementById('search-bar').addEventListener('input', applyFiltersAndDisplay);
-            document.getElementById('filter-status').addEventListener('change', applyFiltersAndDisplay);
-            document.getElementById('filter-date-from').addEventListener('change', applyFiltersAndDisplay);
-            document.getElementById('filter-date-to').addEventListener('change', applyFiltersAndDisplay);
         });
     </script>
 </body>
