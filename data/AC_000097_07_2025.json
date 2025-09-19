@@ -1,0 +1,203 @@
+{
+  "de": "KUWAIT",
+  "d": "2025-07-03",
+  "ts": "CLEARANCE AND DELIVERY ",
+  "cl": [
+    "Import"
+  ],
+  "ca": "TURKISH AIRLINE",
+  "fv": "",
+  "re": "",
+  "createdAt": "2025-08-10T09:16:56.000Z",
+  "totalProfit": 58,
+  "vw": "",
+  "createdBy": "ABDUL HADI ",
+  "co": "BOODAI TRADING CO",
+  "updatedAt": "2025-08-10T09:16:56.000Z",
+  "sh": "J. L. WINGERT CO",
+  "mawb": "235-84318253",
+  "hawb": "",
+  "totalCost": 385.62,
+  "lastUpdatedBy": "ABDUL HADI ",
+  "po": "",
+  "totalSelling": 443.62,
+  "jfn": "AC/000097/07/2025",
+  "pc": "2",
+  "pb": "ABDUL HADI ",
+  "in": "INV/000313/2025",
+  "dsc": "5 GAL RB BYPASS FEEDER ",
+  "or": "LOS ANGELES CA",
+  "cn": "",
+  "status": "pending",
+  "vn": "",
+  "gw": "651 KG",
+  "tn": "",
+  "ch": [
+    {
+      "c": "0",
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Land/Air / Sea Freight:",
+      "s": "0",
+      "c": "0",
+      "k": "freight"
+    },
+    {
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "formalities",
+      "s": "0",
+      "l": "Formalities:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "c": "0",
+      "k": "do_fee"
+    },
+    {
+      "k": "transportation",
+      "n": "",
+      "s": "35.000",
+      "l": "Transportation Charges:",
+      "c": "0"
+    },
+    {
+      "k": "inspection",
+      "s": "26.010",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "26.010",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Handling Charges:",
+      "c": "0",
+      "k": "handling",
+      "s": "15.000"
+    },
+    {
+      "n": "",
+      "c": "3.000",
+      "s": "0",
+      "k": "labor",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "documentation",
+      "s": "0",
+      "l": "Documentation Charges:"
+    },
+    {
+      "s": "20.000",
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "n": "",
+      "c": "15.000"
+    },
+    {
+      "l": "Customs Duty:",
+      "c": "312.610",
+      "k": "customs_duty",
+      "s": "312.610",
+      "n": ""
+    },
+    {
+      "k": "thc",
+      "l": "Terminal Handling Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "legalization",
+      "c": "27.000",
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "30.000"
+    },
+    {
+      "k": "demurrage",
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "l": "Loading / Offloading Charges:",
+      "n": "",
+      "s": "0",
+      "k": "loading"
+    },
+    {
+      "s": "0",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Packing Charges:",
+      "k": "packing"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "port_charges",
+      "l": "Port Charges:"
+    },
+    {
+      "l": "Bank Charges:",
+      "c": "2.000",
+      "s": "5.000",
+      "n": "",
+      "k": "other"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "PAI Approval :",
+      "k": "pai"
+    },
+    {
+      "k": "insurance",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Insurance Fee :"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "EPA Charges :",
+      "k": "epa",
+      "s": "0"
+    }
+  ],
+  "sm": "",
+  "bd": "2025-07-15",
+  "pt": [
+    "Air Freight"
+  ]
+}
