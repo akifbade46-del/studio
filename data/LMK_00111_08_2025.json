@@ -1,0 +1,201 @@
+{
+  "updatedAt": "2025-08-31T07:15:11.000Z",
+  "de": "DOHA W/H",
+  "status": "checked",
+  "totalProfit": 369,
+  "lastUpdatedBy": "ABDUL HADI ",
+  "pt": [],
+  "jfn": "LMK/00111/08/2025",
+  "po": "",
+  "checkedAt": "2025-08-31T07:16:38.000Z",
+  "totalSelling": 405,
+  "ts": "",
+  "pb": "ABDUL HADI ",
+  "ca": "",
+  "in": "INV/00393/2025",
+  "createdAt": "2025-08-30T11:14:36.000Z",
+  "re": "",
+  "co": "MRS. NOURIYA AL HUMAIDI",
+  "ch": [
+    {
+      "s": "0",
+      "l": "Ex-works Charges:",
+      "k": "ex_works",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "k": "surcharge",
+      "s": "0"
+    },
+    {
+      "l": "Formalities:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "formalities"
+    },
+    {
+      "c": "0",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "k": "do_fee",
+      "s": "0"
+    },
+    {
+      "s": "100.000",
+      "n": "",
+      "k": "transportation",
+      "c": "0",
+      "l": "Transportation Charges:"
+    },
+    {
+      "k": "inspection",
+      "s": "0",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Handling Charges:",
+      "s": "50.000",
+      "c": "0",
+      "k": "handling",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "labor",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "documentation",
+      "n": "",
+      "l": "Documentation Charges:"
+    },
+    {
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "customs_duty",
+      "l": "Customs Duty:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "thc",
+      "l": "Terminal Handling Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Legalization Charges:",
+      "s": "0",
+      "k": "legalization",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "demurrage"
+    },
+    {
+      "s": "75.000",
+      "c": "36.000",
+      "l": "Loading / Offloading Charges Hari :",
+      "n": "",
+      "k": "loading"
+    },
+    {
+      "s": "0",
+      "l": "Destination Clearance Charges:",
+      "c": "0",
+      "k": "dest_clearance",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Packing Charges:",
+      "k": "packing",
+      "s": "180.000",
+      "n": ""
+    },
+    {
+      "k": "port_charges",
+      "n": "",
+      "c": "0",
+      "l": "Port Charges:",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "l": "Other Charges:",
+      "n": "",
+      "k": "other",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "pai",
+      "c": "0",
+      "l": "PAI Approval :"
+    },
+    {
+      "k": "insurance",
+      "l": "Insurance Fee :",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "epa",
+      "l": "EPA Charges :",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    }
+  ],
+  "cl": [],
+  "tn": "",
+  "bd": "2025-08-31",
+  "or": "ABU HALIFA",
+  "gw": "",
+  "checkedBy": "AJMAL KIANI",
+  "dsc": "",
+  "createdBy": "ABDUL HADI ",
+  "vn": "",
+  "mawb": "",
+  "vw": "",
+  "sh": "MRS. NOURIYA AL HUMAIDI",
+  "hawb": "",
+  "pc": "",
+  "totalCost": 36,
+  "d": "2025-08-30",
+  "fv": "",
+  "cn": "",
+  "sm": ""
+}
