@@ -1,0 +1,203 @@
+{
+  "mawb": "3809328600",
+  "co": "JAAYEL SAAD S ALSABAN",
+  "sh": "JAAYEL SAAD S ALSABAN",
+  "vn": "",
+  "ca": "DHL",
+  "bd": "2025-07-24",
+  "or": "KUWAIT",
+  "fv": "",
+  "d": "2025-07-24",
+  "totalCost": 63.93,
+  "totalSelling": 130,
+  "gw": "19 KG",
+  "jfn": "AE/00040/07/2025",
+  "pb": "ABDUL HADI ",
+  "updatedAt": "2025-08-10T12:57:52.000Z",
+  "pt": [
+    "Air Freight"
+  ],
+  "in": "INV/00338/2025",
+  "dsc": "PERSONAL EFFECTS",
+  "vw": "26 KG",
+  "createdBy": "ABDUL HADI ",
+  "ch": [
+    {
+      "c": "0",
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "l": "Air Freight Door to Door:",
+      "c": "63.928",
+      "n": "",
+      "k": "freight",
+      "s": "130.000"
+    },
+    {
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Formalities:",
+      "c": "0",
+      "s": "0",
+      "k": "formalities"
+    },
+    {
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "s": "0",
+      "c": "0",
+      "k": "do_fee"
+    },
+    {
+      "s": "0",
+      "k": "transportation",
+      "n": "",
+      "c": "0",
+      "l": "Transportation Charges:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "inspection",
+      "c": "0",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "l": "Handling Charges:",
+      "n": "",
+      "k": "handling",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "labor",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "clearance",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "customs_duty",
+      "c": "0",
+      "s": "0",
+      "l": "Customs Duty:"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "k": "thc"
+    },
+    {
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "legalization"
+    },
+    {
+      "n": "",
+      "k": "demurrage",
+      "c": "0",
+      "s": "0",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "Destination Clearance Charges:",
+      "c": "0",
+      "k": "dest_clearance",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Packing Charges:",
+      "k": "packing"
+    },
+    {
+      "c": "0",
+      "k": "port_charges",
+      "s": "0",
+      "n": "",
+      "l": "Port Charges:"
+    },
+    {
+      "s": "0",
+      "k": "other",
+      "l": "Other Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "insurance",
+      "n": "",
+      "c": "0",
+      "l": "Insurance Fee :"
+    },
+    {
+      "s": "0",
+      "l": "EPA Charges :",
+      "c": "0",
+      "k": "epa",
+      "n": ""
+    }
+  ],
+  "createdAt": "2025-08-10T12:57:52.000Z",
+  "tn": "",
+  "cl": [
+    "Export"
+  ],
+  "hawb": "",
+  "po": "",
+  "cn": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "sm": "",
+  "de": "ITALY",
+  "ts": "DOOR TO DOOR",
+  "pc": "1",
+  "re": "",
+  "status": "pending",
+  "totalProfit": 66.07
+}
