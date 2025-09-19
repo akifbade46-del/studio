@@ -1,0 +1,203 @@
+{
+  "totalCost": 293.46,
+  "updatedAt": "2025-08-10T10:36:50.000Z",
+  "pt": [
+    "Air Freight"
+  ],
+  "or": "MADRID",
+  "po": "",
+  "totalSelling": 488.46,
+  "jfn": "AC/00101/07/205",
+  "sm": "",
+  "vw": "614 KG",
+  "status": "pending",
+  "pc": "3",
+  "ch": [
+    {
+      "k": "ex_works",
+      "c": "0",
+      "n": "",
+      "l": "Ex-works Charges:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Land/Air / Sea Freight:",
+      "c": "0",
+      "s": "0",
+      "k": "freight"
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "surcharge"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "formalities",
+      "n": "",
+      "l": "Formalities:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "65.000",
+      "l": "Transportation Charges:",
+      "k": "transportation",
+      "n": ""
+    },
+    {
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "s": "20.610",
+      "c": "20.610"
+    },
+    {
+      "k": "handling",
+      "n": "",
+      "s": "25.000",
+      "c": "0",
+      "l": "Handling Charges:"
+    },
+    {
+      "c": "0",
+      "l": "Labor / Forklift Charges:",
+      "n": "",
+      "s": "50.000",
+      "k": "labor"
+    },
+    {
+      "k": "documentation",
+      "n": "",
+      "l": "Documentation Charges:",
+      "s": "15.000",
+      "c": "0"
+    },
+    {
+      "k": "clearance",
+      "s": "65.000",
+      "n": "",
+      "c": "30.000",
+      "l": "Clearance Charges:"
+    },
+    {
+      "n": "",
+      "c": "208.600",
+      "s": "208.600",
+      "k": "customs_duty",
+      "l": "Customs Duty:"
+    },
+    {
+      "c": "34.250",
+      "k": "thc",
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "s": "34.250"
+    },
+    {
+      "k": "legalization",
+      "c": "0",
+      "l": "Legalization Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "c": "0"
+    },
+    {
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "packing",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Packing Charges:"
+    },
+    {
+      "c": "0",
+      "l": "Bank Charges:",
+      "n": "",
+      "k": "port_charges",
+      "s": "5.000"
+    },
+    {
+      "l": "Other Charges:",
+      "k": "other",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "PAI Approval :",
+      "k": "pai",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Insurance Fee :",
+      "k": "insurance"
+    },
+    {
+      "c": "0",
+      "l": "EPA Charges :",
+      "k": "epa",
+      "s": "0",
+      "n": ""
+    }
+  ],
+  "vn": "",
+  "createdAt": "2025-08-10T10:36:50.000Z",
+  "in": "INV/00321/2025",
+  "totalProfit": 195,
+  "sh": "SELHOGAR CONFORT S. L",
+  "gw": "230 KG",
+  "cl": [
+    "Import"
+  ],
+  "tn": "",
+  "hawb": "",
+  "dsc": "OFFICE SUPPLIES",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "pb": "ABDUL HADI ",
+  "cn": "",
+  "fv": "",
+  "ca": "KUWAIT AIRWAYS",
+  "de": "KUWAIT",
+  "mawb": "229-17462896",
+  "createdBy": "ABDUL HADI ",
+  "co": "MR. MARWAN M. BOODAI",
+  "bd": "2025-07-21",
+  "ts": "AIR",
+  "re": "",
+  "d": "2025-07-14"
+}
