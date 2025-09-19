@@ -1,0 +1,205 @@
+{
+  "status": "checked",
+  "totalCost": 219.97,
+  "ca": "SHIPCO",
+  "checkedAt": "2025-08-30T10:42:41.000Z",
+  "tn": "",
+  "gw": "525KG",
+  "pc": "3 PALLETS ",
+  "cn": "",
+  "totalProfit": 26.52,
+  "re": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "dsc": "WIPER BLADE ",
+  "totalSelling": 246.5,
+  "checkedBy": "AJMAL KIANI",
+  "or": "HAIPHONG",
+  "fv": "",
+  "jfn": "SILCL/00009/08/2025",
+  "co": "FAST FIX CAR SALUTION SL",
+  "ts": "DO SERVICE ",
+  "cl": [
+    "Import"
+  ],
+  "vn": "",
+  "createdBy": "ABDUL HADI ",
+  "d": "2025-08-21",
+  "pb": "ABDUL HADI ",
+  "sm": "",
+  "bd": "2025-08-30",
+  "createdAt": "2025-08-30T09:29:45.000Z",
+  "sh": "AUTO GLASS SOLUTION SL",
+  "ch": [
+    {
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Land/Air / Sea Freight:",
+      "s": "0",
+      "c": "0",
+      "k": "freight"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "k": "surcharge"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Formalities:",
+      "k": "formalities"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "s": "196.500",
+      "n": "",
+      "c": "196.500"
+    },
+    {
+      "l": "Transportation Charges:",
+      "s": "0",
+      "k": "transportation",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "s": "0",
+      "k": "inspection",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "handling",
+      "l": "Handling Charges:",
+      "s": "25.000",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Labor / Forklift Charges:",
+      "k": "labor"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "documentation",
+      "l": "Documentation Charges:"
+    },
+    {
+      "k": "clearance",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Clearance Charges:"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "customs_duty",
+      "l": "Customs Duty:",
+      "n": ""
+    },
+    {
+      "k": "thc",
+      "c": "0",
+      "l": "Terminal Handling Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "l": "Legalization Charges:",
+      "k": "legalization",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "demurrage",
+      "n": "",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading"
+    },
+    {
+      "c": "0",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "k": "packing",
+      "c": "0",
+      "s": "0",
+      "l": "Packing Charges:"
+    },
+    {
+      "n": "",
+      "l": "Port Charges:",
+      "s": "0",
+      "k": "port_charges",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "25.000",
+      "l": "Other Charges Profit Share $ 75:",
+      "k": "other",
+      "c": "23.475"
+    },
+    {
+      "k": "pai",
+      "c": "0",
+      "n": "",
+      "l": "PAI Approval :",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Insurance Fee :",
+      "k": "insurance"
+    },
+    {
+      "c": "0",
+      "l": "EPA Charges :",
+      "s": "0",
+      "k": "epa",
+      "n": ""
+    }
+  ],
+  "mawb": "2600415",
+  "pt": [
+    "Sea Freight"
+  ],
+  "po": "",
+  "de": "KUWAIT",
+  "in": "INV/00381/2025",
+  "updatedAt": "2025-08-30T09:34:18.000Z",
+  "hawb": "",
+  "vw": ""
+}
