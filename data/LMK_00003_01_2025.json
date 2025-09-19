@@ -1,0 +1,203 @@
+{
+  "createdAt": "2025-08-21T05:35:45.000Z",
+  "pc": "319 BOXES",
+  "status": "pending",
+  "cn": "",
+  "bd": "2025-08-19",
+  "mawb": "",
+  "ch": [
+    {
+      "l": "STORAGE Charges:",
+      "n": "",
+      "k": "ex_works",
+      "s": "3481.960",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "l": "Land Freight:",
+      "s": "0",
+      "k": "freight",
+      "c": "0"
+    },
+    {
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "k": "formalities",
+      "s": "0",
+      "n": "",
+      "l": "Formalities:"
+    },
+    {
+      "k": "do_fee",
+      "l": "Delivery Order Fee:",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "transportation",
+      "l": "Transportation Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0",
+      "k": "inspection",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Handling Charges:",
+      "c": "426.250",
+      "n": "",
+      "k": "handling"
+    },
+    {
+      "n": "",
+      "k": "labor",
+      "l": "Labor / Forklift Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "522.500",
+      "s": "0",
+      "k": "clearance",
+      "l": "Storage Charges: (GFS)",
+      "n": ""
+    },
+    {
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "k": "thc",
+      "c": "0",
+      "l": "Terminal Handling Charges:",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "legalization",
+      "n": "",
+      "s": "0",
+      "l": "Legalization Charges:"
+    },
+    {
+      "k": "demurrage",
+      "n": "",
+      "l": "Demurrage Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "loading"
+    },
+    {
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "k": "dest_clearance",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Packing Charges:",
+      "k": "packing",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "port_charges",
+      "n": "",
+      "l": "Port Charges:"
+    },
+    {
+      "s": "0",
+      "k": "other",
+      "l": "Other Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "pai",
+      "l": "PAI Approval :"
+    },
+    {
+      "c": "233.245",
+      "n": "",
+      "k": "insurance",
+      "s": "0",
+      "l": "Insurance Fee :"
+    },
+    {
+      "l": "EPA Charges :",
+      "s": "0",
+      "k": "epa",
+      "c": "0",
+      "n": ""
+    }
+  ],
+  "updatedAt": "2025-08-21T05:35:45.000Z",
+  "totalSelling": 3481.96,
+  "fv": "",
+  "vn": "",
+  "po": "",
+  "re": "",
+  "co": "MR. MARCOS MORALES",
+  "pb": "ANAND MANI",
+  "tn": "",
+  "ca": "",
+  "dsc": "STORAGE FOR HOUSEHOLD ITEMS",
+  "gw": "4200 KGS",
+  "totalProfit": 2299.97,
+  "hawb": "",
+  "sm": "DINESH",
+  "or": "KUWAIT",
+  "jfn": "LMK/00003/01/2025",
+  "pt": [
+    "Others"
+  ],
+  "in": "INV/00355/2025",
+  "createdBy": "ANAND MANI",
+  "cl": [
+    "Local Move"
+  ],
+  "d": "2025-08-21",
+  "lastUpdatedBy": "ANAND MANI",
+  "totalCost": 1181.99,
+  "ts": "LAND",
+  "sh": "MR. MARCOS MORALES",
+  "de": "KUWAIT",
+  "vw": "55 CBM"
+}
