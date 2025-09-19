@@ -1,0 +1,203 @@
+{
+  "lastUpdatedBy": "ABDUL HADI ",
+  "pt": [
+    "Air Freight"
+  ],
+  "hawb": "",
+  "sh": "ENERPAC TOOL GROUP ",
+  "de": "KUWAIT",
+  "pb": "ABDUL HADI ",
+  "tn": "",
+  "gw": "170 KG",
+  "ts": "CLEARANCE AND DELIVERY ",
+  "cn": "",
+  "ca": "DHL ",
+  "jfn": "AC/00098/07/2025",
+  "pc": "1",
+  "dsc": "PUMPS",
+  "updatedAt": "2025-08-10T09:43:32.000Z",
+  "totalProfit": 58,
+  "d": "2025-07-13",
+  "createdBy": "ABDUL HADI ",
+  "in": "INV/316/2025",
+  "vw": "",
+  "co": "BOODAI TRADING CO",
+  "mawb": "615-66586903",
+  "bd": "2025-07-20",
+  "totalSelling": 289.23,
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "ex_works"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "freight",
+      "l": "Land/Air / Sea Freight:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "k": "surcharge"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "Formalities:",
+      "k": "formalities"
+    },
+    {
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "s": "46.500",
+      "c": "46.500"
+    },
+    {
+      "n": "",
+      "l": "Transportation Charges:",
+      "k": "transportation",
+      "c": "0",
+      "s": "25.000"
+    },
+    {
+      "s": "17.610",
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "k": "inspection",
+      "c": "17.610"
+    },
+    {
+      "c": "0",
+      "k": "handling",
+      "n": "",
+      "s": "15.000",
+      "l": "Handling Charges:"
+    },
+    {
+      "s": "0",
+      "c": "3.000",
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "l": "Documentation Charges:",
+      "k": "documentation",
+      "s": "0"
+    },
+    {
+      "l": "Clearance Charges:",
+      "s": "20.000",
+      "n": "",
+      "k": "clearance",
+      "c": "15.000"
+    },
+    {
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "n": "",
+      "c": "50.120",
+      "s": "50.120"
+    },
+    {
+      "c": "0",
+      "l": "Terminal Handling Charges:",
+      "n": "",
+      "k": "thc",
+      "s": "0"
+    },
+    {
+      "k": "legalization",
+      "n": "",
+      "c": "27.000",
+      "s": "30.000",
+      "l": "Legalization Charges:"
+    },
+    {
+      "n": "",
+      "k": "demurrage",
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "c": "0"
+    },
+    {
+      "l": "Loading / Offloading Charges:",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "loading"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance"
+    },
+    {
+      "k": "packing",
+      "c": "2.000",
+      "n": "",
+      "s": "5.000",
+      "l": "Bank Charges:"
+    },
+    {
+      "l": "MOC Approval:",
+      "k": "port_charges",
+      "n": "",
+      "c": "20.000",
+      "s": "20.000"
+    },
+    {
+      "l": "MOC Service Fee:",
+      "n": "",
+      "k": "other",
+      "s": "15.000",
+      "c": "10.000"
+    },
+    {
+      "k": "pai",
+      "n": "",
+      "c": "30.000",
+      "s": "30.000",
+      "l": "PAI Approval :"
+    },
+    {
+      "c": "10.000",
+      "k": "insurance",
+      "s": "15.000",
+      "l": "PAI Service Fee :",
+      "n": ""
+    },
+    {
+      "n": "",
+      "k": "epa",
+      "l": "EPA Charges :",
+      "s": "0",
+      "c": "0"
+    }
+  ],
+  "fv": "",
+  "cl": [
+    "Import"
+  ],
+  "vn": "",
+  "re": "",
+  "status": "pending",
+  "totalCost": 231.23,
+  "sm": "",
+  "or": "AMSTERDAM",
+  "po": "",
+  "createdAt": "2025-08-10T09:43:32.000Z"
+}
