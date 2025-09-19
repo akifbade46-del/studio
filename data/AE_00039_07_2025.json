@@ -1,0 +1,203 @@
+{
+  "updatedAt": "2025-08-20T12:41:02.000Z",
+  "jfn": "AE/00039/07/2025",
+  "status": "pending",
+  "pt": [
+    "Air Freight"
+  ],
+  "co": "MR.CHEENA MAHESHWARI",
+  "sh": "MR.CHEENA MAHESHWARI",
+  "sm": "DINESH",
+  "ch": [
+    {
+      "c": "0",
+      "l": "DOOR-DOOR  Charges:",
+      "n": "",
+      "s": "280.000",
+      "k": "ex_works"
+    },
+    {
+      "k": "freight",
+      "l": "Land Freight:",
+      "n": "",
+      "c": "148.720",
+      "s": "0"
+    },
+    {
+      "k": "surcharge",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:"
+    },
+    {
+      "n": "",
+      "l": "Formalities:",
+      "k": "formalities",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "s": "0",
+      "k": "do_fee",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Transportation Charges:",
+      "k": "transportation",
+      "c": "0"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "k": "inspection",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Handling Charges:",
+      "s": "0",
+      "k": "handling",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "k": "labor",
+      "n": "",
+      "s": "0",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "c": "0",
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "clearance",
+      "c": "0",
+      "l": "Clearance Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "customs_duty",
+      "s": "0",
+      "c": "0",
+      "l": "Customs Duty:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "thc",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "k": "legalization",
+      "s": "0",
+      "l": "Legalization Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "demurrage"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading",
+      "n": ""
+    },
+    {
+      "k": "dest_clearance",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "l": "Packing Charges:",
+      "k": "packing",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "k": "port_charges",
+      "l": "Port Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Other Charges:",
+      "k": "other",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "insurance",
+      "s": "0",
+      "l": "Insurance Fee :"
+    },
+    {
+      "k": "epa",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "l": "EPA Charges :"
+    }
+  ],
+  "vw": "155.90 KGS",
+  "tn": "",
+  "createdAt": "2025-08-20T12:40:28.000Z",
+  "pc": "4 BOXES",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "cl": [
+    "Export"
+  ],
+  "ca": "FEDEX",
+  "totalSelling": 280,
+  "cn": "",
+  "createdBy": "ANAND MANI",
+  "po": "",
+  "mawb": "881337392640",
+  "lastUpdatedBy": "ANAND MANI",
+  "fv": "",
+  "re": "",
+  "totalCost": 148.72,
+  "hawb": "",
+  "ts": "AIR",
+  "bd": "2025-07-23",
+  "d": "2025-08-20",
+  "pb": "ANAND MANI",
+  "gw": "130 KGS",
+  "totalProfit": 131.28,
+  "vn": "",
+  "in": "INV/00335/2025",
+  "de": "UK",
+  "or": "KUWAIT"
+}
