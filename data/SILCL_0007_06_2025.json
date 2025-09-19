@@ -1,0 +1,203 @@
+{
+  "hawb": "",
+  "ts": "CLEARANCE AND DELIVERY ",
+  "dsc": "BAGGAGE TAG",
+  "po": "",
+  "ch": [
+    {
+      "s": "0",
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "freight",
+      "n": "",
+      "l": "Land/Air / Sea Freight:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0"
+    },
+    {
+      "k": "formalities",
+      "l": "Formalities:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "s": "245.000",
+      "c": "245.000",
+      "k": "do_fee"
+    },
+    {
+      "n": "",
+      "l": "Transportation Charges:",
+      "s": "35.000",
+      "k": "transportation",
+      "c": "0"
+    },
+    {
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "22.110",
+      "n": "",
+      "c": "22.110"
+    },
+    {
+      "k": "handling",
+      "c": "0",
+      "n": "",
+      "s": "15.000",
+      "l": "Handling Charges:"
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "s": "45.000",
+      "n": "",
+      "c": "3.000",
+      "k": "labor"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Documentation Charges:",
+      "k": "documentation",
+      "n": ""
+    },
+    {
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "n": "",
+      "s": "20.000",
+      "c": "12.000"
+    },
+    {
+      "k": "customs_duty",
+      "l": "Customs Duty:",
+      "c": "281.160",
+      "s": "281.160",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "k": "thc"
+    },
+    {
+      "s": "15.000",
+      "l": "Legalization Charges:",
+      "n": "",
+      "k": "legalization",
+      "c": "13.000"
+    },
+    {
+      "c": "0",
+      "l": "Demurrage Charges:",
+      "k": "demurrage",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "loading",
+      "s": "0",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "s": "0",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "5.000",
+      "k": "packing",
+      "n": "",
+      "c": "0",
+      "l": "DO collection Charges:"
+    },
+    {
+      "s": "89.000",
+      "k": "port_charges",
+      "c": "89.000",
+      "l": "Port Charges:",
+      "n": ""
+    },
+    {
+      "k": "other",
+      "s": "3.000",
+      "n": "",
+      "l": "Bank Charges:",
+      "c": "2.000"
+    },
+    {
+      "n": "",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "insurance",
+      "l": "Insurance Fee :",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "epa",
+      "c": "0",
+      "s": "0",
+      "l": "EPA Charges :",
+      "n": ""
+    }
+  ],
+  "lastUpdatedBy": "ABDUL HADI ",
+  "vn": "",
+  "in": "INV/000337/2025",
+  "totalProfit": 108,
+  "pc": "2",
+  "createdAt": "2025-08-11T10:02:13.000Z",
+  "mawb": "SEAEXPZ54701",
+  "cl": [
+    "Import"
+  ],
+  "co": "JAZEERA AIRWAYS",
+  "de": "KUWAIT",
+  "bd": "2025-07-24",
+  "pb": "ABDUL HADI ",
+  "ca": "GLOBELINK",
+  "gw": "1306 KG",
+  "or": "TURKEY",
+  "sh": "ISTANBUL BILGISAYAR",
+  "totalCost": 667.27,
+  "fv": "",
+  "tn": "",
+  "pt": [
+    "Sea Freight"
+  ],
+  "vw": "5.09 CBM",
+  "jfn": "SILCL/0007/06/2025",
+  "createdBy": "ABDUL HADI ",
+  "updatedAt": "2025-08-24T12:51:11.000Z",
+  "sm": "",
+  "cn": "WHSU5916081",
+  "d": "2025-07-25",
+  "status": "pending",
+  "re": "",
+  "totalSelling": 775.27
+}
