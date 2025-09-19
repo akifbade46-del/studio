@@ -1,0 +1,206 @@
+{
+  "lastUpdatedBy": "ABDUL HADI ",
+  "vn": "",
+  "pb": "ABDUL HADI ",
+  "co": "VARIOUS SUPPLIERS",
+  "checkedBy": "AJMAL KIANI",
+  "totalCost": 831.67,
+  "ch": [
+    {
+      "c": "0",
+      "s": "0",
+      "k": "ex_works",
+      "n": "",
+      "l": "Ex-works Charges:"
+    },
+    {
+      "l": "Air Freight:",
+      "k": "freight",
+      "c": "778.675",
+      "n": "",
+      "s": "814.000"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "n": "",
+      "k": "surcharge"
+    },
+    {
+      "l": "Formalities:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "formalities"
+    },
+    {
+      "s": "10.000",
+      "k": "do_fee",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "transportation",
+      "c": "0",
+      "n": "",
+      "l": "Transportation Charges:",
+      "s": "0"
+    },
+    {
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "15.000",
+      "c": "0",
+      "k": "handling",
+      "l": "Handling Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "labor",
+      "l": "Labor / Forklift Charges:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Documentation Charges:",
+      "k": "documentation"
+    },
+    {
+      "k": "clearance",
+      "c": "0",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Customs Duty:",
+      "s": "0",
+      "c": "0",
+      "k": "customs_duty"
+    },
+    {
+      "l": "Terminal Handling Charges:",
+      "n": "",
+      "c": "53.000",
+      "k": "thc",
+      "s": "53.000"
+    },
+    {
+      "l": "Legalization Charges:",
+      "k": "legalization",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "k": "demurrage",
+      "c": "0",
+      "n": "",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading"
+    },
+    {
+      "s": "0",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "k": "packing",
+      "l": "Packing Charges:"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "port_charges",
+      "n": "",
+      "l": "Port Charges:"
+    },
+    {
+      "l": "Other Charges:",
+      "n": "",
+      "c": "0",
+      "k": "other",
+      "s": "0"
+    },
+    {
+      "k": "pai",
+      "n": "",
+      "l": "PAI Approval :",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Insurance Fee :",
+      "c": "0",
+      "k": "insurance"
+    },
+    {
+      "n": "",
+      "l": "EPA Charges :",
+      "k": "epa",
+      "c": "0",
+      "s": "0"
+    }
+  ],
+  "approvedAt": null,
+  "tn": "",
+  "totalSelling": 892,
+  "bd": "2025-08-26",
+  "status": "checked",
+  "rejectedBy": null,
+  "rejectionReason": null,
+  "fv": "",
+  "mawb": "235-58702965",
+  "sm": "",
+  "or": "LONDON",
+  "updatedAt": "2025-08-26T13:10:10.000Z",
+  "jfn": "AC/00105/07/2025",
+  "po": "",
+  "hawb": "",
+  "pc": "2",
+  "cn": "",
+  "totalProfit": 60.33,
+  "sh": "DOCTOR NATIONAL TRADING ",
+  "de": "KUWAIT ",
+  "createdAt": "2025-08-17T11:24:10.000Z",
+  "approvedBy": null,
+  "re": "",
+  "ts": "DO SERVICE ",
+  "gw": "742 KG",
+  "dsc": "BOOKS ",
+  "in": "INV/00374/2025",
+  "createdBy": "ABDUL HADI ",
+  "ca": "TURKISH AIRLINE",
+  "checkedAt": "2025-08-28T12:42:50.000Z",
+  "rejectedAt": null,
+  "d": "2025-07-20",
+  "pt": [],
+  "vw": "",
+  "cl": []
+}
