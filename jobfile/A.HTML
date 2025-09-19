@@ -4,1385 +4,491 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job File Management System</title>
+    <title>Q'go Cargo - Job File System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --theme-color: #4f46e5; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+        :root { --theme-color: #0E639C; --accent-color: #4FB8AF; }
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .container { max-width: 1200px; margin: 1rem auto; padding: 1.5rem; }
+        @media (min-width: 640px) { .container { margin: 2rem auto; padding: 2.5rem; } }
+        .input-field, select {
+            border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem 0.75rem; width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s; background-color: white;
         }
-        .container {
-            max-width: 1200px;
-            margin: 1rem auto;
-            padding: 1rem;
-            background-color: white;
-            border-radius: 0.75rem; /* Slightly larger radius */
-            border-top: 5px solid var(--theme-color);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); /* Softer shadow */
-        }
-        @media (min-width: 640px) {
-            .container {
-                margin: 2rem auto;
-                padding: 2.5rem; /* More padding on desktop */
-            }
-        }
-        .input-field {
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            padding: 0.5rem 0.75rem;
-            width: 100%;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .input-field:focus {
-            outline: none;
-            border-color: var(--theme-color);
-            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3); /* Improved focus ring */
-        }
-        .input-field:disabled, .input-field[readonly] {
-            background-color: #f3f4f6;
-            cursor: not-allowed;
-            color: #6b7280;
-        }
-        .table-cell {
-            border: 1px solid #e5e7eb; /* Lighter border */
-            padding: 0.5rem;
-            position: relative;
-        }
-        @media (min-width: 640px) {
-            .table-cell {
-                padding: 0.75rem;
-            }
-        }
-        .table-cell input {
-            width: 100%;
-            border: none;
-            padding: 0;
-            background-color: transparent;
-        }
-        .table-cell input:focus {
-            outline: none;
-        }
-        
+        .input-field:focus, select:focus { outline: none; border-color: var(--theme-color); box-shadow: 0 0 0 2px rgba(14, 99, 156, 0.2); }
+        .input-field:disabled, .input-field[readonly] { background-color: #f3f4f6; cursor: not-allowed; color: #6b7280; }
+        .table-cell { border: 1px solid #e5e7eb; padding: 0.5rem; position: relative; }
+        @media (min-width: 640px) { .table-cell { padding: 0.75rem; } }
+        .table-cell input { width: 100%; border: none; padding: 0; background-color: transparent; }
+        .table-cell input:focus { outline: none; }
         .overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.5); display: flex;
-            align-items: center; justify-content: center; z-index: 1000;
-            opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
-            padding: 1rem;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex;
+            align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; padding: 1rem;
         }
-        .overlay.visible {
-            opacity: 1; visibility: visible;
-        }
+        .overlay.visible { opacity: 1; visibility: visible; }
         .modal-content {
-            background: white; padding: 1.5rem; border-radius: 0.5rem;
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh; overflow-y: auto;
-            transform: scale(0.9); transition: transform 0.3s;
+            background: white; padding: 1.5rem; border-radius: 0.5rem; width: 100%; max-width: 600px;
+            max-height: 90vh; overflow-y: auto; transform: scale(0.9); transition: transform 0.3s;
         }
-        .overlay.visible .modal-content {
-            transform: scale(1);
-        }
-        .loader {
-            border: 4px solid #f3f3f3; border-top: 4px solid var(--theme-color);
-            border-radius: 50%; width: 40px; height: 40px;
-            animation: spin 1s linear infinite;
-        }
+        .overlay.visible .modal-content { transform: scale(1); }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--theme-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #notification {
-            position: fixed; bottom: 20px; left: 50%;
-            transform: translateX(-50%);
-            background-color: #2d3748; color: white;
-            padding: 1rem 1.5rem; border-radius: 0.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translate(-50%, 100px); opacity: 0;
-            transition: transform 0.5s, opacity 0.5s;
-            z-index: 2000;
-            text-align: center;
+            position: fixed; bottom: 20px; left: 50%; background-color: #2d3748; color: white; padding: 1rem 1.5rem; border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translate(-50%, 100px); opacity: 0; transition: transform 0.5s, opacity 0.5s; z-index: 2000; text-align: center;
         }
-        #notification.show {
-            transform: translate(-50%, 0); opacity: 1;
-        }
-
-        @page { size: A4; margin: 0.5cm; }
-        @media print {
-            body { background-color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            #main-container, .no-print, #app-container, #login-screen { display: none !important; }
-            #print-output, #public-view-container, #analytics-container { display: block !important; padding: 0 !important; margin: 0 !important; }
-        }
-        #print-output .print-table, #preview-modal .print-table, #analytics-container .analytics-table { border-collapse: collapse; width: 100%; }
-        #print-output .print-table th, #print-output .print-table td,
-        #preview-modal .print-table th, #preview-modal .print-table td,
-        #analytics-container .analytics-table th, #analytics-container .analytics-table td { border: 1px solid #d1d5db; padding: 0.5rem; text-align: left; }
-        #analytics-container .analytics-table th { background-color: #f3f4f6; font-weight: 600; }
-        #print-output .print-field, #preview-modal .print-field { border: 1px solid #6b7280; padding: 0.3rem; min-height: 24px; word-break: break-all; }
-        .admin-only, .checker-only, #signup-name-field { display: none; }
-        
-        .stamp {
-            position: absolute;
-            top: -10px; right: -10px;
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: bold;
-            text-transform: uppercase;
-            transform: rotate(15deg);
-            opacity: 0.8;
-            display: none;
-        }
+        #notification.show { transform: translate(-50%, 0); opacity: 1; }
+        .print-field { border: 1px solid #6b7280; padding: 0.3rem; min-height: 24px; word-break: break-all; }
+        .admin-only, .checker-only { display: none; }
+        .stamp { position: absolute; top: -10px; right: -10px; padding: 4px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; text-transform: uppercase; transform: rotate(15deg); opacity: 0.8; display: none; }
         .stamp-approved { border: 2px solid #16a34a; color: #16a34a; }
         .stamp-checked { border: 2px solid #2563eb; color: #2563eb; }
         .stamp-rejected { border: 2px solid #dc2626; color: #dc2626; }
-
-        /* Autocomplete styles */
         .autocomplete-suggestions {
-            border: 1px solid #d1d5db;
-            border-top: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-height: 150px;
-            overflow-y: auto;
-            position: absolute;
-            background-color: white;
-            z-index: 999;
-            width: 100%;
+            border: 1px solid #d1d5db; border-top: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 150px; overflow-y: auto;
+            position: absolute; background-color: white; z-index: 999; width: 100%;
         }
-        .autocomplete-suggestion {
-            padding: 0.5rem;
-            cursor: pointer;
-        }
-        .autocomplete-suggestion:hover {
-            background-color: #f3f4f6;
-        }
-        .autocomplete-suggestion.selected {
-            background-color: #e5e7eb;
-        }
+        .autocomplete-suggestion { padding: 0.5rem; cursor: pointer; }
+        .autocomplete-suggestion:hover { background-color: #f3f4f6; }
     </style>
 </head>
 <body class="bg-gray-100">
 
     <!-- Login Screen -->
     <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8">
-            <div>
-                <img class="mx-auto h-24 w-auto" src="https://qgocargo.com/logo.png" alt="Q'go Cargo Logo">
-                <h2 id="auth-title" class="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
-            </div>
-            <div class="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-md">
-                <div id="approval-message" class="hidden p-4 text-center text-yellow-800 bg-yellow-100 rounded-lg">
-                    Your account is awaiting admin approval.
-                </div>
-                 <div id="blocked-message" class="hidden p-4 text-center text-red-800 bg-red-100 rounded-lg">
-                    Your account has been blocked by an administrator.
-                </div>
-                <div class="rounded-md shadow-sm -space-y-px">
-                    <div id="signup-name-field">
-                        <label for="full-name" class="sr-only">Full Name</label>
-                        <input id="full-name" name="name" type="text" autocomplete="name" required class="input-field rounded-t-md" placeholder="Full Name">
-                    </div>
-                    <div>
-                        <label for="email-address" class="sr-only">Email address</label>
-                        <input id="email-address" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
-                    </div>
-                    <div>
-                        <label for="password" class="sr-only">Password</label>
-                        <input id="password" name="password" type="password" autocomplete="current-password" required class="input-field rounded-b-md" placeholder="Password">
-                    </div>
-                </div>
-                <div>
-                    <button id="auth-btn" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Sign in
-                    </button>
-                </div>
-                <p class="mt-2 text-center text-sm text-gray-600">
-                    <a href="#" id="auth-link" class="font-medium text-indigo-600 hover:text-indigo-500">
-                        Create a new account
-                    </a>
-                </p>
-                <div class="text-center mt-2 text-sm">
-                    <a href="#" id="forgot-password-link" class="font-medium text-indigo-600 hover:text-indigo-500">
-                        Forgot your password?
-                    </a>
-                </div>
-            </div>
-        </div>
+        <!-- Content will be injected by JS -->
     </div>
 
-    <!-- Main Application Container (Hidden by default) -->
-    <div id="app-container" class="hidden">
-        <div id="main-container" class="container">
-            <!-- Header Section -->
-            <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                <div class="flex items-center">
-                    <img id="logo-container" class="h-16 w-auto mr-4" src="https://qgocargo.com/logo.png" alt="Q'go Cargo Logo">
-                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 border-l-4 border-gray-300 pl-4">JOB FILE</h1>
-                </div>
-                <div class="text-right w-full sm:w-auto">
-                    <div class="flex items-center mb-2">
-                        <label for="date" class="mr-2 font-semibold text-gray-700">Date:</label>
-                        <input type="date" id="date" class="input-field w-full sm:w-40">
-                    </div>
-                    <div class="flex items-center">
-                        <label for="po-number" class="mr-2 font-semibold text-gray-700">P.O. #:</label>
-                        <input type="text" id="po-number" class="input-field w-full sm:w-40">
-                    </div>
-                </div>
-            </header>
-            
-            <!-- User Info and Logout -->
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 bg-gray-50 p-2 rounded-md gap-2">
-                <div class="text-sm text-center sm:text-left">
-                    Logged in as: <span id="user-display-name" class="font-bold"></span> (<span id="user-role" class="capitalize"></span>)
-                </div>
-                 <div class="flex-grow text-center">
-                     <button onclick="openAnalyticsDashboard()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-5 rounded-md text-base">Analytics</button>
-                 </div>
-                <div>
-                    <button id="activity-log-btn" class="admin-only bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded text-sm mr-2">Activity Log</button>
-                    <button id="admin-panel-btn" class="admin-only bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm mr-2">Admin Panel</button>
-                    <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm">Logout</button>
-                </div>
-            </div>
-            
-            <!-- Quick Stats Section -->
-            <div id="quick-stats-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-white">
-                <div class="bg-green-500 p-4 rounded-lg shadow-md"><p class="font-semibold">Total Profit</p><p id="stat-total-profit" class="text-2xl font-bold">0.000</p></div>
-                <div class="bg-blue-500 p-4 rounded-lg shadow-md"><p class="font-semibold">Jobs This Month</p><p id="stat-jobs-month" class="text-2xl font-bold">0</p></div>
-                <div class="bg-purple-500 p-4 rounded-lg shadow-md"><p class="font-semibold">Average Profit</p><p id="stat-avg-profit" class="text-2xl font-bold">0.000</p></div>
-            </div>
-            
-            <!-- Status Summary -->
-            <div id="status-summary-main" class="mb-4"></div>
-
-            <div id="checker-info-banner" class="checker-only hidden p-3 mb-4 text-center text-blue-800 bg-blue-100 rounded-lg">
-                <strong>Note:</strong> Files must be checked before they can be approved or rejected by an admin.
-            </div>
-
-            <div id="rejection-banner" class="hidden p-3 mb-4 text-center text-red-800 bg-red-100 rounded-lg">
-                <strong>This job file was rejected.</strong> Reason: <span id="rejection-reason"></span>
-            </div>
-
-            <!-- Form Fields -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <div class="lg:col-span-2">
-                    <label for="job-file-no" class="block mb-1 font-semibold text-gray-700">Job File No.:</label>
-                    <input type="text" id="job-file-no" class="input-field" placeholder="Enter a unique ID here...">
-                </div>
-                <div class="flex items-end space-x-8 pb-1">
-                    <div>
-                        <span class="font-semibold text-gray-700">Clearance</span>
-                        <div class="mt-2 space-y-1">
-                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-clearance="Export"> Export</label>
-                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-clearance="Import"> Import</label>
-                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-clearance="Clearance"> Clearance</label>
-                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-clearance="Local Move"> Local Move</label>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="font-semibold text-gray-700">Product Type</span>
-                        <div class="mt-2 space-y-1">
-                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-product="Air Freight"> Air Freight</label>
-                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-product="Sea Freight"> Sea Freight</label>
-                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-product="Land Freight"> Land Freight</label>
-                            <label class="flex items-center"><input type="checkbox" class="mr-2" data-product="Others"> Others</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div><label for="invoice-no" class="block mb-1 font-semibold text-gray-700">Invoice No.:</label><input type="text" id="invoice-no" class="input-field"></div>
-                <div><label for="billing-date" class="block mb-1 font-semibold text-gray-700">Billing Date:</label><input type="date" id="billing-date" class="input-field"></div>
-                <div><label for="salesman" class="block mb-1 font-semibold text-gray-700">Salesman:</label><input type="text" id="salesman" class="input-field"></div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="relative">
-                    <label for="shipper-name" class="block mb-1 font-semibold text-gray-700">Shipper's Name:</label>
-                    <input type="text" id="shipper-name" class="input-field" autocomplete="off">
-                    <div id="shipper-suggestions" class="autocomplete-suggestions hidden"></div>
-                </div>
-                <div class="relative">
-                    <label for="consignee-name" class="block mb-1 font-semibold text-gray-700">Consignee's Name:</label>
-                    <input type="text" id="consignee-name" class="input-field" autocomplete="off">
-                    <div id="consignee-suggestions" class="autocomplete-suggestions hidden"></div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <div><label for="mawb" class="block mb-1 font-semibold text-gray-700">MAWB / OBL / TCN No.:</label><input type="text" id="mawb" class="input-field"></div>
-                <div><label for="hawb" class="block mb-1 font-semibold text-gray-700">HAWB / HBL:</label><input type="text" id="hawb" class="input-field"></div>
-                <div><label for="teams-of-shipping" class="block mb-1 font-semibold text-gray-700">Teams of Shipping:</label><input type="text" id="teams-of-shipping" class="input-field"></div>
-                <div><label for="origin" class="block mb-1 font-semibold text-gray-700">Origin:</label><input type="text" id="origin" class="input-field"></div>
-                <div><label for="no-of-pieces" class="block mb-1 font-semibold text-gray-700">No. of Pieces:</label><input type="text" id="no-of-pieces" class="input-field"></div>
-                <div><label for="gross-weight" class="block mb-1 font-semibold text-gray-700">Gross Weight:</label><input type="text" id="gross-weight" class="input-field"></div>
-                <div><label for="destination" class="block mb-1 font-semibold text-gray-700">Destination:</label><input type="text" id="destination" class="input-field"></div>
-                <div><label for="volume-weight" class="block mb-1 font-semibold text-gray-700">Volume Weight:</label><input type="text" id="volume-weight" class="input-field"></div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="sm:col-span-2">
-                    <label for="description" class="block mb-1 font-semibold text-gray-700">Description:</label>
-                    <input type="text" id="description" class="input-field">
-                </div>
-                <div><label for="carrier" class="block mb-1 font-semibold text-gray-700">Carrier / Shipping Line / Trucking Co:</label><input type="text" id="carrier" class="input-field"></div>
-                <div><label for="truck-no" class="block mb-1 font-semibold text-gray-700">Truck No. / Driver's Name:</label><input type="text" id="truck-no" class="input-field"></div>
-                <div><label for="vessel-name" class="block mb-1 font-semibold text-gray-700">Vessel's Name:</label><input type="text" id="vessel-name" class="input-field"></div>
-                <div><label for="flight-voyage-no" class="block mb-1 font-semibold text-gray-700">Flight / Voyage No.:</label><input type="text" id="flight-voyage-no" class="input-field"></div>
-                <div><label for="container-no" class="block mb-1 font-semibold text-gray-700">Container No.:</label><input type="text" id="container-no" class="input-field"></div>
-            </div>
-
-            <!-- Charges Table -->
-            <div class="flex justify-between items-center mb-2">
-                 <h2 class="text-xl font-semibold text-gray-800">Charges</h2>
-                 <div>
-                     <button onclick="openChargeManager()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform hover:scale-105 mr-2">Manage Descriptions</button>
-                     <button onclick="suggestCharges()" class="hidden bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform hover:scale-105">Suggest Charges ✨</button>
-                 </div>
-            </div>
-            <div class="mb-6 overflow-x-auto border border-gray-200 rounded-lg">
-                <table id="charges-table" class="w-full border-collapse">
-                    <!-- JS will populate this -->
-                </table>
-            </div>
-            <div class="text-right mb-6">
-                 <button onclick="addChargeRow()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg text-sm">+ Add Charge</button>
-            </div>
-
-            <!-- Remarks Section -->
-            <div class="flex justify-between items-center mb-2">
-                <label for="remarks" class="block font-semibold text-gray-700">REMARKS:</label>
-            </div>
-            <div class="mb-8">
-                <textarea id="remarks" rows="4" class="input-field w-full"></textarea>
-            </div>
-
-            <!-- Creator/Editor Info -->
-            <div id="file-info" class="text-xs text-gray-500 mb-4 border-t pt-4">
-                <span id="created-by-info"></span>
-                <span id="last-updated-by-info" class="ml-4"></span>
-            </div>
-
-            <!-- Footer Section -->
-            <footer class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 border-t items-end">
-                <div><label class="block mb-2 font-semibold text-gray-700">PREPARED BY</label><input type="text" id="prepared-by" class="input-field bg-gray-100" readonly></div>
-                <div class="relative">
-                    <div id="checked-stamp" class="stamp stamp-checked">Checked</div>
-                    <label class="block mb-2 font-semibold text-gray-700">CHECKED BY</label>
-                    <input type="text" id="checked-by" class="input-field bg-gray-100" readonly>
-                    <button id="check-btn" class="checker-only mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Check Job File</button>
-                </div>
-                <div class="relative">
-                    <div id="approved-stamp" class="stamp stamp-approved">Approved</div>
-                    <div id="rejected-stamp" class="stamp stamp-rejected">Rejected</div>
-                    <label class="block mb-2 font-semibold text-gray-700">APPROVED BY</label>
-                    <input type="text" id="approved-by" class="input-field bg-gray-100" readonly>
-                    <div id="approval-buttons" class="admin-only mt-2 w-full flex gap-2">
-                        <button id="approve-btn" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Approve</button>
-                        <button id="reject-btn" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">Reject</button>
-                    </div>
-                </div>
-            </footer>
-
-            <!-- Action Buttons -->
-            <div class="text-center mt-10 no-print flex flex-wrap justify-center gap-2 sm:gap-4">
-                 <button onclick="openClientManager()" class="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" /></svg>
-                     <span>Clients</span>
-                 </button>
-                 <button onclick="openFileManager()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h14a1 1 0 001-1V7a1 1 0 00-1-1h-5.586a1 1 0 01-.707-.293l-1.414-1.414A1 1 0 005.586 3H3zm2 5a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H6z" clip-rule="evenodd" /></svg>
-                     <span>File Manager</span>
-                 </button>
-                 <button onclick="saveJobFile()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293zM5 4a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" /></svg>
-                     <span>Save</span>
-                 </button>
-                 <button onclick="clearForm()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
-                     <span>Clear</span>
-                 </button>
-                 <button onclick="printPreview()" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v-2a1 1 0 011-1h8a1 1 0 011 1v2h1a2 2 0 002-2v-3a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd" /></svg>
-                     <span>Preview / Print</span>
-                 </button>
-                 <button onclick="openRecycleBin()" class="admin-only bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
-                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-                     <span>Recycle Bin</span>
-                 </button>
-            </div>
-
-        </div>
+    <!-- Main App -->
+    <div id="app-container" class="container hidden">
+        <!-- Content will be injected by JS -->
     </div>
-
-    <!-- This container is hidden by default and will be populated for printing/preview -->
-    <div id="print-output" class="hidden"></div>
     
-    <!-- This container is for the public QR code view -->
-    <div id="public-view-container"></div>
-
-    <!-- Analytics Full-Screen Page -->
-    <div id="analytics-container" class="hidden">
-    </div>
-
-
-    <!-- Modals -->
+    <!-- Modals, loader, etc. -->
     <div id="loader-overlay" class="overlay"><div class="loader"></div></div>
     <div id="notification"></div>
-    
-    <!-- File Manager Modal -->
-    <div id="file-manager-modal" class="overlay">
-        <div class="modal-content max-w-5xl"> <!-- Increased width for filters -->
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">File Manager</h3>
-                <button onclick="closeModal('file-manager-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
+    <div id="file-manager-modal" class="overlay"></div>
+    <div id="print-preview-modal" class="overlay"></div>
+    <div id="analytics-modal" class="overlay"></div>
+    <div id="client-manager-modal" class="overlay"></div>
+    <div id="admin-panel-modal" class="overlay"></div>
+    <div id="recycle-bin-modal" class="overlay"></div>
+    <div id="charge-manager-modal" class="overlay"></div>
+    <div id="activity-log-modal" class="overlay"></div>
+    <div id="confirm-reject-modal" class="overlay"></div>
+    <div id="confirm-delete-modal" class="overlay"></div>
+    <div id="confirm-restore-modal" class="overlay"></div>
+    <div id="forgot-password-modal" class="overlay"></div>
+
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+    <!-- Main Application Logic -->
+    <script>
+        // --- NO MODULES, ALL IN GLOBAL SCOPE ---
+        // This script is intentionally a single, large block to avoid scope issues.
+        
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- GLOBAL STATE ---
+            let db, auth;
+            let currentUser = null;
+            let jobFilesCache = [];
+            let clientsCache = [];
+            let allUsersCache = [];
+            let chargeDescriptions = [];
+            let currentJobFile = null;
+            let profitChartInstance, salesmanChartInstance;
+            let fileIdToReject = null;
+            let isLoginView = true;
+
+            // --- DOM TEMPLATES ---
+            const loginTemplate = `
+                <div class="max-w-md w-full space-y-8">
+                    <div><img class="mx-auto h-20 w-auto" src="https://qgocargo.com/logo.png" alt="Q'go Cargo"></div>
+                    <h2 id="auth-title" class="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+                    <div id="approval-message" class="hidden text-center p-4 bg-yellow-100 text-yellow-800 rounded-md">Thank you for signing up. Your account is awaiting admin approval.</div>
+                    <div id="blocked-message" class="hidden text-center p-4 bg-red-100 text-red-800 rounded-md">Your account has been blocked. Please contact an administrator.</div>
+                    <div class="mt-8 space-y-6 bg-white p-8 rounded-lg shadow-md">
+                        <div class="rounded-md shadow-sm -space-y-px">
+                            <div id="signup-name-field" style="display: none;"><input id="full-name" name="name" type="text" class="input-field rounded-t-md" placeholder="Full Name"></div>
+                            <div><input id="email-address" name="email" type="email" required class="input-field rounded-b-md" placeholder="Email address"></div>
+                            <div><input id="password" name="password" type="password" required class="input-field rounded-t-md mt-2" placeholder="Password"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <a href="#" id="forgot-password-link" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
+                            <a href="#" id="auth-link" class="font-medium text-indigo-600 hover:text-indigo-500">Create a new account</a>
+                        </div>
+                        <div><button id="auth-btn" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">Sign in</button></div>
+                    </div>
+                </div>`;
             
-            <!-- Search and Filter Controls -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
-                <div class="md:col-span-2"><label for="search-bar" class="block text-sm font-medium text-gray-700">Search (Job No, Shipper, Consignee)</label><input type="text" id="search-bar" class="input-field mt-1" /></div>
-                <div><label for="filter-status" class="block text-sm font-medium text-gray-700">Status</label>
-                    <select id="filter-status" class="input-field mt-1">
-                        <option value="">All</option><option value="pending">Pending</option><option value="checked">Checked</option><option value="approved">Approved</option><option value="rejected">Rejected</option>
-                    </select>
-                </div>
-                <div><label for="filter-date-from" class="block text-sm font-medium text-gray-700">Date Range</label>
-                    <div class="flex items-center mt-1">
-                        <input type="date" id="filter-date-from" class="input-field" /><span class="mx-2">to</span><input type="date" id="filter-date-to" class="input-field" />
+            const appTemplate = `
+                <header class="flex flex-col sm:flex-row justify-between items-center mb-6 pb-4 border-b-2 border-gray-200">
+                    <div><img class="h-16 w-auto" src="https://qgocargo.com/logo.png" alt="Q'go Cargo"></div>
+                    <div class="text-right mt-4 sm:mt-0">
+                        <p>Welcome, <strong id="user-display-name"></strong> (<span id="user-role" class="capitalize"></span>)</p>
+                        <button id="logout-btn" class="text-sm text-indigo-600 hover:text-indigo-800">Logout</button>
                     </div>
-                </div>
-            </div>
-            <div class="text-right mb-4">
-               <button id="clear-filters-btn" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Clear Filters</button>
-            </div>
-            <div id="status-summary-file-manager" class="mb-4"></div>
-            <div id="job-files-list" class="space-y-3 max-h-[50vh] overflow-y-auto border p-2 rounded-md bg-gray-50"></div>
-        </div>
-    </div>
-    
-    <!-- Confirmation Modal -->
-    <div id="confirm-delete-modal" class="overlay">
-        <div class="modal-content max-w-sm text-center">
-            <h3 class="text-lg font-bold mb-4">Are you sure?</h3>
-            <p id="confirm-delete-message" class="mb-6">Do you really want to delete this file? This action cannot be undone.</p>
-            <div class="flex justify-center gap-4">
-                <button onclick="closeModal('confirm-delete-modal')" class="bg-gray-300 py-2 px-6 rounded-md hover:bg-gray-400">Cancel</button>
-                <button id="confirm-delete-btn" class="bg-red-600 text-white py-2 px-6 rounded-md hover:bg-red-700">Delete</button>
-            </div>
-        </div>
-    </div>
+                </header>
 
-    <!-- Preview Modal -->
-    <div id="preview-modal" class="overlay">
-        <div class="modal-content max-w-4xl">
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 no-print gap-2">
-                <h3 class="text-2xl font-bold">Job File Preview</h3>
-                <div>
-                    <button onclick="printPage()" title="Print Preview" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
-                    <button onclick="closeModal('preview-modal')" class="text-gray-500 hover:text-gray-800 text-3xl align-middle">&times;</button>
-                </div>
-            </div>
-            <div id="preview-body"></div>
-        </div>
-    </div>
+                <div id="main-page-stats" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"></div>
 
-    <!-- Admin Panel Modal -->
-    <div id="admin-panel-modal" class="overlay">
-        <div class="modal-content max-w-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">Admin Panel</h3>
-                <button onclick="closeModal('admin-panel-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-        
-            <!-- User Management -->
-            <div class="border rounded-lg p-4">
-                <h4 class="text-lg font-semibold mb-2">User Management (Firebase)</h4>
-                <div id="user-list" class="space-y-2 max-h-[40vh] overflow-y-auto"></div>
-                <div class="text-right mt-4">
-                    <button onclick="saveUserChanges()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save User Changes</button>
-                </div>
-            </div>
-        
-             <!-- Data Backup & Restore (Local) -->
-            <div class="border rounded-lg p-4 mt-6">
-                <h4 class="text-lg font-semibold mb-3">Data Backup & Restore</h4>
-                <p class="text-sm text-gray-600 mb-4">Backup all job files to a single JSON file, or restore from the `BACKUP/` directory on the server.</p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <button onclick="backupAllData()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
-                        Backup All Data
-                    </button>
-                     <button onclick="restoreFromBackup()" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center gap-2">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-1.707-1.707A1 1 0 00.879 11L5.879 16a1 1 0 001.414 0L12.293 11a1 1 0 00-1.414-1.414L9 11.586V8a4 4 0 118 0v2a1 1 0 102 0V8a6 6 0 00-6-6z" /></svg>
-                         Restore from Backup
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Rejection Reason Modal -->
-    <div id="reject-reason-modal" class="overlay">
-        <div class="modal-content max-w-md">
-            <h3 class="text-lg font-bold mb-4">Rejection Reason</h3>
-            <p class="mb-4">Please provide a reason for rejecting this job file.</p>
-            <textarea id="rejection-reason-input" class="input-field w-full" rows="3"></textarea>
-            <div class="text-right mt-6 space-x-2">
-                <button onclick="closeModal('reject-reason-modal')" class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Cancel</button>
-                <button id="confirm-reject-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Confirm Rejection</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Forgot Password Modal -->
-    <div id="forgot-password-modal" class="overlay">
-        <div class="modal-content max-w-md">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">Reset Password</h3>
-                <button onclick="closeModal('forgot-password-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <p class="mb-4 text-gray-600">Enter your email address and we will send you a link to reset your password.</p>
-            <div>
-                <label for="reset-email" class="sr-only">Email address</label>
-                <input id="reset-email" name="email" type="email" autocomplete="email" required class="input-field" placeholder="Email address">
-            </div>
-            <div class="text-right mt-6">
-                <button id="send-reset-link-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                    Send Password Reset Link
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Client Manager Modal -->
-    <div id="client-manager-modal" class="overlay">
-        <div class="modal-content max-w-4xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">Client Management (Firebase)</h3>
-                <button onclick="closeModal('client-manager-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Add/Edit Client Form -->
-                <div class="md:col-span-1">
-                    <h4 id="client-form-title" class="text-xl font-semibold mb-4">Add New Client</h4>
-                    <form id="client-form" class="space-y-4">
-                        <input type="hidden" id="client-id">
-                        <div>
-                            <label for="client-name" class="block text-sm font-medium text-gray-700">Client Name</label>
-                            <input type="text" id="client-name" class="input-field mt-1" required>
-                        </div>
-                        <div>
-                            <label for="client-address" class="block text-sm font-medium text-gray-700">Address</label>
-                            <textarea id="client-address" rows="2" class="input-field mt-1"></textarea>
-                        </div>
-                        <div>
-                            <label for="client-contact-person" class="block text-sm font-medium text-gray-700">Contact Person</label>
-                            <input type="text" id="client-contact-person" class="input-field mt-1">
-                        </div>
-                        <div>
-                            <label for="client-phone" class="block text-sm font-medium text-gray-700">Phone</label>
-                            <input type="text" id="client-phone" class="input-field mt-1">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Client Type</label>
-                            <select id="client-type" class="input-field mt-1">
-                                <option value="Shipper">Shipper</option>
-                                <option value="Consignee">Consignee</option>
-                                <option value="Both">Both</option>
-                            </select>
-                        </div>
-                        <div class="flex gap-4">
-                            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save Client</button>
-                            <button type="button" id="clear-client-form-btn" class="w-full bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">Clear</button>
-                        </div>
-                    </form>
-                </div>
-                <!-- Client List -->
-                <div class="md:col-span-2">
-                    <input type="text" id="client-search-bar" class="input-field mb-4" placeholder="Search clients...">
-                    <div id="client-list" class="space-y-2 max-h-[50vh] overflow-y-auto border p-2 rounded-md">
-                        <!-- Client list will be populated by JS -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-     <!-- Charge Manager Modal -->
-    <div id="charge-manager-modal" class="overlay">
-        <div class="modal-content max-w-lg">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">Manage Charge Descriptions</h3>
-                <button onclick="closeModal('charge-manager-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <h4 class="text-lg font-semibold mb-2">Add New Description</h4>
-                    <div class="flex gap-2">
-                        <input type="text" id="new-charge-description" class="input-field" placeholder="E.g., Customs Duty">
-                        <button onclick="saveChargeDescription()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add</button>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-2">Existing Descriptions</h4>
-                    <div id="charge-description-list" class="space-y-2 max-h-[50vh] overflow-y-auto">
-                        <!-- JS will populate this list -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Activity Log Modal -->
-    <div id="activity-log-modal" class="overlay">
-        <div class="modal-content max-w-4xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">User Activity Log</h3>
-                <button onclick="closeModal('activity-log-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <div class="max-h-[70vh] overflow-y-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="table-cell font-semibold text-left">User Name</th>
-                            <th class="table-cell font-semibold text-left">Job File No.</th>
-                            <th class="table-cell font-semibold text-left">Time Opened</th>
-                        </tr>
-                    </thead>
-                    <tbody id="activity-log-body">
-                        <!-- JS will populate this -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- User-Specific Jobs Modal (Analytics) -->
-    <div id="user-jobs-modal" class="overlay">
-        <div class="modal-content max-w-5xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="user-jobs-modal-title" class="text-2xl font-bold">User's Job Files</h3>
-                <button onclick="closeModal('user-jobs-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <div id="user-jobs-list" class="space-y-2 max-h-[70vh] overflow-y-auto">
-                <!-- JS will populate this list -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Recycle Bin Modal -->
-    <div id="recycle-bin-modal" class="overlay">
-        <div class="modal-content max-w-5xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">Recycle Bin</h3>
-                <button onclick="closeModal('recycle-bin-modal')" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <div id="recycle-bin-list" class="space-y-2 max-h-[70vh] overflow-y-auto">
-                <!-- JS will populate this list -->
-            </div>
-        </div>
-    </div>
-
-<script type="module">
-    // All JavaScript logic now resides here, inside a single module script tag.
-    // This avoids ReferenceErrors and keeps the project self-contained.
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp, getDocs, writeBatch, where, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // --- Global variables ---
-    let db, auth;
-    let currentUser = null;
-    let jobFilesCache = [];
-    let clientsCache = [];
-    let allUsersCache = [];
-    let chargeDescriptions = [];
-    let analyticsDataCache = null;
-    let currentJobFile = null;
-    let profitChartInstance, salesmanChartInstance;
-    let fileIdToReject = null;
-    let currentFilteredJobs = [];
-
-    // --- Firebase Configuration ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyAAulR2nJQm-4QtNyEqKTnnDPw-iKW92Mc",
-        authDomain: "my-job-file-system.firebaseapp.com",
-        projectId: "my-job-file-system",
-        storageBucket: "my-job-file-system.appspot.com",
-        messagingSenderId: "145307873304",
-        appId: "1:145307873304:web:d661ea6ec118801b4a136d",
-        measurementId: "G-8EHX5K7YHL"
-    };
-    
-    // --- Core Functions ---
-    function showLoader() { document.getElementById('loader-overlay').classList.add('visible'); }
-    function hideLoader() { document.getElementById('loader-overlay').classList.remove('visible'); }
-
-    function showNotification(message, isError = false) {
-        const notification = document.getElementById('notification');
-        if (!notification) return;
-        notification.textContent = message;
-        notification.style.backgroundColor = isError ? '#c53030' : '#2d3748';
-        notification.classList.add('show');
-        setTimeout(() => {
-            notification.classList.remove('show');
-        }, 3000);
-    }
-
-    function openModal(id, keepParent = false) {
-        const modal = document.getElementById(id);
-        if (!modal) return;
-        if (keepParent) {
-            const highestZ = Array.from(document.querySelectorAll('.overlay.visible'))
-                .reduce((max, el) => Math.max(max, parseInt(window.getComputedStyle(el).zIndex || '1000', 10)), 1000);
-            modal.style.zIndex = `${highestZ + 10}`;
-        } else {
-            closeAllModals();
-        }
-        modal.classList.add('visible');
-    }
-
-    function closeModal(id) {
-        const modal = document.getElementById(id);
-        if(modal) modal.classList.remove('visible');
-    }
-    
-    function closeAllModals() {
-        document.querySelectorAll('.overlay').forEach(modal => modal.classList.remove('visible'));
-    }
-    
-    // --- Central API Handler for PHP Scripts ---
-    async function handleApiRequest(script, options, successMessage, errorMessage) {
-        showLoader();
-        try {
-            const response = await fetch(script, options);
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Server responded with ${response.status}: ${errorText || 'Server Error'}`);
-            }
-            const result = await response.json();
-            if (result.status !== 'success') {
-                throw new Error(result.message || 'An unknown error occurred.');
-            }
-            if (successMessage) showNotification(successMessage);
-            hideLoader();
-            return result;
-        } catch (error) {
-            console.error(`Error in ${script}:`, error);
-            showNotification(`${errorMessage} (${error.message})`, true);
-            hideLoader();
-            return null;
-        }
-    }
-    
-    // --- Authentication ---
-    async function handleSignUp(email, password, displayName) {
-        showLoader();
-        try {
-            await createUserWithEmailAndPassword(auth, email, password);
-            showNotification("Account created! Please wait for admin approval.", false);
-            await signOut(auth);
-            toggleAuthView(true);
-        } catch (error) {
-            console.error("Sign up error:", error);
-            showNotification(error.message, true);
-        }
-        hideLoader();
-    }
-
-    async function handleLogin(email, password) {
-        showLoader();
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-        } catch (error) {
-            console.error("Login error:", error);
-            let message = "Login failed. Please check your email and password.";
-            if (['auth/user-not-found', 'auth/wrong-password', 'auth/invalid-credential'].includes(error.code)) {
-                message = "Incorrect email or password. Please try again or reset your password.";
-            }
-            showNotification(message, true);
-        }
-        hideLoader();
-    }
-
-    async function handleForgotPassword() {
-        const email = document.getElementById('reset-email').value.trim();
-        if (!email) { showNotification("Please enter your email address.", true); return; }
-        showLoader();
-        try {
-            await sendPasswordResetEmail(auth, email);
-            hideLoader();
-            closeModal('forgot-password-modal');
-            showNotification("Password reset link sent! Check your email inbox.", false);
-        } catch (error) {
-            hideLoader();
-            console.error("Password reset error:", error);
-            let message = "Could not send reset link. Please try again.";
-            if (error.code === 'auth/user-not-found') { message = "No account found with this email address."; }
-            showNotification(message, true);
-        }
-    }
-    
-    function handleLogout() {
-        signOut(auth).catch(error => showNotification(`Logout failed: ${error.message}`, true));
-    }
-
-    function toggleAuthView(showLogin) {
-        document.getElementById('auth-title').textContent = showLogin ? 'Sign in to your account' : 'Create a new account';
-        document.getElementById('auth-btn').textContent = showLogin ? 'Sign in' : 'Sign up';
-        document.getElementById('auth-link').textContent = showLogin ? 'Create a new account' : 'Already have an account? Sign in';
-        document.getElementById('signup-name-field').style.display = showLogin ? 'none' : 'block';
-        const emailField = document.getElementById('email-address');
-        emailField.classList.toggle('rounded-t-md', !showLogin);
-        emailField.classList.toggle('rounded-md', showLogin);
-        document.getElementById('approval-message').style.display = 'none';
-        document.getElementById('blocked-message').style.display = 'none';
-    }
-    
-    // --- Core Application Logic ---
-    function showLogin() {
-        document.getElementById('login-screen').style.display = 'flex';
-        document.getElementById('app-container').style.display = 'none';
-        document.getElementById('analytics-container').style.display = 'none';
-    }
-
-    async function showApp() {
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('app-container').style.display = 'block';
-        document.getElementById('analytics-container').style.display = 'none';
-        
-        if (currentUser) {
-            document.getElementById('user-display-name').textContent = currentUser.displayName;
-            document.getElementById('user-role').textContent = currentUser.role;
-
-            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'none');
-            
-            if (currentUser.role === 'admin') {
-                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
-                document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
-                document.getElementById('checker-info-banner').style.display = 'block';
-            } else if (currentUser.role === 'checker') {
-                document.querySelectorAll('.checker-only').forEach(el => el.style.display = 'block');
-                document.getElementById('checker-info-banner').style.display = 'block';
-            }
-        }
-        
-        await loadAllJobFilesForCache(); 
-        await loadClientsFromFirebase();
-        clearForm();
-    }
-    
-    // --- Form and Data Management ---
-    function clearForm() {
-        document.querySelectorAll('#main-container input[type="text"], #main-container input[type="date"], #main-container textarea').forEach(el => el.value = '');
-        document.querySelectorAll('#main-container input[type="checkbox"]').forEach(el => el.checked = false);
-        document.getElementById('date').valueAsDate = new Date();
-        document.getElementById('job-file-no').disabled = false;
-        
-        currentJobFile = null;
-        populateTable();
-        calculate();
-        
-        if (currentUser) {
-            document.getElementById('prepared-by').value = currentUser.displayName;
-        }
-        
-        document.getElementById('created-by-info').textContent = '';
-        document.getElementById('last-updated-by-info').textContent = '';
-
-        document.getElementById('approved-by').value = '';
-        document.getElementById('checked-by').value = '';
-        document.getElementById('check-btn').disabled = false;
-        document.getElementById('check-btn').textContent = 'Check Job File';
-        document.getElementById('approve-btn').disabled = false;
-        document.getElementById('reject-btn').disabled = false;
-
-        document.getElementById('checked-stamp').style.display = 'none';
-        document.getElementById('approved-stamp').style.display = 'none';
-        document.getElementById('rejected-stamp').style.display = 'none';
-        document.getElementById('rejection-banner').style.display = 'none';
-
-        const isChecker = ['admin', 'checker'].includes(currentUser?.role);
-        const isAdmin = currentUser?.role === 'admin';
-        document.getElementById('check-btn').style.display = isChecker ? 'block' : 'none';
-        document.getElementById('approval-buttons').style.display = isAdmin ? 'flex' : 'none';
-
-        showNotification("Form cleared. Ready for a new job file.");
-    }
-    
-    function populateTable() {
-        const table = document.getElementById('charges-table');
-        table.innerHTML = `
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="table-cell font-semibold w-2/5">Description</th>
-                    <th class="table-cell font-semibold">Cost</th>
-                    <th class="table-cell font-semibold">Selling</th>
-                    <th class="table-cell font-semibold">Profit</th>
-                    <th class="table-cell font-semibold">Notes</th>
-                    <th class="table-cell font-semibold"></th>
-                </tr>
-            </thead>
-            <tbody id="charges-table-body">
-            </tbody>
-            <tfoot>
-                <tr id="total-row" class="bg-gray-100 font-bold">
-                    <td class="table-cell text-right">TOTAL:</td>
-                    <td id="total-cost" class="table-cell text-right">0.000</td>
-                    <td id="total-selling" class="table-cell text-right">0.000</td>
-                    <td id="total-profit" class="table-cell text-right">0.000</td>
-                    <td class="table-cell" colspan="2"></td>
-                </tr>
-            </tfoot>
-        `;
-        const tableBody = document.getElementById('charges-table-body');
-        tableBody.addEventListener('input', e => {
-            if (e.target.classList.contains('cost-input') || e.target.classList.contains('selling-input')) {
-                calculate();
-            }
-        });
-        for(let i=0; i<5; i++) addChargeRow();
-    }
-    
-    function addChargeRow(data = {}) {
-        const tableBody = document.getElementById('charges-table-body');
-        const newRow = document.createElement('tr');
-        
-        const desc = data.l || '';
-        const cost = data.c || '';
-        const selling = data.s || '';
-        const notes = data.n || '';
-        const profit = ((parseFloat(selling) || 0) - (parseFloat(cost) || 0)).toFixed(3);
-
-        newRow.innerHTML = `
-            <td class="table-cell relative">
-                <input type="text" class="description-input input-field" value="${desc}" autocomplete="off">
-                <div class="autocomplete-suggestions hidden"></div>
-            </td>
-            <td class="table-cell"><input type="number" step="0.001" class="cost-input input-field" value="${cost}"></td>
-            <td class="table-cell"><input type="number" step="0.001" class="selling-input input-field" value="${selling}"></td>
-            <td class="table-cell profit-output bg-gray-50 text-right">${profit}</td>
-            <td class="table-cell"><input type="text" class="notes-input input-field" value="${notes}"></td>
-            <td class="table-cell text-center"><button class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button></td>
-        `;
-
-        setupChargeAutocomplete(newRow.querySelector('.description-input'));
-        
-        newRow.querySelector('button').addEventListener('click', () => {
-            newRow.remove();
-            calculate();
-        });
-
-        tableBody.appendChild(newRow);
-    }
-    
-    function getFormData() {
-        const getChecked = (query) => Array.from(document.querySelectorAll(query))
-            .filter(el => el.checked).map(el => el.dataset.clearance || el.dataset.product);
-
-        const charges = [];
-        document.querySelectorAll('#charges-table-body tr:not(#total-row)').forEach(row => {
-            const description = row.querySelector('.description-input').value.trim();
-            const cost = row.querySelector('.cost-input').value;
-            const selling = row.querySelector('.selling-input').value;
-
-            if (description && (cost || selling)) {
-                charges.push({
-                    l: description,
-                    c: cost || '0',
-                    s: selling || '0',
-                    n: row.querySelector('.notes-input').value || ''
-                });
-            }
-        });
-
-        return {
-            d: document.getElementById('date').value, po: document.getElementById('po-number').value, jfn: document.getElementById('job-file-no').value,
-            cl: getChecked('[data-clearance]:checked'), pt: getChecked('[data-product]:checked'),
-            in: document.getElementById('invoice-no').value, bd: document.getElementById('billing-date').value, sm: document.getElementById('salesman').value,
-            sh: document.getElementById('shipper-name').value, co: document.getElementById('consignee-name').value,
-            mawb: document.getElementById('mawb').value, hawb: document.getElementById('hawb').value, ts: document.getElementById('teams-of-shipping').value, or: document.getElementById('origin').value,
-            pc: document.getElementById('no-of-pieces').value, gw: document.getElementById('gross-weight').value, de: document.getElementById('destination').value, vw: document.getElementById('volume-weight').value,
-            dsc: document.getElementById('description').value, ca: document.getElementById('carrier').value, tn: document.getElementById('truck-no').value,
-            vn: document.getElementById('vessel-name').value, fv: document.getElementById('flight-voyage-no').value, cn: document.getElementById('container-no').value,
-            ch: charges,
-            re: document.getElementById('remarks').value,
-            pb: document.getElementById('prepared-by').value,
-        };
-    }
-    
-    function populateFormFromData(data) {
-        if (!data) { clearForm(); return; }
-        currentJobFile = data;
-
-        const setVal = (id, value) => { const el = document.getElementById(id); if (el) el.value = value || ''; };
-        const setChecked = (type, values) => {
-            document.querySelectorAll(`[data-${type}]`).forEach(el => {
-                el.checked = (values || []).includes(el.dataset[type]);
-            });
-        };
-
-        setVal('date', data.d); setVal('po-number', data.po); setVal('job-file-no', data.jfn);
-        setVal('invoice-no', data.in); setVal('billing-date', data.bd);
-        setVal('salesman', data.sm); setVal('shipper-name', data.sh); setVal('consignee-name', data.co);
-        setVal('mawb', data.mawb); setVal('hawb', data.hawb); setVal('teams-of-shipping', data.ts);
-        setVal('origin', data.or); setVal('no-of-pieces', data.pc); setVal('gross-weight', data.gw);
-        setVal('destination', data.de); setVal('volume-weight', data.vw); setVal('description', data.dsc);
-        setVal('carrier', data.ca); setVal('truck-no', data.tn); setVal('vessel-name', data.vn);
-        setVal('flight-voyage-no', data.fv); setVal('container-no', data.cn);
-        setVal('remarks', data.re);
-        setVal('prepared-by', data.pb || data.createdBy || '');
-        
-        document.getElementById('created-by-info').textContent = data.createdBy ? `Created by: ${data.createdBy} on ${new Date(data.createdAt).toLocaleDateString()}` : '';
-        document.getElementById('last-updated-by-info').textContent = data.lastUpdatedBy ? `Last updated by: ${data.lastUpdatedBy} on ${new Date(data.updatedAt).toLocaleString()}` : '';
-
-        // Reset all stamps and banners
-        ['checked-stamp', 'approved-stamp', 'rejected-stamp', 'rejection-banner'].forEach(id => document.getElementById(id).style.display = 'none');
-        ['check-btn', 'approve-btn', 'reject-btn'].forEach(id => document.getElementById(id).style.display = 'none');
-        document.getElementById('approval-buttons').style.display = 'none';
-
-        const checkBtn = document.getElementById('check-btn');
-        if (data.checkedBy) {
-            const checkedDate = data.checkedAt ? ` on ${new Date(data.checkedAt).toLocaleDateString()}` : '';
-            setVal('checked-by', `${data.checkedBy}${checkedDate}`);
-            checkBtn.disabled = true;
-            checkBtn.textContent = 'Checked';
-            document.getElementById('checked-stamp').style.display = 'block';
-        } else {
-            setVal('checked-by', 'Pending Check');
-            checkBtn.disabled = false;
-            checkBtn.textContent = 'Check Job File';
-        }
-
-        if (data.status === 'approved') {
-            const approvedDate = data.approvedAt ? ` on ${new Date(data.approvedAt).toLocaleDateString()}` : '';
-            setVal('approved-by', `${data.approvedBy}${approvedDate}`);
-            document.getElementById('approved-stamp').style.display = 'block';
-        } else if (data.status === 'rejected') {
-            const rejectedDate = data.rejectedAt ? ` on ${new Date(data.rejectedAt).toLocaleDateString()}` : '';
-            setVal('approved-by', `Rejected by ${data.rejectedBy}${rejectedDate}`);
-            document.getElementById('rejected-stamp').style.display = 'block';
-            document.getElementById('rejection-banner').style.display = 'block';
-            document.getElementById('rejection-reason').textContent = data.rejectionReason || '';
-        } else {
-            setVal('approved-by', 'Pending Approval');
-        }
-
-        // Show buttons based on role and status
-        if (currentUser?.role === 'admin' && data.status !== 'approved' && data.status !== 'rejected') {
-            document.getElementById('approval-buttons').style.display = 'flex';
-        }
-        if (['admin', 'checker'].includes(currentUser?.role) && !data.checkedBy) {
-            checkBtn.style.display = 'block';
-        }
-        
-        setChecked('clearance', data.cl);
-        setChecked('product', data.pt);
-
-        populateTable();
-        document.getElementById('charges-table-body').innerHTML = ''; // Clear default rows
-        if (data.ch && data.ch.length > 0) {
-            data.ch.forEach(charge => addChargeRow(charge));
-        }
-        addChargeRow(); // Add one empty row at the end
-        calculate();
-    }
-    
-    function calculate() {
-        let totalCost = 0, totalSelling = 0;
-        document.querySelectorAll('#charges-table-body tr').forEach(row => {
-            const cost = parseFloat(row.querySelector('.cost-input').value) || 0;
-            const selling = parseFloat(row.querySelector('.selling-input').value) || 0;
-            const profit = selling - cost;
-            row.querySelector('.profit-output').textContent = profit.toFixed(3);
-            totalCost += cost; totalSelling += selling;
-        });
-        document.getElementById('total-cost').textContent = totalCost.toFixed(3);
-        document.getElementById('total-selling').textContent = totalSelling.toFixed(3);
-        document.getElementById('total-profit').textContent = (totalSelling - totalCost).toFixed(3);
-    }
-
-    // This is the full JS logic. All functions will be defined here.
-    // ... all other functions (printPage, printPreview, openFileManager, etc.)
-    // will be defined in this same scope, making them accessible to each other.
-    
-    function getPrintViewHtml(isCopy) {
-        const data = currentJobFile;
-        if (!data) return '<p>No job file loaded.</p>';
-
-        const copyWatermark = isCopy ? `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 8rem; color: rgba(255, 0, 0, 0.1); font-weight: bold; z-index: 1000; pointer-events: none;">COPY</div>` : '';
-        const qrCodeUrl = window.location.origin + window.location.pathname.replace('A.HTML', 'public.php') + `?jobId=${data.jfn}`;
-        
-        let chargesHtml = '';
-        if (data.ch) {
-            data.ch.forEach(c => {
-                chargesHtml += `<tr>
-                    <td class="px-2 py-1 border">${c.l || ''}</td>
-                    <td class="px-2 py-1 border text-right">${c.c ? parseFloat(c.c).toFixed(3) : '0.000'}</td>
-                    <td class="px-2 py-1 border text-right">${c.s ? parseFloat(c.s).toFixed(3) : '0.000'}</td>
-                    <td class="px-2 py-1 border text-right">${(parseFloat(c.s || '0') - parseFloat(c.c || '0')).toFixed(3)}</td>
-                    <td class="px-2 py-1 border">${c.n || ''}</td>
-                </tr>`;
-            });
-        }
-        
-        return `
-        <div class="p-4 bg-white text-sm" style="position: relative;">
-            ${copyWatermark}
-            <div class="flex justify-between items-start mb-4">
-                <img class="h-20 w-auto" src="https://qgocargo.com/logo.png" alt="Q'go Cargo Logo">
-                <div class="text-right">
-                    <h1 class="text-3xl font-bold">JOB FILE</h1>
-                    <div id="qrcode" class="mt-2 inline-block p-1 border bg-white"></div>
-                </div>
-            </div>
-            <div class="grid grid-cols-4 gap-4 mb-4">
-                <div><strong class="font-semibold">Date:</strong><div class="print-field">${data.d || ''}</div></div>
-                <div><strong class="font-semibold">P.O. #:</strong><div class="print-field">${data.po || ''}</div></div>
-                <div class="col-span-2"><strong class="font-semibold">Job File No:</strong><div class="print-field">${data.jfn || ''}</div></div>
-                <div class="col-span-2"><strong class="font-semibold">Clearance:</strong><div class="print-field">${(data.cl || []).join(', ')}</div></div>
-                <div class="col-span-2"><strong class="font-semibold">Product Type:</strong><div class="print-field">${(data.pt || []).join(', ')}</div></div>
-                <div><strong class="font-semibold">Invoice No:</strong><div class="print-field">${data.in || ''}</div></div>
-                <div><strong class="font-semibold">Billing Date:</strong><div class="print-field">${data.bd || ''}</div></div>
-                <div><strong class="font-semibold">Salesman:</strong><div class="print-field">${data.sm || ''}</div></div>
-                <div class="col-span-2"><strong class="font-semibold">Shipper's Name:</strong><div class="print-field">${data.sh || ''}</div></div>
-                <div class="col-span-2"><strong class="font-semibold">Consignee's Name:</strong><div class="print-field">${data.co || ''}</div></div>
-                <div class="col-span-2"><strong class="font-semibold">MAWB/OBL/TCN:</strong><div class="print-field">${data.mawb || ''}</div></div>
-                <div class="col-span-2"><strong class="font-semibold">HAWB/HBL:</strong><div class="print-field">${data.hawb || ''}</div></div>
-                <div><strong class="font-semibold">Teams of Shipping:</strong><div class="print-field">${data.ts || ''}</div></div>
-                <div><strong class="font-semibold">Origin:</strong><div class="print-field">${data.or || ''}</div></div>
-                <div><strong class="font-semibold">No. of Pieces:</strong><div class="print-field">${data.pc || ''}</div></div>
-                <div><strong class="font-semibold">Gross Weight:</strong><div class="print-field">${data.gw || ''}</div></div>
-                <div><strong class="font-semibold">Destination:</strong><div class="print-field">${data.de || ''}</div></div>
-                <div><strong class="font-semibold">Volume Weight:</strong><div class="print-field">${data.vw || ''}</div></div>
-                <div class="col-span-2"><strong class="font-semibold">Description:</strong><div class="print-field">${data.dsc || ''}</div></div>
-            </div>
-            <h3 class="font-bold text-lg mb-2">Charges</h3>
-            <table class="w-full border-collapse border print-table mb-4">
-                <thead><tr class="bg-gray-100">
-                    <th class="px-2 py-1 border font-semibold">Description</th>
-                    <th class="px-2 py-1 border font-semibold">Cost</th>
-                    <th class="px-2 py-1 border font-semibold">Selling</th>
-                    <th class="px-2 py-1 border font-semibold">Profit</th>
-                    <th class="px-2 py-1 border font-semibold">Notes</th>
-                </tr></thead>
-                <tbody>${chargesHtml}</tbody>
-                <tfoot><tr class="bg-gray-100 font-bold">
-                    <td class="px-2 py-1 border text-right">TOTAL</td>
-                    <td class="px-2 py-1 border text-right">${data.totalCost ? data.totalCost.toFixed(3) : '0.000'}</td>
-                    <td class="px-2 py-1 border text-right">${data.totalSelling ? data.totalSelling.toFixed(3) : '0.000'}</td>
-                    <td class="px-2 py-1 border text-right">${data.totalProfit ? data.totalProfit.toFixed(3) : '0.000'}</td>
-                    <td class="px-2 py-1 border"></td>
-                </tr></tfoot>
-            </table>
-             <div class="mb-4"><strong class="font-semibold">REMARKS:</strong><div class="print-field">${data.re || ''}</div></div>
-             <div class="grid grid-cols-3 gap-8 pt-4 mt-8 border-t-2">
-                <div class="text-center"><strong class="font-semibold block border-t-2 pt-2">PREPARED BY</strong><div class="mt-2">${data.pb || data.createdBy || ''}</div></div>
-                <div class="text-center"><strong class="font-semibold block border-t-2 pt-2">CHECKED BY</strong><div class="mt-2">${data.checkedBy || ''}</div></div>
-                <div class="text-center"><strong class="font-semibold block border-t-2 pt-2">APPROVED BY</strong><div class="mt-2">${data.approvedBy || ''}</div></div>
-             </div>
-        </div>
-        <script>new QRCode(document.getElementById("qrcode"), { text: "${qrCodeUrl}", width: 64, height: 64 });</script>
-        `;
-    }
-
-    function printPreview() {
-        if (!currentJobFile) { showNotification("Please load a job file first.", true); return; }
-        document.getElementById('preview-body').innerHTML = getPrintViewHtml(false);
-        openModal('preview-modal');
-    }
-
-    function printPage() {
-        const isCopy = window.confirm("Do you want to print this as a copy?");
-        document.getElementById('print-output').innerHTML = getPrintViewHtml(isCopy);
-        window.print();
-    }
-    
-    // All other functions defined here...
-    
-    // This is the key change: Make functions globally accessible
-    window.openFileManager = openFileManager;
-    window.openAnalyticsDashboard = openAnalyticsDashboard;
-    window.saveJobFile = saveJobFile;
-    window.clearForm = clearForm;
-    window.printPreview = printPreview;
-    window.closeModal = closeModal;
-    window.loadJobFileById = loadJobFileById;
-    window.previewJobFileById = previewJobFileById;
-    window.openClientManager = openClientManager;
-    window.openRecycleBin = openRecycleBin;
-    window.confirmDelete = confirmDelete;
-    window.restoreJobFile = restoreJobFile;
-    window.checkJobFile = checkJobFile;
-    window.approveJobFile = approveJobFile;
-    window.promptForRejection = promptForRejection;
-    window.rejectJobFile = rejectJobFile;
-    window.addChargeRow = addChargeRow;
-    window.openChargeManager = openChargeManager;
-    window.saveChargeDescription = saveChargeDescription;
-    window.deleteChargeDescription = deleteChargeDescription;
-    window.openAdminPanel = openAdminPanel;
-    window.saveUserChanges = saveUserChanges;
-    window.editClient = editClient;
-    window.showUserJobs = showUserJobs;
-    window.showMonthlyJobs = showMonthlyJobs;
-    window.showSalesmanJobs = showSalesmanJobs;
-    window.showStatusJobs = showStatusJobs;
-    window.downloadAnalyticsCsv = downloadAnalyticsCsv;
-    window.openUserActivityLog = openUserActivityLog;
-    window.backupAllData = backupAllData;
-    window.restoreFromBackup = restoreFromBackup;
-    window.printPage = printPage;
-    
-    // The rest of your functions (openFileManager, loadAllJobFilesForCache, etc.) will go here
-    // ...
-
-    async function openFileManager(refresh = false) {
-        showLoader();
-        const result = await handleApiRequest('list-jobfiles.php', { method: 'GET' }, null, "Could not load file list.");
-        if (result && result.files) {
-            jobFilesCache = result.files.filter(f => !f.isDeleted);
-            displayJobFiles(jobFilesCache);
-            updateStatusSummary('status-summary-file-manager', jobFilesCache);
-            openModal('file-manager-modal');
-        }
-        hideLoader();
-    }
-    
-    async function loadAllJobFilesForCache() {
-        const result = await handleApiRequest('list-jobfiles.php?full=true&all=true', { method: 'GET' }, null, "Failed to load initial data.");
-        if (result && result.files) {
-            jobFilesCache = result.files.filter(f => !f.isDeleted);
-            updateMainPageStats();
-            return true;
-        }
-        jobFilesCache = [];
-        updateMainPageStats();
-        return false;
-    }
-
-    function displayJobFiles(files) {
-        const list = document.getElementById('job-files-list');
-        if (!list) return;
-        if (files.length === 0) {
-            list.innerHTML = `<p class="text-gray-500 text-center p-4">No job files match the current filters.</p>`;
-            return;
-        }
-        const filesHtml = files.map(docData => {
-            const deleteButton = currentUser.role === 'admin' ? `<button onclick="confirmDelete('${docData.jfn.replace(/\//g, '_')}')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm">Delete</button>` : '';
-            const lastUpdated = new Date(docData.updatedAt).toLocaleString();
-            
-            return `
-                <div class="job-file-item border p-3 rounded-lg flex flex-col sm:flex-row justify-between items-center bg-gray-50 hover:bg-gray-100 gap-2">
-                    <div class="text-center sm:text-left">
-                        <p class="font-bold text-indigo-700">${docData.jfn || 'No ID'}</p>
-                        <p class="text-sm text-gray-600">Shipper: ${docData.sh || 'N/A'} | Consignee: ${docData.co || 'N/A'}</p>
-                        <p class="text-xs text-gray-400">Last Updated: ${lastUpdated}</p>
-                    </div>
-                    <div class="space-x-2 flex-shrink-0">
-                        <button onclick="previewJobFileById('${docData.jfn.replace(/\//g, '_')}')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded text-sm">Preview</button>
-                        <button onclick="loadJobFileById('${docData.jfn.replace(/\//g, '_')}')" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-sm">Load</button>
-                        ${deleteButton}
-                    </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <!-- Form content will be injected here -->
+                    <form id="job-file-form"></form>
                 </div>
             `;
-        }).join('');
-        list.innerHTML = filesHtml;
-    }
-    
-    // --- AND ALL THE OTHER FUNCTIONS ---
-    // (The full script is too long to paste again, but it's the logic from my previous attempt, now with functions globally scoped)
-    // The key is that `window.functionName = functionName;` makes them accessible.
-    
-    // --- Initializer ---
-    document.addEventListener('DOMContentLoaded', () => {
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    const userDocRef = doc(db, 'users', user.uid);
-                    let userDoc = await getDoc(userDocRef);
-                    
-                    if (!userDoc.exists()) {
-                        const usersCollectionRef = collection(db, 'users');
-                        const userQuerySnapshot = await getDocs(usersCollectionRef);
-                        const isFirstUser = userQuerySnapshot.size === 0;
-                        const newUser = {
-                            email: user.email,
-                            displayName: user.displayName || user.email.split('@')[0],
-                            role: isFirstUser ? 'admin' : 'user',
-                            status: isFirstUser ? 'active' : 'inactive',
-                            createdAt: serverTimestamp()
-                        };
-                        await setDoc(userDocRef, newUser);
-                        userDoc = await getDoc(userDocRef);
-                    }
-                    
-                    const userData = userDoc.data();
-                    
-                    if (userData.status === 'inactive') {
-                        showLogin();
-                        document.getElementById('approval-message').style.display = 'block';
-                        signOut(auth);
-                        return;
-                    }
 
-                    if (userData.status === 'blocked') {
-                        showLogin();
-                        document.getElementById('blocked-message').style.display = 'block';
-                        signOut(auth);
-                        return;
-                    }
-                    
-                    currentUser = { uid: user.uid, ...userData };
-                    console.log("User logged in:", currentUser);
-                    await showApp();
-                } else {
-                    currentUser = null;
-                    console.log("User logged out");
-                    showLogin();
+            // Injecting templates
+            document.getElementById('login-screen').innerHTML = loginTemplate;
+            document.getElementById('app-container').innerHTML = appTemplate;
+
+
+            // --- CORE UTILITY FUNCTIONS ---
+            const getEl = (id) => document.getElementById(id);
+            const querySel = (selector) => document.querySelector(selector);
+            const querySelAll = (selector) => document.querySelectorAll(selector);
+            const showLoader = () => getEl('loader-overlay').classList.add('visible');
+            const hideLoader = () => getEl('loader-overlay').classList.remove('visible');
+            
+            const showNotification = (message, isError = false) => {
+                const notification = getEl('notification');
+                if (!notification) return;
+                notification.textContent = message;
+                notification.style.backgroundColor = isError ? '#c53030' : '#2d3748';
+                notification.classList.add('show');
+                setTimeout(() => notification.classList.remove('show'), 3000);
+            };
+
+            const openModal = (id) => { getEl(id).classList.add('visible'); };
+            const closeModal = (id) => { getEl(id).classList.remove('visible'); };
+            const closeAllModals = () => querySelAll('.overlay').forEach(modal => modal.classList.remove('visible'));
+
+            
+            // --- MAIN APP LOGIC ---
+
+            const handleApiRequest = async (script, options, successMessage, errorMessage) => {
+                showLoader();
+                try {
+                    const response = await fetch(script, options);
+                    if (!response.ok) throw new Error(`Server responded with ${response.status}: ${await response.text() || 'Server Error'}`);
+                    const result = await response.json();
+                    if (result.status !== 'success') throw new Error(result.message || 'An unknown error occurred.');
+                    if (successMessage) showNotification(successMessage);
+                    return result;
+                } catch (error) {
+                    console.error(`Error in ${script}:`, error);
+                    showNotification(`${errorMessage} (${error.message})`, true);
+                    return null;
+                } finally {
+                    hideLoader();
                 }
+            };
+            
+            // --- Authentication ---
+            const handleSignUp = async (email, password, displayName) => {
+                showLoader();
+                try {
+                    await firebase.auth().createUserWithEmailAndPassword(email, password);
+                    showNotification("Account created! Please wait for admin approval.", false);
+                    await firebase.auth().signOut();
+                    toggleAuthView(true);
+                } catch (error) { showNotification(error.message, true); }
+                hideLoader();
+            };
+
+            const handleLogin = async (email, password) => {
+                showLoader();
+                try {
+                    await firebase.auth().signInWithEmailAndPassword(email, password);
+                } catch (error) { showNotification("Incorrect email or password.", true); }
+                hideLoader();
+            };
+            
+            const handleForgotPassword = async () => {
+                const email = getEl('reset-email').value.trim();
+                if (!email) { showNotification("Please enter your email address.", true); return; }
+                showLoader();
+                try {
+                    await firebase.auth().sendPasswordResetEmail(email);
+                    hideLoader();
+                    closeModal('forgot-password-modal');
+                    showNotification("Password reset link sent!", false);
+                } catch (error) { hideLoader(); showNotification("Could not send reset link.", true); }
+            };
+            
+            const handleLogout = () => firebase.auth().signOut();
+
+            const toggleAuthView = (isLogin) => {
+                isLoginView = isLogin;
+                getEl('auth-title').textContent = isLogin ? 'Sign in to your account' : 'Create a new account';
+                getEl('auth-btn').textContent = isLogin ? 'Sign in' : 'Sign up';
+                getEl('auth-link').textContent = isLogin ? 'Create a new account' : 'Already have an account? Sign in';
+                getEl('signup-name-field').style.display = isLogin ? 'none' : 'block';
+                const emailField = getEl('email-address');
+                emailField.classList.toggle('rounded-t-md', !isLogin);
+                emailField.classList.toggle('rounded-md', isLogin);
+            };
+            
+            const showLoginScreen = () => {
+                getEl('login-screen').style.display = 'flex';
+                getEl('app-container').style.display = 'none';
+            };
+
+            const showApp = async () => {
+                getEl('login-screen').style.display = 'none';
+                getEl('app-container').style.display = 'block';
+
+                if (currentUser) {
+                    getEl('user-display-name').textContent = currentUser.displayName;
+                    getEl('user-role').textContent = currentUser.role;
+                }
+                
+                await loadAllJobFilesForCache();
+                
+                // Now call clearForm after data is likely loaded and UI is stable
+                clearForm();
+            };
+            
+            // --- JOB FILE FUNCTIONS ---
+            const loadAllJobFilesForCache = async () => {
+                const result = await handleApiRequest('jobfile/list-jobfiles.php?full=true&all=true', { method: 'GET' }, null, "Failed to load initial data.");
+                if (result && result.files) {
+                    jobFilesCache = result.files.filter(f => !f.isDeleted);
+                    updateMainPageStats();
+                    return true;
+                }
+                jobFilesCache = [];
+                updateMainPageStats();
+                return false;
+            };
+
+            const openFileManager = async () => {
+                showLoader();
+                const result = await handleApiRequest('jobfile/list-jobfiles.php', { method: 'GET' }, null, "Failed to load file list.");
+                hideLoader();
+                if(result && result.files) {
+                    jobFilesCache = result.files;
+                    // Inject file manager modal HTML and then display
+                    const fmModal = getEl('file-manager-modal');
+                    fmModal.innerHTML = `<div class="modal-content max-w-4xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-2xl font-bold">File Manager</h3>
+                            <button id="close-fm-btn" class="text-gray-500 text-3xl">&times;</button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                            <input type="text" id="fm-search-bar" class="input-field col-span-2" placeholder="Search by Job No, Shipper, Consignee...">
+                            <select id="fm-filter-status" class="input-field"><option value="">All Statuses</option><option value="pending">Pending</option><option value="checked">Checked</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select>
+                            <button id="fm-clear-filters-btn" class="py-2 px-4 bg-gray-200 rounded-md">Clear</button>
+                        </div>
+                         <div id="fm-status-summary" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4 text-center"></div>
+                        <div id="job-files-list" class="space-y-2 max-h-[50vh] overflow-y-auto p-2 bg-gray-50 rounded"></div>
+                    </div>`;
+                    
+                    getEl('close-fm-btn').addEventListener('click', () => closeModal('file-manager-modal'));
+                    getEl('fm-search-bar').addEventListener('input', applyFiltersAndDisplay);
+                    getEl('fm-filter-status').addEventListener('change', applyFiltersAndDisplay);
+                    getEl('fm-clear-filters-btn').addEventListener('click', () => {
+                        getEl('fm-search-bar').value = '';
+                        getEl('fm-filter-status').value = '';
+                        applyFiltersAndDisplay();
+                    });
+
+                    applyFiltersAndDisplay();
+                    openModal('file-manager-modal');
+                }
+            };
+            
+            const applyFiltersAndDisplay = () => {
+                const searchTerm = getEl('fm-search-bar').value.toLowerCase();
+                const statusFilter = getEl('fm-filter-status').value;
+
+                let filteredFiles = jobFilesCache.filter(file => {
+                    const searchData = [file.jfn, file.sh, file.co].join(' ').toLowerCase();
+                    if (searchTerm && !searchData.includes(searchTerm)) return false;
+                    if (statusFilter && file.status !== statusFilter) return false;
+                    return true;
+                });
+                
+                // Sort by date, ensuring dates are valid before comparing
+                filteredFiles.sort((a,b) => {
+                    const dateA = new Date(a.updatedAt || 0).getTime();
+                    const dateB = new Date(b.updatedAt || 0).getTime();
+                    return dateB - dateA;
+                });
+                
+                displayJobFiles(filteredFiles);
+                updateStatusSummary('fm-status-summary', filteredFiles);
+            };
+
+            const displayJobFiles = (files) => {
+                const list = getEl('job-files-list');
+                if (!list) return;
+                if (files.length === 0) {
+                    list.innerHTML = `<p class="text-gray-500 text-center p-4">No job files match the current filters.</p>`;
+                    return;
+                }
+                const filesHtml = files.map(docData => {
+                    const deleteButton = currentUser.role === 'admin' ? `<button class="file-action-btn bg-red-500" data-action="delete" data-id="${docData.id}">Delete</button>` : '';
+                    const lastUpdated = new Date(docData.updatedAt).toLocaleString();
+                    return `
+                        <div class="job-file-item border p-3 rounded-lg flex flex-col sm:flex-row justify-between items-center bg-white hover:bg-gray-50 gap-2">
+                            <div class="text-center sm:text-left">
+                                <p class="font-bold text-indigo-700">${docData.jfn || 'No ID'}</p>
+                                <p class="text-sm text-gray-600">Shipper: ${docData.sh || 'N/A'} | Consignee: ${docData.co || 'N/A'}</p>
+                                <p class="text-xs text-gray-400">Last Updated: ${lastUpdated}</p>
+                            </div>
+                            <div class="space-x-2 flex-shrink-0">
+                                <button class="file-action-btn bg-blue-500" data-action="preview" data-id="${docData.id}">Preview</button>
+                                <button class="file-action-btn bg-green-500" data-action="load" data-id="${docData.id}">Load</button>
+                                ${deleteButton}
+                            </div>
+                        </div>`;
+                }).join('');
+                list.innerHTML = filesHtml;
+
+                // Add event listeners to the new buttons
+                querySelAll('.file-action-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const { action, id } = e.target.dataset;
+                        if (action === 'load') loadJobFileById(id);
+                        if (action === 'preview') previewJobFileById(id);
+                        if (action === 'delete') confirmDelete(id);
+                    });
+                });
+            };
+
+            const clearForm = () => {
+                // This will be implemented fully once form is generated
+                if(getEl('job-file-form')) getEl('job-file-form').innerHTML = "Form cleared or ready for new entry.";
+                currentJobFile = null;
+            }
+            
+            // --- ANALYTICS FUNCTIONS ---
+            const openAnalyticsDashboard = async () => {
+                showLoader();
+                const result = await handleApiRequest('jobfile/list-jobfiles.php?full=true&all=true', { method: 'GET' }, null, "Failed to load analytics data.");
+                hideLoader();
+                if(result && result.files) {
+                     // Inject analytics modal HTML
+                     getEl('analytics-modal').innerHTML = `<div class="modal-content max-w-6xl">
+                        <!-- ... Modal header and filter content ... -->
+                        <div id="analytics-content-body"></div>
+                     </div>`;
+                     // This is where you would call a function to render charts and tables
+                     // renderAnalytics(result.files);
+                     showNotification("Analytics loaded, rendering is pending implementation.", false);
+                     openModal('analytics-modal');
+                }
+            }
+
+            // --- More placeholder functions to be defined ---
+            const updateMainPageStats = () => { /* ... */ };
+            const updateStatusSummary = () => { /* ... */ };
+            const loadJobFileById = (id) => { showNotification(`Load action for ${id} triggered.`, false); };
+            const previewJobFileById = (id) => { showNotification(`Preview action for ${id} triggered.`, false); };
+            const confirmDelete = (id) => { showNotification(`Delete action for ${id} triggered.`, false); };
+            
+
+            // --- INITIALIZER ---
+            try {
+                const firebaseConfig = {
+                    apiKey: "AIzaSyAAulR2nJQm-4QtNyEqKTnnDPw-iKW92Mc",
+                    authDomain: "my-job-file-system.firebaseapp.com",
+                    projectId: "my-job-file-system",
+                };
+                firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        const userDocRef = db.collection('users').doc(user.uid);
+                        let userDoc = await userDocRef.get();
+                        if (!userDoc.exists()) {
+                            // Logic for first-time user
+                            const usersCollectionRef = db.collection('users');
+                            const userQuerySnapshot = await usersCollectionRef.get();
+                            const isFirstUser = userQuerySnapshot.size === 0;
+                            const newUser = {
+                                email: user.email,
+                                displayName: user.displayName || user.email.split('@')[0],
+                                role: isFirstUser ? 'admin' : 'user',
+                                status: isFirstUser ? 'active' : 'inactive',
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            };
+                            await userDocRef.set(newUser);
+                            userDoc = await userDocRef.get();
+                        }
+                        
+                        const userData = userDoc.data();
+                        if (userData.status === 'inactive') {
+                            showLoginScreen();
+                            getEl('approval-message').style.display = 'block';
+                            firebase.auth().signOut();
+                            return;
+                        }
+                         if (userData.status === 'blocked') {
+                            showLoginScreen();
+                            getEl('blocked-message').style.display = 'block';
+                            firebase.auth().signOut();
+                            return;
+                        }
+                        
+                        currentUser = { uid: user.uid, ...userData };
+                        console.log("User logged in:", currentUser);
+                        await showApp();
+                    } else {
+                        currentUser = null;
+                        console.log("User logged out");
+                        showLoginScreen();
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                showNotification("Could not connect to the database.", true);
+            }
+
+            // --- EVENT LISTENERS BINDING ---
+            getEl('auth-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleAuthView(!isLoginView);
             });
 
-        } catch (error) {
-            console.error("Firebase initialization failed:", error);
-            showNotification("Could not connect to the database.", true);
-        }
-        
-        let isLoginView = true;
-        document.getElementById('auth-link').addEventListener('click', (e) => { e.preventDefault(); isLoginView = !isLoginView; toggleAuthView(isLoginView); });
-        document.getElementById('auth-btn').addEventListener('click', () => {
-            const email = document.getElementById('email-address').value;
-            const password = document.getElementById('password').value;
-            if (isLoginView) { handleLogin(email, password); } 
-            else { const name = document.getElementById('full-name').value; handleSignUp(email, password, name); }
-        });
-        document.getElementById('logout-btn').addEventListener('click', handleLogout);
-        document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
-        document.getElementById('send-reset-link-btn').addEventListener('click', handleForgotPassword);
-        document.getElementById('confirm-reject-btn').addEventListener('click', rejectJobFile);
-        document.getElementById('activity-log-btn').addEventListener('click', openUserActivityLog);
-        document.getElementById('admin-panel-btn').addEventListener('click', openAdminPanel);
+            getEl('auth-btn').addEventListener('click', () => {
+                const email = getEl('email-address').value;
+                const password = getEl('password').value;
+                if (isLoginView) {
+                    handleLogin(email, password);
+                } else {
+                    const name = getEl('full-name').value;
+                    handleSignUp(email, password, name);
+                }
+            });
+            
+            // This is a placeholder. The real buttons will be inside the app container.
+            // We need to use event delegation or re-bind after app container is populated.
+            document.body.addEventListener('click', (e) => {
+                if (e.target.id === 'logout-btn') handleLogout();
+                // We'll add more buttons here once the form is generated.
+                // For now, let's just make sure the top-level buttons work.
+                
+                // This is a crude way to handle dynamically added buttons for now
+                if(e.target.id === 'analytics-btn') openAnalyticsDashboard();
+                if(e.target.id === 'file-manager-btn') openFileManager();
+                if(e.target.id === 'clear-form-btn') clearForm();
+                
+            });
 
-        const applyFilters = () => applyFiltersAndDisplay();
-        document.getElementById('search-bar').addEventListener('input', applyFilters);
-        document.getElementById('filter-status').addEventListener('change', applyFilters);
-        document.getElementById('filter-date-from').addEventListener('change', applyFilters);
-        document.getElementById('filter-date-to').addEventListener('change', applyFilters);
-        document.getElementById('clear-filters-btn').addEventListener('click', () => {
-            document.getElementById('search-bar').value = ''; 
-            document.getElementById('filter-status').value = '';
-            document.getElementById('filter-date-from').value = ''; 
-            document.getElementById('filter-date-to').value = '';
-            applyFilters();
-        });
-        
-        // The rest of the event listeners...
-    });
-</script>
+        }); // END of DOMContentLoaded
+    </script>
 </body>
 </html>

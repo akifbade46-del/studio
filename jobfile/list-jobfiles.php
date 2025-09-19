@@ -6,7 +6,11 @@ function json_response($status, $message, $data = null) {
     http_response_code($status);
     $response = ['status' => $message === 'success' ? 'success' : 'error', 'message' => $message];
     if ($data !== null) {
-        $response['files'] = $data;
+        if ($message === 'success') {
+            $response['files'] = $data;
+        } else {
+            $response['details'] = $data;
+        }
     }
     echo json_encode($response);
     exit();
@@ -17,15 +21,19 @@ $show_deleted = isset($_GET['deleted']);
 
 $directories_to_scan = [];
 if ($show_deleted) {
-    if (is_dir('recycle_bin/')) $directories_to_scan[] = 'recycle_bin/*.json';
+    if (is_dir('recycle_bin/')) $directories_to_scan[] = 'recycle_bin';
 } else {
-    if (is_dir('data/')) $directories_to_scan[] = 'data/*.json';
+    if (is_dir('data/')) $directories_to_scan[] = 'data';
+}
+
+if (empty($directories_to_scan)) {
+    json_response(200, 'success', []);
 }
 
 $file_data = [];
 
-foreach ($directories_to_scan as $pattern) {
-    $found_files = glob($pattern);
+foreach ($directories_to_scan as $dir) {
+    $found_files = glob($dir . '/*.json');
     if ($found_files === false) continue;
 
     foreach ($found_files as $file) {
@@ -34,26 +42,34 @@ foreach ($directories_to_scan as $pattern) {
         
         if (!$data || !isset($data['jfn'])) continue;
 
-        // Use ISO 8601 format for dates which JS understands reliably
+        // Use ISO 8601 format (date('c')) which JS's new Date() understands reliably
         $updatedTimestamp = filemtime($file);
         $updatedAtISO = date('c', $updatedTimestamp);
 
+        // Fallback for createdAt if it doesn't exist in the file
+        if (isset($data['createdAt']) && is_array($data['createdAt']) && isset($data['createdAt']['seconds'])) {
+             $createdAtISO = date('c', $data['createdAt']['seconds']);
+        } else if (isset($data['createdAt'])) {
+            $createdAtTimestamp = strtotime($data['createdAt']);
+            $createdAtISO = $createdAtTimestamp ? date('c', $createdAtTimestamp) : $updatedAtISO;
+        } else {
+            $createdAtISO = $updatedAtISO;
+        }
+
+
         if ($is_full_data_request) {
+            $data['id'] = basename($file, '.json');
             $data['updatedAt'] = $updatedAtISO;
-            $data['createdAt'] = $data['createdAt'] ?? $updatedAtISO;
+            $data['createdAt'] = $createdAtISO;
             $file_data[] = $data;
         } else {
             $file_info = [
+                'id' => basename($file, '.json'),
                 'jfn' => $data['jfn'],
                 'sh' => $data['sh'] ?? 'N/A',
                 'co' => $data['co'] ?? 'N/A',
-                'mawb' => $data['mawb'] ?? 'N/A',
-                'd' => $data['d'] ?? null,
                 'status' => $data['status'] ?? 'pending',
                 'updatedAt' => $updatedAtISO,
-                'deletedAt' => $data['deletedAt'] ?? null,
-                'deletedBy' => $data['deletedBy'] ?? null,
-                'isDeleted' => $show_deleted,
             ];
             $file_data[] = $file_info;
         }

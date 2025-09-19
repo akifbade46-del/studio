@@ -26,11 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 $json_data = file_get_contents('php://input');
 $request = json_decode($json_data, true);
 
-if (json_last_error() !== JSON_ERROR_NONE || !isset($request['filename']) || !isset($request['status']) || !isset($request['user'])) {
-    json_response(400, 'Invalid or missing parameters.');
+if (json_last_error() !== JSON_ERROR_NONE || !isset($request['fileId']) || !isset($request['status']) || !isset($request['user'])) {
+    json_response(400, 'Invalid or missing parameters: fileId, status, and user are required.');
 }
 
-$filename = basename($request['filename']);
+$filename = basename($request['fileId']) . '.json';
 $file_path = 'data/' . $filename;
 
 if (!file_exists($file_path)) {
