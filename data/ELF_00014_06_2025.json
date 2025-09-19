@@ -1,0 +1,210 @@
+{
+  "status": "pending",
+  "ca": "TRUCK",
+  "rejectedBy": null,
+  "totalCost": 798.9,
+  "checkedAt": null,
+  "tn": "",
+  "gw": "4529 KGS",
+  "pc": "134",
+  "cn": "",
+  "approvedAt": null,
+  "totalProfit": 497.1,
+  "re": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "totalSelling": 1296,
+  "checkedBy": null,
+  "or": "KUWAIT",
+  "jfn": "ELF/00014/06/2025",
+  "fv": "",
+  "co": "MR. MADHUR SHARMA",
+  "ts": "LAND",
+  "cl": [
+    "Export"
+  ],
+  "rejectionReason": null,
+  "vn": "",
+  "createdBy": "ANAND MANI",
+  "d": "2025-08-17",
+  "pb": "ANAND MANI",
+  "rejectedAt": null,
+  "sm": "DINESH",
+  "bd": "2025-08-21",
+  "createdAt": "2025-08-17T10:48:14.000Z",
+  "sh": "MR. MADHUR SHARMA",
+  "ch": [
+    {
+      "k": "ex_works",
+      "c": "0",
+      "n": "",
+      "s": "1296.000",
+      "l": "Door to door Service Charges without Insurance:"
+    },
+    {
+      "k": "freight",
+      "s": "0",
+      "c": "150.000",
+      "n": "",
+      "l": "Land Freight:"
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "k": "surcharge",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "formalities",
+      "l": "Formalities:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "do_fee",
+      "l": "Delivery Order Fee:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "transportation",
+      "l": "Transportation Charges:"
+    },
+    {
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Handling Charges:",
+      "n": "",
+      "k": "handling",
+      "s": "0",
+      "c": "105.000"
+    },
+    {
+      "k": "labor",
+      "c": "0",
+      "l": "Labor / Forklift Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "k": "clearance",
+      "c": "244.905",
+      "l": "Clearance Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Terminal Handling Charges:",
+      "k": "thc"
+    },
+    {
+      "n": "",
+      "l": "Legalization Charges:",
+      "k": "legalization",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "demurrage",
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "50.000",
+      "l": "Packing Charges:",
+      "s": "0",
+      "k": "packing"
+    },
+    {
+      "c": "0",
+      "k": "port_charges",
+      "n": "",
+      "s": "0",
+      "l": "Port Charges:"
+    },
+    {
+      "l": "Other Charges:",
+      "s": "0",
+      "k": "other",
+      "n": "",
+      "c": "249.000"
+    },
+    {
+      "s": "0",
+      "l": "PAI Approval :",
+      "k": "pai",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "Insurance Fee :",
+      "n": "",
+      "k": "insurance"
+    },
+    {
+      "c": "0",
+      "k": "epa",
+      "s": "0",
+      "l": "EPA Charges :",
+      "n": ""
+    }
+  ],
+  "pt": [
+    "Land Freight"
+  ],
+  "po": "",
+  "mawb": "",
+  "in": "INV/00357/2025",
+  "de": "SAUDI ARABIA",
+  "updatedAt": "2025-08-31T11:08:36.000Z",
+  "approvedBy": null,
+  "hawb": "",
+  "vw": "35 CBM"
+}
