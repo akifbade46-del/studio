@@ -1,5 +1,5 @@
-
 <?php
+header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 require 'github_config.php';
 
@@ -32,27 +32,59 @@ $files = [];
 if (is_array($files_raw)) {
     foreach ($files_raw as $file_info) {
         if ($file_info['type'] == 'file' && pathinfo($file_info['name'], PATHINFO_EXTENSION) == 'json') {
-            
-            $file_content_raw = file_get_contents($file_info['download_url']);
-            $file_content = json_decode($file_content_raw, true);
-
-            // Create a summary, don't send the whole file
-            $summary = [
+             // We don't fetch content here anymore to speed things up
+             $summary = [
                 'id' => pathinfo($file_info['name'], PATHINFO_FILENAME),
-                'jfn' => $file_content['jfn'] ?? '',
-                'sh' => $file_content['sh'] ?? '',
-                'co' => $file_content['co'] ?? '',
-                'totalProfit' => $file_content['totalProfit'] ?? 0,
-                'bd' => $file_content['bd'] ?? '',
-                // Use updatedAt from file content if available, otherwise fallback is needed client-side
-                'updatedAt' => $file_content['updatedAt'] ?? date('c', time()), 
-            ];
-            $files[] = $summary;
+                'name' => $file_info['name'],
+                'path' => $file_info['path']
+             ];
+             $files[] = $summary;
         }
     }
 }
 
-echo json_encode($files);
-?>
+// Now, fetch summary data for each file
+$summaries = [];
+$mh = curl_multi_init();
+$handles = [];
 
-    
+foreach($files as $file) {
+    $ch = curl_init();
+    $headers = [
+        'Authorization: token ' . GITHUB_TOKEN,
+        'Accept: application/vnd.github.v3.raw',
+        'User-Agent: ' . GITHUB_USER
+    ];
+    curl_setopt($ch, CURLOPT_URL, 'https://api.github.com/repos/' . GITHUB_USER . '/' . GITHUB_REPO . '/contents/' . $file['path']);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_multi_add_handle($mh, $ch);
+    $handles[$file['id']] = $ch;
+}
+
+$running = null;
+do {
+    curl_multi_exec($mh, $running);
+} while ($running);
+
+foreach($handles as $id => $ch) {
+    $content = curl_multi_getcontent($ch);
+    $data = json_decode($content, true);
+    if($data) {
+        $summaries[] = [
+            'id' => $id,
+            'jfn' => $data['jfn'] ?? '',
+            'sh' => $data['sh'] ?? '',
+            'co' => $data['co'] ?? '',
+            'totalProfit' => $data['totalProfit'] ?? 0,
+            'bd' => $data['bd'] ?? '',
+            'updatedAt' => $data['updatedAt'] ?? date('c'), // Use ISO 8601 format
+        ];
+    }
+    curl_multi_remove_handle($mh, $ch);
+}
+curl_multi_close($mh);
+
+
+echo json_encode($summaries);
+?>

@@ -1,17 +1,23 @@
-
 <?php
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
+
+// Handle preflight request for CORS
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    exit(0);
+}
+
 require 'github_config.php';
 
-// Function to send requests to GitHub API
-function github_api_request($url, $method = 'GET', $data = null, $extra_headers = []) {
+function github_api_request($url, $method = 'GET', $data = null) {
     $ch = curl_init();
     $headers = [
         'Authorization: token ' . GITHUB_TOKEN,
         'Accept: application/vnd.github.v3+json',
         'User-Agent: ' . GITHUB_USER
     ];
-    $headers = array_merge($headers, $extra_headers);
 
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -37,15 +43,15 @@ if (!$input || !isset($input['fileId']) || !isset($input['content'])) {
     exit;
 }
 
-$fileId = str_replace('/', '_', $input['fileId']);
+$fileId = str_replace(['/', '\\', '.'], '_', $input['fileId']); // Sanitize fileId
 $content = $input['content'];
 $isUpdating = isset($input['isUpdating']) && $input['isUpdating'];
 
 $filePath = DATA_PATH . $fileId . '.json';
 $apiUrl = 'https://api.github.com/repos/' . GITHUB_USER . '/' . GITHUB_REPO . '/contents/' . $filePath;
 
-// Add/update timestamps
-$content['updatedAt'] = date('c'); // ISO 8601 format
+// Add/update timestamps in ISO 8601 format
+$content['updatedAt'] = date('c'); 
 if (!$isUpdating) {
     $content['createdAt'] = date('c');
 }
@@ -66,14 +72,12 @@ if ($isUpdating) {
     if ($response['code'] == 200 && isset($response['body']['sha'])) {
         $payload['sha'] = $response['body']['sha'];
     } elseif ($response['code'] != 404) {
-        // If it's not a 404 (not found), then it's some other error
         http_response_code($response['code']);
         echo json_encode(['error' => 'Could not get existing file SHA', 'details' => $response['body']]);
         exit;
     }
 }
 
-// Create or update the file
 $response = github_api_request($apiUrl, 'PUT', $payload);
 
 if ($response['code'] == 200 || $response['code'] == 201) {
@@ -83,5 +87,3 @@ if ($response['code'] == 200 || $response['code'] == 201) {
     echo json_encode(['error' => 'Failed to save file to GitHub', 'details' => $response['body']]);
 }
 ?>
-
-    

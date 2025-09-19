@@ -102,7 +102,6 @@
                 </div>
             </div>
 
-             <!-- Other form fields from original AKIF.HTML -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div><label for="date" class="block mb-1 font-semibold text-gray-700">Date:</label><input type="date" id="date" class="input-field"></div>
                 <div><label for="po-number" class="block mb-1 font-semibold text-gray-700">P.O. #:</label><input type="text" id="po-number" class="input-field"></div>
@@ -160,11 +159,19 @@
     <div id="preview-modal" class="overlay"><div class="modal-content max-w-4xl"><div class="flex justify-between items-center mb-4 no-print"><h3 class="text-2xl font-bold">Job File Preview</h3><div><button id="print-preview-btn" title="Print Preview" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button><button id="close-preview-btn" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button></div></div><div id="preview-body"></div></div></div>
     <div id="analytics-modal" class="overlay"><div class="modal-content max-w-6xl"><div class="flex justify-between items-center mb-4"><h3 class="text-2xl font-bold">Analytics Dashboard</h3><button id="close-analytics-btn" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button></div><div id="analytics-body" class="space-y-6"></div></div></div>
 
-    <!-- Firebase SDK (for Auth only) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js";
         
+        // --- CONFIGURATION ---
+        const GITHUB_CONFIG = {
+            TOKEN: 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN', // ⚠️ PASTE YOUR TOKEN HERE
+            USER: 'YOUR_GITHUB_USERNAME',               // Replace with your GitHub username
+            REPO: 'YOUR_GITHUB_REPOSITORY_NAME',        // Replace with your repository name
+            BRANCH: 'main',                             // Or 'master'
+            DATA_PATH: 'data/'                          // Folder in your repo for job files
+        };
+
         // --- Globals ---
         let auth;
         let currentUser = null;
@@ -177,14 +184,103 @@
             projectId: "my-job-file-system"
         };
         
-        // --- PHP Script Endpoints ---
-        const API_URLS = {
-            save: 'save-to-github.php',
-            list: 'list-from-github.php',
-            load: 'load-from-github.php',
-            delete: 'delete-from-github.php'
-        };
+        // --- GitHub API Functions ---
+        async function githubApiRequest(url, method = 'GET', body = null) {
+            const headers = {
+                'Authorization': `token ${GITHUB_CONFIG.TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'X-GitHub-Api-Version': '2022-11-28'
+            };
+            const options = { method, headers };
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`GitHub API Error (${response.status}): ${errorData.message}`);
+            }
+            // For DELETE requests, response might be empty
+            return response.status === 204 ? null : response.json();
+        }
 
+        async function saveJobFileToGitHub(fileId, content, isUpdating) {
+            const filePath = `${GITHUB_CONFIG.DATA_PATH}${fileId}.json`;
+            const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.USER}/${GITHUB_CONFIG.REPO}/contents/${filePath}`;
+
+            content.updatedAt = new Date().toISOString();
+            if(!isUpdating) {
+                content.createdAt = new Date().toISOString();
+            }
+
+            const payload = {
+                message: `${isUpdating ? 'Update' : 'Create'} job file: ${fileId}`,
+                content: btoa(JSON.stringify(content, null, 2)), // btoa encodes to base64
+                branch: GITHUB_CONFIG.BRANCH
+            };
+
+            if (isUpdating) {
+                try {
+                    const existingFile = await githubApiRequest(apiUrl);
+                    payload.sha = existingFile.sha;
+                } catch (error) {
+                     if (error.message.includes('404')) {
+                        // File doesn't exist, so it's a create operation, not an update.
+                        // No SHA needed.
+                    } else {
+                        throw error; // Re-throw other errors
+                    }
+                }
+            }
+            
+            return githubApiRequest(apiUrl, 'PUT', payload);
+        }
+
+        async function loadJobFilesFromGitHub() {
+            const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.USER}/${GITHUB_CONFIG.REPO}/contents/${GITHUB_CONFIG.DATA_PATH}`;
+            const files = await githubApiRequest(apiUrl);
+            
+            const summaries = await Promise.all(files
+                .filter(file => file.name.endsWith('.json'))
+                .map(async file => {
+                    const content = await loadSingleJobFileFromGitHub(file.name.replace('.json', ''));
+                    return {
+                        id: file.name.replace('.json', ''),
+                        jfn: content.jfn || '',
+                        sh: content.sh || '',
+                        co: content.co || '',
+                        totalProfit: content.totalProfit || 0,
+                        bd: content.bd || '',
+                        updatedAt: content.updatedAt || new Date(0).toISOString()
+                    };
+                })
+            );
+            return summaries;
+        }
+
+        async function loadSingleJobFileFromGitHub(fileId) {
+            const filePath = `${GITHUB_CONFIG.DATA_PATH}${fileId}.json`;
+            const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.USER}/${GITHUB_CONFIG.REPO}/contents/${filePath}`;
+            const fileData = await githubApiRequest(apiUrl);
+            const content = atob(fileData.content); // atob decodes from base64
+            return JSON.parse(content);
+        }
+
+        async function deleteJobFileFromGitHub(fileId) {
+            const filePath = `${GITHUB_CONFIG.DATA_PATH}${fileId}.json`;
+            const apiUrl = `https://api.github.com/repos/${GITHUB_CONFIG.USER}/${GITHUB_CONFIG.REPO}/contents/${filePath}`;
+            
+            // Get SHA first
+            const fileData = await githubApiRequest(apiUrl);
+
+            const payload = {
+                message: `Delete job file: ${fileId}`,
+                sha: fileData.sha,
+                branch: GITHUB_CONFIG.BRANCH
+            };
+            return githubApiRequest(apiUrl, 'DELETE', payload);
+        }
+        
         // --- Core App Logic ---
         function initializeAppLogic() {
             try {
@@ -208,29 +304,16 @@
             }
         }
 
-        async function handleApiRequest(url, options = {}) {
-            try {
-                const response = await fetch(url, options);
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Server error ${response.status}: ${errorText}`);
-                }
-                return await response.json();
-            } catch (error) {
-                console.error(`Error in API request to ${url}:`, error);
-                showNotification(`Request failed: ${error.message}`, true);
-                throw error;
-            }
-        }
-        
         async function loadAllJobFilesForCache() {
             showLoader();
             try {
-                const data = await handleApiRequest(API_URLS.list);
-                jobFilesCache = data.sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
+                const summaries = await loadJobFilesFromGitHub();
+                jobFilesCache = summaries.sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
                 updateMainPageStats();
             } catch (error) {
                 jobFilesCache = [];
+                console.error("Failed to load job files from GitHub:", error);
+                showNotification("Failed to load job files. Check console & GitHub config.", true);
             } finally {
                 hideLoader();
             }
@@ -251,9 +334,19 @@
         }
 
         function clearForm() {
-            document.querySelector('#main-container form, #main-container').reset();
-            document.getElementById('job-file-no').disabled = false;
-            document.getElementById('date').valueAsDate = new Date();
+            const mainContainer = document.getElementById('main-container');
+            if (mainContainer) {
+                const form = mainContainer.querySelector('form') || mainContainer;
+                // Safely reset if it's a form element
+                if(typeof form.reset === 'function') {
+                    form.reset();
+                } else { // Fallback for div
+                    mainContainer.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(input => input.value = '');
+                    mainContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => checkbox.checked = false);
+                }
+            }
+            if (document.getElementById('job-file-no')) document.getElementById('job-file-no').disabled = false;
+            if (document.getElementById('date')) document.getElementById('date').valueAsDate = new Date();
             populateTable();
             calculate();
         }
@@ -271,14 +364,13 @@
             
             showLoader();
             try {
-                await handleApiRequest(API_URLS.save, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fileId: jobFileNo, content: data, isUpdating: isUpdating })
-                });
-                showNotification(`Job file "${jobFileNo}" saved to GitHub successfully!`);
+                await saveJobFileToGitHub(jobFileNo, data, isUpdating);
+                showNotification(`Job file "${jobFileNo}" saved successfully!`);
                 await loadAllJobFilesForCache();
                 document.getElementById('job-file-no').disabled = true;
+            } catch(error) {
+                console.error("Save error:", error);
+                showNotification(`Failed to save file: ${error.message}`, true);
             } finally {
                 hideLoader();
             }
@@ -287,12 +379,15 @@
         async function openFileManager() {
             showLoader();
             try {
-                const files = await handleApiRequest(API_URLS.list);
-                jobFilesCache = files.sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
+                // Use cache if available, otherwise fetch
+                if (jobFilesCache.length === 0) {
+                     const summaries = await loadJobFilesFromGitHub();
+                     jobFilesCache = summaries.sort((a,b) => b.updatedAt.localeCompare(a.updatedAt));
+                }
                 displayJobFiles(jobFilesCache);
                 openModal('file-manager-modal');
             } catch (error) {
-                 // Error is already shown by handleApiRequest
+                 showNotification(`Could not open File Manager: ${error.message}`, true);
             } finally {
                  hideLoader();
             }
@@ -322,11 +417,14 @@
         async function loadJobFile(fileId) {
             showLoader();
             try {
-                const data = await handleApiRequest(`${API_URLS.load}?fileId=${fileId}`);
+                const data = await loadSingleJobFileFromGitHub(fileId);
                 populateFormFromData(data);
                 document.getElementById('job-file-no').disabled = true;
                 closeModal('file-manager-modal');
                 showNotification(`Loaded job file "${data.jfn}".`);
+            } catch (error) {
+                console.error("Load error:", error);
+                showNotification(`Failed to load file: ${error.message}`, true);
             } finally {
                 hideLoader();
             }
@@ -335,13 +433,12 @@
         async function deleteJobFile(fileId) {
             showLoader();
             try {
-                await handleApiRequest(API_URLS.delete, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fileId: fileId })
-                });
-                showNotification(`Job file "${fileId.replace(/_/g, '/')}" deleted successfully.`);
+                await deleteJobFileFromGitHub(fileId);
+                showNotification(`Job file "${fileId.replace(/_/g, '/')}" deleted.`);
                 await openFileManager(); // Refresh file list
+            } catch(error) {
+                 console.error("Delete error:", error);
+                showNotification(`Failed to delete file: ${error.message}`, true);
             } finally {
                 hideLoader();
             }
@@ -352,16 +449,21 @@
              modal.querySelector('#confirm-message').textContent = `Are you sure you want to delete job file "${fileId.replace(/_/g, '/')}"? This action cannot be undone.`;
              openModal('confirm-modal');
              const okButton = modal.querySelector('#confirm-ok');
-             okButton.onclick = () => {
+             
+             const handler = () => {
                  deleteJobFile(fileId);
                  closeModal('confirm-modal');
              };
+             
+             // Remove old listener before adding new one
+             okButton.replaceWith(okButton.cloneNode(true));
+             document.getElementById('confirm-ok').addEventListener('click', handler);
         }
 
         // --- Analytics ---
         function openAnalyticsDashboard() {
             const body = document.getElementById('analytics-body');
-            body.innerHTML = ''; // Clear previous
+            body.innerHTML = '';
             
             let totalProfit = 0;
             const profitByMonth = {};
@@ -405,7 +507,7 @@
             openModal('analytics-modal');
         }
 
-        // --- Other Functions (from original file) ---
+        // --- Other Functions ---
         function getFormData() {
             const getVal = id => document.getElementById(id).value || '';
             const getChecked = query => Array.from(document.querySelectorAll(query)).filter(el => el.checked).map(el => el.dataset.clearance || el.dataset.product);
@@ -414,8 +516,11 @@
                 const description = row.querySelector('.description-input').value;
                 if(description) charges.push({ l: description, c: row.querySelector('.cost-input').value || '0', s: row.querySelector('.selling-input').value || '0', n: '' });
             });
+            const totalCost = parseFloat(document.getElementById('total-cost').textContent) || 0;
+            const totalSelling = parseFloat(document.getElementById('total-selling').textContent) || 0;
+            const totalProfit = parseFloat(document.getElementById('total-profit').textContent) || 0;
             return {
-                d: getVal('date'), po: getVal('po-number'), jfn: getVal('job-file-no'), cl: getChecked('[data-clearance]:checked'), pt: getChecked('[data-product]:checked'), in: getVal('invoice-no'), bd: getVal('billing-date'), sm: getVal('salesman'), sh: getVal('shipper-name'), co: getVal('consignee-name'), mawb: getVal('mawb'), hawb: getVal('hawb'), ts: getVal('teams-of-shipping'), or: getVal('origin'), pc: getVal('no-of-pieces'), gw: getVal('gross-weight'), de: getVal('destination'), vw: getVal('volume-weight'), dsc: getVal('description'), ca: getVal('carrier'), tn: getVal('truck-no'), ch: charges, totalCost: 0, totalSelling: 0, totalProfit: 0, createdBy: currentUser.displayName, createdAt: new Date().toISOString()
+                d: getVal('date'), po: getVal('po-number'), jfn: getVal('job-file-no'), cl: getChecked('[data-clearance]:checked'), pt: getChecked('[data-product]:checked'), in: getVal('invoice-no'), bd: getVal('billing-date'), sm: getVal('salesman'), sh: getVal('shipper-name'), co: getVal('consignee-name'), mawb: getVal('mawb'), hawb: getVal('hawb'), ts: getVal('teams-of-shipping'), or: getVal('origin'), pc: getVal('no-of-pieces'), gw: getVal('gross-weight'), de: getVal('destination'), vw: getVal('volume-weight'), dsc: getVal('description'), ca: getVal('carrier'), tn: getVal('truck-no'), ch: charges, totalCost: totalCost, totalSelling: totalSelling, totalProfit: totalProfit, createdBy: currentUser.displayName
             };
         }
         
@@ -424,13 +529,19 @@
             const setVal = (id, value) => { if (document.getElementById(id)) document.getElementById(id).value = value || ''; };
             const setChecked = (type, values) => { document.querySelectorAll(`[data-${type}]`).forEach(el => el.checked = (values || []).includes(el.dataset[type])); };
             
-            Object.keys(data).forEach(key => {
-                const map = { d: 'date', po: 'po-number', jfn: 'job-file-no', in: 'invoice-no', bd: 'billing-date', sm: 'salesman', sh: 'shipper-name', co: 'consignee-name', mawb: 'mawb', hawb: 'hawb', ts: 'teams-of-shipping', or: 'origin', pc: 'no-of-pieces', gw: 'gross-weight', de: 'destination', vw: 'volume-weight', dsc: 'description', ca: 'carrier', tn: 'truck-no' };
-                if(map[key]) setVal(map[key], data[key]);
-            });
+            const fieldMap = { d: 'date', po: 'po-number', jfn: 'job-file-no', in: 'invoice-no', bd: 'billing-date', sm: 'salesman', sh: 'shipper-name', co: 'consignee-name', mawb: 'mawb', hawb: 'hawb', ts: 'teams-of-shipping', or: 'origin', pc: 'no-of-pieces', gw: 'gross-weight', de: 'destination', vw: 'volume-weight', dsc: 'description', ca: 'carrier', tn: 'truck-no' };
+            Object.keys(fieldMap).forEach(key => setVal(fieldMap[key], data[key]));
+
             setChecked('clearance', data.cl); setChecked('product', data.pt);
-            populateTable();
-            if (data.ch && data.ch.length > 0) { document.getElementById('charges-table-body').innerHTML = ''; data.ch.forEach(charge => addChargeRow(charge)); }
+            
+            // Clear table before populating
+            const tableBody = document.getElementById('charges-table-body');
+            tableBody.innerHTML = '';
+            if (data.ch && data.ch.length > 0) {
+                 data.ch.forEach(charge => addChargeRow(charge)); 
+            } else {
+                 for(let i=0; i<10; i++) addChargeRow(); // Add empty rows if none exist
+            }
             calculate();
         }
 
@@ -444,8 +555,18 @@
             document.getElementById('auth-btn').addEventListener('click', () => {
                 const email = document.getElementById('email-address').value;
                 const password = document.getElementById('password').value;
-                if (isLoginView) { signInWithEmailAndPassword(auth, email, password).catch(err => showNotification(err.message, true)); } 
-                else { createUserWithEmailAndPassword(auth, email, password).then(() => { showNotification("Account created! You can now log in."); toggleAuthView(true); }).catch(err => showNotification(err.message, true)); }
+                showLoader();
+                if (isLoginView) { 
+                    signInWithEmailAndPassword(auth, email, password)
+                        .catch(err => { showNotification(err.message, true); hideLoader(); });
+                } 
+                else { 
+                    const displayName = document.getElementById('full-name').value;
+                    createUserWithEmailAndPassword(auth, email, password)
+                        .then(() => { showNotification("Account created! You can now log in."); toggleAuthView(true); })
+                        .catch(err => showNotification(err.message, true))
+                        .finally(() => hideLoader()); 
+                }
             });
             
             document.getElementById('new-job-btn').addEventListener('click', clearForm);
@@ -453,13 +574,24 @@
             document.getElementById('file-manager-btn').addEventListener('click', openFileManager);
             document.getElementById('analytics-btn').addEventListener('click', openAnalyticsDashboard);
             document.getElementById('add-charge-btn').addEventListener('click', () => addChargeRow());
-            document.getElementById('print-btn').addEventListener('click', () => { showNotification("Please save the file first to generate a printable version.", true); });
+            document.getElementById('print-btn').addEventListener('click', () => {
+                 const data = getFormData();
+                 if(!data.jfn) { showNotification("Please save the file first to generate a printable version.", true); return; }
+                 const printHTML = getPrintViewHtml(data);
+                 document.getElementById('print-output').innerHTML = printHTML;
+                 window.print();
+            });
             
             document.getElementById('close-fm-btn').addEventListener('click', () => closeModal('file-manager-modal'));
             document.getElementById('close-preview-btn').addEventListener('click', () => closeModal('preview-modal'));
             document.getElementById('close-analytics-btn').addEventListener('click', () => closeModal('analytics-modal'));
             document.getElementById('confirm-cancel').addEventListener('click', () => closeModal('confirm-modal'));
-            document.getElementById('print-preview-btn').addEventListener('click', () => { const content = document.getElementById('preview-body').innerHTML; const printWindow = window.open('', '', 'height=800,width=1200'); printWindow.document.write('<html><head><title>Print</title><script src="https://cdn.tailwindcss.com"><\/script></head><body>' + content + '</body></html>'); printWindow.document.close(); printWindow.print(); });
+            document.getElementById('print-preview-btn').addEventListener('click', () => { 
+                const content = document.getElementById('preview-body').innerHTML; 
+                const printWindow = window.open('', '', 'height=800,width=1200'); 
+                printWindow.document.write('<html><head><title>Print</title><script src="https://cdn.tailwindcss.com"><\/script><style>body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }</style></head><body>' + content + '</body></html>'); 
+                printWindow.document.close(); printWindow.print(); 
+            });
 
             document.getElementById('fm-search-bar').addEventListener('input', (e) => {
                 const term = e.target.value.toLowerCase();
@@ -467,21 +599,25 @@
                 displayJobFiles(filtered);
             });
             
+            // Make functions globally accessible for inline onclick handlers
             window.loadJobFile = loadJobFile;
             window.previewJobFile = async (fileId) => {
                 showLoader();
                 try {
-                    const data = await handleApiRequest(`${API_URLS.load}?fileId=${fileId}`);
+                    const data = await loadSingleJobFileFromGitHub(fileId);
                     document.getElementById('preview-body').innerHTML = getPrintViewHtml(data);
                     openModal('preview-modal');
-                } finally {
+                } catch(error) {
+                    showNotification(`Could not preview file: ${error.message}`, true);
+                }
+                finally {
                     hideLoader();
                 }
             };
             window.confirmDelete = confirmDelete;
 
             populateTable();
-            document.getElementById('date').valueAsDate = new Date();
+            if(document.getElementById('date')) document.getElementById('date').valueAsDate = new Date();
         });
         
         function showNotification(message, isError = false) { const el = document.getElementById('notification'); el.textContent = message; el.style.backgroundColor = isError ? '#c53030' : '#2d3748'; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 3000); }
@@ -491,9 +627,9 @@
         function closeModal(id) { document.getElementById(id).classList.remove('visible'); }
         function toggleAuthView(showLogin) { document.getElementById('signup-name-field').style.display = showLogin ? 'none' : 'block'; document.getElementById('auth-title').textContent = showLogin ? 'Sign in' : 'Create an account'; document.getElementById('auth-btn').textContent = showLogin ? 'Sign in' : 'Sign up'; document.getElementById('auth-link').textContent = showLogin ? 'Create an account' : 'Sign in';}
         function calculate() { let totalCost = 0, totalSelling = 0; document.querySelectorAll('#charges-table-body tr').forEach(row => { const cost = parseFloat(row.querySelector('.cost-input').value) || 0; const selling = parseFloat(row.querySelector('.selling-input').value) || 0; row.cells[3].textContent = (selling - cost).toFixed(3); totalCost += cost; totalSelling += selling; }); document.getElementById('total-cost').textContent = totalCost.toFixed(3); document.getElementById('total-selling').textContent = totalSelling.toFixed(3); document.getElementById('total-profit').textContent = (totalSelling - totalCost).toFixed(3); }
-        function populateTable() { const table = document.getElementById('charges-table'); table.innerHTML = `<thead><tr class="bg-gray-100"><th class="w-2/5">Description</th><th>Cost</th><th>Selling</th><th>Profit</th><th></th></tr></thead><tbody id="charges-table-body"></tbody><tfoot><tr class="bg-gray-100 font-bold"><td class="text-right">TOTAL:</td><td id="total-cost" class="text-right">0.000</td><td id="total-selling" class="text-right">0.000</td><td id="total-profit" class="text-right">0.000</td><td></td></tr></tfoot>`; table.querySelectorAll('input').forEach(i => i.addEventListener('input', calculate)); for(let i=0; i<10; i++) addChargeRow(); }
-        function addChargeRow(data = {}) { const newRow = document.getElementById('charges-table-body').insertRow(); newRow.innerHTML = `<td class="table-cell"><input type="text" class="description-input input-field" value="${data.l || ''}"></td><td class="table-cell"><input type="number" step="0.001" class="cost-input input-field" value="${data.c || ''}"></td><td class="table-cell"><input type="number" step="0.001" class="selling-input input-field" value="${data.s || ''}"></td><td class="profit-output text-right p-2 bg-gray-50">${((data.s || 0) - (data.c || 0)).toFixed(3)}</td><td class="table-cell text-center"><button class="text-red-500 hover:text-red-700">&times;</button></td>`; newRow.querySelector('button').addEventListener('click', () => { newRow.remove(); calculate(); }); newRow.querySelectorAll('input').forEach(i => i.addEventListener('input', calculate)); }
-        function getPrintViewHtml(data) { const totalCost = data.ch.reduce((sum, item) => sum + (parseFloat(item.c) || 0), 0); const totalSelling = data.ch.reduce((sum, item) => sum + (parseFloat(item.s) || 0), 0); const totalProfit = totalSelling - totalCost; return `<div class="border p-4 bg-white"><div class="text-center mb-4"><h1 class="text-2xl font-bold">Q'GO CARGO</h1><h2 class="text-xl">JOB FILE</h2></div><div class="grid grid-cols-2 gap-4 text-sm"><div><strong>Job No:</strong> ${data.jfn}</div><div class="text-right"><strong>Date:</strong> ${data.d}</div><div><strong>Shipper:</strong> ${data.sh}</div><div><strong>Consignee:</strong> ${data.co}</div></div><hr class="my-4"><table class="print-table w-full text-sm"><thead><tr><th>Description</th><th>Cost</th><th>Selling</th><th>Profit</th></tr></thead><tbody>${(data.ch || []).map(c => `<tr><td>${c.l}</td><td>${c.c}</td><td>${c.s}</td><td>${(parseFloat(c.s || 0) - parseFloat(c.c || 0)).toFixed(3)}</td></tr>`).join('')}</tbody><tfoot><tr class="font-bold bg-gray-100"><td>TOTAL</td><td>${totalCost.toFixed(3)}</td><td>${totalSelling.toFixed(3)}</td><td>${totalProfit.toFixed(3)}</td></tr></tfoot></table></div>`; }
+        function populateTable() { const table = document.getElementById('charges-table'); table.innerHTML = `<thead><tr class="bg-gray-100 text-left"><th class="table-cell font-semibold w-2/5">Description</th><th class="table-cell font-semibold">Cost</th><th class="table-cell font-semibold">Selling</th><th class="table-cell font-semibold">Profit</th><th class="table-cell font-semibold"></th></tr></thead><tbody id="charges-table-body"></tbody><tfoot><tr class="bg-gray-100 font-bold"><td class="table-cell text-right">TOTAL:</td><td id="total-cost" class="table-cell text-right">0.000</td><td id="total-selling" class="table-cell text-right">0.000</td><td id="total-profit" class="table-cell text-right">0.000</td><td class="table-cell"></td></tr></tfoot>`; const tableBody = document.getElementById('charges-table-body'); tableBody.addEventListener('input', calculate); for(let i=0; i<10; i++) addChargeRow(); }
+        function addChargeRow(data = {}) { const newRow = document.getElementById('charges-table-body').insertRow(); newRow.innerHTML = `<td class="table-cell"><input type="text" class="description-input input-field" value="${data.l || ''}"></td><td class="table-cell"><input type="number" step="0.001" class="cost-input input-field" value="${data.c || ''}"></td><td class="table-cell"><input type="number" step="0.001" class="selling-input input-field" value="${data.s || ''}"></td><td class="profit-output text-right p-2 bg-gray-50">${((data.s || 0) - (data.c || 0)).toFixed(3)}</td><td class="table-cell text-center"><button class="text-red-500 hover:text-red-700 font-bold text-lg">&times;</button></td>`; newRow.querySelector('button').addEventListener('click', () => { newRow.remove(); calculate(); }); newRow.querySelectorAll('input').forEach(i => i.addEventListener('input', calculate)); }
+        function getPrintViewHtml(data) { const totalCost = (data.ch || []).reduce((sum, item) => sum + (parseFloat(item.c) || 0), 0); const totalSelling = (data.ch || []).reduce((sum, item) => sum + (parseFloat(item.s) || 0), 0); const totalProfit = totalSelling - totalCost; return `<div class="border p-4 bg-white"><div class="text-center mb-4"><h1 class="text-2xl font-bold">Q'GO CARGO</h1><h2 class="text-xl">JOB FILE</h2></div><div class="grid grid-cols-2 gap-4 text-sm"><div><strong>Job No:</strong> ${data.jfn}</div><div class="text-right"><strong>Date:</strong> ${data.d}</div><div><strong>Shipper:</strong> ${data.sh}</div><div><strong>Consignee:</strong> ${data.co}</div></div><hr class="my-4"><table class="print-table w-full text-sm"><thead><tr><th>Description</th><th>Cost</th><th>Selling</th><th>Profit</th></tr></thead><tbody>${(data.ch || []).map(c => `<tr><td>${c.l}</td><td>${c.c}</td><td>${c.s}</td><td>${(parseFloat(c.s || 0) - parseFloat(c.c || 0)).toFixed(3)}</td></tr>`).join('')}</tbody><tfoot><tr class="font-bold bg-gray-100"><td>TOTAL</td><td>${totalCost.toFixed(3)}</td><td>${totalSelling.toFixed(3)}</td><td>${totalProfit.toFixed(3)}</td></tr></tfoot></table></div>`; }
         function updateMainPageStats() { const totalProfit = jobFilesCache.reduce((sum, job) => sum + (parseFloat(job.totalProfit) || 0), 0); const jobsThisMonth = jobFilesCache.filter(job => job.bd && job.bd.startsWith(new Date().toISOString().substring(0, 7))).length; const avgProfit = jobFilesCache.length > 0 ? totalProfit / jobFilesCache.length : 0; document.getElementById('stat-total-profit').textContent = `KD ${totalProfit.toFixed(3)}`; document.getElementById('stat-jobs-month').textContent = jobsThisMonth; document.getElementById('stat-avg-profit').textContent = `KD ${avgProfit.toFixed(3)}`; }
     </script>
 </body>

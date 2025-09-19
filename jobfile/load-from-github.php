@@ -1,5 +1,5 @@
-
 <?php
+header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 require 'github_config.php';
 
@@ -9,7 +9,7 @@ if (!isset($_GET['fileId'])) {
     exit;
 }
 
-$fileId = str_replace('/', '_', $_GET['fileId']);
+$fileId = str_replace(['/', '\\', '.'], '_', $_GET['fileId']); // Sanitize fileId
 $filePath = DATA_PATH . $fileId . '.json';
 $apiUrl = 'https://api.github.com/repos/' . GITHUB_USER . '/' . GITHUB_REPO . '/contents/' . $filePath;
 
@@ -29,12 +29,11 @@ $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 if ($http_code == 200) {
-    // Since we requested raw, the response is the JSON string itself
+    // The response is the raw JSON string
     echo $response;
 } else {
     http_response_code($http_code);
-    echo json_encode(['error' => 'Could not load file from GitHub.', 'details' => json_decode($response)]);
+    $decodedResponse = json_decode($response, true);
+    echo json_encode(['error' => 'Could not load file from GitHub.', 'details' => $decodedResponse]);
 }
 ?>
-
-    

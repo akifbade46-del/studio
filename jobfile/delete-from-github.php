@@ -1,16 +1,23 @@
-
 <?php
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Content-Type: application/json');
+
+// Handle preflight request for CORS
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    exit(0);
+}
+
 require 'github_config.php';
 
-function github_api_request($url, $method = 'GET', $data = null, $extra_headers = []) {
+function github_api_request($url, $method = 'GET', $data = null) {
     $ch = curl_init();
     $headers = [
         'Authorization: token ' . GITHUB_TOKEN,
         'Accept: application/vnd.github.v3+json',
         'User-Agent: ' . GITHUB_USER
     ];
-    $headers = array_merge($headers, $extra_headers);
 
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -32,11 +39,11 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 if (!$input || !isset($input['fileId'])) {
     http_response_code(400);
-    echo json_encode(['error' => 'Invalid input']);
+    echo json_encode(['error' => 'Invalid input: fileId is missing']);
     exit;
 }
 
-$fileId = str_replace('/', '_', $input['fileId']);
+$fileId = str_replace(['/', '\\', '.'], '_', $input['fileId']); // Sanitize fileId
 $filePath = DATA_PATH . $fileId . '.json';
 $apiUrl = 'https://api.github.com/repos/' . GITHUB_USER . '/' . GITHUB_REPO . '/contents/' . $filePath;
 
@@ -64,5 +71,3 @@ if ($deleteResponse['code'] == 200) {
     echo json_encode(['error' => 'Failed to delete file from GitHub.', 'details' => $deleteResponse['body']]);
 }
 ?>
-
-    
