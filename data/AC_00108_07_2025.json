@@ -1,0 +1,203 @@
+{
+  "fv": "",
+  "dsc": "FILTERS",
+  "cn": "",
+  "jfn": "AC/00108/07/2025",
+  "ts": "CLEARANCE AND DELIVERY ",
+  "mawb": "615-66589806",
+  "updatedAt": "2025-08-11T10:10:40.000Z",
+  "bd": "2025-07-28",
+  "createdBy": "ABDUL HADI ",
+  "po": "",
+  "sm": "",
+  "totalCost": 901.54,
+  "gw": "387 KG ",
+  "co": "BOODAI TRADING CO",
+  "hawb": "",
+  "vw": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "pb": "ABDUL HADI ",
+  "tn": "",
+  "status": "pending",
+  "re": "",
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "c": "0",
+      "k": "ex_works",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "freight",
+      "c": "0",
+      "l": "Land/Air / Sea Freight:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "k": "surcharge",
+      "s": "0"
+    },
+    {
+      "k": "formalities",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Formalities:"
+    },
+    {
+      "s": "52.500",
+      "n": "",
+      "k": "do_fee",
+      "l": "Delivery Order Fee:",
+      "c": "52.500"
+    },
+    {
+      "l": "Transportation Charges:",
+      "n": "",
+      "s": "30.000",
+      "k": "transportation",
+      "c": "0"
+    },
+    {
+      "s": "17.610",
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "c": "17.610"
+    },
+    {
+      "c": "0",
+      "k": "handling",
+      "s": "15.000",
+      "n": "",
+      "l": "Handling Charges:"
+    },
+    {
+      "c": "3.000",
+      "s": "0",
+      "k": "labor",
+      "n": "",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "s": "20.000",
+      "c": "15.000"
+    },
+    {
+      "s": "706.690",
+      "k": "customs_duty",
+      "c": "706.690",
+      "l": "Customs Duty:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "thc",
+      "s": "0",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "k": "legalization",
+      "c": "27.000",
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "30.000"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "demurrage"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "loading",
+      "l": "Loading / Offloading Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance"
+    },
+    {
+      "c": "2.000",
+      "n": "",
+      "l": "Bank Charges:",
+      "k": "packing",
+      "s": "5.000"
+    },
+    {
+      "s": "7.740",
+      "k": "port_charges",
+      "l": "Storage Charges:",
+      "n": "",
+      "c": "7.740"
+    },
+    {
+      "s": "20.000",
+      "n": "",
+      "l": "MOC Charges:",
+      "c": "20.000",
+      "k": "other"
+    },
+    {
+      "n": "",
+      "s": "30.000",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "c": "30.000"
+    },
+    {
+      "l": "MOC service Fee :",
+      "n": "",
+      "s": "15.000",
+      "k": "insurance",
+      "c": "10.000"
+    },
+    {
+      "k": "epa",
+      "c": "10.000",
+      "n": "",
+      "s": "15.000",
+      "l": "PAI service Charges :"
+    }
+  ],
+  "sh": "TEMET INTERNATIONAL ",
+  "vn": "",
+  "ca": "DHL",
+  "cl": [
+    "Import"
+  ],
+  "de": "KUWAIT",
+  "pc": "5",
+  "in": "INV/00342/2025",
+  "d": "2025-07-20",
+  "createdAt": "2025-08-11T10:10:40.000Z",
+  "totalSelling": 964.54,
+  "pt": [
+    "Air Freight"
+  ],
+  "totalProfit": 63,
+  "or": "ASMTERDAM"
+}
