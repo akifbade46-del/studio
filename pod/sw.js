@@ -1,5 +1,5 @@
 
-const CACHE_NAME = 'qgo-pod-cache-v2'; // Incremented cache version
+const CACHE_NAME = 'qgo-pod-cache-v3'; // Incremented cache version
 const urlsToCache = [
   './',
   './index.html',
@@ -16,7 +16,11 @@ const urlsToCache = [
   'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
   'https://cdn.jsdelivr.net/npm/chart.js',
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
-  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
+  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+  // Firebase SDKs should be cached as they are critical
+  'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js',
+  'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js',
+  'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js'
 ];
 
 self.addEventListener('install', event => {
@@ -34,10 +38,9 @@ self.addEventListener('install', event => {
   );
 });
 
-// Use the Network First (Network Falling Back to Cache) strategy
 self.addEventListener('fetch', event => {
     // We only want to cache GET requests.
-    if (event.request.method !== 'GET') {
+    if (event.request.method !== 'GET' || !event.request.url.startsWith('http')) {
         return;
     }
 
@@ -56,7 +59,12 @@ self.addEventListener('fetch', event => {
             })
             .catch(() => {
                 // If the network request fails, try to get the response from the cache.
-                return caches.match(event.request);
+                return caches.match(event.request).then(response => {
+                    return response || new Response("Network error: You are offline.", {
+                        status: 408,
+                        headers: { 'Content-Type': 'text/plain' }
+                    });
+                });
             })
     );
 });

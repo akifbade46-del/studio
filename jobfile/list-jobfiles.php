@@ -14,48 +14,54 @@ function json_response($status, $message, $data = null) {
 
 $is_full_data_request = isset($_GET['full']);
 $show_deleted = isset($_GET['deleted']);
-$show_all = isset($_GET['all']); // To get both deleted and non-deleted for backup
+$show_all = isset($_GET['all']);
 
-$directory = $show_deleted ? 'recycle_bin/' : 'data/';
-$files = [];
-
+$directories_to_scan = [];
 if ($show_all) {
-    $data_files = glob('data/*.json');
-    $recycle_files = glob('recycle_bin/*.json');
-    $files = array_merge($data_files ? $data_files : [], $recycle_files ? $recycle_files : []);
+    if (is_dir('data/')) $directories_to_scan[] = 'data/*.json';
+    if (is_dir('recycle_bin/')) $directories_to_scan[] = 'recycle_bin/*.json';
+} elseif ($show_deleted) {
+    if (is_dir('recycle_bin/')) $directories_to_scan[] = 'recycle_bin/*.json';
 } else {
-    $found_files = glob($directory . '*.json');
-    $files = $found_files ? $found_files : [];
+    if (is_dir('data/')) $directories_to_scan[] = 'data/*.json';
+}
+
+$all_file_paths = [];
+foreach ($directories_to_scan as $pattern) {
+    $found_files = glob($pattern);
+    if ($found_files) {
+        $all_file_paths = array_merge($all_file_paths, $found_files);
+    }
 }
 
 $file_data = [];
 
-foreach ($files as $file) {
+foreach ($all_file_paths as $file) {
     $content = file_get_contents($file);
     $data = json_decode($content, true);
     if (!$data) {
-        continue; // Skip invalid JSON files
+        continue;
     }
 
-    // Standardize the updated date. Use 'updatedAt', then 'createdAt', then file modification time.
     $updatedTimestamp = null;
     if (isset($data['updatedAt']) && !empty($data['updatedAt'])) {
         $updatedTimestamp = strtotime($data['updatedAt']);
-    } elseif (isset($data['createdAt']) && !empty($data['createdAt'])) {
-         $updatedTimestamp = strtotime($data['createdAt']);
+    }
+    if ($updatedTimestamp === false || $updatedTimestamp === null) {
+        if (isset($data['createdAt']) && !empty($data['createdAt'])) {
+            $updatedTimestamp = strtotime($data['createdAt']);
+        }
     }
     if ($updatedTimestamp === false || $updatedTimestamp === null) {
          $updatedTimestamp = filemtime($file);
     }
     
-    // Format to ISO 8601 string (e.g., "2024-08-20T15:30:00+00:00") which JS can parse and sort reliably.
     $updatedAtISO = date('c', $updatedTimestamp);
 
     if ($is_full_data_request) {
-        $data['updatedAt'] = $updatedAtISO; // Ensure consistent date format
+        $data['updatedAt'] = $updatedAtISO;
         $file_data[] = $data;
     } else {
-        // Optimized for list view: only send necessary fields
         $file_data[] = [
             'jfn' => $data['jfn'] ?? basename($file, '.json'),
             'sh' => $data['sh'] ?? 'N/A',
@@ -66,7 +72,7 @@ foreach ($files as $file) {
             'updatedAt' => $updatedAtISO,
             'deletedAt' => $data['deletedAt'] ?? null,
             'deletedBy' => $data['deletedBy'] ?? null,
-            'isDeleted' => $show_deleted,
+            'isDeleted' => $show_deleted || strpos($file, 'recycle_bin/') !== false,
         ];
     }
 }

@@ -16,9 +16,16 @@ const firebaseConfig = {
 };
 
 // --- App Initialization ---
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+let app, db, auth;
+
+try {
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    auth = getAuth(app);
+} catch (error) {
+    console.error("Fatal: Firebase initialization failed.", error);
+    document.body.innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Could not initialize Firebase. The application cannot start.</div>';
+}
 
 export { db, auth };
 
@@ -39,8 +46,8 @@ export async function initializeAppLogic() {
                     const userDoc = await getDoc(userDocRef);
 
                     if (userDoc.exists() && userDoc.data().status === 'active') {
-                        const currentUser = { uid: user.uid, ...userDoc.data() };
-                        setGlobalCurrentUser(currentUser);
+                        const currentUserData = { uid: user.uid, ...userDoc.data() };
+                        setGlobalCurrentUser(currentUserData);
                         showApp();
                     } else {
                         if (userDoc.exists()) {
@@ -57,18 +64,18 @@ export async function initializeAppLogic() {
                 document.body.classList.remove('loading');
             });
         }
-        // Add auth-related event listeners here, but only for non-public views
+        
         if (!podId && !feedbackId) {
-            document.getElementById('auth-btn').addEventListener('click', handleLogin);
-            document.getElementById('driver-signup-link').addEventListener('click', (e) => { e.preventDefault(); openModal('signup-modal'); });
-            document.getElementById('forgot-password-link').addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
-            document.getElementById('signup-form').addEventListener('submit', handleSignup);
-            document.getElementById('forgot-password-form').addEventListener('submit', handleForgotPassword);
+            document.getElementById('auth-btn')?.addEventListener('click', handleLogin);
+            document.getElementById('driver-signup-link')?.addEventListener('click', (e) => { e.preventDefault(); openModal('signup-modal'); });
+            document.getElementById('forgot-password-link')?.addEventListener('click', (e) => { e.preventDefault(); openModal('forgot-password-modal'); });
+            document.getElementById('signup-form')?.addEventListener('submit', handleSignup);
+            document.getElementById('forgot-password-form')?.addEventListener('submit', handleForgotPassword);
         }
 
     } catch (error) {
-        console.error("Firebase initialization failed:", error);
-        showNotification("Could not connect to the database.", true);
+        console.error("App logic initialization failed:", error);
+        showNotification("An error occurred during app startup.", true);
         document.body.classList.remove('loading');
     }
 }
@@ -165,5 +172,3 @@ export function handleLogout() {
         showNotification("Logout failed. Please try again.", true);
     });
 }
-
-    

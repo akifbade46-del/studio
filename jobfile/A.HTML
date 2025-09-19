@@ -688,7 +688,7 @@
         // Import Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, query, where, serverTimestamp, getDocs, writeBatch, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
         // --- Global variables ---
         let db, auth;
@@ -700,6 +700,7 @@
         let analyticsDataCache = null; // Caches full data for analytics
         let currentJobFile = null; // Holds the currently loaded job file data
         let profitChartInstance, salesmanChartInstance;
+        let fileIdToReject = null;
 
         // --- Firebase Configuration ---
         const firebaseConfig = {
@@ -760,7 +761,7 @@
                         
                         currentUser = { uid: user.uid, ...userData };
                         console.log("User logged in:", currentUser);
-                        showApp();
+                        await showApp();
                     } else {
                         currentUser = null;
                         console.log("User logged out");
@@ -942,16 +943,14 @@
             if(fromModal) await openFileManager(true); // Force reload
         }
         function promptForRejection(docId = null) { 
-            const jobFileId = docId || (currentJobFile ? currentJobFile.jfn.replace(/\//g, '_') : null);
-            if (!jobFileId) { showNotification("No file specified to reject.", true); return; }
-            document.getElementById('confirm-reject-btn').dataset.jobId = jobFileId;
+            fileIdToReject = docId || (currentJobFile ? currentJobFile.jfn.replace(/\//g, '_') : null);
+            if (!fileIdToReject) { showNotification("No file specified to reject.", true); return; }
             openModal('reject-reason-modal');
         }
         async function rejectJobFile() {
             const reason = document.getElementById('rejection-reason-input').value;
-            const jobFileId = document.getElementById('confirm-reject-btn').dataset.jobId;
             if (!reason) { showNotification("Please provide a reason for rejection.", true); return; }
-            await updateStatus(jobFileId, 'rejected', reason);
+            await updateStatus(fileIdToReject, 'rejected', reason);
         }
         
         function confirmDelete(docId, type = 'jobfile') {
@@ -1047,8 +1046,8 @@
             if (!modal) return;
             if (keepParent) {
                  const highestZ = Array.from(document.querySelectorAll('.overlay.visible'))
-                    .reduce((max, el) => Math.max(max, parseInt(window.getComputedStyle(el).zIndex || 1000)), 1000);
-                modal.style.zIndex = `${highestZ + 1}`;
+                    .reduce((max, el) => Math.max(max, parseInt(window.getComputedStyle(el).zIndex || '1000', 10)), 1000);
+                modal.style.zIndex = `${highestZ + 10}`;
             } else {
                 closeAllModals();
             }
@@ -1358,8 +1357,9 @@
 
         async function openFileManager(forceReload = false) {
             showLoader();
+            let result;
             if (forceReload || jobFilesCache.length === 0) {
-                 const result = await handleApiRequest('list-jobfiles.php', { method: 'GET' }, null, "Could not list job files.");
+                 result = await handleApiRequest('list-jobfiles.php', { method: 'GET' }, null, "Could not list job files.");
                  if (result && result.files) {
                      jobFilesCache = result.files;
                  } else {
@@ -1387,8 +1387,7 @@
                 if (toDate && (file.d || '') > toDate) return false;
                 return true;
             });
-            // FIX: Ensure updatedAt is treated as a string for localeCompare
-            filtered.sort((a,b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
+            filtered.sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt));
             displayJobFiles(filtered, 'job-files-list');
             updateStatusSummary('status-summary-file-manager', filtered);
         }
@@ -1702,15 +1701,15 @@
                 </div>
                 <div>
                   <h4 class="text-xl font-bold mb-2">Files by Creator</h4>
-                  ${renderTableFromData(files, 'createdBy', 'Creator', ['profit', 'count'], showUserJobs)}
+                  ${renderTableFromData(files, 'createdBy', 'Creator', ['profit', 'count'], 'showUserJobs')}
                 </div>
                  <div>
                   <h4 class="text-xl font-bold mb-2">Files by Month (Job Date)</h4>
-                  ${renderTableFromData(files, (f) => f.d ? f.d.substring(0, 7) : 'N/A', 'Month', ['profit', 'count'], (month) => showMonthlyJobs(month, 'd'))}
+                  ${renderTableFromData(files, (f) => f.d ? f.d.substring(0, 7) : 'N/A', 'Month', ['profit', 'count'], 'showMonthlyJobs', 'd')}
                 </div>
                 <div>
                   <h4 class="text-xl font-bold mb-2">Files by Salesman</h4>
-                  ${renderTableFromData(files, 'sm', 'Salesman', ['profit', 'count'], showSalesmanJobs)}
+                  ${renderTableFromData(files, 'sm', 'Salesman', ['profit', 'count'], 'showSalesmanJobs')}
                 </div>
             `;
             // Init Charts
@@ -1725,8 +1724,7 @@
                 },
                 options: { plugins: { title: { display: true, text: 'Monthly Profit Over Time' } } }
             });
-            const salesmanData = Object.entries(renderTableFromData(files, 'sm', '', [], () => {})[1])
-                .sort((a,b) => b[1].profit - a[1].profit);
+            const salesmanData = Object.entries(groupData(files, 'sm')).sort((a,b) => b[1].profit - a[1].profit);
              salesmanChartInstance = new Chart(document.getElementById('salesman-profit-chart'), {
                 type: 'bar',
                 data: {
@@ -1737,8 +1735,8 @@
             });
         }
         
-        function renderTableFromData(files, keyField, keyHeader, valueHeaders, clickHandler) {
-            const data = files.reduce((acc, file) => {
+        function groupData(files, keyField) {
+             return files.reduce((acc, file) => {
                 const key = typeof keyField === 'function' ? keyField(file) : (file[keyField] || 'N/A');
                 if(!acc[key]) acc[key] = { profit: 0, cost: 0, selling: 0, count: 0 };
                 acc[key].profit += file.totalProfit || 0;
@@ -1747,12 +1745,16 @@
                 acc[key].count++;
                 return acc;
             }, {});
-            if(keyHeader === '') return [null, data]; // Return data for chart
+        }
+
+        function renderTableFromData(files, keyField, keyHeader, valueHeaders, clickHandlerName, clickHandlerParamType) {
+            const data = groupData(files, keyField);
             let table = `<table class="w-full analytics-table"><thead><tr><th>${keyHeader}</th>`;
             valueHeaders.forEach(h => table += `<th>${h.charAt(0).toUpperCase() + h.slice(1)}</th>`);
             table += '</tr></thead><tbody>';
             Object.entries(data).sort((a, b) => b[1].profit - a[1].profit).forEach(([key, values]) => {
-                table += `<tr class="hover:bg-gray-100 cursor-pointer" onclick="${clickHandler.name}('${key}')"><td>${key}</td>`;
+                const param = clickHandlerParamType ? `'${key}','${clickHandlerParamType}'` : `'${key}'`;
+                table += `<tr class="hover:bg-gray-100 cursor-pointer" onclick="${clickHandlerName}(${param})"><td>${key}</td>`;
                 valueHeaders.forEach(h => table += `<td>${typeof values[h] === 'number' ? (h === 'count' ? values[h] : values[h].toFixed(3)) : values[h]}</td>`);
                 table += `</tr>`;
             });
@@ -1782,7 +1784,7 @@
             const statusFiles = jobFilesCache.filter(f => (f.status || 'pending') === status && !f.isDeleted);
             displayJobFiles(statusFiles, 'user-jobs-list');
             document.getElementById('user-jobs-modal-title').textContent = `Job Files with Status: ${status.charAt(0).toUpperCase() + status.slice(1)}`;
-            openModal('user-jobs-modal');
+            openModal('user-jobs-modal', true);
         }
         function downloadAnalyticsCsv() {
              let csvContent = "data:text/csv;charset=utf-8,Job File No,Date,Shipper,Consignee,Salesman,Created By,Status,Total Cost,Total Selling,Total Profit\n";
@@ -1985,8 +1987,3 @@
     </script>
 </body>
 </html>
-
-  
-
-    
-
