@@ -1,0 +1,203 @@
+{
+  "hawb": "",
+  "ts": "SEA",
+  "po": "",
+  "totalProfit": 188.08,
+  "fv": "",
+  "cn": "",
+  "pb": "ANAND MANI",
+  "ca": "GROUPAGE",
+  "createdBy": "ANAND MANI",
+  "or": "KUWAIT",
+  "bd": "2025-08-25",
+  "d": "2025-08-20",
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "de": "USA",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "re": "",
+  "totalCost": 989.92,
+  "co": "MR. SHAWN ERROLL DAVIS JR",
+  "createdAt": "2025-08-20T13:56:51.000Z",
+  "mawb": "",
+  "cl": [
+    "Export"
+  ],
+  "sm": "DINESH",
+  "updatedAt": "2025-08-31T11:07:52.000Z",
+  "pc": "48 BOXES",
+  "tn": "",
+  "pt": [
+    "Sea Freight"
+  ],
+  "in": "INV/00358/2025",
+  "vw": "7CBM",
+  "gw": "600 KGS",
+  "jfn": "ELF/00016/06/2025",
+  "status": "pending",
+  "sh": "MR. SHAWN ERROLL DAVIS JR",
+  "totalSelling": 1178,
+  "vn": "",
+  "ch": [
+    {
+      "c": "0",
+      "n": "",
+      "k": "ex_works",
+      "s": "1178.000",
+      "l": "DOOR - DOOR Charges:"
+    },
+    {
+      "n": "",
+      "k": "freight",
+      "c": "723.030",
+      "s": "0",
+      "l": "Sea Freight:"
+    },
+    {
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "formalities",
+      "l": "Formalities:",
+      "c": "0"
+    },
+    {
+      "k": "do_fee",
+      "s": "0",
+      "l": "Delivery Order Fee:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "transportation",
+      "l": "Transportation Charges:",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "inspection",
+      "c": "0",
+      "l": "Inspection / Computer Print Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Handling Charges:",
+      "s": "0",
+      "k": "handling",
+      "n": ""
+    },
+    {
+      "k": "labor",
+      "n": "",
+      "c": "0",
+      "l": "Labor / Forklift Charges:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Documentation Charges:",
+      "k": "documentation"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Clearance Charges:",
+      "n": "",
+      "k": "clearance"
+    },
+    {
+      "n": "",
+      "k": "customs_duty",
+      "c": "0",
+      "s": "0",
+      "l": "Customs Duty:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "thc",
+      "s": "0",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "legalization",
+      "s": "0",
+      "l": "Legalization Charges:"
+    },
+    {
+      "n": "",
+      "k": "demurrage",
+      "s": "0",
+      "c": "0",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "n": "",
+      "k": "loading",
+      "s": "0",
+      "c": "0",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "n": "",
+      "l": "Destination Clearance Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "dest_clearance"
+    },
+    {
+      "l": "Packing Charges:",
+      "s": "0",
+      "c": "126.634",
+      "k": "packing",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "k": "port_charges",
+      "c": "0",
+      "l": "Port Charges:",
+      "n": ""
+    },
+    {
+      "k": "other",
+      "n": "",
+      "c": "121.919",
+      "s": "0",
+      "l": "Other Charges: QUOT8 LEAD"
+    },
+    {
+      "s": "0",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "18.335",
+      "l": "Insurance Fee :",
+      "k": "insurance"
+    },
+    {
+      "s": "0",
+      "k": "epa",
+      "n": "",
+      "l": "EPA Charges :",
+      "c": "0"
+    }
+  ]
+}
