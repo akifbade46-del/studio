@@ -1,0 +1,206 @@
+{
+  "pt": [
+    "Sea Freight"
+  ],
+  "ts": "DO SERVICE ",
+  "po": "",
+  "co": "AL ABRAJ TEX CO",
+  "de": "KUWAIT",
+  "vw": "",
+  "vn": "",
+  "updatedAt": "2025-08-30T18:49:17.000Z",
+  "pc": "129  CRT",
+  "hawb": "",
+  "status": "pending",
+  "checkedBy": null,
+  "pb": "ABDUL HADI ",
+  "bd": "2025-08-30",
+  "sm": "",
+  "createdAt": "2025-08-30T10:01:25.000Z",
+  "ca": "ONE LINE ",
+  "or": "PUSAN",
+  "fv": "",
+  "jfn": "SIFCL/00013/08/2025",
+  "checkedAt": null,
+  "ch": [
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Ex-works Charges:",
+      "k": "ex_works"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "freight",
+      "l": "Land/Air / Sea Freight:",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "k": "surcharge",
+      "l": "Fuell Security / War Surcharge:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "l": "Formalities:",
+      "n": "",
+      "s": "0",
+      "k": "formalities"
+    },
+    {
+      "k": "do_fee",
+      "l": "Delivery Order Fee:",
+      "s": "138.000",
+      "n": "",
+      "c": "138.000"
+    },
+    {
+      "l": "Transportation Charges:",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "k": "transportation"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "inspection",
+      "s": "0",
+      "l": "Inspection / Computer Print Charges:"
+    },
+    {
+      "k": "handling",
+      "n": "",
+      "l": "Handling Charges:",
+      "s": "25.000",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "l": "Labor / Forklift Charges:",
+      "k": "labor",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Documentation Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "documentation"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "k": "clearance",
+      "l": "Clearance Charges:",
+      "n": ""
+    },
+    {
+      "k": "customs_duty",
+      "s": "0",
+      "l": "Customs Duty:",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "thc",
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "l": "Legalization Charges:",
+      "c": "0",
+      "k": "legalization",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "k": "demurrage",
+      "c": "0",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "k": "loading",
+      "s": "0"
+    },
+    {
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "packing",
+      "l": "Packing Charges:",
+      "s": "0"
+    },
+    {
+      "k": "port_charges",
+      "n": "",
+      "s": "0",
+      "l": "Port Charges:",
+      "c": "0"
+    },
+    {
+      "c": "23.475",
+      "l": "Other Charges Profit Share $ 75@ 313:",
+      "n": "",
+      "s": "25.000",
+      "k": "other"
+    },
+    {
+      "c": "0",
+      "l": "PAI Approval :",
+      "n": "",
+      "k": "pai",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "insurance",
+      "l": "Insurance Fee :"
+    },
+    {
+      "k": "epa",
+      "c": "0",
+      "l": "EPA Charges :",
+      "s": "0",
+      "n": ""
+    }
+  ],
+  "sh": "EUNSAN SHIPPING & AIRCARGO",
+  "re": "",
+  "createdBy": "ABDUL HADI ",
+  "cn": "",
+  "gw": "7760 KG",
+  "tn": "",
+  "in": "INV/00382/2025",
+  "cl": [
+    "Import"
+  ],
+  "mawb": "ONEYPUSF06583900",
+  "assignedTo": null,
+  "totalProfit": 26.52,
+  "d": "2025-08-10",
+  "dsc": "POLYESTER WOVEN FABRIC",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "totalSelling": 188,
+  "totalCost": 161.47
+}
