@@ -1,0 +1,201 @@
+{
+  "createdAt": "2025-08-30T08:07:32.000Z",
+  "pc": "",
+  "status": "checked",
+  "cn": "",
+  "bd": "2025-08-31",
+  "mawb": "",
+  "ch": [
+    {
+      "c": "0",
+      "s": "0",
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Land/Air / Sea Freight:",
+      "s": "0",
+      "k": "freight",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Formalities:",
+      "k": "formalities"
+    },
+    {
+      "k": "do_fee",
+      "s": "0",
+      "l": "Delivery Order Fee:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "transportation",
+      "l": "Transportation Charges 12 TRIP:",
+      "n": "",
+      "c": "0",
+      "s": "180.000"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "handling",
+      "l": "Handling Charges:",
+      "n": ""
+    },
+    {
+      "k": "labor",
+      "c": "0",
+      "n": "",
+      "l": "Labor / Forklift Charges:",
+      "s": "0"
+    },
+    {
+      "k": "documentation",
+      "l": "Documentation Charges:",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Clearance Charges:",
+      "c": "0",
+      "k": "clearance"
+    },
+    {
+      "k": "customs_duty",
+      "c": "0",
+      "l": "Customs Duty:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "k": "thc",
+      "l": "Terminal Handling Charges:",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "l": "Legalization Charges:",
+      "s": "0",
+      "n": "",
+      "k": "legalization"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "demurrage",
+      "c": "0",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "c": "0",
+      "l": "Loading / Offloading Charges:",
+      "s": "0",
+      "k": "loading",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Destination Clearance Charges:",
+      "c": "0",
+      "k": "dest_clearance",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "10.000",
+      "k": "packing",
+      "l": "Pallets Charges:",
+      "n": ""
+    },
+    {
+      "k": "port_charges",
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Port Charges:"
+    },
+    {
+      "k": "other",
+      "n": "",
+      "s": "0",
+      "c": "00.01",
+      "l": "Other Charges:"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "l": "PAI Approval :",
+      "k": "pai",
+      "n": ""
+    },
+    {
+      "k": "insurance",
+      "s": "0",
+      "l": "Insurance Fee :",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "EPA Charges :",
+      "c": "0",
+      "k": "epa",
+      "s": "0",
+      "n": ""
+    }
+  ],
+  "updatedAt": "2025-08-31T07:12:27.000Z",
+  "totalSelling": 190,
+  "vn": "",
+  "fv": "",
+  "po": "",
+  "re": "",
+  "co": "JAZEERA AIRWAYS",
+  "pb": "ABDUL HADI ",
+  "checkedBy": "AJMAL KIANI",
+  "tn": "",
+  "checkedAt": "2025-08-31T07:14:54.000Z",
+  "ca": "",
+  "dsc": "DUTY FREE",
+  "gw": "",
+  "totalProfit": 189.99,
+  "hawb": "",
+  "sm": "",
+  "or": "AL RAI",
+  "jfn": "LMK/00107/08/2025",
+  "pt": [],
+  "in": "INV/00389/2025",
+  "cl": [],
+  "createdBy": "ABDUL HADI ",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "d": "2025-08-28",
+  "ts": "LOCAL MOVE ",
+  "totalCost": 0.01,
+  "sh": "JAZEERA AIRWAYS",
+  "de": "AIRPORT ",
+  "vw": ""
+}
