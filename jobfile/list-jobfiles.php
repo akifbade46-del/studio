@@ -31,26 +31,25 @@ if ($show_all) {
 $file_data = [];
 
 foreach ($files as $file) {
-    $content = file_get_contents($file);
-    $data = json_decode($content, true);
-    if ($data) {
-        // Use file modification time as the primary source for 'updatedAt' for sorting
-        $updatedAtTimestamp = filemtime($file);
-        $updatedAtISO = date('c', $updatedAtTimestamp);
-
-        if ($is_full_data_request) {
-            $data['updatedAt'] = $updatedAtISO;
+    if ($is_full_data_request) {
+        $content = file_get_contents($file);
+        $data = json_decode($content, true);
+        if ($data) {
             $file_data[] = $data;
-        } else {
-            // Only get necessary fields for list view to keep payload small
-            $file_data[] = [
+        }
+    } else {
+        // Optimized for list view: only read necessary fields
+        $content = file_get_contents($file);
+        $data = json_decode($content, true);
+        if ($data) {
+             $file_data[] = [
                 'jfn' => $data['jfn'] ?? basename($file, '.json'),
                 'sh' => $data['sh'] ?? 'N/A',
                 'co' => $data['co'] ?? 'N/A',
                 'mawb' => $data['mawb'] ?? 'N/A',
                 'd' => $data['d'] ?? null,
                 'status' => $data['status'] ?? 'pending',
-                'updatedAt' => $updatedAtISO,
+                'updatedAt' => $data['updatedAt'] ?? date('c', filemtime($file)),
                 'deletedAt' => $data['deletedAt'] ?? null,
                 'deletedBy' => $data['deletedBy'] ?? null,
                 'isDeleted' => $show_deleted,
@@ -61,5 +60,3 @@ foreach ($files as $file) {
 
 json_response(200, 'success', $file_data);
 ?>
-
-  

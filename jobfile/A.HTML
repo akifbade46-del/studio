@@ -893,13 +893,12 @@
             }
         }
         
-        async function loadJobFiles() {
-            const result = await handleApiRequest('list-jobfiles.php', { method: 'GET' }, null, "Could not list job files.");
+        async function loadAllJobFilesForCache() {
+            const result = await handleApiRequest('list-jobfiles.php?full=true', { method: 'GET' }, null, "Could not list job files.");
             if (result && result.files) {
                 jobFilesCache = result.files;
                 jobFilesCache.sort((a,b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
                 updateMainPageStats();
-                applyFiltersAndDisplay();
                 return true;
             }
             return false;
@@ -917,10 +916,10 @@
         }
         
         async function updateStatus(docId, status, reason = null) {
-            const filename = (docId || currentJobFile.jfn.replace(/\//g, '_')) + '.json';
-            if (!filename) { showNotification("No job file loaded to update status.", true); return; }
+            const jobFileId = docId || (currentJobFile ? currentJobFile.jfn.replace(/\//g, '_') : null);
+            if (!jobFileId) { showNotification("No job file loaded to update status.", true); return; }
             
-            const payload = { filename, status, user: currentUser.displayName };
+            const payload = { filename: jobFileId + '.json', status, user: currentUser.displayName };
             if (reason) payload.reason = reason;
 
             const result = await handleApiRequest('update-status.php', {
@@ -936,21 +935,16 @@
         }
 
         async function checkJobFile(docId = null, fromModal = false) { 
-            const jobFileId = docId || (currentJobFile ? currentJobFile.jfn.replace(/\//g, '_') : null);
-            if (!jobFileId) { showNotification("No file specified to check.", true); return; }
-            await updateStatus(jobFileId, 'checked');
-            if(fromModal) openFileManager();
+            await updateStatus(docId, 'checked');
+            if(fromModal) await openFileManager(true); // Force reload
         }
         async function approveJobFile(docId = null, fromModal = false) { 
-             const jobFileId = docId || (currentJobFile ? currentJobFile.jfn.replace(/\//g, '_') : null);
-            if (!jobFileId) { showNotification("No file specified to approve.", true); return; }
-            await updateStatus(jobFileId, 'approved'); 
-            if(fromModal) openFileManager();
+            await updateStatus(docId, 'approved'); 
+            if(fromModal) await openFileManager(true); // Force reload
         }
         function promptForRejection(docId = null) { 
             const jobFileId = docId || (currentJobFile ? currentJobFile.jfn.replace(/\//g, '_') : null);
             if (!jobFileId) { showNotification("No file specified to reject.", true); return; }
-            // Store the ID in a global variable or a data attribute on the modal confirm button
             document.getElementById('confirm-reject-btn').dataset.jobId = jobFileId;
             openModal('reject-reason-modal');
         }
@@ -1002,7 +996,7 @@
                 isPermanent ? "File permanently deleted." : "File moved to recycle bin.", 
                 "Failed to delete file.");
             if (result) {
-                if(isPermanent) openRecycleBin(); else openFileManager();
+                if(isPermanent) openRecycleBin(true); else openFileManager(true);
             }
         }
         
@@ -1011,7 +1005,7 @@
                 "File restored successfully.", "Failed to restore file.");
             if(result) {
                 closeModal('confirm-delete-modal');
-                openRecycleBin(); // Refresh recycle bin view
+                openRecycleBin(true); // Refresh recycle bin view
             }
         }
 
@@ -1041,7 +1035,7 @@
             }
             
             clearForm();
-            await loadJobFiles(); // This will now also update the stats
+            await loadAllJobFilesForCache();
             loadClients();
         }
 
@@ -1363,13 +1357,20 @@
             document.getElementById('approval-message').style.display = 'none';
         }
 
-        async function openFileManager() {
+        async function openFileManager(forceReload = false) {
             showLoader();
-            const success = await loadJobFiles();
-            hideLoader();
-            if (success) {
-                openModal('file-manager-modal');
+            if (forceReload || jobFilesCache.length === 0) {
+                 const result = await handleApiRequest('list-jobfiles.php', { method: 'GET' }, null, "Could not list job files.");
+                 if (result && result.files) {
+                     jobFilesCache = result.files;
+                 } else {
+                     hideLoader();
+                     return;
+                 }
             }
+            hideLoader();
+            applyFiltersAndDisplay();
+            openModal('file-manager-modal');
         }
 
         function applyFiltersAndDisplay() {
@@ -1387,7 +1388,7 @@
                 if (toDate && (file.d || '') > toDate) return false;
                 return true;
             });
-
+            filtered.sort((a,b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
             displayJobFiles(filtered, 'job-files-list');
             updateStatusSummary('status-summary-file-manager', filtered);
         }
@@ -1853,12 +1854,15 @@
         }
 
         // --- RECYCLE BIN & BACKUP ---
-        async function openRecycleBin() {
+        async function openRecycleBin(forceReload = false) {
             showLoader();
             const result = await handleApiRequest('list-jobfiles.php?deleted=true', { method: 'GET' }, null, "Could not load recycle bin.");
             hideLoader();
             if(result && result.files) {
-                jobFilesCache = [...jobFilesCache.filter(f => !f.isDeleted), ...result.files]; // merge recycle bin files into cache
+                 if(forceReload) {
+                    const nonDeletedFiles = jobFilesCache.filter(f => !f.isDeleted);
+                    jobFilesCache = [...nonDeletedFiles, ...result.files];
+                 }
                 displayJobFiles(result.files, 'recycle-bin-list', true);
                 openModal('recycle-bin-modal');
             }
@@ -1883,7 +1887,7 @@
             const result = await handleApiRequest('restore.php', { method: 'GET' }, null, "Failed to restore data.");
             if(result) {
                 showNotification(result.message);
-                loadJobFiles();
+                loadAllJobFilesForCache();
             }
         }
 
