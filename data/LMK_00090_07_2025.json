@@ -1,0 +1,203 @@
+{
+  "d": "2025-08-20",
+  "de": "KUWAIT",
+  "ch": [
+    {
+      "s": "1160.00",
+      "l": "Ex-works Charges:",
+      "n": "",
+      "k": "ex_works",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Land/Air / Sea Freight:",
+      "k": "freight"
+    },
+    {
+      "c": "0",
+      "k": "surcharge",
+      "n": "",
+      "s": "0",
+      "l": "Fuell Security / War Surcharge:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "l": "Formalities:",
+      "k": "formalities",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "k": "do_fee",
+      "s": "0",
+      "n": "",
+      "l": "Delivery Order Fee:"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Transportation Charges:",
+      "c": "0",
+      "k": "transportation"
+    },
+    {
+      "k": "inspection",
+      "s": "0",
+      "l": "Inspection / Computer Print Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "l": "Handling Charges:",
+      "k": "handling",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "l": "Labor / Forklift Charges:",
+      "n": "",
+      "s": "0",
+      "k": "labor",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "documentation",
+      "s": "0",
+      "l": "Documentation Charges:"
+    },
+    {
+      "k": "clearance",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Clearance Charges:"
+    },
+    {
+      "l": "Customs Duty:",
+      "n": "",
+      "c": "0",
+      "k": "customs_duty",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "k": "thc",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "c": "0",
+      "l": "Legalization Charges:",
+      "k": "legalization",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "demurrage",
+      "s": "0",
+      "l": "Demurrage Charges:",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "k": "loading",
+      "c": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "0",
+      "l": "Destination Clearance Charges:",
+      "k": "dest_clearance"
+    },
+    {
+      "c": "0",
+      "k": "packing",
+      "l": "Packing Charges:",
+      "n": "",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Port Charges:",
+      "c": "0",
+      "s": "0",
+      "k": "port_charges"
+    },
+    {
+      "n": "",
+      "c": "2.250",
+      "k": "other",
+      "s": "0",
+      "l": "Other Charges:"
+    },
+    {
+      "l": "PAI Approval :",
+      "k": "pai",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "insurance",
+      "c": "0",
+      "l": "Insurance Fee :",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "k": "epa",
+      "l": "EPA Charges :",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    }
+  ],
+  "vn": "",
+  "hawb": "",
+  "status": "pending",
+  "sm": "DINESH",
+  "or": "KUWAIT",
+  "tn": "",
+  "updatedAt": "2025-08-20T12:55:24.000Z",
+  "createdAt": "2025-08-20T12:55:24.000Z",
+  "createdBy": "ANAND MANI",
+  "totalProfit": 1157.75,
+  "fv": "",
+  "totalSelling": 1160,
+  "dsc": "USED HOUSEHOLD ITEMS",
+  "in": "INV/00356/2025",
+  "ts": "LAND",
+  "jfn": "LMK/00090/07/2025",
+  "co": "MS.SAFA ABDULRAHMAN ALHASHEM",
+  "bd": "2025-08-19",
+  "vw": "",
+  "sh": "MS.SAFA ABDULRAHMAN ALHASHEM",
+  "totalCost": 2.25,
+  "re": "",
+  "gw": "",
+  "pb": "ANAND MANI",
+  "pc": "33 BOXES",
+  "po": "",
+  "ca": "",
+  "cl": [
+    "Local Move"
+  ],
+  "cn": "",
+  "pt": [
+    "Others"
+  ],
+  "mawb": "",
+  "lastUpdatedBy": "ANAND MANI"
+}
