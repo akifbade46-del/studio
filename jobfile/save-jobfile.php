@@ -1,69 +1,73 @@
 <?php
-// Set headers to allow cross-origin requests (for development) and define content type
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Content-Type: application/json");
 
-// Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
 }
 
-// Check if it's a POST request
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    http_response_code(405); // Method Not Allowed
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
+// Function to send JSON response
+function json_response($status, $message, $data = null) {
+    http_response_code($status);
+    $response = ['status' => $message === 'success' ? 'success' : 'error', 'message' => $message];
+    if ($data !== null) {
+        $response['data'] = $data;
+    }
+    echo json_encode($response);
     exit();
 }
 
-// Get the raw POST data
-$json_data = file_get_contents('php://input');
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+    json_response(405, 'Invalid request method.');
+}
 
-// Decode the JSON data
+$json_data = file_get_contents('php://input');
 $request_data = json_decode($json_data, true);
 
-// Check if JSON decoding was successful and data exists
 if (json_last_error() !== JSON_ERROR_NONE || !isset($request_data['filename']) || !isset($request_data['data'])) {
-    http_response_code(400); // Bad Request
-    echo json_encode(['status' => 'error', 'message' => 'Invalid or missing JSON data.']);
-    exit();
+    json_response(400, 'Invalid or missing JSON data.');
 }
 
-// Sanitize filename to prevent directory traversal attacks
 $filename = basename($request_data['filename']);
-if (empty($filename)) {
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Filename is invalid or empty.']);
-    exit();
+if (empty($filename) || strpos($filename, '.json') === false) {
+    json_response(400, 'Filename is invalid or empty.');
 }
 
-// Define the directory to save files. Make sure this directory exists and is writable.
 $directory = 'data/';
-
-// Create the directory if it doesn't exist
 if (!is_dir($directory)) {
     if (!mkdir($directory, 0755, true)) {
-        http_response_code(500); // Internal Server Error
-        echo json_encode(['status' => 'error', 'message' => 'Failed to create data directory.']);
-        exit();
+        json_response(500, 'Failed to create data directory.');
     }
 }
 
-// Construct the full file path
 $file_path = $directory . $filename;
 
-// Convert the job file data back to a nicely formatted JSON string
+// Check for duplicates before saving (for new files)
+$is_updating = file_exists($file_path);
+if (!$is_updating) {
+    $all_files = glob($directory . '*.json');
+    $new_data = $request_data['data'];
+    foreach ($all_files as $file) {
+        $content = file_get_contents($file);
+        $existing_data = json_decode($content, true);
+        if (
+            (isset($new_data['in']) && !empty($new_data['in']) && $existing_data['in'] === $new_data['in']) ||
+            (isset($new_data['mawb']) && !empty($new_data['mawb']) && $existing_data['mawb'] === $new_data['mawb'])
+        ) {
+            json_response(409, 'Duplicate Invoice No. or MAWB No. found in file: ' . $existing_data['jfn']);
+        }
+    }
+}
+
+
 $json_to_save = json_encode($request_data['data'], JSON_PRETTY_PRINT);
 
-// Write the data to the file
 if (file_put_contents($file_path, $json_to_save) !== false) {
-    http_response_code(200); // OK
-    echo json_encode(['status' => 'success', 'message' => 'File saved successfully.', 'path' => $file_path]);
+    json_response(200, 'success', $request_data['data']);
 } else {
-    http_response_code(500); // Internal Server Error
-    echo json_encode(['status' => 'error', 'message' => 'Failed to write file to server. Check directory permissions.']);
+    json_response(500, 'Failed to write file to server. Check directory permissions.');
 }
 ?>
-
-    
