@@ -1,0 +1,205 @@
+{
+  "gw": "53 KG",
+  "pb": "ABDUL HADI ",
+  "ts": "",
+  "totalProfit": 63,
+  "vw": "",
+  "de": "KUWAIT",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "bd": "2025-08-30",
+  "co": "JAZEERA AIRWAYS ",
+  "vn": "",
+  "or": "DUBAI",
+  "createdAt": "2025-08-30T08:33:54.000Z",
+  "dsc": "AIRCRAFT PART",
+  "in": "INV/00377/2025",
+  "totalCost": 129.55,
+  "createdBy": "ABDUL HADI ",
+  "hawb": "",
+  "sm": "",
+  "pt": [
+    "Air Freight"
+  ],
+  "updatedAt": "2025-08-30T08:35:28.000Z",
+  "tn": "",
+  "cl": [
+    "Import"
+  ],
+  "po": "",
+  "ch": [
+    {
+      "n": "",
+      "c": "0",
+      "l": "Ex-works Charges:",
+      "k": "ex_works",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "k": "freight",
+      "l": "Land/Air / Sea Freight:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "k": "surcharge"
+    },
+    {
+      "k": "formalities",
+      "l": "Formalities:",
+      "c": "0",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "05.000",
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "c": "01.000"
+    },
+    {
+      "n": "",
+      "k": "transportation",
+      "s": "15.000",
+      "c": "0",
+      "l": "Transportation Charges:"
+    },
+    {
+      "s": "18.810",
+      "c": "18.810",
+      "n": "",
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection"
+    },
+    {
+      "n": "",
+      "k": "handling",
+      "s": "15.000",
+      "l": "Handling Charges:",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "labor",
+      "l": "Labor / Forklift Charges:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Inspection Charges :",
+      "c": "04.000",
+      "s": "0",
+      "k": "documentation"
+    },
+    {
+      "l": "Clearance Charges:",
+      "s": "20.000",
+      "c": "08.000",
+      "n": "",
+      "k": "clearance"
+    },
+    {
+      "l": "Customs Duty:",
+      "k": "customs_duty",
+      "c": "20.240",
+      "n": "",
+      "s": "20.240"
+    },
+    {
+      "l": "Terminal Handling Charges:",
+      "s": "43.500",
+      "c": "43.500",
+      "k": "thc",
+      "n": ""
+    },
+    {
+      "s": "25.000",
+      "k": "legalization",
+      "l": "Legalization Charges:",
+      "c": "25.000",
+      "n": ""
+    },
+    {
+      "k": "demurrage",
+      "s": "05.000",
+      "n": "",
+      "l": "Demurrage Charges:",
+      "c": "01.000"
+    },
+    {
+      "n": "",
+      "l": "Loading / Offloading Charges:",
+      "s": "15.000",
+      "k": "loading",
+      "c": "0"
+    },
+    {
+      "k": "dest_clearance",
+      "n": "",
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "c": "01.000",
+      "k": "packing",
+      "s": "0",
+      "l": "Bank Charges:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "n": "",
+      "c": "02.000",
+      "l": "Service  Charges:",
+      "k": "port_charges"
+    },
+    {
+      "s": "0",
+      "l": "Other Charges:",
+      "c": "0",
+      "k": "other",
+      "n": ""
+    },
+    {
+      "l": "PAI Approval :",
+      "k": "pai",
+      "s": "10.000",
+      "c": "05.000",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Insurance Fee :",
+      "k": "insurance",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "epa",
+      "l": "EPA Charges :",
+      "c": "0"
+    }
+  ],
+  "mawb": "703-131844780",
+  "checkedAt": "2025-08-30T10:49:32.000Z",
+  "totalSelling": 192.55,
+  "jfn": "AC/00119/08/2025",
+  "status": "checked",
+  "d": "2025-08-28",
+  "cn": "",
+  "ca": "JAZEERA AIRWAYS",
+  "re": "",
+  "sh": "AL ASHRAFI TRADING ",
+  "pc": "03",
+  "fv": "",
+  "checkedBy": "AJMAL KIANI"
+}
