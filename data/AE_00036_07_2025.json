@@ -1,0 +1,203 @@
+{
+  "vw": "",
+  "totalProfit": 83.54,
+  "in": "INV/00311/2025",
+  "or": "KUWAIT",
+  "totalSelling": 193.35,
+  "dsc": "PERSONAL EFFECTS",
+  "po": "",
+  "co": "MR. HANADI A. M. JUMAAH",
+  "cn": "",
+  "de": "MALAGA (SPAIN)",
+  "mawb": "235-89165075",
+  "bd": "2025-07-14",
+  "gw": "65 KG",
+  "fv": "",
+  "vn": "",
+  "updatedAt": "2025-08-10T08:05:57.000Z",
+  "createdBy": "ABDUL HADI ",
+  "sm": "",
+  "pt": [
+    "Air Freight"
+  ],
+  "cl": [
+    "Export"
+  ],
+  "createdAt": "2025-08-10T08:05:12.000Z",
+  "jfn": "AE/00036/07/2025",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "d": "2025-07-03",
+  "totalCost": 109.81,
+  "sh": "MR. HANADI A. M. JUMAAH",
+  "ca": "TURKISH AIRLINE",
+  "hawb": "",
+  "re": "",
+  "status": "pending",
+  "pb": "ABDUL HADI ",
+  "ch": [
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Ex-works Charges:",
+      "k": "ex_works"
+    },
+    {
+      "c": "67.000",
+      "s": "193.350",
+      "l": "Air Freight Door to Door:",
+      "k": "freight",
+      "n": ""
+    },
+    {
+      "l": "Fuell Security / War Surcharge:",
+      "s": "0",
+      "k": "surcharge",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "formalities",
+      "s": "0",
+      "l": "Formalities:",
+      "c": "15.000",
+      "n": ""
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Transportation Charges:",
+      "k": "transportation"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "k": "inspection",
+      "s": "0",
+      "c": "12.810",
+      "n": ""
+    },
+    {
+      "k": "handling",
+      "c": "0",
+      "l": "Handling Charges:",
+      "s": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Labor / Forklift Charges:",
+      "n": "",
+      "k": "labor",
+      "c": "0"
+    },
+    {
+      "l": "Documentation Charges:",
+      "s": "0",
+      "c": "0",
+      "k": "documentation",
+      "n": ""
+    },
+    {
+      "c": "15.000",
+      "n": "",
+      "k": "clearance",
+      "l": "Clearance Charges:",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "k": "customs_duty",
+      "s": "0",
+      "l": "Customs Duty:"
+    },
+    {
+      "l": "Terminal Handling Charges:",
+      "k": "thc",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "k": "legalization",
+      "s": "0",
+      "n": "",
+      "l": "Legalization Charges:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "k": "demurrage",
+      "l": "Demurrage Charges:"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "loading",
+      "s": "0",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Destination Clearance Charges:",
+      "n": "",
+      "k": "dest_clearance"
+    },
+    {
+      "l": "Packing Charges:",
+      "k": "packing",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Port Charges:",
+      "k": "port_charges",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "other",
+      "l": "Other Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "pai",
+      "l": "PAI Approval :",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "k": "insurance",
+      "n": "",
+      "c": "0",
+      "l": "Insurance Fee :"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "epa",
+      "l": "EPA Charges :",
+      "n": ""
+    }
+  ],
+  "tn": "",
+  "ts": "AIR",
+  "pc": "1 PALLET"
+}
