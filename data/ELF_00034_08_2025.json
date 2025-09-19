@@ -1,0 +1,203 @@
+{
+  "ch": [
+    {
+      "k": "ex_works",
+      "l": "Ex-works Charges:",
+      "s": "2061.000",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "c": "310.000",
+      "k": "freight",
+      "l": "Land Freight:",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "k": "surcharge",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "k": "formalities",
+      "l": "Formalities:",
+      "n": "",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "n": "",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "l": "Transportation Charges: CAR",
+      "n": "",
+      "s": "0",
+      "c": "281",
+      "k": "transportation"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "c": "0",
+      "n": "",
+      "k": "inspection",
+      "s": "0"
+    },
+    {
+      "k": "handling",
+      "c": "0",
+      "n": "",
+      "s": "0",
+      "l": "Handling Charges:"
+    },
+    {
+      "k": "labor",
+      "n": "",
+      "l": "Labor / Forklift Charges:",
+      "s": "0",
+      "c": "0"
+    },
+    {
+      "k": "documentation",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Documentation Charges:"
+    },
+    {
+      "c": "0",
+      "k": "clearance",
+      "n": "",
+      "s": "0",
+      "l": "Clearance Charges:"
+    },
+    {
+      "k": "customs_duty",
+      "s": "0",
+      "n": "",
+      "l": "Customs Duty:",
+      "c": "0"
+    },
+    {
+      "c": "0",
+      "k": "thc",
+      "n": "",
+      "s": "0",
+      "l": "Terminal Handling Charges:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "legalization",
+      "c": "0",
+      "l": "Legalization Charges:"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Demurrage Charges:",
+      "k": "demurrage"
+    },
+    {
+      "k": "loading",
+      "c": "0",
+      "s": "0",
+      "n": "",
+      "l": "Loading / Offloading Charges:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "dest_clearance",
+      "c": "0",
+      "l": "Destination Clearance Charges:"
+    },
+    {
+      "n": "",
+      "s": "0",
+      "k": "packing",
+      "l": "Packing Charges:",
+      "c": "130.000"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Port Charges:",
+      "k": "port_charges",
+      "c": "0"
+    },
+    {
+      "n": "",
+      "k": "other",
+      "s": "0",
+      "c": "0",
+      "l": "Other Charges:"
+    },
+    {
+      "s": "0",
+      "l": "PAI Approval :",
+      "k": "pai",
+      "n": "",
+      "c": "0"
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "n": "",
+      "l": "Insurance Fee :",
+      "k": "insurance"
+    },
+    {
+      "k": "epa",
+      "c": "0",
+      "n": "",
+      "l": "EPA Charges :",
+      "s": "0"
+    }
+  ],
+  "co": "MR. SYED MATEEN YUNUS",
+  "sh": "MR. SYED MATEEN YUNUS",
+  "createdAt": "2025-08-18T07:48:41.000Z",
+  "hawb": "",
+  "de": "DUBAI",
+  "vw": "40 CBM",
+  "pt": [
+    "Land Freight"
+  ],
+  "status": "pending",
+  "lastUpdatedBy": "ANAND MANI",
+  "ca": "TRUCK",
+  "pb": "ANAND MANI",
+  "po": "",
+  "totalSelling": 2061,
+  "tn": "",
+  "createdBy": "ANAND MANI",
+  "totalProfit": 1340,
+  "re": "",
+  "cl": [
+    "Export"
+  ],
+  "bd": "",
+  "updatedAt": "2025-08-18T07:52:27.000Z",
+  "pc": "216 BOXES AND 2 CARS",
+  "gw": "2800",
+  "in": "",
+  "jfn": "ELF/00034/08/2025",
+  "d": "2025-08-18",
+  "cn": "",
+  "vn": "",
+  "or": "KUWAIT",
+  "fv": "",
+  "mawb": "",
+  "sm": "DINESH",
+  "totalCost": 721,
+  "dsc": "CAR & USED HOUSEHOLD ITEMS",
+  "ts": "LAND"
+}
