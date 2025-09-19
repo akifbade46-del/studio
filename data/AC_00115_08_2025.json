@@ -1,0 +1,205 @@
+{
+  "dsc": "WIRE ROPE ",
+  "de": "",
+  "status": "checked",
+  "pc": "1",
+  "checkedBy": "AJMAL KIANI",
+  "ts": "CLEARANCE AND DELIVERY ",
+  "pt": [
+    "Air Freight"
+  ],
+  "d": "2025-08-13",
+  "cl": [
+    "Import"
+  ],
+  "lastUpdatedBy": "ABDUL HADI ",
+  "totalProfit": 54,
+  "sm": "",
+  "co": "BOODAI TRADING CO",
+  "mawb": "157-03451604",
+  "gw": "138 KG",
+  "updatedAt": "2025-08-30T09:39:28.000Z",
+  "jfn": "AC/00115/08/2025",
+  "createdBy": "ABDUL HADI ",
+  "bd": "2025-08-30",
+  "fv": "",
+  "totalSelling": 211.44,
+  "sh": "ADEMSAN MAKINA SAN",
+  "ch": [
+    {
+      "s": "0",
+      "l": "Ex-works Charges:",
+      "c": "0",
+      "k": "ex_works",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "l": "Land/Air / Sea Freight:",
+      "n": "",
+      "k": "freight"
+    },
+    {
+      "s": "0",
+      "n": "",
+      "l": "Fuell Security / War Surcharge:",
+      "c": "0",
+      "k": "surcharge"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "k": "formalities",
+      "s": "0",
+      "l": "Formalities:"
+    },
+    {
+      "l": "Delivery Order Fee:",
+      "k": "do_fee",
+      "c": "55.000",
+      "n": "",
+      "s": "55.000"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "s": "25.000",
+      "l": "Transportation Charges:",
+      "k": "transportation"
+    },
+    {
+      "n": "",
+      "s": "16.410",
+      "k": "inspection",
+      "l": "Inspection / Computer Print Charges:",
+      "c": "16.410"
+    },
+    {
+      "c": "0",
+      "k": "handling",
+      "l": "Handling Charges:",
+      "s": "15.000",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Labor / Forklift Charges:",
+      "k": "labor"
+    },
+    {
+      "s": "0",
+      "k": "documentation",
+      "l": "Inspection Charges:",
+      "c": "4.000",
+      "n": ""
+    },
+    {
+      "c": "8.000",
+      "n": "",
+      "s": "20.000",
+      "k": "clearance",
+      "l": "Clearance Charges:"
+    },
+    {
+      "s": "33.030",
+      "k": "customs_duty",
+      "c": "33.030",
+      "n": "",
+      "l": "Customs Duty:"
+    },
+    {
+      "k": "thc",
+      "s": "12.000",
+      "c": "12.000",
+      "l": "Terminal Handling Charges:",
+      "n": ""
+    },
+    {
+      "s": "30.000",
+      "n": "",
+      "k": "legalization",
+      "c": "25.000",
+      "l": "Legalization Charges:"
+    },
+    {
+      "k": "demurrage",
+      "s": "0",
+      "l": "Legalization Fee Charges:",
+      "c": "01.000",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "l": "Loading / Offloading Charges:",
+      "c": "0",
+      "k": "loading",
+      "n": ""
+    },
+    {
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "01.000",
+      "l": "Bank  Charges:",
+      "s": "5.000",
+      "k": "packing",
+      "n": ""
+    },
+    {
+      "k": "port_charges",
+      "n": "",
+      "s": "0",
+      "c": "0",
+      "l": "Port Charges:"
+    },
+    {
+      "c": "2.000",
+      "n": "",
+      "s": "0",
+      "k": "other",
+      "l": "Other  Service Charges:"
+    },
+    {
+      "k": "pai",
+      "l": "PAI Approval :",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "k": "insurance",
+      "n": "",
+      "s": "0",
+      "l": "Insurance Fee :",
+      "c": "0"
+    },
+    {
+      "k": "epa",
+      "s": "0",
+      "n": "",
+      "l": "EPA Charges :",
+      "c": "0"
+    }
+  ],
+  "hawb": "",
+  "vw": "",
+  "checkedAt": "2025-08-30T10:45:12.000Z",
+  "re": "",
+  "po": "",
+  "vn": "",
+  "tn": "",
+  "cn": "",
+  "in": "INV/00383/2025",
+  "pb": "ABDUL HADI ",
+  "or": "TURKEY ",
+  "createdAt": "2025-08-30T09:39:28.000Z",
+  "ca": "QATAR AIRWAYS ",
+  "totalCost": 157.44
+}
