@@ -1,0 +1,203 @@
+{
+  "updatedAt": "2025-08-10T10:47:06.000Z",
+  "mawb": "072-73415311",
+  "gw": "66 KG",
+  "bd": "2025-07-22",
+  "totalSelling": 516.2,
+  "ts": "AIR",
+  "ca": "GLUF AIR ",
+  "re": "",
+  "createdBy": "ABDUL HADI ",
+  "po": "",
+  "or": "LONDON ",
+  "tn": "",
+  "dsc": "HOUSE EFFECTS AND FITTING ",
+  "pt": [
+    "Air Freight"
+  ],
+  "fv": "",
+  "vw": " ",
+  "vn": "",
+  "pb": "ABDUL HADI ",
+  "d": "2025-07-16",
+  "sh": "IDEWORKS LTD",
+  "cl": [
+    "Import"
+  ],
+  "in": "INV/00323/2025",
+  "co": "MR. MARWAN M. BOODAI",
+  "totalCost": 306.2,
+  "cn": "",
+  "totalProfit": 210,
+  "createdAt": "2025-08-10T10:47:06.000Z",
+  "status": "pending",
+  "sm": "",
+  "pc": "1",
+  "jfn": "AC/00102/07/2025",
+  "hawb": "",
+  "ch": [
+    {
+      "l": "Ex-works Charges:",
+      "s": "0",
+      "k": "ex_works",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Land/Air / Sea Freight:",
+      "s": "0",
+      "k": "freight"
+    },
+    {
+      "c": "0",
+      "l": "Fuell Security / War Surcharge:",
+      "n": "",
+      "s": "0",
+      "k": "surcharge"
+    },
+    {
+      "c": "0",
+      "n": "",
+      "l": "Formalities:",
+      "s": "0",
+      "k": "formalities"
+    },
+    {
+      "n": "",
+      "k": "do_fee",
+      "l": "Delivery Order Fee:",
+      "c": "0",
+      "s": "0"
+    },
+    {
+      "c": "0",
+      "l": "Transportation Charges:",
+      "s": "45.000",
+      "n": "",
+      "k": "transportation"
+    },
+    {
+      "c": "20.610",
+      "k": "inspection",
+      "s": "20.610",
+      "l": "Inspection / Computer Print Charges:",
+      "n": ""
+    },
+    {
+      "n": "",
+      "s": "25.000",
+      "l": "Handling Charges:",
+      "k": "handling",
+      "c": "0"
+    },
+    {
+      "s": "30.000",
+      "c": "3.000",
+      "n": "",
+      "k": "labor",
+      "l": "Labor / Forklift Charges:"
+    },
+    {
+      "n": "",
+      "c": "0",
+      "s": "15.000",
+      "l": "Documentation Charges:",
+      "k": "documentation"
+    },
+    {
+      "l": "Clearance Charges:",
+      "k": "clearance",
+      "n": "",
+      "c": "35.000",
+      "s": "65.000"
+    },
+    {
+      "c": "172.090",
+      "n": "",
+      "l": "Customs Duty:",
+      "s": "172.090",
+      "k": "customs_duty"
+    },
+    {
+      "k": "thc",
+      "l": "Terminal Handling Charges:",
+      "c": "33.500",
+      "n": "",
+      "s": "33.500"
+    },
+    {
+      "l": "Legalization Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "legalization"
+    },
+    {
+      "l": "Demurrage Charges:",
+      "s": "0",
+      "n": "",
+      "c": "0",
+      "k": "demurrage"
+    },
+    {
+      "l": "Loading / Offloading Charges:",
+      "k": "loading",
+      "s": "0",
+      "c": "0",
+      "n": ""
+    },
+    {
+      "s": "0",
+      "c": "0",
+      "k": "dest_clearance",
+      "l": "Destination Clearance Charges:",
+      "n": ""
+    },
+    {
+      "k": "packing",
+      "c": "0",
+      "n": "",
+      "l": "Packing Charges:",
+      "s": "0"
+    },
+    {
+      "c": "2.000",
+      "n": "",
+      "l": "Bank Charges:",
+      "s": "5.000",
+      "k": "port_charges"
+    },
+    {
+      "n": "",
+      "c": "10.000",
+      "s": "75.000",
+      "k": "other",
+      "l": "PAI Service Charges:"
+    },
+    {
+      "k": "pai",
+      "c": "30.000",
+      "l": "PAI Approval :",
+      "n": "",
+      "s": "30.000"
+    },
+    {
+      "l": "Insurance Fee :",
+      "n": "",
+      "s": "0",
+      "k": "insurance",
+      "c": "0"
+    },
+    {
+      "l": "EPA Charges :",
+      "k": "epa",
+      "c": "0",
+      "n": "",
+      "s": "0"
+    }
+  ],
+  "lastUpdatedBy": "ABDUL HADI ",
+  "de": " KUWAIT"
+}
