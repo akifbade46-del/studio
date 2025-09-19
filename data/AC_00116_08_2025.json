@@ -1,0 +1,102 @@
+{
+  "dsc": "PAINT PROTECTION FILM ",
+  "sm": "",
+  "ch": [
+    {
+      "c": "0",
+      "l": "Ex-works Charges:",
+      "s": "257.250",
+      "n": ""
+    },
+    {
+      "n": "",
+      "l": "Delivery Order Fee:",
+      "s": "47.250",
+      "c": "01.000"
+    },
+    {
+      "l": "Inspection / Computer Print Charges:",
+      "s": "16.410",
+      "c": "16.410",
+      "n": ""
+    },
+    {
+      "l": "Customs Duty:",
+      "c": "15.220",
+      "s": "15.220",
+      "n": ""
+    },
+    {
+      "l": "Clearance Charges:",
+      "n": "",
+      "c": "12.000",
+      "s": "0"
+    },
+    {
+      "n": "",
+      "l": "Terminal Handling Charges:",
+      "s": "36.500",
+      "c": "36.500"
+    },
+    {
+      "n": "",
+      "l": "Legalization Charges:",
+      "s": "25.000",
+      "c": "25.000"
+    },
+    {
+      "l": "Legalization Fee:",
+      "s": "0",
+      "c": "01.000",
+      "n": ""
+    },
+    {
+      "c": "01.000",
+      "s": "0",
+      "n": "",
+      "l": "Bank fee"
+    },
+    {
+      "c": "02.000",
+      "n": "",
+      "s": "0",
+      "l": "Other Charges:"
+    }
+  ],
+  "createdAt": "2025-09-14T05:37:24.000Z",
+  "updatedAt": "2025-09-14T05:37:24.000Z",
+  "d": "2025-08-25",
+  "hawb": "",
+  "lastUpdatedBy": "ABDUL HADI ",
+  "tn": "",
+  "jfn": "AC/00116/08/2025",
+  "cn": "",
+  "gw": "162KG ",
+  "pt": [
+    "Air Freight"
+  ],
+  "de": "KUWAIT",
+  "fv": "",
+  "re": "",
+  "cl": [
+    "Import"
+  ],
+  "totalCost": 110.13,
+  "sh": "GLORY CHEMICAC",
+  "vw": "",
+  "pc": "6",
+  "po": "",
+  "in": "",
+  "vn": "",
+  "co": "FOX PROTECTION COMPANY ",
+  "status": "pending",
+  "totalSelling": 397.63,
+  "totalProfit": 287.5,
+  "createdBy": "ABDUL HADI ",
+  "mawb": "157-05205981",
+  "ca": "QATAR AIRWAYS ",
+  "bd": "",
+  "pb": "ABDUL HADI ",
+  "ts": "DDP",
+  "or": "KOREA"
+}
