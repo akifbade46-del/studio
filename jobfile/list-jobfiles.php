@@ -31,30 +31,43 @@ if ($show_all) {
 $file_data = [];
 
 foreach ($files as $file) {
+    $content = file_get_contents($file);
+    $data = json_decode($content, true);
+    if (!$data) {
+        continue; // Skip invalid JSON files
+    }
+
+    // Standardize the updated date. Use 'updatedAt', then 'createdAt', then file modification time.
+    $updatedTimestamp = null;
+    if (isset($data['updatedAt']) && !empty($data['updatedAt'])) {
+        $updatedTimestamp = strtotime($data['updatedAt']);
+    } elseif (isset($data['createdAt']) && !empty($data['createdAt'])) {
+         $updatedTimestamp = strtotime($data['createdAt']);
+    }
+    if ($updatedTimestamp === false || $updatedTimestamp === null) {
+         $updatedTimestamp = filemtime($file);
+    }
+    
+    // Format to ISO 8601 string (e.g., "2024-08-20T15:30:00+00:00") which JS can parse and sort reliably.
+    $updatedAtISO = date('c', $updatedTimestamp);
+
     if ($is_full_data_request) {
-        $content = file_get_contents($file);
-        $data = json_decode($content, true);
-        if ($data) {
-            $file_data[] = $data;
-        }
+        $data['updatedAt'] = $updatedAtISO; // Ensure consistent date format
+        $file_data[] = $data;
     } else {
-        // Optimized for list view: only read necessary fields
-        $content = file_get_contents($file);
-        $data = json_decode($content, true);
-        if ($data) {
-             $file_data[] = [
-                'jfn' => $data['jfn'] ?? basename($file, '.json'),
-                'sh' => $data['sh'] ?? 'N/A',
-                'co' => $data['co'] ?? 'N/A',
-                'mawb' => $data['mawb'] ?? 'N/A',
-                'd' => $data['d'] ?? null,
-                'status' => $data['status'] ?? 'pending',
-                'updatedAt' => $data['updatedAt'] ?? date('c', filemtime($file)),
-                'deletedAt' => $data['deletedAt'] ?? null,
-                'deletedBy' => $data['deletedBy'] ?? null,
-                'isDeleted' => $show_deleted,
-            ];
-        }
+        // Optimized for list view: only send necessary fields
+        $file_data[] = [
+            'jfn' => $data['jfn'] ?? basename($file, '.json'),
+            'sh' => $data['sh'] ?? 'N/A',
+            'co' => $data['co'] ?? 'N/A',
+            'mawb' => $data['mawb'] ?? 'N/A',
+            'd' => $data['d'] ?? null,
+            'status' => $data['status'] ?? 'pending',
+            'updatedAt' => $updatedAtISO,
+            'deletedAt' => $data['deletedAt'] ?? null,
+            'deletedBy' => $data['deletedBy'] ?? null,
+            'isDeleted' => $show_deleted,
+        ];
     }
 }
 

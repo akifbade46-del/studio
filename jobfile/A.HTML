@@ -395,7 +395,7 @@
                  </button>
                  <button onclick="saveJobFile()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293zM5 4a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" /></svg>
-                     <span>Save to DB</span>
+                     <span>Save</span>
                  </button>
                  <button onclick="clearForm()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
@@ -894,10 +894,9 @@
         }
         
         async function loadAllJobFilesForCache() {
-            const result = await handleApiRequest('list-jobfiles.php?full=true', { method: 'GET' }, null, "Could not list job files.");
+            const result = await handleApiRequest('list-jobfiles.php?full=true&all=true', { method: 'GET' }, null, "Could not list job files.");
             if (result && result.files) {
                 jobFilesCache = result.files;
-                jobFilesCache.sort((a,b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
                 updateMainPageStats();
                 return true;
             }
@@ -964,7 +963,7 @@
             if (type === 'jobfile' || type === 'recycle') {
                 const isPermanent = type === 'recycle';
                 const fileCache = isPermanent ? jobFilesCache.filter(f => f.isDeleted) : jobFilesCache;
-                const fileToDelete = fileCache.find(f => f.jfn.replace(/\//g, '_') === docId);
+                const fileToDelete = fileCache.find(f => f.jfn && f.jfn.replace(/\//g, '_') === docId);
                 title = isPermanent ? 'Confirm Permanent Deletion' : 'Confirm Deletion';
                 message = isPermanent ? `This will permanently delete the file "${fileToDelete?.jfn || docId}". This action CANNOT be undone.`
                                       : `Are you sure you want to delete the file "${fileToDelete?.jfn || docId}"? This will move it to the recycle bin.`;
@@ -1388,7 +1387,8 @@
                 if (toDate && (file.d || '') > toDate) return false;
                 return true;
             });
-            filtered.sort((a,b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
+            // FIX: Ensure updatedAt is treated as a string for localeCompare
+            filtered.sort((a,b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
             displayJobFiles(filtered, 'job-files-list');
             updateStatusSummary('status-summary-file-manager', filtered);
         }
@@ -1464,7 +1464,10 @@
         };
         
         function updateMainPageStats() {
+            if (!jobFilesCache) return;
             const files = jobFilesCache.filter(f => !f.isDeleted);
+            if (files.length === 0) return;
+
             const totalProfit = files.reduce((sum, file) => sum + (file.totalProfit || 0), 0);
             const currentMonth = new Date().toISOString().substring(0, 7); // "YYYY-MM"
             const jobsThisMonth = files.filter(file => file.createdAt && file.createdAt.startsWith(currentMonth)).length;
@@ -1517,7 +1520,7 @@
             showLoader();
             try {
                 const docRef = id ? doc(db, 'clients', id) : doc(collection(db, 'clients'));
-                await setDoc(docRef, data, { merge: true });
+                await setDoc(docRef, { ...data, updatedAt: serverTimestamp() }, { merge: true });
                 showNotification("Client saved successfully.");
                 clearClientForm();
             } catch (e) { console.error(e); showNotification("Error saving client.", true); }
@@ -1622,23 +1625,42 @@
         
         // --- Analytics Dashboard ---
         async function openAnalyticsDashboard() {
-            const result = await handleApiRequest('list-jobfiles.php?full=true&all=true', { method: 'GET' }, null, "Could not load data for analytics.");
-            if(!result || !result.files) return;
-            analyticsDataCache = result.files.filter(f => !f.isDeleted); // only non-deleted
+            if (!analyticsDataCache) {
+                const result = await handleApiRequest('list-jobfiles.php?full=true&all=true', { method: 'GET' }, null, "Could not load data for analytics.");
+                if (!result || !result.files) return;
+                analyticsDataCache = result.files.filter(f => !f.isDeleted); // only non-deleted
+            }
             
             const container = document.getElementById('analytics-container');
             container.innerHTML = `
                 <div class="container">
                     <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2 no-print">
                         <h3 class="text-2xl font-bold">Analytics Dashboard</h3>
+                        <div class="flex items-center gap-2">
+                             <label for="analytics-date-from" class="text-sm font-medium">From:</label>
+                            <input type="date" id="analytics-date-from" class="input-field text-sm p-1">
+                             <label for="analytics-date-to" class="text-sm font-medium">To:</label>
+                            <input type="date" id="analytics-date-to" class="input-field text-sm p-1">
+                            <button id="analytics-apply-filter" class="btn bg-blue-600 text-white py-1 px-3 text-sm">Apply</button>
+                        </div>
                         <div>
                             <button onclick="downloadAnalyticsCsv()" title="Download CSV" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded mr-4">📄 CSV</button>
                             <button onclick="printPage()" title="Print Analytics" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded mr-4">🖨️ Print</button>
-                            <button onclick="closeAnalyticsDashboard()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded">Back to Job File</button>
+                            <button onclick="closeAnalyticsDashboard()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-3 rounded">Back</button>
                         </div>
                     </div>
                     <div id="analytics-body" class="space-y-6"></div>
                 </div>`;
+            
+            document.getElementById('analytics-apply-filter').addEventListener('click', () => {
+                const fromDate = document.getElementById('analytics-date-from').value;
+                const toDate = document.getElementById('analytics-date-to').value;
+                let filteredFiles = analyticsDataCache;
+                if(fromDate) filteredFiles = filteredFiles.filter(f => f.d && f.d >= fromDate);
+                if(toDate) filteredFiles = filteredFiles.filter(f => f.d && f.d <= toDate);
+                renderAnalytics(filteredFiles);
+            });
+
             renderAnalytics(analyticsDataCache);
             document.getElementById('app-container').style.display = 'none';
             container.style.display = 'block';
@@ -1667,17 +1689,7 @@
                 acc[month].count++;
                 return acc;
             }, {});
-
-            const salesmanData = files.reduce((acc, file) => {
-                const salesman = file.sm || 'N/A';
-                if(!acc[salesman]) acc[salesman] = { profit: 0, count: 0 };
-                acc[salesman].profit += file.totalProfit || 0;
-                acc[salesman].count++;
-                return acc;
-            }, {});
             
-            const sortedSalesmen = Object.entries(salesmanData).sort((a,b) => b[1].profit - a[1].profit);
-
             body.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                     <div class="bg-red-100 p-4 rounded-lg"><p class="text-sm font-medium">Total Cost</p><p class="text-2xl font-bold">${totals.cost.toFixed(3)}</p></div>
@@ -1713,11 +1725,13 @@
                 },
                 options: { plugins: { title: { display: true, text: 'Monthly Profit Over Time' } } }
             });
+            const salesmanData = Object.entries(renderTableFromData(files, 'sm', '', [], () => {})[1])
+                .sort((a,b) => b[1].profit - a[1].profit);
              salesmanChartInstance = new Chart(document.getElementById('salesman-profit-chart'), {
                 type: 'bar',
                 data: {
-                    labels: sortedSalesmen.map(s => s[0]),
-                    datasets: [{ label: 'Salesman Profit', data: sortedSalesmen.map(s => s[1].profit), backgroundColor: '#2563eb' }]
+                    labels: salesmanData.map(s => s[0]),
+                    datasets: [{ label: 'Salesman Profit', data: salesmanData.map(s => s[1].profit), backgroundColor: '#2563eb' }]
                 },
                 options: { plugins: { title: { display: true, text: 'Top Salesmen by Profit' } } }
             });
@@ -1733,12 +1747,13 @@
                 acc[key].count++;
                 return acc;
             }, {});
+            if(keyHeader === '') return [null, data]; // Return data for chart
             let table = `<table class="w-full analytics-table"><thead><tr><th>${keyHeader}</th>`;
             valueHeaders.forEach(h => table += `<th>${h.charAt(0).toUpperCase() + h.slice(1)}</th>`);
             table += '</tr></thead><tbody>';
             Object.entries(data).sort((a, b) => b[1].profit - a[1].profit).forEach(([key, values]) => {
                 table += `<tr class="hover:bg-gray-100 cursor-pointer" onclick="${clickHandler.name}('${key}')"><td>${key}</td>`;
-                valueHeaders.forEach(h => table += `<td>${typeof values[h] === 'number' ? values[h].toFixed(3) : values[h]}</td>`);
+                valueHeaders.forEach(h => table += `<td>${typeof values[h] === 'number' ? (h === 'count' ? values[h] : values[h].toFixed(3)) : values[h]}</td>`);
                 table += `</tr>`;
             });
             table += '</tbody></table>';
@@ -1764,7 +1779,7 @@
             openModal('user-jobs-modal', true);
         }
         function showStatusJobs(status){
-            const statusFiles = jobFilesCache.filter(f => (f.status || 'pending') === status);
+            const statusFiles = jobFilesCache.filter(f => (f.status || 'pending') === status && !f.isDeleted);
             displayJobFiles(statusFiles, 'user-jobs-list');
             document.getElementById('user-jobs-modal-title').textContent = `Job Files with Status: ${status.charAt(0).toUpperCase() + status.slice(1)}`;
             openModal('user-jobs-modal');
@@ -1974,3 +1989,4 @@
   
 
     
+
