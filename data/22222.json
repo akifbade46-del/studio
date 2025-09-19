@@ -1,0 +1,43 @@
+{
+  "d": "2025-09-19",
+  "po": "",
+  "jfn": "22222",
+  "cl": [],
+  "pt": [],
+  "in": "",
+  "bd": "",
+  "sm": "",
+  "sh": "",
+  "co": "",
+  "mawb": "",
+  "hawb": "",
+  "ts": "",
+  "or": "",
+  "pc": "",
+  "gw": "",
+  "de": "",
+  "vw": "",
+  "dsc": "",
+  "ca": "",
+  "tn": "",
+  "vn": "",
+  "fv": "",
+  "cn": "",
+  "ch": [
+    {
+      "description": "AA",
+      "cost": 23,
+      "selling": 3233,
+      "profit": 3210,
+      "notes": ""
+    }
+  ],
+  "re": "",
+  "pb": "akifbade46",
+  "id": "22222",
+  "status": "draft",
+  "createdBy": "akifbade46",
+  "createdAt": "2025-09-19T15:46:55.835Z",
+  "lastUpdatedBy": "akifbade46",
+  "updatedAt": "2025-09-19T15:46:55.835Z"
+}
