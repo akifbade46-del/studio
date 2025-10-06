@@ -51,3 +51,33 @@ First, make sure your project is a GitHub repository and that you have pushed al
 ---
 
 This project also contains a separate, standalone Proof of Delivery (POD) system located in the `/public/pod` directory. Since it is in the `public` folder, Vercel will serve it as a static site. You can access it by going to your deployment URL and adding `/pod/` at the end (e.g., `https://your-deployment-url.vercel.app/pod/`).
+
+## POD Download Links
+
+The POD system provides several ways to access and download delivery receipts:
+
+### For Admin/Staff Users:
+- **View Receipt**: Opens the full receipt modal with print/share options
+- **Copy Download Link**: Directly copies the public POD URL to clipboard for sharing
+
+### For Drivers:
+- **View Receipt**: Shows completed delivery receipts
+- **Copy Download Link**: Quick way to share POD links with customers
+
+### Public POD Access:
+Anyone with a POD link can access it directly by visiting:
+```
+https://your-domain.com/pod/?podId=DELIVERY_ID
+```
+
+### Features:
+- **Direct PDF Download**: Large "Download PDF Receipt" button
+- **Shareable URLs**: Permanent links that work without login
+- **QR Code Integration**: Automatic QR codes for easy mobile access
+- **Responsive Design**: Works on all devices
+
+### Example Usage:
+1. Complete a delivery in the driver interface
+2. Click "Copy Download Link" to get the shareable URL
+3. Share the URL with customers or stakeholders
+4. Recipients can access the POD and download PDF without any login
