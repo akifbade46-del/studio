@@ -1,502 +1,745 @@
-import React, { useState, useEffect, useRef } from 'react';
-
-// --- Icons (Inline SVGs for maximum compatibility) ---
-const MailIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>;
-const PhoneIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>;
-const ChevronDownIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>;
-const BriefcaseIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>;
-const TrophyIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#eab308" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>;
-const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>;
-const GraduationCapIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.42 10.922a2 2 0 0 1-.01 3.235l-8.52 4.73a2 2 0 0 1-1.78 0l-8.52-4.73a2 2 0 0 1-.01-3.235l8.52-4.73a2 2 0 0 1 1.78 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>;
-const MapPinIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>;
-const DownloadIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>;
-
-// --- Helper Hook for Scroll Animations ---
-function useIntersectionObserver(options = { threshold: 0.1, triggerOnce: true }) {
-  const [isIntersecting, setIsIntersecting] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setIsIntersecting(true);
-        if (options.triggerOnce && ref.current) {
-          observer.unobserve(ref.current);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earl Augustine Pasco | Professional Portfolio</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-bright: #60a5fa;
+            --accent: #8b5cf6;
+            --bg: #020617; 
+            --card-bg: rgba(15, 23, 42, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --nav-bg: rgba(2, 6, 23, 0.85);
         }
-      } else if (!options.triggerOnce) {
-        setIsIntersecting(false);
-      }
-    }, options);
 
-    if (ref.current) observer.observe(ref.current);
-    return () => {
-      if (ref.current) observer.unobserve(ref.current);
-    };
-  }, [options.threshold, options.triggerOnce]);
-
-  return [ref, isIntersecting];
-}
-
-// --- Animated Section Wrapper ---
-const AnimatedSection = ({ children, id, className = "", delay = "" }) => {
-  const [ref, isVisible] = useIntersectionObserver();
-  return (
-    <section 
-      id={id} 
-      ref={ref} 
-      className={`transition-all duration-1000 transform ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-      } ${className} ${delay}`}
-    >
-      {children}
-    </section>
-  );
-};
-
-// --- Main Application ---
-export default function App() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Handle sticky navbar shadow on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Custom smooth scroll function to bypass iframe anchor restrictions
-  const scrollToSection = (e, id) => {
-    e.preventDefault();
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    setMobileMenuOpen(false);
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const navLinks = [
-    { name: 'About', id: 'about' },
-    { name: 'Experience', id: 'experience' },
-    { name: 'Education', id: 'education' },
-    { name: 'Contact', id: 'contact' },
-  ];
-
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500/30 selection:text-blue-200 overflow-x-hidden">
-      {/* Inject smooth scrolling global style */}
-      <style>{`
-        html { scroll-behavior: smooth; }
-        .clip-diagonal { clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%); }
-        /* Custom scrollbar for dark mode */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 5px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
-      `}</style>
-
-      {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-slate-950/90 backdrop-blur-md shadow-lg shadow-black/20 py-3 border-b border-slate-800' : 'bg-transparent py-5'}`}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div 
-              className="text-2xl font-bold tracking-tighter text-white cursor-pointer"
-              onClick={scrollToTop}
-            >
-              EP<span className="text-blue-500">.</span>
-            </div>
-            
-            {/* Desktop Menu */}
-            <div className="hidden md:flex space-x-8">
-              {navLinks.map((link) => (
-                <button 
-                  key={link.name} 
-                  onClick={(e) => scrollToSection(e, link.id)}
-                  className="text-sm font-medium text-slate-400 hover:text-blue-400 transition-colors"
-                >
-                  {link.name}
-                </button>
-              ))}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <button 
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="text-slate-400 hover:text-blue-400 focus:outline-none"
-              >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  {mobileMenuOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  )}
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-slate-900 border-t border-slate-800 shadow-2xl absolute w-full">
-            <div className="px-4 pt-2 pb-4 space-y-1">
-              {navLinks.map((link) => (
-                <button
-                  key={link.name}
-                  onClick={(e) => scrollToSection(e, link.id)}
-                  className="block w-full text-left px-3 py-3 text-base font-medium text-slate-300 hover:text-blue-400 hover:bg-slate-800 rounded-md"
-                >
-                  {link.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden clip-diagonal bg-slate-900">
-        {/* Dark mode glow effects */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-blue-900/30 blur-3xl opacity-50 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-indigo-900/20 blur-3xl opacity-50 pointer-events-none"></div>
-        
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col-reverse lg:flex-row items-center gap-12">
-            
-            {/* Text Content */}
-            <div className="w-full lg:w-3/5 text-center lg:text-left">
-              <div className="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 font-semibold text-sm mb-6 animate-[fadeIn_1s_ease-out]">
-                Customer Service Professional
-              </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight mb-6 animate-[fadeInUp_1s_ease-out_0.2s_both]">
-                Hi, I'm <span className="text-blue-500">Earl Augustine</span> Pasco
-              </h1>
-              <p className="text-lg sm:text-xl text-slate-400 mb-8 max-w-2xl mx-auto lg:mx-0 animate-[fadeInUp_1s_ease-out_0.4s_both]">
-                Dedicated professional with over 3 years of experience providing exceptional customer service. Quick to adapt, detail-oriented, and passionate about solving problems efficiently to ensure the best customer experience.
-              </p>
-              
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 animate-[fadeInUp_1s_ease-out_0.6s_both]">
-                <button 
-                  onClick={(e) => scrollToSection(e, 'contact')} 
-                  className="px-6 py-3 rounded-full bg-blue-600 text-white font-medium hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/50 active:scale-95 flex justify-center items-center gap-2"
-                >
-                  <MailIcon /> Contact Me
-                </button>
-                <button 
-                  onClick={(e) => scrollToSection(e, 'experience')} 
-                  className="px-6 py-3 rounded-full bg-slate-800 text-white border border-slate-700 font-medium hover:bg-slate-700 transition-all shadow-sm active:scale-95 flex justify-center items-center gap-2"
-                >
-                  <BriefcaseIcon /> View Experience
-                </button>
-                <a 
-                  href="Earl_Augustine_Pasco_CV.pdf" 
-                  download="Earl_Augustine_Pasco_CV.pdf"
-                  className="px-6 py-3 rounded-full bg-transparent text-blue-400 border border-blue-500/50 font-medium hover:bg-blue-500/10 transition-all shadow-sm active:scale-95 flex justify-center items-center gap-2"
-                >
-                  <DownloadIcon /> Download CV
-                </a>
-              </div>
-            </div>
-
-            {/* Image */}
-            <div className="w-full lg:w-2/5 flex justify-center lg:justify-end animate-[fadeIn_1.5s_ease-out]">
-              <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96">
-                <div className="absolute inset-0 bg-blue-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-                <div className="relative w-full h-full rounded-full border-4 border-slate-800 shadow-2xl shadow-black overflow-hidden bg-slate-800">
-                  {/* Updated Image Source to the provided link */}
-                  <img 
-                    src="https://akifbade46-del.github.io/studio/docs/Screenshot_20260220_201042_Google.jpg" 
-                    alt="Earl Augustine Pasco" 
-                    className="w-full h-full object-cover object-center"
-                    crossOrigin="anonymous"
-                  />
-                </div>
-                
-                {/* Floating Badge Dark Mode */}
-                <div className="absolute bottom-4 right-4 bg-slate-800 border border-slate-700 p-3 rounded-2xl shadow-xl flex items-center gap-3 animate-bounce" style={{ animationDuration: '3s' }}>
-                  <div className="bg-green-500/20 p-2 rounded-full text-green-400">
-                    <TrophyIcon />
-                  </div>
-                  <div className="text-sm font-bold text-white leading-tight">
-                    Top Agent <br/><span className="text-xs text-slate-400 font-normal">Award Winner</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-        
-        {/* Scroll Down Indicator */}
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 hidden lg:flex flex-col items-center animate-bounce text-slate-500">
-          <span className="text-xs uppercase tracking-widest font-semibold mb-2">Scroll</span>
-          <ChevronDownIcon />
-        </div>
-      </section>
-
-      {/* Highlights / About Section */}
-      <AnimatedSection id="about" className="py-20 bg-slate-950">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">Highlights of Qualifications</h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto rounded-full"></div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              "More than 3 years of experience in providing exceptional customer service",
-              "Ability to adapt to new working situations with ease, and quick to learn all programs",
-              "Strong attention to detail and the ability to solve problem efficiently",
-              "Maintains high level productivity on dedicated teams as well as individually",
-              "Proficient in Microsoft Office Programs, utilizing systems and spreadsheets",
-              "Excellent communication and interpersonal skills. Fluent in English and Filipino"
-            ].map((highlight, index) => (
-              <div key={index} className="flex items-start gap-4 p-6 bg-slate-900 rounded-2xl border border-slate-800 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-900/10 transition-all group">
-                <div className="flex-shrink-0 text-blue-400 bg-blue-500/10 p-2 rounded-full group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                  <CheckCircleIcon />
-                </div>
-                <p className="text-slate-300 font-medium leading-relaxed">{highlight}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Experience Section */}
-      <AnimatedSection id="experience" className="py-20 bg-slate-900">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-white mb-4">Employment Experience</h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto rounded-full"></div>
-          </div>
-
-          <div className="space-y-12">
-            {/* Job 1 */}
-            <div className="relative pl-8 md:pl-0">
-              <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-0.5 bg-slate-800"></div>
-              
-              <div className="md:flex items-center justify-between w-full">
-                <div className="hidden md:w-5/12 md:flex justify-end pr-8">
-                  <div className="text-right">
-                    <h3 className="text-xl font-bold text-white">Customer Service Representative</h3>
-                    <p className="text-blue-400 font-semibold mb-1">IGT SOLUTIONS, Pavia</p>
-                    <p className="text-sm text-slate-400 flex items-center justify-end gap-1">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                      Mar 2023 - Oct 2023
-                    </p>
-                  </div>
-                </div>
-
-                <div className="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 w-8 h-8 rounded-full bg-blue-600 border-4 border-slate-900 shadow-lg flex items-center justify-center z-10">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-
-                <div className="md:w-5/12 md:pl-8 mt-4 md:mt-0">
-                  <div className="md:hidden mb-4">
-                    <h3 className="text-xl font-bold text-white">Customer Service Representative</h3>
-                    <p className="text-blue-400 font-semibold">IGT SOLUTIONS, Pavia</p>
-                    <p className="text-sm text-slate-400">Mar 2023 - Oct 2023</p>
-                  </div>
-                  <div className="bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 hover:border-slate-600 transition-colors">
-                    <p className="text-sm font-medium text-slate-200 mb-3 pb-3 border-b border-slate-700">Assigned as a Subject Matter Expert in Kiwi.com website.</p>
-                    <ul className="space-y-2 text-slate-400 text-sm list-disc pl-4 marker:text-blue-500">
-                      <li>Called and informed passengers in case of flight disruptions/cancellations.</li>
-                      <li>Assisted passengers with their online check-ins & baggage allowances.</li>
-                      <li>Utilized flight status via flightradar24 to provide accurate information.</li>
-                      <li>Completed each transaction in quick and professional manner.</li>
-                    </ul>
-                    <div className="mt-4 bg-yellow-900/20 text-yellow-300 p-3 rounded-xl flex items-start gap-3 border border-yellow-900/50">
-                      <div className="mt-0.5"><TrophyIcon /></div>
-                      <p className="text-sm font-medium">AWARD: Top Agent of the month based on employee performance and average handling time.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Job 2 */}
-            <div className="relative pl-8 md:pl-0">
-              <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-0.5 bg-slate-800"></div>
-              
-              <div className="md:flex items-center justify-between w-full flex-row-reverse">
-                <div className="hidden md:w-5/12 md:flex justify-start pl-8">
-                  <div className="text-left">
-                    <h3 className="text-xl font-bold text-white">Customer Service Representative</h3>
-                    <p className="text-blue-400 font-semibold mb-1">IQOR ILOILO</p>
-                    <p className="text-sm text-slate-400 flex items-center justify-start gap-1">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                      Oct 2020 - Jan 2022
-                    </p>
-                  </div>
-                </div>
-
-                <div className="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 w-8 h-8 rounded-full bg-slate-600 border-4 border-slate-900 shadow-lg flex items-center justify-center z-10">
-                  <div className="w-2 h-2 bg-slate-200 rounded-full"></div>
-                </div>
-
-                <div className="md:w-5/12 md:pr-8 mt-4 md:mt-0">
-                  <div className="md:hidden mb-4">
-                    <h3 className="text-xl font-bold text-white">Customer Service Representative</h3>
-                    <p className="text-blue-400 font-semibold">IQOR ILOILO</p>
-                    <p className="text-sm text-slate-400">Oct 2020 - Jan 2022</p>
-                  </div>
-                  <div className="bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-700 hover:border-slate-600 transition-colors">
-                    <ul className="space-y-2 text-slate-400 text-sm list-disc pl-4 marker:text-slate-500">
-                      <li>Assisted customers over chat with their concerns providing accurate information.</li>
-                      <li>Processed payments such as cash, debit, and credit.</li>
-                      <li>Tracked customers' orders and dealt with giving compensation for late deliveries.</li>
-                      <li>Processed customer claims and returns, informing of company policy.</li>
-                      <li>Handled-well irate customers by empathizing with their concerns.</li>
-                    </ul>
-                    <div className="mt-4 bg-yellow-900/20 text-yellow-300 p-3 rounded-xl flex items-start gap-3 border border-yellow-900/50">
-                      <div className="mt-0.5"><TrophyIcon /></div>
-                      <p className="text-sm font-medium">AWARD: Top Agent of the month based on the satisfaction rating and average handling time.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* On-The-Job Training Section */}
-      <AnimatedSection className="py-20 bg-slate-950">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">On-The-Job Training</h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto rounded-full"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-slate-900 rounded-3xl p-8 border border-slate-800 hover:border-blue-500/50 transition-colors">
-              <div className="w-12 h-12 bg-slate-800 rounded-2xl shadow-sm flex items-center justify-center mb-6 text-blue-400 border border-slate-700">
-                <MapPinIcon />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-1">Banquet Server</h3>
-              <p className="text-blue-400 font-medium mb-4">DIVERSION 21, Mandurriao, Iloilo City <span className="text-slate-500 text-sm font-normal block mt-1">Dec 2019 - Jan 2020</span></p>
-              <ul className="space-y-2 text-slate-400 text-sm">
-                <li className="flex gap-2"><span className="text-blue-500 mt-0.5">▹</span> Worked in a diverse team of up to 10 individuals.</li>
-                <li className="flex gap-2"><span className="text-blue-500 mt-0.5">▹</span> Set up tables, dining rooms, and halls for events.</li>
-                <li className="flex gap-2"><span className="text-blue-500 mt-0.5">▹</span> Served food and beverage efficiently to guests.</li>
-                <li className="flex gap-2"><span className="text-blue-500 mt-0.5">▹</span> Demonstrated good coordination by multi-tasking.</li>
-              </ul>
-            </div>
-
-            <div className="bg-slate-900 rounded-3xl p-8 border border-slate-800 hover:border-blue-500/50 transition-colors">
-              <div className="w-12 h-12 bg-slate-800 rounded-2xl shadow-sm flex items-center justify-center mb-6 text-blue-400 border border-slate-700">
-                <BriefcaseIcon />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-1">On-Board Training</h3>
-              <p className="text-blue-400 font-medium mb-4">2GO TRAVELS, Iloilo-Manila-Palawan</p>
-              <ul className="space-y-2 text-slate-400 text-sm">
-                <li className="flex gap-2"><span className="text-blue-500 mt-0.5">▹</span> Helped guide guests through their dining experience.</li>
-                <li className="flex gap-2"><span className="text-blue-500 mt-0.5">▹</span> Ensured cabins are cleaned/sanitized before arrivals.</li>
-                <li className="flex gap-2"><span className="text-blue-500 mt-0.5">▹</span> Assisted passengers' concerns in a timely manner.</li>
-                <li className="flex gap-2"><span className="text-blue-500 mt-0.5">▹</span> Informed PWD/senior citizens about safety measures.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Education & Extra Info */}
-      <AnimatedSection id="education" className="py-20 bg-slate-900">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Education */}
-            <div className="bg-slate-800 rounded-3xl p-8 shadow-lg border border-slate-700">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="p-3 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20">
-                  <GraduationCapIcon />
-                </div>
-                <h2 className="text-2xl font-bold text-white">Education</h2>
-              </div>
-              <h3 className="text-lg font-bold text-slate-200 leading-snug mb-2">
-                Bachelor of Science in Hotel and Restaurant Management
-              </h3>
-              <p className="text-slate-400 mb-2">Iloilo State College of Fisheries - Dingle Campus</p>
-              <p className="text-sm font-semibold text-blue-400">Dingle, Iloilo Philippines | 2020</p>
-            </div>
-
-            {/* License & References snippet */}
-            <div className="bg-slate-800 rounded-3xl p-8 shadow-lg border border-slate-700 flex flex-col justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-white mb-4 border-b border-slate-700 pb-2">License & Certifications</h2>
-                <div className="flex items-center gap-3 text-slate-300 font-medium">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>
-                  Non-Professional Driver's License
-                </div>
-              </div>
-              
-              <div className="mt-8">
-                <h2 className="text-lg font-bold text-white mb-4 border-b border-slate-700 pb-2">Professional References</h2>
-                <p className="text-sm text-slate-400 italic">Available upon request or visible in full CV document.</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-slate-900 border border-slate-700 text-slate-300 text-xs rounded-full">Khen Padilla</span>
-                  <span className="px-3 py-1 bg-slate-900 border border-slate-700 text-slate-300 text-xs rounded-full">John Michael Devera</span>
-                  <span className="px-3 py-1 bg-slate-900 border border-slate-700 text-slate-300 text-xs rounded-full">Randolf Ian Rojo</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Contact Section */}
-      <AnimatedSection id="contact" className="py-24 bg-black text-white clip-diagonal" delay="!mt-[-4rem] pt-32">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Let's Work Together</h2>
-          <p className="text-slate-400 mb-10 max-w-2xl mx-auto">
-            I am currently looking for new opportunities where my skills in customer service and problem-solving can add value to your team. Feel free to reach out!
-          </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-12">
-            <a href="mailto:earlaugustinepasco888@yahoo.com" className="flex items-center gap-3 bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800 px-6 py-4 rounded-2xl transition-all w-full sm:w-auto shadow-lg">
-              <div className="text-blue-400 bg-blue-500/10 p-2 rounded-lg"><MailIcon /></div>
-              <div className="text-left">
-                <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Email</p>
-                <p className="text-sm font-medium text-slate-200">earlaugustinepasco888@yahoo.com</p>
-              </div>
-            </a>
-            <a href="tel:09055477996" className="flex items-center gap-3 bg-slate-900 border border-slate-800 hover:border-green-500/50 hover:bg-slate-800 px-6 py-4 rounded-2xl transition-all w-full sm:w-auto shadow-lg">
-              <div className="text-green-400 bg-green-500/10 p-2 rounded-lg"><PhoneIcon /></div>
-              <div className="text-left">
-                <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Phone</p>
-                <p className="text-sm font-medium text-slate-200">09055477996</p>
-              </div>
-            </a>
-          </div>
-
-        </div>
-      </AnimatedSection>
-      
-      {/* Footer */}
-      <footer className="bg-slate-950 py-8 text-center text-slate-500 text-sm border-t border-slate-900">
-        <p>&copy; {new Date().getFullYear()} Earl Augustine Pasco. All Rights Reserved.</p>
-      </footer>
-
-      {/* Tailwind Custom Animations definition */}
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
+
+        html {
+            scroll-behavior: smooth;
         }
-      `}</style>
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Modern Background Graphics */
+        .mesh-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.12) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.25rem 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .nav-logo img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Mobile Nav Overlay */
+        .mobile-nav {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            transform: translateX(100%);
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mobile-nav.open {
+            transform: translateX(0);
+        }
+
+        .mobile-nav-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 3rem;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .mobile-nav-links a {
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 6rem;
+            padding-bottom: 4rem;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        /* Responsive Photo Sphere */
+        .photo-sphere {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1;
+            margin: 0 auto;
+        }
+
+        .orbit-ring {
+            position: absolute;
+            inset: -10px;
+            border: 2px dashed rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .main-photo-wrapper {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            padding: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.2);
+        }
+
+        .main-photo-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 5px solid var(--bg);
+        }
+
+        .main-photo-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .floating-status {
+            position: absolute;
+            bottom: 20px;
+            right: -10px;
+            background: rgba(15, 23, 42, 0.95);
+            padding: 0.6rem 1rem;
+            border-radius: 100px;
+            border: 1px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        /* Hero Text */
+        .hero-text h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text h1 span {
+            display: block;
+            background: linear-gradient(to right, #fff, var(--primary-bright));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-filled {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            border: 1px solid var(--glass-border);
+            color: white;
+            background: rgba(255,255,255,0.03);
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 0;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        /* Cards Layout */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-bright);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtitle {
+            color: var(--primary-bright);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-list {
+            list-style: none;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+
+        .card-list li {
+            margin-bottom: 0.6rem;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+
+        .card-list li::before {
+            content: "•";
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Skills/Training Badges */
+        .badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem 1.25rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Reference Cards */
+        .ref-card {
+            padding: 1.5rem;
+        }
+
+        .ref-info p {
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        .ref-name {
+            font-weight: 700;
+            color: white;
+            font-size: 1rem !important;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 0;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 968px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text { order: 2; }
+            .hero-image-container { order: 1; }
+
+            .photo-sphere {
+                max-width: 280px;
+                margin-bottom: 2rem;
+            }
+
+            .cta-group {
+                justify-content: center;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 1.5rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mesh-gradient"></div>
+
+    <!-- Mobile Nav -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <button class="mobile-menu-btn" id="closeMenu">
+                <i data-lucide="x" style="width: 32px; height: 32px;"></i>
+            </button>
+        </div>
+        <div class="mobile-nav-links">
+            <a href="#about">About</a>
+            <a href="#experience">Experience</a>
+            <a href="#skills">Skills</a>
+            <a href="#education">Education</a>
+            <a href="#contact">Contact</a>
+        </div>
     </div>
-  );
-}
+
+    <nav id="navbar">
+        <div class="container nav-container">
+            <a href="#" class="nav-logo">
+                <img src="https://akifbade46-del.github.io/studio/docs/Screenshot_20260220_201042_Google.jpg" alt="EP">
+                <span>EARL PASCO</span>
+            </a>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#experience">Experience</a>
+                <a href="#skills">Skills</a>
+                <a href="#education">Education</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <button class="mobile-menu-btn" id="openMenu">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="hero" id="about">
+        <div class="container hero-grid">
+            <div class="hero-image-container reveal">
+                <div class="photo-sphere">
+                    <div class="orbit-ring"></div>
+                    <div class="main-photo-wrapper">
+                        <div class="main-photo-inner">
+                            <img src="https://akifbade46-del.github.io/studio/docs/Screenshot_20260220_201042_Google.jpg" alt="Earl Augustine Pasco">
+                        </div>
+                    </div>
+                    <div class="floating-status">
+                        <div class="status-dot"></div>
+                        <span style="font-weight: 800; font-size: 0.7rem; color: white;">HIRING READY</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-text reveal">
+                <p style="color: var(--primary-bright); font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 1rem; font-size: 0.75rem;">Customer Service Specialist</p>
+                <h1>Earl Augustine<span>Pasco</span></h1>
+                <p class="hero-desc">Solving complex travel and logistics challenges through 3+ years of expert support. Dedicated to excellence and precision in every interaction.</p>
+                
+                <div class="cta-group">
+                    <a href="#contact" class="btn btn-filled">
+                        <i data-lucide="message-square"></i> Contact Me
+                    </a>
+                    <a href="https://akifbade46-del.github.io/studio/blob/main/docs/Earl_Augustine_Pasco_CV.pdf" target="_blank" class="btn btn-outline">
+                        <i data-lucide="file-down"></i> Download CV
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Employment Experience</h2>
+            </div>
+            <div class="card-grid">
+                <!-- IGT Solutions -->
+                <div class="card reveal">
+                    <div class="card-icon"><i data-lucide="plane"></i></div>
+                    <div class="card-subtitle">Mar 2023 — Oct 2023</div>
+                    <h3 class="card-title">CSR / SME</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem; font-weight: 600;">IGT Solutions, Pavia</p>
+                    <ul class="card-list">
+                        <li>Assigned as Subject Matter Expert for Kiwi.com operations.</li>
+                        <li>Proactively managed communications for flight disruptions and cancellations.</li>
+                        <li>Resolved baggage inquiries and online check-in challenges.</li>
+                        <li>Utilized Flightradar24 for precise aviation tracking.</li>
+                    </ul>
+                    <div style="margin-top: 1.5rem; color: #fbbf24; font-size: 0.8rem; font-weight: 700;">
+                        🏆 Top Agent of the Month - Performance Award
+                    </div>
+                </div>
+
+                <!-- IQOR -->
+                <div class="card reveal">
+                    <div class="card-icon"><i data-lucide="message-circle"></i></div>
+                    <div class="card-subtitle">Oct 2020 — Jan 2022</div>
+                    <h3 class="card-title">Customer Representative</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem; font-weight: 600;">IQOR Iloilo</p>
+                    <ul class="card-list">
+                        <li>Managed high-volume chat support concerns globally.</li>
+                        <li>Processed secure multi-platform payments (Cash, Debit, Credit).</li>
+                        <li>Coordinated order tracking and late delivery compensations.</li>
+                        <li>Handled customer claims and returns with high efficiency.</li>
+                    </ul>
+                    <div style="margin-top: 1.5rem; color: #fbbf24; font-size: 0.8rem; font-weight: 700;">
+                        ⭐ Top Agent of the Month - Satisfaction Rating
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="training" style="background: rgba(255,255,255,0.02);">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Training & Education</h2>
+            </div>
+            <div class="card-grid">
+                <!-- Education -->
+                <div class="card reveal">
+                    <div class="card-icon"><i data-lucide="graduation-cap"></i></div>
+                    <h3 class="card-title">BS in Hotel & Restaurant Mgmt</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Iloilo State College of Fisheries - Dingle</p>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Class of 2020</p>
+                    <div style="margin-top: 1rem; border-top: 1px solid var(--glass-border); padding-top: 1rem;">
+                        <p style="font-size: 0.8rem; font-weight: 600;">License: Non-Pro Driver's License</p>
+                    </div>
+                </div>
+
+                <!-- Training 1 -->
+                <div class="card reveal">
+                    <div class="card-icon"><i data-lucide="award"></i></div>
+                    <h3 class="card-title">Banquet Server</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Diversion 21, Mandurriao</p>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Dec 2019 — Jan 2020</p>
+                    <p style="font-size: 0.85rem; margin-top: 1rem;">Managed event setups and professional guest serving in diverse teams.</p>
+                </div>
+
+                <!-- Training 2 -->
+                <div class="card reveal">
+                    <div class="card-icon"><i data-lucide="ship"></i></div>
+                    <h3 class="card-title">On-Board Training</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">2GO Travels</p>
+                    <p style="color: var(--text-muted); font-size: 0.8rem;">Iloilo-Manila-Palawan Route</p>
+                    <p style="font-size: 0.85rem; margin-top: 1rem;">Cabin management, passenger assistance, and safety protocol execution.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Core Skills</h2>
+            </div>
+            <div class="badge-container reveal">
+                <div class="badge"><i data-lucide="check-circle-2"></i> 3+ Years Experience</div>
+                <div class="badge"><i data-lucide="monitor"></i> MS Office & CRM Tools</div>
+                <div class="badge"><i data-lucide="languages"></i> English & Filipino</div>
+                <div class="badge"><i data-lucide="brain"></i> Rapid Problem Solving</div>
+                <div class="badge"><i data-lucide="users"></i> High-Level Teamwork</div>
+                <div class="badge"><i data-lucide="zap"></i> Quick System Learner</div>
+                <div class="badge"><i data-lucide="search"></i> High Attention to Detail</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="references">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Professional References</h2>
+            </div>
+            <div class="card-grid">
+                <div class="card ref-card reveal">
+                    <div class="ref-info">
+                        <p class="ref-name">Khen Padilla</p>
+                        <p style="color: var(--primary-bright); font-weight: 600;">CSR</p>
+                        <p>IGT Solutions - Pavia</p>
+                        <p style="margin-top: 0.5rem; opacity: 0.8;">09692130406</p>
+                    </div>
+                </div>
+                <div class="card ref-card reveal">
+                    <div class="ref-info">
+                        <p class="ref-name">John Michael Devera</p>
+                        <p style="color: var(--primary-bright); font-weight: 600;">Operation Expert</p>
+                        <p>Carelon - Iloilo City</p>
+                        <p style="margin-top: 0.5rem; opacity: 0.8;">09636666743</p>
+                    </div>
+                </div>
+                <div class="card ref-card reveal">
+                    <div class="ref-info">
+                        <p class="ref-name">Randolf Ian Rojo</p>
+                        <p style="color: var(--primary-bright); font-weight: 600;">Digital Communication Specialist</p>
+                        <p>HeatPressNation - Iloilo City</p>
+                        <p style="margin-top: 0.5rem; opacity: 0.8;">09178221071</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Let's Connect</h2>
+            </div>
+            <div class="card-grid">
+                <div class="card reveal" style="text-align: center;">
+                    <i data-lucide="phone" style="margin-bottom: 1rem; color: var(--primary);"></i>
+                    <p style="font-weight: 700; font-size: 1.2rem;">0905 547 7996</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Direct Line</p>
+                </div>
+                <div class="card reveal" style="text-align: center;">
+                    <i data-lucide="mail" style="margin-bottom: 1rem; color: var(--primary);"></i>
+                    <p style="font-weight: 700; font-size: 0.9rem; word-break: break-all;">earlaugustinepasco888@yahoo.com</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Official Email</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <h3 style="font-weight: 900; letter-spacing: -0.05em; margin-bottom: 1rem;">PASCO.</h3>
+            <p style="color: var(--text-muted); font-size: 0.8rem;">Professional Portfolio &copy; 2024</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Reveal Logic
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Mobile Menu Logic
+        const mobileNav = document.getElementById('mobileNav');
+        const openBtn = document.getElementById('openMenu');
+        const closeBtn = document.getElementById('closeMenu');
+
+        openBtn.onclick = () => mobileNav.classList.add('open');
+        closeBtn.onclick = () => mobileNav.classList.remove('open');
+        mobileNav.querySelectorAll('a').forEach(a => {
+            a.onclick = () => mobileNav.classList.remove('open');
+        });
+
+        // Scroll Tracking
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) nav.style.padding = '0.75rem 0';
+            else nav.style.padding = '1.25rem 0';
+
+            // Active State
+            let current = "";
+            document.querySelectorAll("section").forEach((section) => {
+                if (pageYOffset >= section.offsetTop - 150) current = section.getAttribute("id");
+            });
+
+            document.querySelectorAll(".nav-links a").forEach((li) => {
+                li.classList.remove("active");
+                if (li.getAttribute("href").includes(current)) li.classList.add("active");
+            });
+        });
+    </script>
+</body>
+</html>
 
 
