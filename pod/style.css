@@ -48,6 +48,8 @@ body.loading > * {
 .btn-success:hover { background-color: #429e96; }
 .btn-danger { background-color: #dc2626; color: white; }
 .btn-danger:hover { background-color: #b91c1c; }
+.btn-lg { padding: 1rem 2rem; font-size: 1.125rem; }
+.btn-xs { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
 
 .overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
